@@ -1,0 +1,91 @@
+###  作用域  scopes  ###
+ ##可做条件可做效果
+	ROOT # 本国
+	THIS # 当前作用域
+	FROM # 来源/交互的对方 若用于事件/新闻则为事件/新闻的发出方 on_action等具体看wiki
+	PREV # 上个作用域
+	PREV.PREV # 上的作用域的上个作用域，以此类推
+	mio:<MIO>
+	sp:<special_project>
+	overlord # 宗主国
+	faction_leader # 阵营领袖
+	owner # state scopes  # 拥有国
+	controller # state scopes  # 控制国
+	capital_scope # 首都的state
+	event_target:<event_target_key>
+	var:<variable>
+
+ ##只可做效果  every_XXX random_XXX 仅列举部分
+	every_possible_country ##检测所有tag，包括地图上不存在的
+	every_country ##检测仅存在于地图上的tag
+	every_other_country
+	random_country
+	random_other_country
+	every_enemy_country
+	every_subject_country ##所有附庸
+	every_state
+	random_owned_state
+	random_controlled_state
+	random_owned_controlled_state
+	every_unit_leader
+	every_army_leader
+	every_character
+	every_allied_country  ##盟友
+
+ ##只可做条件  any_XXX all_XXX 仅列举部分
+	all_country
+	any_country
+	any_other_country
+	any_neighbor_country
+	any_allied_country
+	any_enemy_country
+	any_state
+	any_neighbor_state
+	any_core_state
+	any_owned_state
+	any_controlled_state
+
+ ##数组作用域
+	any_of_scopes  ##Trigger
+	any_of_scopes = {
+		array = global.majors  ##检查的数组
+		tooltip = has_more_states_than_any_other_major_tt  ##显示的本地化
+		NOT = { tag = PREV }  ##条件
+		check_variable = { num_owned_controlled_states > PREV.num_owned_controlled_states }
+	}
+	all_of_scopes  ##Trigger
+	all_of_scopes = {
+		array = global.majors  ##检查的数组
+		tooltip = has_more_states_than_every_other_major_tt  ##显示的本地化
+		OR = {   ##条件
+			tag = PREV
+			check_variable = { num_owned_controlled_states < PREV.num_owned_controlled_states }
+		}
+	}
+	for_each_scope_loop  ##Effect
+	for_each_scope_loop = {
+		array = global.majors  ##检查的数组
+		if = {  ##对数组中每个元素执行效果
+			limit = {
+				NOT = { tag = ROOT }
+			}
+			random_owned_controlled_state = {
+				transfer_state_to = ROOT
+			}
+		}
+	}
+	random_scope_in_array  ##Effect
+	random_scope_in_array = {
+		array = global.countries  ##检查的数组
+		break = break
+		limit = {  ##数组中随机元素的条件
+			is_dynamic_country = no
+			exists = no
+			any_state = {
+				is_core_of = PREV   # Is core of the currently-checked country
+			}
+		}
+		random_core_state = {  ##对数组中随机元素执行效果
+			transfer_state_to = PREV    # Transfers to the currently-selected country.
+		}
+	}
