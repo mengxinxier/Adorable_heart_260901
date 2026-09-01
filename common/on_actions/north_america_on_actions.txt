@@ -1,0 +1,208 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_NA_war_ai_behavior_SELECTION
+						option = NA_war_GAME_RULE_1
+					}
+				}
+				USA = { add_ideas = NA_war_buff }
+			}
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_NA_war_ai_behavior_SELECTION
+						option = NA_war_GAME_RULE_2
+					}
+				}
+				NFA = { add_ideas = NA_war_buff }
+			}
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_NA_war_ai_behavior_SELECTION
+						option = NA_war_GAME_RULE_3
+					}
+				}
+				FRG = { add_ideas = NA_war_buff }
+			}
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_NA_war_ai_behavior_SELECTION
+						option = NA_war_GAME_RULE_4
+					}
+				}
+				NGD = { add_ideas = NA_war_buff }
+			}
+			every_state = {
+				if = {
+					limit = {
+						is_on_continent = north_america
+					}
+					if = {
+						limit = {
+							is_core_of = NFA
+						}
+						set_state_flag = NA_NFA_AREA
+						set_state_flag = NA_FRA_AREA
+					}
+					if = {
+						limit = {
+							is_core_of = USA
+						}
+						set_state_flag = NA_USA_AREA
+						set_state_flag = NA_ENG_AREA
+					}
+					if = {
+						limit = {
+							is_core_of = CAN
+						}
+						set_state_flag = NA_CAN_AREA
+						set_state_flag = NA_ENG_AREA
+					}
+					if = {
+						limit = {
+							is_core_of = FRG
+						}
+						set_state_flag = NA_FRG_AREA
+						set_state_flag = NA_FRA_AREA
+					}
+					if = {
+						limit = {
+							is_core_of = NGD
+						}
+						set_state_flag = NA_NGD_AREA
+						set_state_flag = NA_CHI_AREA
+					}
+				}
+			}
+			FRG = {
+				while_loop_effect = {
+					limit = {
+						check_variable = {
+							num_of_army_01 <20
+						}
+					}
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"联邦正规军\" division_template = \"联邦正规军\" start_experience_factor = 0.4"
+							#amount = 1
+							owner = PREV
+						}
+					}
+					add_to_variable = {
+						num_of_army_01 = 1
+					}
+				}
+				while_loop_effect = {
+					limit = {
+						check_variable = {
+							num_of_army_00 < 17
+						}
+					}
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"联邦守备军\" division_template = \"联邦守备军\" start_experience_factor = 0.25"
+							#amount = 1
+							owner = PREV
+						}
+					}
+					add_to_variable = {
+						num_of_army_00 = 1
+					}
+				}
+				while_loop_effect = {
+					limit = {
+						check_variable = {
+							num_of_army_02 <8
+						}
+					}
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"联邦装甲部队\" division_template = \"联邦装甲部队\" start_experience_factor = 0.4"
+							#amount = 1
+							owner = PREV
+						}
+					}
+					add_to_variable = {
+						num_of_army_02 = 1
+					}
+				}
+			}
+			USA = {
+				NAE = { enable_country_integration_50_compliance = yes }
+				NAF = { enable_country_integration_80_compliance = yes }
+				NAC = { enable_country_integration_80_compliance = yes }
+				NAR = { enable_country_integration_80_compliance = yes }
+			}
+			NFA = {
+				NAE = { enable_country_integration_80_compliance = yes }
+				NAF = { enable_country_integration_50_compliance = yes }
+				NAC = { enable_country_integration_80_compliance = yes }
+				NAR = { enable_country_integration_80_compliance = yes }
+			}
+			FRG = {
+				NAE = { enable_country_integration_80_compliance = yes }
+				NAF = { enable_country_integration_50_compliance = yes }
+				NAC = { enable_country_integration_80_compliance = yes }
+				NAR = { enable_country_integration_80_compliance = yes }
+			}
+			NGD = {
+				NAE = { enable_country_integration_80_compliance = yes }
+				NAF = { enable_country_integration_80_compliance = yes }
+				NAC = { enable_country_integration_50_compliance = yes }
+				NAR = { enable_country_integration_80_compliance = yes }
+			}
+			CAN = {
+				NAE = { enable_country_integration_50_compliance = yes }
+				NAF = { enable_country_integration_80_compliance = yes }
+				NAC = { enable_country_integration_80_compliance = yes }
+				NAR = { enable_country_integration_80_compliance = yes }
+			}
+		}
+	}
+	on_declare_war = {
+   		effect = {
+			if = {
+           		limit = {
+               		tag = NFA
+                	FROM = { 
+						OR = {
+							tag = USA
+							tag = NGD 
+							tag = FRG
+						}
+					}
+           	 	}
+           		set_global_flag = NA_war_has_began
+        	}
+			if = {
+           		limit = {
+               		tag = NGD
+                	FROM = { 
+						OR = {
+							tag = NFA
+							tag = USA 
+						}
+					}
+           	 	}
+           		set_global_flag = NA_war_has_began
+        	}
+			if = {
+           		limit = {
+               		tag = FRG
+                	FROM = { 
+						OR = {
+							tag = NFA
+							tag = USA 
+						}
+					}
+           	 	}
+           		set_global_flag = NA_war_has_began
+        	}
+   	 	}
+	}
+}

@@ -1,0 +1,281 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			822 = { set_state_flag = has_city_story }
+			822 = { set_state_flag = has_city_story2 }
+			823 = { set_state_flag = has_city_story }
+			749 = { set_state_flag = has_city_story }
+			831 = { set_state_flag = has_city_story }
+			289 = { set_state_flag = has_city_story }
+			824 = { set_state_flag = has_city_story }
+			824 = { set_state_flag = has_city_story2 }
+			every_country = {
+				limit = {
+					or = {
+						tag = PAW
+					}
+				}
+				set_variable = {
+					another_country_leader_group = 12
+				}
+				activate_mission = PAW_shijiezhiwai_gc_1
+			}
+			every_country = {
+				limit = {
+					tag = PAW
+					is_ai = yes
+				}
+				country_event = paw.0
+			}
+		}
+	}
+	on_capitulation = {
+		effect = {	
+			if = {	#白厄黑化线效果，停止抵抗后计算国家数-1
+				limit = {
+					ROOT = {
+						has_global_flag = paw_heihualuxian_yes
+						has_country_flag = paw_blue_and_red_tag
+						is_in_array = { global.paw_msze_dysz_modifier = PREV }
+					}
+				}
+				clr_country_flag = paw_blue_and_red_tag
+				remove_from_array = { array = global.paw_msze_dysz_modifier value = FROM }
+				add_to_variable = {
+					var = global.paw_mszesz_dysz_modifier
+					value = -1
+				}
+			}
+			if = {	#昔涟线效果，其他非黑线国家被击败
+				limit = {
+					not = { has_government = fascism }
+					has_global_flag = paw_xilianzhenjieju_yes
+					PAW = { has_completed_focus = PAW_61 }
+				}
+				PAW = {
+					PAW_wflszx_upup_yes = yes
+				}
+			}
+			if = {	#昔涟线效果，击败非蓝线国家
+				limit = {
+					FROM = {
+						tag = PAW
+						is_subject = no
+						has_completed_focus = PAW_59
+					}
+					has_global_flag = paw_xilianzhenjieju_yes
+					not = { has_government = democratic }
+				}
+				PAW = {
+					PAW_wflszx_up_yes = yes
+				}
+			}
+			if = { #脚本和平，翁法罗斯内战
+                limit = {
+                    ROOT = {
+                        tag = BRM
+                        is_subject = no
+                        has_war_with = PAW
+                    }
+                    FROM = {
+                       tag = PAW
+                       has_country_flag = paw_nzpd_flag
+                    }
+                }
+                PAW = {
+                    white_peace = {
+                        tag = BRM
+                        message = paw_wflsnz_brm_out_tips
+                    }
+                    annex_country = {
+                        target = BRM
+                        transfer_troops = no
+                    }
+                }
+            }
+			if = { #脚本和平，翁法罗斯内战
+                limit = {
+                    ROOT = {
+                        tag = LAO
+                        is_subject = no
+                        has_war_with = PAW
+                    }
+                    FROM = {
+                       tag = PAW
+                       has_country_flag = paw_nzpd_flag
+                    }
+                }
+                PAW = {
+                    white_peace = {
+                        tag = LAO
+                        message = paw_wflsnz_lao_out_tips
+                    }
+                    annex_country = {
+                        target = LAO
+                        transfer_troops = no
+                    }
+                }
+            }
+			if = { #脚本和平，翁法罗斯内战
+                limit = {
+                    ROOT = {
+                        tag = SIA
+                        is_subject = no
+                        has_war_with = PAW
+                    }
+                    FROM = {
+                       tag = PAW
+                       has_country_flag = paw_nzpd_flag
+                    }
+                }
+                PAW = {
+                    white_peace = {
+                        tag = SIA
+                        message = paw_wflsnz_sia_out_tips
+                    }
+                    annex_country = {
+                        target = SIA
+                        transfer_troops = no
+                    }
+                }
+            }
+			if = { #脚本和平，翁法罗斯内战
+                limit = {
+                    ROOT = {
+                        tag = VIN
+                        is_subject = no
+                        has_war_with = PAW
+                    }
+                    FROM = {
+                       tag = PAW
+                       has_country_flag = paw_nzpd_flag
+                    }
+                }
+                PAW = {
+                    white_peace = {
+                        tag = VIN
+                        message = paw_wflsnz_vin_out_tips
+                    }
+                    annex_country = {
+                        target = VIN
+                        transfer_troops = no
+                    }
+                }
+            }
+			if = { #脚本释放，樱花协助东南亚自由联军
+                limit = {
+                    ROOT = {
+                        tag = PAW
+                        is_subject = no
+                        has_war_with = JAP
+                    }
+                    FROM = {
+						tag = JAP
+						has_country_flag = paw_jap_xzdnylj_flag
+                    }
+                }
+				SIA = {
+					every_state = {
+						limit = {
+							is_core_of = PAW
+						}
+						add_core_of = SIA
+					}
+				}
+                PAW = {
+                    release = SIA
+					release = VIN
+                }
+				JAP = {
+					set_autonomy = {
+						target = SIA
+						autonomy_state = autonomy_wtt_imperial_protectorate
+					}
+					set_autonomy = {
+						target = VIN
+						autonomy_state = autonomy_wtt_imperial_protectorate
+					}
+					822 = {
+						set_state_controller_to = SIA
+					}
+					289 = {
+						set_state_controller_to = SIA
+					}
+					831 = {
+						set_state_controller_to = SIA
+					}
+					749 = {
+						set_state_controller_to = SIA
+					}
+					724 = {
+						set_state_controller_to = SIA
+					}
+					882 = {
+						set_state_controller_to = SIA
+					}
+					823 = {
+						set_state_controller_to = SIA
+					}
+					825 = {
+						set_state_controller_to = SIA
+					}
+					824 = {
+						set_state_controller_to = SIA
+					}
+					857 = {
+						set_state_controller_to = VIN
+					}
+					671 = {
+						set_state_controller_to = VIN
+					}
+					670 = {
+						set_state_controller_to = VIN
+					}
+					827 = {
+						set_state_controller_to = VIN
+					}
+					826 = {
+						set_state_controller_to = VIN
+					}
+					856 = {
+						set_state_controller_to = VIN
+					}
+					750 = {
+						set_state_controller_to = VIN
+					}
+					286 = {
+						set_state_controller_to = VIN
+					}
+				}
+				PAW = {
+					every_state = {
+						limit = {
+							is_core_of = SIA
+						}
+						add_core_of = PAW
+					}
+				}
+            }
+		}
+	}
+	on_annex = {
+		effect = {
+			if = {	#白厄黑化线效果，被吞并后计算国家数-1
+				limit = {
+					FROM = {
+						has_global_flag = paw_heihualuxian_yes
+						has_country_flag = paw_blue_and_red_tag
+						is_in_array = { global.paw_msze_dysz_modifier = PREV }
+					}
+				}
+				clr_country_flag = paw_blue_and_red_tag
+				remove_from_array = { array = global.paw_msze_dysz_modifier value = FROM }
+				add_to_variable = {
+					var = global.paw_mszesz_dysz_modifier
+					value = -1
+				}
+			}
+		}
+		
+	}
+}

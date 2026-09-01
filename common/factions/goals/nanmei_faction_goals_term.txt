@@ -1,0 +1,384 @@
+
+
+# 万狼盛宴
+PAM_faction_goal_name = {
+    name = PAM_faction_goal_name
+    description = PAM_faction_goal_desc
+    category = short_term
+    group = FOCUS_WEILIE
+    visible = {
+        FROM = {
+            original_tag = PAM
+            not = {
+                has_country_flag = PAM_yeying
+            }
+            OR = {
+                has_completed_focus = PAM_lqslzs
+                has_war_with = PAQ
+            }
+        }
+    }
+    cancel = {
+    }
+    completed = {
+        has_war = no
+        controls_state = 1194
+        controls_state = 1036
+        controls_state = 896
+        controls_state = 500
+        controls_state = 1220
+    }
+    complete_effect = {
+        add_faction_initiative = 1
+        add_faction_power_projection = 100
+        every_faction_member = {
+            add_war_support = 0.05
+        }
+        add_research_slot = 1
+        custom_effect_tooltip = PAM_nmdwl_tt
+        country_event = {
+            id = PAM.31
+            hours = 6
+        }
+        hidden_effect = {
+            MGU = { enable_country_integration_80_compliance = yes }
+            ELF = { enable_country_integration_80_compliance = yes }
+            LFC = { enable_country_integration_80_compliance = yes }
+            SAJ = { enable_country_integration_80_compliance = yes }
+            PAM = { enable_country_integration_80_compliance = yes }
+            PAU = { enable_country_integration_80_compliance = yes }
+            PGM = { enable_country_integration_80_compliance = yes }
+            PA1 = { enable_country_integration_80_compliance = yes }
+            PAQ = { enable_country_integration_80_compliance = yes }
+            MST = { enable_country_integration_80_compliance = yes }
+            MGC = { enable_country_integration_80_compliance = yes }
+            MGR = { enable_country_integration_80_compliance = yes }
+        }
+    }
+    ai_will_do = {
+        base = 10
+    }
+}
+
+
+#滚回你们的岛上去！
+PAM_get_out_old_bones_name = {
+    name = PAM_get_out_old_bones
+    description = PAM_get_out_old_bones_desc
+    category = medium_term
+    group = FOCUS_WEILIE
+    visible = {
+        FROM = {
+            original_tag = PAM
+            has_completed_focus = PAM_bleed_the_lion
+        }
+    }
+    cancel = {
+    }
+    completed = {
+        or = {
+            ENG = {
+                surrender_progress > 0.5
+            }
+            AND = {
+                276 = {state_is_fully_controlled_by_ROOT_or_subject_faction = yes}
+                298 = {state_is_fully_controlled_by_ROOT_or_subject_faction = yes}
+                545 = {state_is_fully_controlled_by_ROOT_or_subject_faction = yes}
+                275 = {state_is_fully_controlled_by_ROOT_or_subject_faction = yes}
+                446 = {state_is_fully_controlled_by_ROOT_or_subject_faction = yes}
+            }
+        }
+    }
+    complete_effect = {
+        every_faction_member = {
+            limit = {
+                not = {
+                    tag = PAM
+                }
+            }
+            set_country_flag = PAM_Wolf
+            custom_effect_tooltip = PAM_Wolf_tt
+        }
+        set_global_flag = PAM_jituishengbei
+        every_country = {
+            limit = {
+                is_subject_of = ENG
+            }
+            PAM = {
+                activate_targeted_decision = {
+                    target = PREV
+                    decision = PAM_jingong_FROM
+                }
+            }
+            set_country_flag = PAM_subject_eng_country
+        }
+        ENG = {
+            every_subject_country = {
+                PREV = {
+                    set_autonomy = {
+                        target = PREV
+                        autonomy_state = autonomy_free
+                    }
+                }
+            }
+        }
+        every_country = {
+            limit = {
+                is_in_faction_with = ENG
+                not = ENG
+            }
+            set_country_flag = PAM_zhenying_eng_country
+        }
+        ENG = {
+            dismantle_faction = yes
+        }
+        if = {
+            limit = {
+                AND = {
+                    276 = {
+                        or = {
+                            is_controlled_by = PAM
+                            is_in_faction_with = PAM
+                        }
+                    }
+                    298 = {
+                        or = {
+                            is_controlled_by = PAM
+                            is_in_faction_with = PAM
+                        }
+                    }
+                    545 = {
+                        or = {
+                            is_controlled_by = PAM
+                            is_in_faction_with = PAM
+                        }
+                    }
+                    275 = {
+                        or = {
+                            is_controlled_by = PAM
+                            is_in_faction_with = PAM
+                        }
+                    }
+                    446 = {
+                        or = {
+                            is_controlled_by = PAM
+                            is_in_faction_with = PAM
+                        }
+                    }
+                }
+            }
+            every_country = {
+                limit = {
+                    NOT = {
+                        surrender_progress > 0.4
+                    }
+                    OR = {
+                        has_country_flag = PAM_zhenying_eng_country
+                        TAG = ENG
+                    }
+                }
+                FROM = {
+                    white_peace = {
+                        tag = PREV
+                        message = PAM_win_ENG
+                    }
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                ENG = {
+                    surrender_progress > 0.5
+                }
+            }
+            every_country = {
+                limit = {
+                    NOT = {
+                        surrender_progress > 0.4
+                    }
+                    OR = {
+                        has_country_flag = PAM_zhenying_eng_country
+                        TAG = ENG
+                    }
+                }
+                FROM = {
+                    white_peace = {
+                        tag = PREV
+                        message = PAM_win_ENG
+                    }
+                }
+            }
+        }
+		#every_country = {
+		#	limit = {
+		#		has_country_flag = PAM_zhenying_eng_country
+		#		has_capitulated = yes
+		#	}
+		#	random_enemy_country = {
+		#		start_peace_conference = {
+		#			tag = PREV
+		#			score_factor = 1
+		#			winner_scope = ALL
+		#			loser_scope = LIMITED
+		#		}
+		#	}
+		#}
+    }
+    ai_will_do = {
+        base = 10
+    }
+}
+#跨越大洋的主菜
+PAM_the_main_course_across_the_sea = {
+    name = PAM_the_main_course_across_the_sea
+    description = PAM_the_main_course_across_the_sea_desc
+    category = long_term
+    group = FOCUS_WEILIE
+    visible = {
+        FROM = {
+            original_tag = PAM
+            has_completed_focus =PAM_devour_the_old_world
+        }
+    }
+    cancel = {
+    }
+    completed = {
+        has_war = no
+        64 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        16 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        117 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        10 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                    is_guaranteed_by = SOV
+                }
+            }
+        }
+        4 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        1104 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        142 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        1097 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+        459 = {
+            owner = {
+                or = {
+                    is_in_faction_with = PAM
+                    is_in_faction_with = SOV
+                }
+            }
+        }
+    }
+    complete_effect = {
+        add_faction_initiative = 2
+        add_faction_power_projection = 200
+        every_faction_member = {
+            modify_building_resources = {
+                building = synthetic_refinery
+                resource = oil
+                amount = 50
+            }
+        }
+    }
+    ai_will_do = {
+        base = 10
+    }
+}
+#吞世狼群
+faction_manifest_world_hunt = {
+    name = world_hunt_goal_name
+    description = world_hunt_goal_desc
+    is_manifest = yes
+    ratio_progress = {
+        total_amount_collection = game:all_states
+        completed_amount_collection = collection:ah_states_ROOT_control
+        range = {
+            max = 1
+        }
+        scale = {
+
+        }
+        progress_sections = {
+            world_hunt_stage_01 = {  ##
+                min = 0.2
+                modifier = {
+                    war_support_factor = 0.2
+                    conscription_factor = 0.1
+                    training_time_factor = -0.1
+                }
+            }
+            world_hunt_stage_02 = {  ##
+                min = 0.4
+                modifier = {
+                    navy_max_range_factor = 0.1
+                    naval_invasion_prep_speed = 0.2
+                    no_supply_grace = 48
+                }
+            }
+            world_hunt_stage_03 = {  ##
+                min = 0.6
+                modifier = {
+                    resistance_growth = -0.25
+                    compliance_growth = 0.1
+                }
+            }
+            world_hunt_stage_04 = {  ##
+                min = 0.8
+                modifier = {
+                    consumer_goods_factor = 0.15
+                    industrial_capacity_factory = 0.2
+                    global_building_slots_factor = 0.2
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,2738 @@
+###收拾国土
+PAO_urbanization_decision_cate = {
+    PAO_urbanization_decision_AH = {
+        icon = GFX_ssfj
+        allowed = {
+            original_tag = PAO
+        }
+        available = {
+        }
+        visible = {
+        }
+        on_map_mode = decision_view_only
+        state_target = yes
+        target_root_trigger = {
+            has_completed_focus = PAO_fjss
+            not = {
+                has_country_flag = gtqs
+            }
+        }
+        target_trigger = {
+            FROM = {
+                is_core_of = ROOT
+                is_fully_controlled_by = ROOT
+                or = {
+                    has_state_category = zero_island
+                    has_state_category = one_island
+                    has_state_category = wasteland
+                    has_state_category = zero
+                    has_state_category = one
+                    has_state_category = two
+                    has_state_category = three
+                    has_state_category = four
+                }
+            }
+        }
+        target_array = owned_states
+        cost = 50
+        days_remove = 365
+        remove_effect = {
+            FROM = {
+                increase_state_category_by_one_level = yes
+            }
+        }
+        ai_will_do = {
+            base = 40
+        }
+    }
+
+    PAO_urbanization_decision_AH2 = {
+        icon = GFX_ssfj2
+        allowed = {
+            or = {
+                original_tag = PAO
+                original_tag = MGU
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        on_map_mode = decision_view_only
+        available = {
+            FROM = {
+                not = {
+                    has_state_flag = jxqs
+                }
+            }
+
+        }
+        visible = {
+        }
+        state_target = yes
+        target_root_trigger = {
+            OR = {
+                has_country_flag = gtqs
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        target_trigger = {
+            FROM = {
+                OR = {
+                    AND = {
+                        is_core_of = PAO
+                        is_fully_controlled_by = PAO
+                    }
+                    AND = {
+                        is_core_of = MGU
+                        is_fully_controlled_by = MGU
+                    }
+                    controller = {
+                        or = {
+                            is_subject_of = PAO
+                            is_subject_of = MGU
+                        }
+                    }
+                }
+                or = {
+                    has_state_category = zero_island
+                    has_state_category = one_island
+                    has_state_category = wasteland
+                    has_state_category = zero
+                    has_state_category = one
+                    has_state_category = two
+                    has_state_category = three
+                    has_state_category = four
+                    has_state_category = five
+                }
+            }
+        }
+        complete_effect = {
+            FROM = {
+                set_state_flag = jxqs
+            }
+        }
+        cost = 50
+        days_remove = 180
+        remove_effect = {
+            FROM = {
+                increase_state_category_by_one_level = yes
+                clr_state_flag = jxqs
+            }
+        }
+        ai_will_do = {
+            base = 40
+        }
+    }
+}
+#建设奇观
+PAO_qiguan = {
+    PAO_chongjiankuilei = {
+        priority = 10000
+        #需要特别注意的是，在整个目标决议中，FROM均是指“目标”，也就是被该决议定准的国家/地区，而ROOT（或不写作用域）则指当前掌握决议的国家自己
+
+        icon = GFX_shty#决议的图标
+
+        fire_only_once = yes#是否为仅能进行一次的决议（默认no）
+
+        available = {
+            #满足其中条件，才允许点选该决议
+        }
+
+        visible = {
+            #什么条件下决议可见（但是因为每帧检测一次，用在目标决议中对性能消耗较大）
+        }
+        target_array = subjects
+        target_trigger = {
+            ROOT = {
+                has_completed_focus = PAO_lgch
+            }
+            FROM = {
+                is_subject_of = ROOT
+                exists = yes
+            }
+        }
+        cost = 100
+        complete_effect = {
+            #完成（点选）决议时触发的效果
+        }
+
+        cancel_trigger = {
+            #满足什么条件会立刻取消（中断）此决议，会立刻打断正在读条的决议
+        }
+
+        cancel_effect = {
+            #决议被打断时触发的效果（这个效果与其他效果不同，它不会在鼠标悬停于决议上方时显示出来）
+        }
+        days_remove = 20
+        remove_effect = {
+            FROM = {
+                set_country_leader_ideology = Crimson_Idealism
+                custom_effect_tooltip = PAO_change_to_Crimson_Idealism_tt
+                set_party_name = {
+                    ideology = fascism
+                    long_name = lxly_fascism_party
+                    name = lxly_fascism_party_long
+                }
+            }
+            if = {
+                limit = {
+                    PAO = {
+                        has_completed_focus = PAO_lgch
+                    }
+                    FROM = {
+                        not = {
+                            or = {
+                                has_idea = PAO_zqgt
+                                has_idea = PAO_zqgt2
+                                has_idea = PAO_zqgt3
+                                has_idea = PAO_zqgt4
+                                has_idea = PAO_ckmf
+                                has_idea = PAO_ckmf2
+                            }
+                        }
+                    }
+                }
+                FROM = {
+                    add_ideas = PAO_zqgt4
+                    add_ideas = PAO_ckmf2
+                }
+            }
+        }
+
+        ai_will_do = {
+            base = 100#ai点选这个决议的意愿
+        }
+    }
+    #强迫圣杯议和
+    PAO_shengbeiyihe = {
+        priority = 9999
+        visible = {
+            not = {
+                is_in_faction_with = NFA
+            }
+            has_country_flag = engyihe
+            or = {
+                has_war_with = NGD
+                has_war_with = CAN
+                has_war_with = USA
+                has_war_with = FRG
+                has_war_with = NFA
+            }
+            or = {
+                TAG = MGU
+                TAG = PAO
+            }
+        }
+        cancel_trigger = {
+
+            not = {
+                382 = {
+                    controller = {
+                        or = {
+                            tag = PAO
+                            is_in_faction_with = PAO
+                        }
+                    }
+                }
+
+
+            }
+
+        }
+        available = {
+            has_war_with = ENG
+            361 = {
+                controller = {
+                    or = {
+                        tag = PAO
+                        is_in_faction_with = PAO
+                    }
+                }
+            }
+            276 = {
+                controller = {
+                    or = {
+                        tag = PAO
+                        is_in_faction_with = PAO
+                    }
+                }
+            }
+
+
+
+
+        }
+        complete_effect = {
+            ENG = {
+                set_autonomy = {
+                    target = CAN
+                    autonomy_state = autonomy_free
+                }
+            }
+            CAN = {
+                leave_faction = yes
+            }
+            NFA = {
+                leave_faction = yes
+            }
+            USA = {
+                leave_faction = yes
+            }
+            FRG = {
+                leave_faction = yes
+            }
+            NGD = {
+                leave_faction = yes
+            }
+        }
+        cost = 100
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            clr_country_flag = engyihe
+            if = {
+                every_country = {
+                    limit = {
+                        OR = {
+                            is_in_faction_with = ENG
+                            TAG = ENG
+                        }
+                    }
+                    PAO = {
+                        white_peace = PREV
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #强迫苏联议和
+    PAO_sulianyihe = {
+        priority = 9999
+        visible = {
+            has_country_flag = sovyihe
+            or = {
+                has_war_with = SOV
+            }
+            or = {
+                TAG = MGU
+                TAG = PAO
+            }
+        }
+        cancel_trigger = {
+            not = {
+                64 = {
+                    controller = {
+                        or = {
+                            tag = PAO
+                            is_in_faction_with = PAO
+                        }
+                    }
+                }
+            }
+        }
+        available = {
+            has_war_with = SOV
+            206 = {
+                controller = {
+                    or = {
+                        tag = PAO
+                        is_in_faction_with = PAO
+                    }
+                }
+            }
+            202 = {
+                controller = {
+                    or = {
+                        tag = PAO
+                        is_in_faction_with = PAO
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            every_country = {
+				limit = {
+					is_in_faction_with = SOV
+					has_capitulated = yes
+				}
+				leave_faction = yes
+            }
+        }
+        cost = 100
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            clr_country_flag = sovyihe
+            if = {
+                every_country = {
+                    limit = {
+                        OR = {
+                            is_in_faction_with = sov
+                            TAG = sov
+                        }
+                    }
+                    PAO = {
+                        white_peace = PREV
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+
+    PAO_jingong_FROM = {
+        priority = 9999
+        icon = GFX_anxijingong
+        cost = 10
+        days_remove = 15
+        on_map_mode = decision_view_only
+        target_trigger = {
+            ROOT = {
+                is_subject = no
+            }
+            FROM = {
+                not = {
+                    or = {
+                        has_war_with = ROOT
+                        is_in_faction_with = ROOT
+                        is_subject_of = ROOT
+                    }
+                }
+            }
+        }
+        allowed = {
+            always = no
+        }
+        available = {
+            FROM = {
+                not = {
+                    or = {
+                        has_war_with = ROOT
+                        is_in_faction_with = ROOT
+                        is_subject_of = ROOT
+                    }
+                }
+                not = {
+                    has_country_flag = LHS_war_plan_going_on
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                has_war = yes
+                add = -100
+            }
+            modifier = {
+                tag = MGU
+                add = -100
+            }
+            modifier = {
+                has_idea = LHS_zdwl
+                add = -10000
+            }
+            modifier = {
+                is_ai = yes
+                add = -100
+            }
+            modifier = {
+                or = {
+                    has_game_rule = {
+                        rule = AH_PAO_ai_behavior_SELECTION
+                        option = PAO_GAME_RULE_1
+                    }
+                    has_game_rule = {
+                        rule = AH_PAO_ai_behavior_SELECTION
+                        option = PAO_GAME_RULE_2
+                    }
+                }
+                add = 200
+            }
+            modifier = {
+                not = {
+                    has_global_flag = PAO_rebuiid
+                    has_completed_focus = PAO_zhth
+                }
+                add = 10000
+            }
+        }
+        complete_effect = {
+            set_country_flag = PAO_war_plan_going_on
+            FROM_country_is_defender_and_ROOT_is_accacker = yes
+        }
+        remove_effect = {
+            declare_war_on = {
+                target = FROM
+                type = topple_government
+            }
+            clr_country_flag = PAO_war_plan_going_on
+        }
+        cancel_trigger = {
+        }
+        cancel_effect = {
+        }
+    }
+    PAO_minshengjianshe_AH3 = {
+        icon = GFX_huayuanjianshe
+        allowed = {
+            or = {
+                original_tag = PAO
+                original_tag = MGU
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 9
+            not = {
+                FROM = {
+                    has_state_flag = jshy
+                }
+            }
+        }
+        visible = {
+        }
+        state_target = yes
+        target_root_trigger = {
+            OR = {
+                has_country_flag = gtsc
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        target_trigger = {
+            FROM = {
+                OR = {
+                    AND = {
+                        is_core_of = PAO
+                        is_fully_controlled_by = PAO
+                    }
+                    AND = {
+                        is_core_of = MGU
+                        is_fully_controlled_by = MGU
+                    }
+                    controller = {
+                        or = {
+                            is_subject_of = PAO
+                            is_subject_of = MGU
+                        }
+                    }
+                }
+                has_dynamic_modifier = {
+                    modifier = PAO_minsheng
+                }
+                has_dynamic_modifier = {
+                    modifier = PAO_shiwu
+                }
+                not = {
+                    or = {
+                        has_dynamic_modifier = {
+                            modifier = PAO_bchy
+                            scope = PAO
+                        }
+                        has_dynamic_modifier = {
+                            modifier = PAO_bchy
+                            scope = MGU
+                        }
+                        has_state_category = zero_island
+                        has_state_category = one_island
+                        has_state_category = wasteland
+                        has_state_category = zero
+                        has_state_category = one
+                        has_state_category = two
+                        has_state_category = three
+                        has_state_category = four
+                    }
+                }
+                industrial_complex > 1
+            }
+        }
+        cost = 100
+        days_remove = 20
+        modifier = {
+            civilian_factory_use = 10
+        }
+        complete_effect = {
+            FROM = {
+                set_state_flag = jshy
+            }
+        }
+        remove_effect = {
+            FROM = {
+                add_dynamic_modifier = {
+                    modifier = PAO_bchy
+                    scope = PAO
+                }
+                add_dynamic_modifier = {
+                    modifier = PAO_bchy
+                    scope = MGU
+                }
+                custom_effect_tooltip = PAO_jddq_tt
+                reduce_state_category_by_one_level = yes
+                clr_state_flag = jshy
+                remove_building = {
+                    type = industrial_complex
+                    level = 2
+                }
+            }
+            if = {
+                limit = {
+                    controller = {
+                        or = {
+                            is_subject_of = PAO
+                            is_subject_of = MGU
+                        }
+                    }
+                    add_offsite_building = { type = industrial_complex level = 1 }
+                    add_offsite_building = { type = industrial_complex level = 1 }
+                }
+            }
+            PAO = {
+                add_offsite_building = { type = industrial_complex level = 1 }
+            }
+            MGU = {
+                add_offsite_building = { type = industrial_complex level = 1 }
+            }
+        }
+        ai_will_do = {
+            factor = 200
+        }
+    }
+
+
+
+    PAO_build_mzty = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 845
+            controls_state = 845
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 13209 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            845 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                845 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 13209
+                    }
+                }
+            }
+        }
+    }
+
+    PAO_build_mzty2 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 302
+            controls_state = 302
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 5230 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            302 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                302 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 5230
+                    }
+                }
+            }
+        }
+    }
+
+    PAO_build_mzty3 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM}}
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 303
+            controls_state = 303
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 12997 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            303 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                302 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 12997
+                    }
+                }
+            }
+        }
+    }
+
+    PAO_build_mzty4 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 491
+            controls_state = 491
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 13539 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            491 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                491 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 13539
+                    }
+                }
+            }
+        }
+    }
+
+    PAO_build_mzty5 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 1144
+            controls_state = 1144
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 5918 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            1144 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                1144 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 5918
+                    }
+                }
+            }
+        }
+    }
+
+    PAO_build_mzty6 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 278
+            controls_state = 278
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 12364 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            278 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                278 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 12364
+                    }
+                }
+            }
+        }
+    }
+    PAO_build_mzty7 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 301
+            controls_state = 301
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 2152 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            301 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                301 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 2152
+                    }
+                }
+            }
+        }
+    }
+    PAO_build_mzty8 = {
+        icon = GFX_jsmzty
+        allowed = { or = {tag = PAO tag = PAM} }
+        on_map_mode = decision_view_only
+        visible = {
+            or = {
+                has_completed_focus = PAM_mtyyynh
+                has_completed_focus = PAO_gdwj
+                has_completed_focus = PAO_zmcs
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 39
+            owns_state = 847
+            controls_state = 847
+        }
+        fire_only_once = yes
+        cost = 80
+        days_remove = 80
+        highlight_states = {
+            highlight_provinces = { 10982 }
+        }
+        modifier = {
+            civilian_factory_use = 40
+        }
+        ai_will_do = {
+            factor = 200
+        }
+        remove_effect = {
+            847 = {
+                if = {
+                    limit = { infrastructure < 4 }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                add_extra_state_shared_building_slots = 2
+                custom_effect_tooltip = PAO_mzty_TT
+            }
+            hidden_effect = {
+                847 = {
+                    add_building_construction = {
+                        type = PAO_mzty
+                        level = 1
+                        instant_build = yes
+                        province = 10982
+                    }
+                }
+            }
+        }
+    }
+    PAO_wrxj_AH = {
+        icon = GFX_PAO_wrxj2
+        allowed = {
+            original_tag = PAO
+        }
+        available = {
+        }
+        visible = {
+            not = {
+                has_country_flag = PAO_wrxj_AHaaa
+            }
+        }
+        state_target = yes
+        target_root_trigger = {
+            has_completed_focus = PAO_wrxj
+        }
+        target_trigger = {
+            FROM = {
+                is_fully_controlled_by = ROOT
+                not = {
+                    has_dynamic_modifier = {
+                        modifier = PAO_wrxj
+                    }
+                }
+            }
+        }
+        target_array = owned_states
+        cost = 50
+        days_remove = 60
+        modifier = {
+        }
+        remove_effect = {
+            FROM = {
+                add_dynamic_modifier = {
+                    modifier = PAO_wrxj
+
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 200
+        }
+    }
+    PAO_wrxj_AHaaa = { #隐藏显示
+        icon = GFX_PAO_wrxj2
+        allowed = {
+            original_tag = PAO
+        }
+        available = {
+        }
+        visible = {
+            has_completed_focus = PAO_wrxj
+        }
+        cost = 0
+        days_remove = 0
+        remove_effect = {
+            if = {
+                limit = {
+                    not = {
+                        has_country_flag = PAO_wrxj_AHaaa
+                    }
+                }
+                set_country_flag = PAO_wrxj_AHaaa
+            }
+            else = {
+                clr_country_flag = PAO_wrxj_AHaaa
+            }
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+
+    PAO_shiwupeiji_AH = {
+        icon = GFX_shiwupeiji
+        allowed = {
+            original_tag = PAO
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 9
+        }
+        visible = {
+
+        }
+        state_target = yes
+        on_map_mode = decision_view_only
+        target_root_trigger = {
+            has_completed_focus = PAO_zhyw
+            not = {
+                has_country_flag = gtsc
+            }
+        }
+        target_trigger = {
+            FROM = {
+                is_core_of = ROOT
+                is_fully_controlled_by = ROOT
+                not = {
+                    has_dynamic_modifier = {
+
+                        modifier = PAO_shiwu
+                    }
+                    or = {
+                        has_state_category = zero_island
+                        has_state_category = one_island
+                        has_state_category = wasteland
+                        has_state_category = zero
+                        has_state_category = one
+                        has_state_category = two
+                        has_state_category = three
+                        has_state_category = four
+                    }
+                }
+            }
+        }
+        target_array = owned_states
+        cost = 100
+        days_remove = 20
+        modifier = {
+            civilian_factory_use = 10
+        }
+        remove_effect = {
+            FROM = {
+                add_dynamic_modifier = {
+                    modifier = PAO_shiwu
+
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 200
+        }
+    }
+    PAO_minshengjianshe_AH = {
+        icon = GFX_minshengjianshe
+        allowed = {
+            original_tag = PAO
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 9
+        }
+        visible = {
+        }
+        on_map_mode = decision_view_only
+        state_target = yes
+        target_root_trigger = {
+            has_completed_focus = PAO_zhyw
+            not = {
+                has_country_flag = gtsc
+            }
+        }
+        target_trigger = {
+            FROM = {
+                is_core_of = ROOT
+                is_fully_controlled_by = ROOT
+
+                not = {
+                    has_dynamic_modifier = {
+
+                        modifier = PAO_minsheng
+                    }
+                    or = {
+                        has_state_category = zero_island
+                        has_state_category = one_island
+                        has_state_category = wasteland
+                        has_state_category = zero
+                        has_state_category = one
+                        has_state_category = two
+                        has_state_category = three
+                        has_state_category = four
+                    }
+                }
+            }
+        }
+        target_array = owned_states
+        cost = 100
+        days_remove = 80
+        modifier = {
+            civilian_factory_use = 10
+        }
+        remove_effect = {
+            FROM = {
+                add_dynamic_modifier = {
+                    modifier = PAO_minsheng
+
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 200
+        }
+    }
+
+
+    PAO_shiwupeiji_AH2 = {
+        icon = GFX_shiwupeiji2
+        on_map_mode = decision_view_only
+        allowed = {
+            or = {
+                original_tag = PAO
+                original_tag = MGU
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        available = {
+            num_of_civilian_factories_available_for_projects > 9
+            FROM = {
+                NOT = {
+                    has_state_flag = jxff
+                }
+            }
+        }
+        visible = {
+        }
+        state_target = yes
+        target_root_trigger = {
+            OR = {
+                has_country_flag = gtsc
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        on_map_mode = decision_view_only
+        target_trigger = {
+            FROM = {
+                OR = {
+                    AND = {
+                        is_core_of = PAO
+                        is_fully_controlled_by = PAO
+                    }
+                    AND = {
+                        is_core_of = MGU
+                        is_fully_controlled_by = MGU
+                    }
+
+                    controller = {
+                        or = {
+                            is_subject_of = PAO
+                            is_subject_of = MGU
+                        }
+                    }
+
+                }
+                not = {
+                    has_dynamic_modifier = {
+
+                        modifier = PAO_shiwu
+                    }
+                    or = {
+                        has_state_category = zero_island
+                        has_state_category = one_island
+                        has_state_category = wasteland
+                        has_state_category = zero
+                        has_state_category = one
+                        has_state_category = two
+                        has_state_category = three
+                    }
+                }
+            }
+        }
+        cost = 80
+        days_remove = 10
+        modifier = {
+            civilian_factory_use = 10
+        }
+        complete_effect = {
+            FROM = {
+                set_state_flag = jxff
+            }
+        }
+        remove_effect = {
+            FROM = {
+                add_dynamic_modifier = {
+                    modifier = PAO_shiwu
+
+                }
+                clr_state_flag = jxff
+            }
+        }
+        ai_will_do = {
+            factor = 200
+        }
+    }
+    PAO_minshengjianshe_AH2 = {
+        icon = GFX_minshengjianshe2
+        allowed = {
+            or = {
+                original_tag = PAO
+                original_tag = MGU
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        on_map_mode = decision_view_only
+        available = {
+            num_of_civilian_factories_available_for_projects > 9
+            FROM = {
+                NOT = {
+                    has_state_flag = jxms
+                }
+            }
+        }
+        visible = {
+        }
+        state_target = yes
+        target_root_trigger = {
+            OR = {
+                has_country_flag = gtsc
+                is_subject_of = PAO
+                is_subject_of = MGU
+            }
+        }
+        target_trigger = {
+            FROM = {
+                OR = {
+                    AND = {
+                        is_core_of = PAO
+                        is_fully_controlled_by = PAO
+                    }
+                    AND = {
+                        is_core_of = MGU
+                        is_fully_controlled_by = MGU
+                    }
+                    controller = {
+                        or = {
+                            is_subject_of = PAO
+                            is_subject_of = MGU
+                        }
+                    }
+                }
+
+                not = {
+                    has_dynamic_modifier = {
+
+                        modifier = PAO_minsheng
+                    }
+                    or = {
+                        has_state_category = zero_island
+                        has_state_category = one_island
+                        has_state_category = wasteland
+                        has_state_category = zero
+                        has_state_category = one
+                        has_state_category = two
+                        has_state_category = three
+                    }
+                }
+            }
+        }
+        cost = 100
+        days_remove = 60
+        modifier = {
+            civilian_factory_use = 10
+        }
+        complete_effect = {
+            FROM = {
+                set_state_flag = jxms
+            }
+        }
+        remove_effect = {
+            FROM = {
+                add_dynamic_modifier = {
+                    modifier = PAO_minsheng
+
+                }
+                clr_state_flag = jxms
+            }
+        }
+        ai_will_do = {
+            factor = 200
+        }
+    }
+
+
+}
+PAO_BACK_PAM = {
+    PAO_dym = {
+
+        icon = GFX_PAO_dym
+        days_remove = 180
+
+        #基础花费
+        cost = 100
+        #自定义花费，其本质上是一个tt字符串，本身不会扣除任何东西，需要在complete_effect内进行扣除
+
+        fire_only_once = yes
+
+        #条件
+        allowed = {
+            tag = PAO
+        }
+        available = {
+            has_war_with = LHS
+        }
+        visible = {
+            has_completed_focus = PAO_wmsq
+            LHS = {
+                exists = yes
+            }
+        }
+
+        cancel_trigger = {
+            LHS = {
+                exists = no
+            }
+        }
+
+        #修正
+        modifier = {
+            production_speed_arms_factory_factor = 0.25
+            ai_focus_defense_factor = 1
+            army_core_defence_factor = 0.1
+            land_bunker_effectiveness_factor = 0.25
+            pocket_penalty = -0.3
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = LHS
+            defense_bonus_against = 0.1
+        }
+
+        #效果
+        complete_effect = {
+
+        }
+        remove_effect = {
+
+        }
+
+        cancel_effect = {
+
+        }
+
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    PAO_dem = {
+
+        icon = GFX_PAO_dem
+        days_remove = 180
+
+        #基础花费
+        cost = 100
+        #自定义花费，其本质上是一个tt字符串，本身不会扣除任何东西，需要在complete_effect内进行扣除
+
+        fire_only_once = yes
+
+        #条件
+        allowed = {
+            tag = PAO
+        }
+        available = {
+            has_war_with = LHS
+            or = {
+                LHS = {
+                    surrender_progress > 0.2
+                }
+                date > 1939.1.1
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_wmsq
+            LHS = {
+                exists = yes
+            }
+        }
+
+        cancel_trigger = {
+            LHS = {
+                exists = no
+            }
+        }
+
+        #修正
+        modifier = {
+            army_speed_factor = 0.1
+            org_loss_when_moving = -0.3
+            no_supply_grace = 48
+            training_time_army_factor = -0.25
+            max_training = 0.25
+            ai_focus_aggressive_factor = 0.5
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = LHS
+            attack_bonus_against = 0.1
+            breakthrough_bonus_against = 0.1
+        }
+
+        #效果
+        complete_effect = {
+
+        }
+
+        cancel_effect = {
+
+        }
+
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    PAO_zzm = {
+
+        icon = GFX_PAO_zzm
+        days_remove = 180
+
+        #基础花费
+        cost = 100
+        #自定义花费，其本质上是一个tt字符串，本身不会扣除任何东西，需要在complete_effect内进行扣除
+
+        fire_only_once = yes
+
+        #条件
+        allowed = {
+            tag = PAO
+        }
+        available = {
+            has_war_with = LHS
+            or = {
+                LHS = {
+                    surrender_progress > 0.5
+                }
+                date > 1940.1.1
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_wmsq
+            LHS = {
+                exists = yes
+            }
+        }
+
+        cancel_trigger = {
+            LHS = {
+                exists = no
+            }
+        }
+
+        #修正
+        modifier = {
+            army_morale_factor = 0.2
+            coordination_bonus = 0.1
+            supply_node_range = 0.2
+            army_attack_speed_factor = 0.1
+            ai_focus_aggressive_factor = 1
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = LHS
+            attack_bonus_against = 0.2
+        }
+
+        #效果
+        complete_effect = {
+
+        }
+        remove_effect = {
+        }
+
+        cancel_effect = {
+
+        }
+
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    PAO_nalaibani = {
+        icon = GFX_PAO_back_PAM3
+        visible = {
+            TAG = PAO
+            is_subject = no
+            has_completed_focus = PAO_nswm
+            PAM = {
+                exists = no
+            }
+            LHS = {
+                exists = no
+            }
+        }
+        cost = 50
+        days_remove = 5
+        target_trigger = {
+            FROM = {
+                any_controlled_state = {
+                    is_claimed_by = PAO
+                }
+                not = {
+                    has_country_flag = PAO_Territorial_negotiations_already
+                    tag = QYJ
+                    has_war_with = PAO
+                }
+            }
+        }
+        remove_effect = {
+            FROM = {
+                set_country_flag = PAO_Territorial_negotiations_already
+                country_event = {
+                    id = PAO.111
+                    days = 1
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    PAO_laibangmang = {
+        icon = GFX_anxijingong
+        visible = {
+            TAG = PAO
+            is_subject = no
+            has_completed_focus = PAO_nswm
+            MGU = {
+                exists = yes
+                NOT = { has_government = communism }
+                NOT = { has_war_with = LHS }
+            }
+        }
+        available = {
+            has_war_with = LHS
+        }
+        cost = 0
+        days_remove = 5
+        remove_effect = {
+            MGU = { country_event = magicunion.10995 }
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    PAO_laibangmang2 = {
+        icon = GFX_anxijingong
+        visible = {
+            TAG = PAO
+            is_subject = no
+            has_completed_focus = PAO_nswm
+            MGU = {
+                exists = yes
+                NOT = { has_government = communism }
+                NOT = { has_war_with = PAQ }
+            }
+        }
+        available = {
+            has_war_with = PAQ
+        }
+        cost = 0
+        days_remove = 5
+        remove_effect = {
+            MGU = { country_event = magicunion.10996 }
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    PAO_PAM_rebuiid = {
+        icon = GFX_luomu
+        visible = {
+            TAG = PAO
+            is_subject = no
+            has_completed_focus = PAO_wmsq
+        }
+        priority = 100
+        #days_remove = 0
+        fire_only_once = yes
+        available = {
+            is_subject = no
+            PAM = {
+                all_core_state = {
+                    is_controlled_by = PAO
+                }
+            }
+            CHL = {
+                all_core_state = {
+                    is_controlled_by = PAO
+                }
+            }
+            PAU = {
+                all_core_state = {
+                    is_controlled_by = PAO
+                }
+            }
+            or = {
+                NOT = {
+                    country_exists = LHS
+                }
+                LHS = {
+                    has_capitulated = yes
+                }
+                LHS = {
+                    is_subject = yes
+                }
+            }
+        }
+        complete_effect = {
+            set_global_flag = PAO_rebuiid
+            custom_effect_tooltip = jiesuoguoce
+            mark_focus_tree_layout_dirty = yes
+            add_state_core = 845
+            set_capital = {
+                state = 845
+            }
+            PAM_wldn = {
+                set_portraits = {
+                    army = {
+                        large = "gfx/leaders/PAM/wldn2.png"
+                    }
+                    army = {
+                        small = "gfx/leaders/PAM/small/wldn2_small.png"
+                    }
+                    civilian = {
+                        large = "gfx/leaders/PAM/wldn2.png"
+                    }
+                    civilian = {
+                        small = "gfx/leaders/PAM/small/wldn2_small.png"
+                    }
+                }
+            }
+            every_state = {
+                limit = {
+                    is_controlled_by = PAO
+                    or = {
+                        is_core_of = PAM
+                        is_core_of = PAU
+                        is_core_of = PAO
+                        is_core_of = LHS
+                    }
+                }
+                PAO = {
+                    transfer_state = prev
+                }
+            }
+            hidden_effect = {
+                remove_ideas = PAO_hidden_idea_Alice
+                clr_country_flag = PAO_SL_BlackSouls_Alice
+                add_ideas = PAO_hidden_idea_wldn
+
+                news_event = {
+                    id = PAO_news.1
+                    days = 1
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    PAO_transfer = {
+        icon = GFX_zlhx
+        allowed = {
+            original_tag = PAO
+        }
+        available = {
+            has_political_power > 49
+        }
+        visible = {
+            has_completed_focus = PAO_nhwj
+        }
+        state_target = yes
+        target_root_trigger = {
+            has_completed_focus = PAO_nhwj
+        }
+        target_trigger = {
+            FROM = {
+                not = {
+                    is_core_of = PAO
+                }
+                OR = {
+                    is_core_of = PAM
+                    is_core_of = PAU
+                    is_core_of = LHS
+                    is_core_of = CHL
+                }
+            }
+        }
+        target_array = controlled_states
+        days_remove = 20
+        remove_effect = {
+            FROM = {
+                add_core_of = PAO
+            }
+            add_political_power = -50
+        }
+        ai_will_do = {
+            base = 40
+        }
+    }
+
+    PAO_gzdrx = {
+        icon = GFX_galgamelili
+        allowed = {
+            original_tag = PAO
+        }
+        activation = {
+            has_completed_focus = PAO_wmsq
+            PAO = {
+                is_ai = no
+            }
+            PAO = {
+                has_idea = LHS_zdwl
+            }
+        }
+        available = {
+            or = {
+                has_capitulated = yes
+                not = {
+                    has_war_with = LHS
+                }
+                not = {
+                    has_idea = LHS_zdwl
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_wmsq
+        }
+        priority = 1
+        days_mission_timeout = 30
+        is_good = yes
+        timeout_effect = {
+            custom_effect_tooltip = "召集四支亡灵公主的侍卫"
+            for_loop_effect = {
+                start = 0
+                end = 4
+                add = 1
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"亡灵公主的侍卫\" division_template = \"亡灵公主的侍卫\" start_experience_factor = 0.4 start_equipment_factor = 1"
+                        owner = ROOT
+                    }
+                }
+            }
+            hidden_effect = {
+                activate_mission = PAO_gzdrx
+            }
+        }
+    }
+    PAO_gzdrx1 = {
+        icon = GFX_galgamelili
+        allowed = {
+            original_tag = PAO
+        }
+        activation = {
+            has_completed_focus = PAO_wmsq
+            PAO = {
+                is_ai = no
+            }
+            PAO = {
+                has_idea = LHS_zdwl
+            }
+        }
+        available = {
+            or = {
+                has_capitulated = yes
+                not = {
+                    has_war_with = LHS
+                }
+                not = {
+                    has_idea = LHS_zdwl
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_wmsq
+        }
+        priority = 1
+        days_mission_timeout = 60
+        is_good = yes
+        timeout_effect = {
+            custom_effect_tooltip = "召集一支亡灵公主的亲卫"
+            for_loop_effect = {
+                start = 0
+                end = 1
+                add = 1
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"亡灵公主的亲卫\" division_template = \"亡灵公主的亲卫\" start_experience_factor = 0.5 start_equipment_factor = 1"
+                        owner = ROOT
+                    }
+                }
+            }
+            hidden_effect = {
+                activate_mission = PAO_gzdrx1
+            }
+        }
+    }
+
+}
+
+PAO_BACK_PAM2 = {
+    PAM_jingong_FROM2 = { #pam2线
+        priority = 9999
+        icon = GFX_anxijingong
+        cost = 10
+        days_remove = 90
+        on_map_mode = decision_view_only
+        target_trigger = {
+            ROOT = {
+                is_subject = no
+            }
+            FROM = {
+                not = {
+                    or = {
+                        has_war_with = ROOT
+                        is_in_faction_with = ROOT
+                        is_subject_of = ROOT
+                    }
+                }
+            }
+        }
+        allowed = {
+            always = no
+        }
+        available = {
+            FROM = {
+                has_offensive_war = yes
+                not = {
+                    or = {
+                        has_war_with = ROOT
+                        is_in_faction_with = ROOT
+                        is_subject_of = ROOT
+                    }
+                }
+                not = {
+                    has_country_flag = LHS_war_plan_going_on
+                }
+            }
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            custom_modifier_tooltip = PAM_die_attack_tt
+        }
+        ai_will_do = {
+            base = 0
+        }
+        complete_effect = {
+            declare_war_on = {
+                target = FROM
+                type = topple_government
+            }
+            hidden_effect = {
+                FROM = {
+                    add_ideas = PAM_die_attack_idea
+                }
+            }
+        }
+        remove_effect = {
+            hidden_effect = {
+                FROM = {
+                    remove_ideas = PAM_die_attack_idea
+                }
+            }
+        }
+        cancel_trigger = {
+        }
+        cancel_effect = {
+        }
+    }
+    PAO_dym2 = {
+
+        icon = GFX_PAO_dym2
+        days_remove = 180
+
+        #基础花费
+        cost = 100
+        #自定义花费，其本质上是一个tt字符串，本身不会扣除任何东西，需要在complete_effect内进行扣除
+
+        fire_only_once = yes
+
+        #条件
+        allowed = {
+            tag = PAO
+        }
+        available = {
+            or = {
+                has_war_with = LHS
+                LHS = {
+                    exists = no
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_zhth
+        }
+
+        cancel_trigger = {
+            LHS = {
+                exists = no
+            }
+        }
+
+        #修正
+        modifier = {
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = LHS
+            attack_bonus_against = 0.1
+            defense_bonus_against = 0.1
+        }
+
+        #效果
+        complete_effect = {
+            add_to_variable = {
+                PAO_yyzx_army_org_factor = 0.10
+            }
+            custom_effect_tooltip = yyzx10_4_tt
+        }
+        remove_effect = {
+
+        }
+
+        cancel_effect = {
+
+        }
+
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+
+    PAO_dem2 = {
+
+        icon = GFX_PAO_dem2
+        days_remove = 180
+
+        #基础花费
+        cost = 100
+        #自定义花费，其本质上是一个tt字符串，本身不会扣除任何东西，需要在complete_effect内进行扣除
+
+        fire_only_once = yes
+
+        #条件
+        allowed = {
+            tag = PAO
+        }
+        available = {
+            or = {
+                has_war_with = LHS
+                LHS = {
+                    exists = no
+                }
+            }
+            or = {
+                LHS = {
+                    surrender_progress > 0.2
+                }
+                LHS = {
+                    casualties_inflicted_by = {
+                        opponent = PAO
+                        thousands > 200
+                    }
+                }
+                date > 1939.1.1
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_zhth
+        }
+
+        cancel_trigger = {
+            LHS = {
+                exists = no
+            }
+        }
+
+        #修正
+        modifier = {
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = LHS
+            breakthrough_bonus_against = 0.1
+        }
+
+        #效果
+        complete_effect = {
+            add_to_variable = {
+                PAO_yyzx_land_night_attack = 0.25
+            }
+            custom_effect_tooltip = yyzx25_3_tt
+        }
+
+        cancel_effect = {
+
+        }
+
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+
+    PAO_zzm2 = {
+
+        icon = GFX_PAO_zzm2
+        days_remove = 180
+
+        #基础花费
+        cost = 100
+        #自定义花费，其本质上是一个tt字符串，本身不会扣除任何东西，需要在complete_effect内进行扣除
+
+        fire_only_once = yes
+
+        #条件
+        allowed = {
+            tag = PAO
+        }
+        available = {
+            or = {
+                has_war_with = LHS
+                LHS = {
+                    exists = no
+                }
+            }
+            or = {
+                LHS = {
+                    surrender_progress > 0.5
+                }
+                LHS = {
+                    casualties_inflicted_by = {
+                        opponent = PAO
+                        thousands > 500
+                    }
+                }
+                date > 1940.1.1
+            }
+        }
+        visible = {
+            has_completed_focus = PAO_zhth
+        }
+
+        cancel_trigger = {
+            LHS = {
+                exists = no
+            }
+        }
+
+        #修正
+        modifier = {
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = LHS
+            breakthrough_bonus_against = 0.2
+        }
+
+        #效果
+        complete_effect = {
+            add_to_variable = {
+                PAO_yyzx_political_power_factor = 0.1
+            }
+            custom_effect_tooltip = yyzx10_1_tt
+        }
+        remove_effect = {
+        }
+
+        cancel_effect = {
+
+        }
+
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    PAO_juedou_FROM = {
+        priority = 9999
+        icon = GFX_PAO_zzjd_target
+        cost = 10
+        days_remove = 15
+        target_trigger = {
+            ROOT = {
+                is_subject = no
+            }
+            FROM = {
+                not = {
+                    or = {
+                        has_war_with = ROOT
+                        is_in_faction_with = ROOT
+                        is_subject_of = ROOT
+                    }
+                }
+            }
+        }
+        allowed = {
+            always = no
+        }
+        available = {
+            FROM = {
+                not = {
+                    or = {
+                        has_war_with = ROOT
+                        is_in_faction_with = ROOT
+                        is_subject_of = ROOT
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                has_war = yes
+                add = -100
+            }
+            modifier = {
+                tag = MGU
+                add = -100
+            }
+            modifier = {
+                has_idea = LHS_zdwl
+                add = -10000
+            }
+            modifier = {
+                is_ai = yes
+                add = -100
+            }
+            modifier = {
+                tag = PAO
+                add = -100
+            }
+        }
+        complete_effect = {
+            set_country_flag = PAO_war_plan_going_on
+            FROM_country_is_defender_and_ROOT_is_accacker = yes
+        }
+        remove_effect = {
+            add_ideas = PAO_zzjd
+            FROM = {
+                add_ideas = PAO_zzjd
+            }
+            if = {
+                limit = {
+                    FROM = {
+                        OR = {
+                            TAG = USA
+                            TAG = NGD
+                            TAG = NFA
+                            TAG = FRG
+                        }
+                    }
+                    PAN = {
+                        is_in_faction_with = PAO
+                    }
+                }
+                PAN = {
+                    add_ideas = PAO_zzjd
+                    declare_war_on = {
+                        target = FROM
+                        type = topple_government
+                    }
+                }
+            }
+            declare_war_on = {
+                target = FROM
+                type = topple_government
+            }
+            clr_country_flag = PAO_war_plan_going_on
+        }
+        cancel_trigger = {
+        }
+        cancel_effect = {
+        }
+    }
+    PAO_rmzd_target = {
+        icon = GFX_PAO_rmzd_target
+        visible = {
+        }
+        available = {
+            FROM = {
+                has_war_with = PAO
+                strength_ratio = {
+                    tag = PAO
+                    ratio > 1
+                }
+            }
+        }
+        cost = 50
+        days_remove = 1095
+        target_trigger = {
+            or = {
+                has_completed_focus = PAO_rmzd
+                has_country_flag = PAM_yqrm
+            }
+            FROM = {
+                has_war_with = PAO
+                strength_ratio = {
+                    tag = PAO
+                    ratio > 1
+                }
+            }
+        }
+        #修正
+        modifier = {
+            breakthrough_factor = 0.1
+            army_defence_factor = 0.1
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = FROM
+            defense_bonus_against = 0.1
+        }
+        remove_effect = {
+        }
+        cancel_trigger = {
+            FROM = {
+                or = {
+                    not = {has_war_with = PAO}
+                    strength_ratio = {
+                        tag = PAO
+                        ratio < 0.8
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    PAO_rmzj_target = {
+        icon = GFX_PAO_rmzj_target
+        visible = {
+        }
+        available = {
+            FROM = {
+                has_war_with = PAO
+                casualties_inflicted_by = {
+                    opponent = PAO
+                    thousands > 721
+                }
+            }
+        }
+        cost = 50
+        days_remove = 30
+        target_trigger = {
+            or = {
+                has_completed_focus = PAO_rmzd
+                has_country_flag = PAM_yqrm
+            }
+            FROM = {
+                has_war_with = PAO
+                casualties_inflicted_by = {
+                    opponent = PAO
+                    thousands > 721
+                }
+                not={
+                    has_country_flag = PAO_rmzj_cf
+                    or = {
+                        tag = WL1
+                        tag = MS1
+                    }
+                }
+            }
+        }
+        #修正
+        modifier = {
+            army_morale_factor = 0.2
+            org_loss_when_moving = -0.2
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+            tag = FROM
+            breakthrough_bonus_against = 0.2
+        }
+        remove_effect = {
+            add_collaboration = {
+                target = FROM
+                value = 0.2
+            }
+            FROM = {
+                set_country_flag = PAO_rmzj_cf
+            }
+        }
+        cancel_trigger = {
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    PAO_zhjs_target = {
+        icon = GFX_PAO_zhjs_target
+        visible = {
+        }
+        available = {
+            FROM = {
+                has_war_with = PAO
+                PAO = {
+                    casualties_inflicted_by = {
+                        opponent = FROM
+                        thousands > 10
+                    }
+                }
+            }
+        }
+        cost = 50
+        days_remove = 90
+        target_trigger = {
+            or = {
+                has_completed_focus = PAO_zhjs
+                has_country_flag = PAM_yqrm
+            }
+            FROM = {
+                has_war_with = PAO
+                not = {
+                    has_country_flag = PAO_zhjs_cf
+                }
+                PAO = {
+                    casualties_inflicted_by = {
+                        opponent = FROM
+                        thousands > 10
+                    }
+                }
+            }
+        }
+        #修正
+        modifier = {
+            production_speed_industrial_complex_factor = 0.1
+            repair_speed_industrial_complex_factor = 0.2
+            production_speed_infrastructure_factor = 0.1
+            repair_speed_infrastructure_factor = 0.2
+            conversion_cost_mil_to_civ_factor = -0.1
+            stability_weekly = 0.01
+            war_support_weekly = 0.005
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+        }
+        complete_effect = {
+            add_stability = -0.05
+            add_war_support = -0.05
+        }
+        remove_effect = {
+            FROM = {
+                set_country_flag = PAO_zhjs_cf
+            }
+        }
+        cancel_trigger = {
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    PAO_mqjj_target = {
+        icon = GFX_PAO_mqjj_target
+        visible = {
+        }
+        available = {
+            FROM = {
+                is_subject_of = PAO
+            }
+        }
+        cost = 100
+        days_remove = 90
+        target_trigger = {
+            or = {
+                has_completed_focus = PAO_mqjj
+                has_country_flag = PAM_yqrm
+            }
+            FROM = {
+                is_subject_of = PAO
+            }
+        }
+        #修正
+        modifier = {
+            civilian_factory_use = 20
+            political_power_cost = 1
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+        }
+        complete_effect = {
+        }
+        remove_effect = {
+            FROM = {
+                add_popularity = {
+                    ideology = communism
+                    popularity = 0.2
+                }
+                country_event = {
+                    id = PAO.120
+                }
+            }
+            custom_effect_tooltip = PAO_mqjj2_tt
+            effect_tooltip = {
+                FROM = {
+                    every_core_state = {
+                        add_claim_by = PAO
+                        add_compliance = 10
+                    }
+                    every_character = {
+                        limit = { is_general_advisor = no }
+                        set_nationality = PAO
+                    }
+                }
+                PAO = {
+                    FROM = { enable_country_integration_80_compliance = yes }
+                }
+                annex_country = {
+                    target = FROM
+                    transfer_troops = yes
+                }
+            }
+        }
+        cancel_trigger = {
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    PAO_mbqw_target = {
+        icon = GFX_PAO_mbqw_target
+        visible = {
+        }
+        available = {
+            any_controlled_state = {
+                compliance < 60
+                is_core_of = FROM
+            }
+            FROM = {
+                has_war_with = PAO
+                any_core_state = {
+                    not = {
+                        is_core_of = PAO
+                    }
+                    or = {
+                        is_controlled_by = PAO
+                        is_owned_by = PAO
+                    }
+                }
+            }
+        }
+        target_trigger = {
+            or = {
+                has_completed_focus = PAO_mbqw
+                has_country_flag = PAM_yqrm
+            }
+            FROM = {
+                has_war_with = PAO
+                any_core_state = {
+                    not = {
+                        is_core_of = PAO
+                    }
+                    compliance < 60
+                    or = {
+                        is_controlled_by = PAO
+                        is_owned_by = PAO
+                    }
+                }
+            }
+        }
+        cost = 50
+        days_remove = 15
+        #修正
+        modifier = {
+            civilian_factory_use = 10
+            political_power_cost = 0.5
+        }
+        targeted_modifier = { #决议正在进行时的修正，可以专门指向某国（天数为days_remove设定的数）
+        }
+        fixed_random_seed = no
+        remove_effect = {
+            FROM = {
+                random_state = {
+                    limit = {
+                        not = {
+                            is_core_of = PAO
+                        }
+                        compliance < 60
+                        is_core_of = FROM
+                        or = {
+                            is_controlled_by = PAO
+                            is_owned_by = PAO
+                        }
+                    }
+                    add_compliance = 10
+                }
+                random_list = {
+                    80 = {
+                        random_state = {
+                            limit = {
+                                not = {
+                                    is_core_of = PAO
+                                }
+                                compliance < 60
+                                is_core_of = FROM
+                                or = {
+                                    is_controlled_by = PAO
+                                    is_owned_by = PAO
+                                }
+                            }
+                            add_compliance = 10
+                        }
+                    }
+                    20 = {}
+                }
+                random_list = {
+                    60 = {
+                        random_state = {
+                            limit = {
+                                not = {
+                                    is_core_of = PAO
+                                }
+                                compliance < 60
+                                is_core_of = FROM
+                                or = {
+                                    is_controlled_by = PAO
+                                    is_owned_by = PAO
+                                }
+                            }
+                            add_compliance = 10
+                        }
+                    }
+                    40 = {}
+                }
+                random_list = {
+                    40 = {
+                        random_state = {
+                            limit = {
+                                not = {
+                                    is_core_of = PAO
+                                }
+                                compliance < 60
+                                is_core_of = FROM
+                                or = {
+                                    is_controlled_by = PAO
+                                    is_owned_by = PAO
+                                }
+                            }
+                            add_compliance = 10
+                        }
+                    }
+                    60 = {}
+                }
+                random_list = {
+                    20 = {
+                        random_state = {
+                            limit = {
+                                not = {
+                                    is_core_of = PAO
+                                }
+                                compliance < 60
+                                is_core_of = FROM
+                                or = {
+                                    is_controlled_by = PAO
+                                    is_owned_by = PAO
+                                }
+                            }
+                            add_compliance = 10
+                        }
+                    }
+                    80 = {}
+                }
+            }
+        }
+        cancel_trigger = {
+        }
+        ai_will_do = {
+            factor = 50
+        }
+    }
+
+
+    PAO_nalaibani2 = {
+        icon = GFX_PAO_back_PAM3
+        visible = {
+            TAG = PAO
+            is_subject = no
+            or = {
+                has_completed_focus = PAO_yhyh
+            }
+            PAM = {
+                exists = no
+            }
+            LHS = {
+                exists = no
+            }
+        }
+        cost = 50
+        days_remove = 5
+        target_trigger = {
+            FROM = {
+                any_controlled_state = {
+                    is_core_of = PAO
+                }
+                not = {
+                    has_country_flag = PAO_Territorial_negotiations_already
+                    has_war_with = PAO
+                    tag = WL1
+                    tag = MS1
+                }
+            }
+        }
+        remove_effect = {
+            FROM = {
+                set_country_flag = PAO_Territorial_negotiations_already
+                country_event = {
+                    id = PAO.222
+                    days = 1
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+
+

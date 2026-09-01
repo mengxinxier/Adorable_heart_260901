@@ -1,0 +1,267 @@
+
+ENG_power_balance = {
+	initial_value = 0
+	left_side = ENG_left_side	
+	right_side = ENG_right_side	
+	decision_category = ENG_balance_of_power_category
+
+	### 中立
+	range = {
+		id = ENG_balance_range
+		min = -0.10
+		max = 0.10
+		modifier = {
+			custom_modifier_tooltip = ENG_tooltip_add_zzd_infulunce_monthly_1
+			political_power_gain = 0.2
+			stability_weekly = 0.001
+			
+		}
+		on_activate = {
+			set_country_flag = FLAG_ENG_bop_zzlm_qljh
+			add_to_variable = {
+				VAR_ENG_zzd_infulunce_monthly = 1
+			}
+		}
+		on_deactivate = {
+			clr_country_flag = FLAG_ENG_bop_zzlm_qljh	
+			add_to_variable = {
+				VAR_ENG_zzd_infulunce_monthly = -1
+			}
+		}
+	}
+
+	### 左翼
+	side = { 
+		id = ENG_left_side	
+		icon = GFX_bop_ENG_left_side  #图标
+
+		range = {#左翼增长
+			id = ENG_left_low_control_range
+			min = -0.3
+			max = -0.1
+			modifier = {
+				political_power_gain = 0.05
+				power_balance_weekly = -0.01
+			}
+			on_activate = {
+			
+			}
+			on_deactivate = {
+			
+			}
+		}
+
+		range = { #权利失衡
+			id = ENG_left_medium_control_range
+			min = -0.6
+			max = -0.3
+			modifier = {
+				political_power_gain = -0.1
+				stability_weekly = -0.01
+			}
+			on_activate = {
+				
+			}
+			on_deactivate = {
+				
+			}
+		}
+
+		range = { #左翼主导
+			id = ENG_left_high_control_range
+			min = -0.9
+			max = -0.6
+			modifier = {
+				power_balance_weekly = -0.01
+				production_speed_buildings_factor = 0.1 #建造速度
+				industrial_capacity_factory = 0.1 #工厂产出
+				custom_modifier_tooltip = ENG_tooltip_jian_zzd_infulunce_monthly_1
+				custom_modifier_tooltip = ENG_tooltip_jian_lhzx_jijindu_monthly_1
+				custom_modifier_tooltip = ENG_tooltip_bop_zyzd
+			}
+			on_activate = {		
+				set_country_flag = FLAG_ENG_bop_zyzd
+				ENG_jisuan_bop_zyzd = yes
+				add_to_variable = {
+					VAR_ENG_xyy_support_ewxg = ENG_VAR_ewzc_zyzd
+				}
+				ENG_yiyuan_icon_frames = yes
+
+				add_to_variable = {
+					VAR_ENG_zzd_infulunce_monthly = -1
+				}
+				add_to_variable = {
+					VAR_ENG_lhzx_jijindu_monthly = -1
+				}
+				set_power_balance_gfx = { #图标换成亮的
+					id = ENG_power_balance
+					side = ENG_left_side
+					gfx = GFX_bop_ENG_left_improved_side
+				}
+			}
+			on_deactivate = {		
+				clr_country_flag = FLAG_ENG_bop_zyzd
+				multiply_variable = {
+					var = ENG_VAR_ewzc_zyzd
+					value = -1
+				}
+				add_to_variable = {
+					VAR_ENG_xyy_support_ewxg = ENG_VAR_ewzc_zyzd
+				}
+				ENG_yiyuan_icon_frames = yes
+
+				add_to_variable = {
+					VAR_ENG_zzd_infulunce_monthly = 1
+				}	
+				add_to_variable = {
+					VAR_ENG_lhzx_jijindu_monthly = 1
+				}
+				set_power_balance_gfx = {  #图标换回去
+					id = ENG_power_balance
+					side = ENG_left_side
+					gfx = GFX_bop_ENG_left_side
+				}
+			}
+		}
+
+		range = { #联盟破裂
+			id = ENG_left_total_control_range
+			min = -1
+			max = -0.9
+			modifier = {
+			}
+			on_activate = {
+				country_event = ENG_event.901
+				set_power_balance_gfx = { #图标换成亮的
+					id = ENG_power_balance
+					side = ENG_left_side
+					gfx = GFX_bop_ENG_left_improved_side
+				}
+			}			
+			on_deactivate = {		
+				set_power_balance_gfx = {  #图标换回去
+					id = ENG_power_balance
+					side = ENG_left_side
+					gfx = GFX_bop_ENG_left_side
+				}
+			}
+		}
+	}
+
+	### 右翼
+	side = { 
+		id = ENG_right_side	
+		icon = GFX_bop_ENG_right_side
+
+		range = { #右翼增长
+			id = ENG_right_low_control_range
+			min = 0.1
+			max = 0.3
+			modifier = {
+				political_power_gain = 0.05
+				power_balance_weekly = 0.01
+			}
+			on_activate = {
+				
+			}
+			on_deactivate = {
+				
+			}
+		}
+
+		range = { #权利失衡
+			id = ENG_right_medium_control_range
+			min = 0.3
+			max = 0.6
+			modifier = {
+				political_power_gain = -0.1
+				stability_weekly = -0.01
+			}
+			on_activate = {
+			}
+			on_deactivate = {
+			}
+		}
+
+		range = { #右翼主导
+			id = ENG_right_high_control_range
+			min = 0.6
+			max = 0.9
+			modifier = {
+				power_balance_weekly = 0.01
+				political_power_gain = 0.10 #加pp
+				research_speed_factor = 0.10 #研究速度
+				production_factory_efficiency_gain_factor = 0.1 #生产效率增长
+				custom_modifier_tooltip = ENG_tooltip_VAR_exincome_modifier_add_10
+				custom_modifier_tooltip = ENG_tooltip_jian_zzd_infulunce_monthly_1
+				custom_modifier_tooltip = ENG_tooltip_jian_sbhs_jijindu_monthly_1
+				custom_modifier_tooltip = ENG_tooltip_bop_yyzd
+			}
+			on_activate = {
+				add_to_variable = {
+					VAR_ENG_syy_support_ewxg = 20
+				}
+				add_to_variable = {
+					VAR_ENG_zzd_infulunce_monthly = -1
+				}
+				add_to_variable = {
+					VAR_ENG_sbhs_jijindu_monthly = -1
+				}	
+				add_to_variable = {
+					ENG_VAR_exincome_modifier = 0.1
+				}	
+				
+				set_power_balance_gfx = {
+					id = ENG_power_balance
+					side = ENG_right_side
+					gfx = GFX_bop_ENG_right_improved_side
+				}
+			}
+			on_deactivate = {
+				add_to_variable = {
+					VAR_ENG_syy_support_ewxg = -20
+				}
+				add_to_variable = {
+					VAR_ENG_zzd_infulunce_monthly = 1
+				}
+				add_to_variable = {
+					VAR_ENG_sbhs_jijindu_monthly = 1
+				}
+				add_to_variable = {
+					ENG_VAR_exincome_modifier = -0.1
+				}
+
+				set_power_balance_gfx = {
+					id = ENG_power_balance
+					side = ENG_right_side
+					gfx = GFX_bop_ENG_right_side
+				}
+			}
+		}
+
+		range = { #联盟破裂
+			id = ENG_right_total_control_range
+			min = 0.9
+			max = 1
+			modifier = {
+			}
+			on_activate = {
+				country_event = ENG_event.902
+				set_power_balance_gfx = {
+					id = ENG_power_balance
+					side = ENG_right_side
+					gfx = GFX_bop_ENG_right_improved_side
+				}
+			}
+			on_deactivate = {
+				set_power_balance_gfx = {
+					id = ENG_power_balance
+					side = ENG_right_side
+					gfx = GFX_bop_ENG_right_side
+				}
+			}
+		}
+	}
+
+
+}

@@ -1,0 +1,259 @@
+on_actions = {
+	on_annex = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = ARF 
+							tag = BLA 
+							tag = NPT 
+						}
+					}
+					has_global_flag  = Iberian_civil_war_start
+				}
+				FROM = {
+					every_character = {
+						limit = { is_general_advisor = no }
+						set_nationality = AHM
+					}
+					if = {
+						limit = { NOT = { tag = NPT } }
+						every_core_state = {
+							remove_core_of = PREV
+						}
+					}
+				}
+
+			}
+			if = { #犯罪神寄了
+				limit = {
+					FROM = { tag = ARF }
+					has_global_flag = Iberian_civil_war_start
+				}
+				every_country = {
+					limit = {
+						OR = {
+							tag = BLA
+							tag = NPT
+							AND = {
+								tag = MOR
+								has_global_flag = MOR_declare_ambition_flag
+							}
+						}
+						exists = yes
+					}
+					country_event = neptune.047
+				}
+				if = {
+					limit = { country_exists = NPT }
+					ARF = { transfer_navy = { target = NPT } }
+				}
+				else_if = {
+					limit = { country_exists = BLA }
+					ARF = { transfer_navy = { target = BLA } }
+				}
+				else_if = {
+					limit = { country_exists = MOR has_global_flag = MOR_declare_ambition_flag }
+					ARF = { transfer_navy = { target = MOR } }
+				}
+			}
+			if = { #布兰寄了
+				limit = {
+					FROM = { tag = BLA }
+					has_global_flag = Iberian_civil_war_start
+				}
+				every_country = {
+					limit = {
+						OR = {
+							tag = ARF
+							tag = NPT
+						}
+						exists = yes
+					}
+					if = {
+						limit = { 
+							MOR = { has_global_flag = MOR_declare_ambition_flag } 
+						}
+						country_event = iberia_rec.021
+					}
+					else = { country_event = neptune.046 }
+				}
+				MOR = {
+					if = {
+						limit = { NOT = { is_subject_of = NPT } }
+						country_event = { id = iberia_for.016 hours = 6 }
+					}
+				}
+				if = {
+					limit = { country_exists = NPT }
+					BLA = { transfer_navy = { target = NPT } }
+				}
+				else_if = {
+					limit = { country_exists = ARF }
+					BLA = { transfer_navy = { target = ARF } }
+				}
+				else_if = {
+					limit = { country_exists = MOR has_global_flag = MOR_declare_ambition_flag }
+					BLA = { transfer_navy = { target = MOR } }
+				}
+			}
+			if = { #涅普姬雅寄了
+				limit = {
+					FROM = { tag = NPT }
+					has_global_flag = Iberian_civil_war_start
+				}
+				every_country = {
+					limit = {
+						OR = {
+							tag = ARF
+							tag = BLA
+						}
+						exists = yes
+					}
+					country_event = neptune.045
+				}
+				if = {
+					limit = { country_exists = BLA }
+					NPT = { transfer_navy = { target = BLA } }
+				}
+				else_if = {
+					limit = { country_exists = ARF }
+					NPT = { transfer_navy = { target = ARF } }
+				}
+				else_if = {
+					limit = { country_exists = MOR has_global_flag = MOR_declare_ambition_flag }
+					NPT = { transfer_navy = { target = MOR } }
+				}
+			}
+			if = {
+				limit = {
+					FROM = { tag = MOR }
+					has_global_flag = Iberian_civil_war_start
+					has_global_flag = MOR_declare_ambition_flag
+				}
+				if = {
+					limit = { country_exists = BLA }
+					MOR = { transfer_navy = { target = BLA } }
+				}
+				else_if = {
+					limit = { country_exists = ARF }
+					MOR = { transfer_navy = { target = ARF } }
+				}
+				else_if = {
+					limit = { country_exists = NPT  }
+					MOR = { transfer_navy = { target = NPT } }
+				}
+			}
+		}
+	}
+	on_monthly_NPT = {
+		effect = {
+			if = {
+				limit = { has_country_flag = NPT_inspiration_from_research_slot }
+				add_to_variable = {
+					NPT_inspiration_index = amount_research_slots
+				}
+			}
+			if = {
+				limit = {
+					has_completed_focus = NPT_Noire_defederalization_initiative
+					OR = {
+						has_country_flag = NPT_Noire_integrate_vert_start
+						has_country_flag = NPT_Noire_integrate_blanc_start
+						has_country_flag = NPT_Noire_integrate_neptune_start
+						MOR = { is_subject_of = ROOT }
+					}
+				}
+				add_to_variable = {
+					NPT_cohesion_index = NPT_core_city
+				}
+			}
+		}
+	}
+
+	on_declare_war = {
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						tag = FRA
+						tag = DVL
+					}
+					FROM = {
+						has_idea = NPT_military_alliance
+						OR = {
+							tag = NPA
+							tag = ENG
+						}
+					}
+				}
+				custom_effect_tooltip = NPT_military_alliance_tt
+			}
+		}
+	}
+
+	# on_peace = {
+	# 	effect = {
+	# 		if = {
+	# 			limit = {
+	# 				has_global_flag = Iberian_civil_war_start
+	# 			}
+				
+	# 			if = {
+	# 				limit = {
+	# 					tag = ARF
+	# 					NPT = { exists = no }
+	# 					BLA = { exists = no }
+	# 					has_civil_war = no
+	# 					NOT = { has_war_with = MOR }
+	# 				}
+	# 				clr_global_flag = Iberian_civil_war_start
+	# 				country_event = { id = neptune.057 days = 1 }
+	# 			}
+	# 			if = {
+	# 				limit = { 
+	# 					tag = NPT 
+	# 					has_global_flag = NPT_birth_of_devil_sword
+	# 					BLA = { exists = no }
+	# 					ARF = { exists = no }
+	# 					has_civil_war = no
+	# 					NOT = { has_war_with = MOR }
+	# 				}
+	# 				clr_global_flag = Iberian_civil_war_start
+	# 				country_event = { id = neptune.099 days = 1 }
+	# 			}
+	# 			if = {
+	# 				limit = { 
+	# 					tag = NPT 
+	# 					NOT = { has_global_flag = NPT_birth_of_devil_sword }
+	# 					BLA = { exists = no }
+	# 					ARF = { exists = no }
+	# 					has_civil_war = no
+	# 					NOT = { has_war_with = MOR }
+	# 				}
+	# 				clr_global_flag = Iberian_civil_war_start
+	# 				country_event = { id = neptune.125 days = 1 }
+	# 			}
+	# 			if = {
+	# 				limit = { tag = BLA exists = yes  }
+	# 				clr_global_flag = Iberian_civil_war_start
+	# 				country_event = { id = neptune.125 days = 1 }
+	# 			}
+	# 			if = {
+	# 				limit = { 
+	# 					tag = MOR
+	# 					NPT = { exists = no }
+	# 					ARF = { exists = no }
+	# 					BLA = { exists = no }
+	# 					has_civil_war = no
+	# 					has_global_flag = MOR_declare_ambition_flag
+	# 				}
+	# 				clr_global_flag = Iberian_civil_war_start
+	# 				country_event = { id = iberia_rec.022 days = 1 }
+	# 			}
+	# 		}
+	# 	}
+	# }
+	
+}

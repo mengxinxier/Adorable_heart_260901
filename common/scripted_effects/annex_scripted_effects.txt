@@ -1,0 +1,1253 @@
+release_targeted_tag = {
+	if = {
+		limit = { not = { country_exists = var:tag_to_release } }
+		if = {
+			limit = {
+				has_war = yes
+			}
+			every_owned_state = {
+				limit = {
+					is_core_of = var:tag_to_release
+					is_claim_or_core_of_ROOT = no
+					NOT = {
+						has_state_flag = retain_state_@PREV
+					}
+					NOT = {
+						has_variable = retain_state_@THIS
+					}
+					NOT = {
+						has_state_flag = occupied_by_@PREV
+					}
+					NOT = {
+						has_variable = occupied_by_@THIS
+					}
+				}
+				transfer_state_without_overriding_occupation = yes
+			}
+		}
+		else = {
+			every_owned_state = {
+				limit = {
+					is_core_of = var:tag_to_release
+					is_claim_or_core_of_ROOT = no
+					NOT = {
+						has_state_flag = retain_state_@PREV
+					}
+					NOT = {
+						has_variable = retain_state_@THIS
+					}
+					NOT = {
+						has_state_flag = occupied_by_@PREV
+					}
+					NOT = {
+						has_variable = occupied_by_@THIS
+					}
+				}
+				transfer_state_to = var:tag_to_release
+			}
+		}
+		clear_retained_states = yes
+		puppet_released_tag = yes
+		if = {
+			limit = { var:tag_to_release = { tag = PRE } }
+			var:tag_to_release = {
+				create_country_leader = {
+					name = PRE_malucil   ##玛露西尔·多纳托
+					desc = ""
+					picture = "gfx/leaders/PRE/malucil.png"
+					expire = "1985.1.1"
+					ideology = leninism
+					traits = {}
+				}
+				create_country_leader = {
+					name = PRE_zilchak   ##齐尔查克·蒂姆兹
+					desc = ""
+					picture = "gfx/leaders/PRE/zilchak.png"
+					expire = "1985.1.1"
+					ideology = liberalism
+					traits = {}
+				}
+				create_country_leader = {
+					name = PRE_delgaru   ##德尔嘉鲁·梅里尼
+					desc = ""
+					picture = "gfx/leaders/PRE/delgaru.png"
+					expire = "1985.1.1"
+					ideology = despotism
+					traits = {}
+				}
+				create_country_leader = {
+					name = PRE_misrun   ##米斯伦
+					desc = ""
+					picture = "gfx/leaders/PRE/misrun.png"
+					expire = "1985.1.1"
+					ideology = fascism_ideology
+					traits = {}
+				}
+			}
+		}
+		if = {
+			limit = { var:tag_to_release = { tag = RHI } }
+			var:tag_to_release = {
+				create_country_leader = {
+					name = RHI_Astrologist_Mona_Megistus   ##阿斯托洛吉斯·莫娜·梅姬斯图斯
+					desc = ""
+					picture = "gfx/leaders/RHI/RHI_Astrologist_Mona_Megistus.dds"
+					expire = "1985.1.1"
+					ideology = leninism
+					traits = {}
+				}
+				create_country_leader = {
+					name = RHI_Barbara   ##芭芭拉
+					desc = ""
+					picture = "gfx/leaders/RHI/RHI_Barbara.dds"
+					expire = "1985.1.1"
+					ideology = socialism
+					traits = {}
+				}
+				create_country_leader = {
+					name = RHI_Fischl   ##菲谢尔
+					desc = ""
+					picture = "gfx/leaders/RHI/RHI_Fischl.dds"
+					expire = "1985.1.1"
+					ideology = Absolute_monarchy
+					traits = {}
+				}
+				create_country_leader = {
+					name = RHI_Diluc_Ragnvindr   ##迪卢克·莱艮芬德
+					desc = ""
+					picture = "gfx/leaders/RHI/RHI_Diluc_Ragnvindr.dds"
+					expire = "1985.1.1"
+					ideology = fascism_ideology
+					traits = {}
+				}
+			}
+		}
+		if = {
+			limit = { tag = SOV }
+			var:tag_to_release = {
+				if = {
+					limit = { tag = AUS }
+					set_cosmetic_tag = AUS_SOV
+				}
+				if = {
+					limit = { tag = BAY }
+					set_cosmetic_tag = BAY_SOV
+				}
+				if = {
+					limit = { tag = ELA }
+					set_cosmetic_tag = ENG_SOV
+				}
+				if = {
+					limit = { tag = GOG }
+					set_cosmetic_tag = GOG_SOV
+				}
+				if = {
+					limit = { tag = GEU }
+					set_cosmetic_tag = GEU_SOV
+				}
+				if = {
+					limit = { tag = ITA }
+					set_cosmetic_tag = ITA_SOV
+				}
+				if = {
+					limit = { tag = MGU }
+					set_cosmetic_tag = MGU_SOV
+				}
+				if = {
+					limit = { tag = MOR }
+					set_cosmetic_tag = MOR_SOV
+				}
+				if = {
+					limit = { tag = NPT }
+					set_cosmetic_tag = NPT_SOV
+				}
+				if = {
+					limit = { tag = POL }
+					set_cosmetic_tag = POL_SOV
+				}
+				if = {
+					limit = { tag = PRE }
+					set_cosmetic_tag = PRE_SOV
+				}
+				if = {
+					limit = { tag = ROM }
+					set_cosmetic_tag = ROM_SOV
+				}
+				if = {
+					limit = { tag = SAX }
+					set_cosmetic_tag = SAX_SOV
+				}
+			}
+		}
+	}
+}
+
+remove_targeted_core = {
+	every_state = {
+		limit = {
+			is_claimed_by = var:tag_to_release
+		}
+		remove_claim_by = var:tag_to_release
+	}
+	every_state = {
+		limit = {
+			is_core_of = var:tag_to_release
+		}
+		remove_core_of = var:tag_to_release
+	}
+}
+
+# state scope
+transfer_state_without_overriding_occupation = {
+	if = {
+		limit = {
+			is_fully_controlled_by = owner
+		}
+		transfer_state_to = var:tag_to_release
+	}
+	else = {
+		set_state_owner_to = var:tag_to_release
+		set_state_province_controller = {
+			controller = var:tag_to_release
+			limit = {
+				NOT = {
+					has_war_with = ROOT
+				}
+			}
+		}
+	}
+}
+
+add_claim_by_ROOT_if_has_no_core = {
+	if = {
+		limit = {
+			not = { is_core_of = ROOT }
+			not = { is_claimed_by = ROOT }
+		}
+		add_claim_by = ROOT
+	}
+}
+
+add_claim_by_PREV_if_has_no_core = {
+	if = {
+		limit = {
+			not = { is_core_of = PREV }
+			not = { is_claimed_by = PREV }
+		}
+		add_claim_by = PREV
+	}
+}
+
+# country scope
+clear_retained_states = {
+	hidden_effect = {
+		every_state = {
+			limit = {
+				has_state_flag = retain_state_@PREV
+			}
+			clr_state_flag = retain_state_@PREV
+		}
+	}
+}
+
+# global scope
+puppet_released_tag = {
+	puppet = var:tag_to_release
+	var:tag_to_release = {
+		drop_cosmetic_tag = yes
+		mark_focus_tree_layout_dirty = yes
+		hidden_effect = {
+			inherit_technology = ROOT
+			#remove_ideas = ready_to_surrender
+			# set_politics = {
+			# 	ruling_party = var:current_party_ideology_group
+			# 	elections_allowed = no
+			# }
+		}
+	}
+	recheck_annexations = yes
+}
+
+occupy_tiny_country = {
+	add_political_power = -20
+	recheck_annexations = yes
+}
+
+occupy_small_country = {
+	add_political_power = -50
+	recheck_annexations = yes
+}
+
+occupy_medium_country = {
+	add_political_power = -100
+	recheck_annexations = yes
+}
+
+occupy_large_country = {
+	add_political_power = -200
+	recheck_annexations = yes
+}
+
+occupy_huge_country = {
+	add_political_power = -300
+	recheck_annexations = yes
+}
+
+occupy_massive_country = {
+	add_political_power = -400
+	recheck_annexations = yes
+}
+
+recheck_annexations = {
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = AH_checking_for_possible_annexations
+				}
+			}
+			set_country_flag = {
+				flag = AH_checking_for_possible_annexations
+				days = 7
+				value = 1
+			}
+			country_event = {
+				id = annex.1
+				days = 1
+				random_days = 3
+			}
+		}
+	}
+}
+
+recheck_annexations_immediate = {
+	hidden_effect = {
+		every_owned_state = {
+			limit = {
+				is_controlled_by = ROOT
+				NOT = {
+					is_core_of = ROOT
+				}
+				NOT = {
+					has_state_flag = occupied_by_@ROOT
+				}
+			}
+			check_potential_annexations = yes
+		}
+	}
+}
+
+add_core_and_transfer_if_owned_else_add_claim = {
+	if = {
+		limit = {
+			is_valid_annexation_state = yes
+		}
+		remove_claim_and_add_core_of_target = yes
+		transfer_state_without_overriding_occupation = yes
+	}
+	else_if = {
+		limit = {
+			is_claim_or_core_of_ROOT = no
+		}
+		add_claim_of_target = yes
+	}
+	ROOT = {
+		recheck_annexations = yes
+	}
+}
+
+annexation_event_option_effect = {
+	clr_country_flag = has_annexation_event_ongoing
+	recheck_annexations_immediate = yes
+}
+
+
+# state scope
+remove_claim_and_add_core_of_target = {
+	if = {
+		limit = {
+			is_claimed_by = var:tag_to_release
+		}
+		remove_claim_by = var:tag_to_release
+	}
+	if = {
+		limit = {
+			NOT = {
+				is_core_of = var:tag_to_release
+			}
+		}
+		add_core_of = var:tag_to_release
+	}
+	ROOT = {
+		recheck_annexations = yes
+	}
+}
+
+# state scope
+transfer_state_without_overriding_occupation = {
+	if = {
+		limit = {
+			is_fully_controlled_by = owner
+		}
+		transfer_state_to = var:tag_to_release
+	}
+	else = {
+		set_state_owner_to = var:tag_to_release
+		set_state_province_controller = {
+			controller = var:tag_to_release
+			limit = {
+				NOT = {
+					has_war_with = ROOT
+				}
+			}
+		}
+	}
+}
+
+# state scope
+transfer_to_ROOT = {
+	if = {
+		limit = {
+			is_fully_controlled_by = controller
+			controller = { is_ally_of_ROOT = yes }
+		}
+		ROOT = { transfer_state = PREV }
+	}
+	else = {
+		ROOT = { set_state_owner = PREV }
+	}
+}
+
+check_potential_annexations = {
+ #####  德国   ####
+	if = {
+		limit = { can_release_germany = yes }
+		ROOT = { activate_mission = annexation_GER_CONQ }
+	}
+	else_if = {
+		limit = { can_release_rhineland = yes }
+		ROOT = { activate_mission = annexation_RHI_CONQ }
+	}
+	else_if = {
+		limit = { can_release_Prussia = yes }
+		ROOT = { activate_mission = annexation_PRE_CONQ }
+	}
+	else_if = {
+		limit = { can_release_north_germany = yes }
+		ROOT = { activate_mission = annexation_NGF_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SGER = yes }
+		ROOT = { activate_mission = annexation_SGER_CONQ }
+	}
+	else_if = {
+		limit = { can_release_AUS = yes }
+		ROOT = { activate_mission = annexation_AUS_CONQ }
+	}
+	else_if = {
+		limit = { can_release_BAY = yes }
+		ROOT = { activate_mission = annexation_BAY_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SIL = yes }
+		ROOT = { activate_mission = annexation_SIL_CONQ }
+	}
+	else_if = {
+		limit = { can_release_KSH = yes }
+		ROOT = { activate_mission = annexation_KSH_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SHL = yes }
+		ROOT = { activate_mission = annexation_SHL_CONQ }
+	}
+	else_if = {
+		limit = { can_release_HAN = yes }
+		ROOT = { activate_mission = annexation_HAN_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SAX = yes }
+		ROOT = { activate_mission = annexation_SAX_CONQ }
+	}
+	else_if = {
+		limit = { can_release_MEK = yes }
+		ROOT = { activate_mission = annexation_MEK_CONQ }
+	}
+	else_if = {
+		limit = { can_release_DDR = yes }
+		ROOT = { activate_mission = annexation_DDR_CONQ }
+	}
+	else_if = {
+		limit = { can_release_AUS_TRENT = yes }
+		ROOT = { activate_mission = annexation_AUS_TRENT_CONQ }
+	}
+ #####  幻想乡   ####
+	else_if = {
+		limit = { can_release_france = yes }
+		ROOT = { activate_mission = annexation_FRA_CONQ }
+	}
+	else_if = {
+		limit = { can_release_KMK = yes }
+		ROOT = { activate_mission = annexation_KMK_CONQ }
+	}
+	else_if = {
+		limit = { can_release_KNM = yes }
+		ROOT = { activate_mission = annexation_KNM_CONQ }
+	}
+	else_if = {
+		limit = { can_release_GNS = yes }
+		ROOT = { activate_mission = annexation_GNS_CONQ }
+	}
+	else_if = {
+		limit = { can_release_COM = yes }
+		ROOT = { activate_mission = annexation_COM_CONQ }
+	}
+	else_if = {
+		limit = { can_release_GOS = yes }
+		ROOT = { activate_mission = annexation_GOS_CONQ }
+	}
+	else_if = {
+		limit = { can_release_BRI = yes }
+		ROOT = { activate_mission = annexation_BRI_CONQ }
+	}
+	else_if = {
+		limit = { can_release_PES = yes }
+		ROOT = { activate_mission = annexation_PES_CONQ }
+	}
+	else_if = {
+		limit = { can_release_HKR = yes }
+		ROOT = { activate_mission = annexation_HKR_CONQ }
+	}
+	else_if = {
+		limit = { can_release_MRY = yes }
+		ROOT = { activate_mission = annexation_MRY_CONQ }
+	}
+	else_if = {
+		limit = { can_release_MYO = yes }
+		ROOT = { activate_mission = annexation_MYO_CONQ }
+	}
+	else_if = {
+		limit = { can_release_NOS = yes }
+		ROOT = { activate_mission = annexation_NOS_CONQ }
+	}
+	else_if = {
+		limit = { can_release_MEI = yes }
+		ROOT = { activate_mission = annexation_MEI_CONQ }
+	}
+ #####  枫丹   ####
+	else_if = {
+		limit = { can_release_FOT = yes }
+		ROOT = { activate_mission = annexation_FOT_CONQ }
+	}
+ #####  伊比利亚   ####
+	else_if = {
+		limit = { can_release_NPT = yes }
+		ROOT = { activate_mission = annexation_NPT_CONQ }
+	}
+	else_if = {
+		limit = { can_release_PPT = yes }
+		ROOT = { activate_mission = annexation_PPT_CONQ }
+	}
+	else_if = {
+		limit = { can_release_LOW = yes }
+		ROOT = { activate_mission = annexation_LOW_CONQ }
+	}
+	else_if = {
+		limit = { can_release_LEA = yes }
+		ROOT = { activate_mission = annexation_LEA_CONQ }
+	}
+	else_if = {
+		limit = { can_release_LAS = yes }
+		ROOT = { activate_mission = annexation_LAS_CONQ }
+	}
+ #####  不列颠   ####
+	else_if = {
+		limit = { can_release_ENG = yes }
+		ROOT = { activate_mission = annexation_ENG_CONQ }
+	}
+	else_if = {
+		limit = { can_release_IRE = yes }
+		ROOT = { activate_mission = annexation_IRE_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SCO = yes }
+		ROOT = { activate_mission = annexation_SCO_CONQ }
+	}
+	else_if = {
+		limit = { can_release_WLS = yes }
+		ROOT = { activate_mission = annexation_WLS_CONQ }
+	}
+	else_if = {
+		limit = { can_release_ELA = yes }
+		ROOT = { activate_mission = annexation_SAS_CONQ }
+	}
+ #####  火车   ####
+	else_if = {
+		limit = { can_release_TRB = yes }
+		ROOT = { activate_mission = annexation_TRB_CONQ }
+	}
+	else_if = {
+		limit = { can_release_Wanggong = yes }
+		ROOT = { activate_mission = annexation_Wanggong_CONQ }
+	}
+ #####  意大利   ####
+	else_if = {
+		limit = { can_release_ITA = yes }
+		ROOT = { activate_mission = annexation_ITA_CONQ }
+	}
+	else_if = {
+		limit = { can_release_ALS = yes }
+		ROOT = { activate_mission = annexation_ALS_CONQ }
+	}
+ #####  JK   ####
+	else_if = {
+		limit = { can_release_CZE = yes }
+		ROOT = { activate_mission = annexation_CZE_CONQ }
+	}
+ #####  斯连教国   ####
+	else_if = {
+		limit = { can_release_SLO = yes }
+		ROOT = { activate_mission = annexation_SLO_CONQ }
+	}
+ #####  宝石之国   ####
+	else_if = {
+		limit = { can_release_HUN = yes }
+		ROOT = { activate_mission = annexation_HUN_CONQ }
+	}
+ #####  基沃托斯   ####
+	else_if = {
+		limit = { can_release_KVO = yes }
+		ROOT = { activate_mission = annexation_KVO_CONQ }
+	}
+	else_if = {
+		limit = { can_release_ABY = yes }
+		ROOT = { activate_mission = annexation_ABY_CONQ }
+	}
+	else_if = {
+		limit = { can_release_ARI = yes }
+		ROOT = { activate_mission = annexation_ARI_CONQ }
+	}
+	else_if = {
+		limit = { can_release_GEH = yes }
+		ROOT = { activate_mission = annexation_GEH_CONQ }
+	}
+	else_if = {
+		limit = { can_release_AKK = yes }
+		ROOT = { activate_mission = annexation_AKK_CONQ }
+	}
+	else_if = {
+		limit = { can_release_MIL = yes }
+		ROOT = { activate_mission = annexation_MIL_CONQ }
+	}
+	else_if = {
+		limit = { can_release_RED = yes }
+		ROOT = { activate_mission = annexation_RED_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SHJ = yes }
+		ROOT = { activate_mission = annexation_SHJ_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SRT = yes }
+		ROOT = { activate_mission = annexation_SRT_CONQ }
+	}
+	else_if = {
+		limit = { can_release_TRY = yes }
+		ROOT = { activate_mission = annexation_TRY_CONQ }
+	}
+	else_if = {
+		limit = { can_release_VAL = yes }
+		ROOT = { activate_mission = annexation_VAL_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SCH = yes }
+		ROOT = { activate_mission = annexation_SCH_CONQ }
+	}
+	else_if = {
+		limit = { can_release_HRA = yes }
+		ROOT = { activate_mission = annexation_HRA_CONQ }
+	}
+ #####  北欧   ####
+	else_if = {
+		limit = { can_release_DEN = yes }
+		ROOT = { activate_mission = annexation_DEN_CONQ }
+	}
+	else_if = {
+		limit = { can_release_SWE = yes }
+		ROOT = { activate_mission = annexation_SWE_CONQ }
+	}
+	else_if = {
+		limit = { can_release_KAL = yes }
+		ROOT = { activate_mission = annexation_KAL_CONQ }
+	}
+	else_if = {
+		limit = { can_release_Gotland = yes }
+		ROOT = { activate_mission = annexation_Gotland_CONQ }
+	}
+	else_if = {
+		limit = { can_release_FIN = yes }
+		ROOT = { activate_mission = annexation_FIN_CONQ }
+	}
+	else_if = {
+		limit = { can_release_KAR = yes }
+		ROOT = { activate_mission = annexation_KAR_CONQ }
+	}
+	else_if = {
+		limit = { can_release_NOR = yes }
+		ROOT = { activate_mission = annexation_NOR_CONQ }
+	}
+	else_if = {
+		limit = { can_release_ICE = yes }
+		ROOT = { activate_mission = annexation_ICE_CONQ }
+	}
+ #####  巴尔干   ####
+	#保加利亚
+	else_if = {
+		limit = { can_release_BUL = yes }
+		ROOT = { activate_mission = annexation_BUL_CONQ }
+	}
+	#阿尔巴尼亚
+	else_if = {
+		limit = { can_release_ALB = yes }
+		ROOT = { activate_mission = annexation_ALB_CONQ }
+	}
+	#马其顿
+	else_if = {
+		limit = { can_release_MAC = yes }
+		ROOT = { activate_mission = annexation_THESS_CONQ }
+	}
+	#特兰西瓦尼亚
+	else_if = {
+		limit = { can_release_TRA = yes }
+		ROOT = { activate_mission = annexation_TRS_CONQ }
+	}
+	#希腊
+	else_if = {
+		limit = { can_release_GRE = yes }
+		ROOT = { activate_mission = annexation_GRE_CONQ }
+	}
+	#色雷斯
+	else_if = {
+		limit = { can_release_Thrace = yes }
+		ROOT = { activate_mission = annexation_Thrace_CONQ }
+	}
+	#罗马尼亚
+	else_if = {
+		limit = { can_release_ROM = yes }
+		ROOT = { activate_mission = annexation_ROM_CONQ }
+	}
+	#比萨拉比亚
+	else_if = {
+		limit = { can_release_Basarabia = yes }
+		ROOT = { activate_mission = annexation_Basarabia_CONQ }
+	}
+	#埃迪尔内
+	else_if = {
+		limit = { can_release_Edirne = yes }
+		ROOT = { activate_mission = annexation_Edirne_CONQ }
+	}
+	#罗德岛
+	else_if = {
+		limit = { can_release_RIS = yes }
+		ROOT = { activate_mission = annexation_RIS_CONQ }
+	}
+ #####  东欧   ####
+	#波罗的
+	else_if = {
+		limit = { can_release_LAT = yes }
+		ROOT = { activate_mission = annexation_LAT_CONQ_baltic }
+	}
+	#卡西米尔
+	else_if = {
+		limit = { can_release_POL = yes }
+		ROOT = { activate_mission = annexation_POL_CONQ }
+	}
+	#加利西亚
+	else_if = {
+		limit = { can_release_GLC = yes }
+		ROOT = { activate_mission = annexation_GLC_CONQ }
+	}
+	#斯坦尼斯瓦武夫
+	else_if = {
+		limit = { can_release_Stanislaw = yes }
+		ROOT = { activate_mission = annexation_GLC_EX_CONQ }
+	}
+	#白俄罗斯
+	else_if = {
+		limit = { can_release_BLR = yes }
+		ROOT = { activate_mission = annexation_BLR_CONQ }
+	}
+	#乌克兰
+	else_if = {
+		limit = { can_release_UKR = yes }
+		ROOT = { activate_mission = annexation_UKR_CONQ }
+	}
+	#克里米亚
+	else_if = {
+		limit = { can_release_Crimean = yes }
+		ROOT = { activate_mission = annexation_Crimean_CONQ }
+	}
+	#俄罗斯
+	else_if = {
+		limit = { can_release_RUS = yes }
+		ROOT = { activate_mission = annexation_RUS_CONQ }
+	}
+	#西伯利亚
+	else_if = {
+		limit = { can_release_SIB = yes }
+		ROOT = { activate_mission = annexation_SIB_CONQ }
+	}
+	#远东
+	else_if = {
+		limit = { can_release_EAM = yes }
+		ROOT = { activate_mission = annexation_EAM_CONQ }
+	}
+	#格鲁吉亚
+	else_if = {
+		limit = { can_release_GEO = yes }
+		ROOT = { activate_mission = annexation_GEO_CONQ }
+	}
+	#阿塞拜疆
+	else_if = {
+		limit = { can_release_AZR = yes }
+		ROOT = { activate_mission = annexation_AZR_CONQ }
+	}
+	#亚美尼亚
+	else_if = {
+		limit = { can_release_ARM = yes }
+		ROOT = { activate_mission = annexation_ARM_CONQ }
+	}
+	#库班
+	else_if = {
+		limit = { can_release_KUB = yes }
+		ROOT = { activate_mission = annexation_KUB_CONQ }
+	}
+ #####  中东   ####
+	#土耳其
+	else_if = {
+		limit = { can_release_TUR = yes }
+		ROOT = { activate_mission = annexation_TUR_CONQ }
+	}
+	#库尔德
+	else_if = {
+		limit = { can_release_KUR = yes }
+		ROOT = { activate_mission = annexation_KUR_CONQ }
+	}
+	#卡兹戴尔
+	else_if = {
+		limit = { can_release_PAL = yes }
+		ROOT = { activate_mission = annexation_PAL_CONQ }
+	}
+	#塞鲁托布尔
+	else_if = {
+		limit = { can_release_LEB = yes }
+		ROOT = { activate_mission = annexation_LEB_CONQ }
+	}
+	#霍布雷
+	else_if = {
+		limit = { can_release_SYR = yes }
+		ROOT = { activate_mission = annexation_SYR_CONQ }
+	}
+	#梅洛马格
+	else_if = {
+		limit = { can_release_IRQ = yes }
+		ROOT = { activate_mission = annexation_IRQ_CONQ }
+	}
+	#南阿拉伯半岛
+	else_if = {
+		limit = { can_release_YEM = yes }
+		ROOT = { activate_mission = annexation_YEM_CONQ }
+	}
+ #####  特雷森   ####
+	#特雷森
+	else_if = {
+		limit = { can_release_TAM = yes }
+		ROOT = { activate_mission = annexation_TAM_CONQ }
+	}
+	#巴基斯坦
+	else_if = {
+		limit = { can_release_PAK = yes }
+		ROOT = { activate_mission = annexation_PAK_CONQ }
+	}
+ #####  樱花   ####
+	#樱花
+	else_if = {
+		limit = { can_release_JAP = yes }
+		ROOT = { activate_mission = annexation_JAP_CONQ }
+	}
+	#南樱花
+	else_if = {
+		limit = { can_release_SOUTH_JAP = yes }
+		ROOT = { activate_mission = annexation_SOUTH_JAP_CONQ }
+	}
+	#北樱花
+	else_if = {
+		limit = { can_release_NORTH_JAP = yes }
+		ROOT = { activate_mission = annexation_NORTH_JAP_CONQ }
+	}
+ #####  中国   ####
+	#中国
+	else_if = {
+		limit = { can_release_CHI = yes }
+		ROOT = { activate_mission = annexation_CHI_CONQ }
+	}
+	#新疆
+	else_if = {
+		limit = { can_release_SIK = yes }
+		ROOT = { activate_mission = annexation_SIK_CONQ }
+	}
+	#蒙古
+	else_if = {
+		limit = { can_release_MON = yes }
+		ROOT = { activate_mission = annexation_MON_CONQ }
+	}
+	#满洲
+	else_if = {
+		limit = { can_release_MAN = yes }
+		ROOT = { activate_mission = annexation_MAN_CONQ }
+	}
+	#西藏
+	else_if = {
+		limit = { can_release_TIB = yes }
+		ROOT = { activate_mission = annexation_TIB_CONQ }
+	}
+ #####  其它亚洲国家   ####
+	#印度
+	else_if = {
+		limit = { can_release_RAJ = yes }
+		ROOT = { activate_mission = annexation_RAJ_CONQ }
+	}
+	#缅甸
+	else_if = {
+		limit = { can_release_MMR = yes }
+		ROOT = { activate_mission = annexation_MMR_CONQ }
+	}
+	#琉球
+	else_if = {
+		limit = { can_release_RYU = yes }
+		ROOT = { activate_mission = annexation_RYU_CONQ }
+	}
+	#朝鲜
+	else_if = {
+		limit = { can_release_KOR = yes }
+		ROOT = { activate_mission = annexation_KOR_CONQ }
+	}
+	#印度支那
+	else_if = {
+		limit = { can_release_VIN = yes }
+		ROOT = { activate_mission = annexation_VIN_CONQ }
+	}
+	#泰国
+	else_if = {
+		limit = { can_release_SIA = yes }
+		ROOT = { activate_mission = annexation_PAW_CONQ }
+	}
+	#夏连特拉
+	else_if = {
+		limit = { can_release_MAL = yes }
+		ROOT = { activate_mission = annexation_MAL_CONQ }
+	}
+	#菲律宾
+	else_if = {
+		limit = { can_release_PHI = yes }
+		ROOT = { activate_mission = annexation_PHI_CONQ }
+	}
+	#太平洋群岛
+	else_if = {
+		limit = { can_release_Pacific_Islands = yes }
+		ROOT = { activate_mission = annexation_Pacific_Islands_CONQ }
+	}
+	#武侦高校
+	else_if = {
+		limit = { can_release_AST = yes }
+		ROOT = { activate_mission = annexation_AST_CONQ }
+	}
+	#新西兰
+	else_if = {
+		limit = { can_release_NZL = yes }
+		ROOT = { activate_mission = annexation_NZL_CONQ }
+	}
+	#珊瑚宫
+	else_if = {
+		limit = { can_release_HAW = yes }
+		ROOT = { activate_mission = annexation_HAW_CONQ }
+	}
+
+ #####  北美   ####
+	#晴空
+	else_if = {
+		limit = { can_release_CAN = yes }
+		ROOT = { activate_mission = annexation_CAN_CONQ }
+	}
+	#精灵之国
+	else_if = {
+		limit = { can_release_USA = yes }
+		ROOT = { activate_mission = annexation_USA_CONQ }
+	}
+	#阿拉斯加
+	else_if = {
+		limit = { can_release_ASK = yes }
+		ROOT = { activate_mission = annexation_ASK_CONQ }
+	}
+	#新英格兰
+	else_if = {
+		limit = { can_release_NEE = yes }
+		ROOT = { activate_mission = annexation_NEE_CONQ }
+	}
+	#北美汉语区
+	else_if = {
+		limit = { can_release_NGD = yes }
+		ROOT = { activate_mission = annexation_NGD_CONQ }
+	}
+	#北美法语区
+	else_if = {
+		limit = { can_release_NFA = yes }
+		ROOT = { activate_mission = annexation_NFA_CONQ }
+	}
+	#齐亚德
+	else_if = {
+		limit = { can_release_FRG = yes }
+		ROOT = { activate_mission = annexation_FRG_CONQ }
+	}
+	#中美洲
+	else_if = {
+		limit = { can_release_MA = yes }
+		ROOT = { activate_mission = annexation_MA_CONQ }
+	}
+	#废墟图书馆
+	else_if = {
+		limit = { can_release_PAJ = yes }
+		ROOT = { activate_mission = annexation_PAJ_CONQ }
+	}
+	#瓦尔哈拉社
+	else_if = {
+		limit = { can_release_PAN = yes }
+		ROOT = { activate_mission = annexation_PAN_CONQ }
+	}
+	#生命之树
+	else_if = {
+		limit = { can_release_CUB = yes }
+		ROOT = { activate_mission = annexation_CUB_CONQ }
+	}
+	#西印度群岛
+	else_if = {
+		limit = { can_release_West_indies = yes }
+		ROOT = { activate_mission = annexation_West_indies_CONQ }
+	}
+
+ #####  南美   ####
+	#斯塔王国
+	else_if = {
+		limit = { can_release_PA1 = yes }
+		ROOT = { activate_mission = annexation_PA1_CONQ }
+	}
+	#莉兰迪亚
+	else_if = {
+		limit = { can_release_PAM = yes }
+		ROOT = { activate_mission = annexation_PAM_CONQ }
+	}
+	#夜莺
+	else_if = {
+		limit = { can_release_PAO = yes }
+		ROOT = { activate_mission = annexation_PAO_CONQ }
+	}
+	#魔法少女
+	else_if = {
+		limit = { can_release_MGU = yes }
+		ROOT = { activate_mission = annexation_MGU_CONQ }
+	}
+	#艾硫希欧
+	else_if = {
+		limit = { can_release_PAQ = yes }
+		ROOT = { activate_mission = annexation_PAQ_CONQ }
+	}
+	#妖精
+	else_if = {
+		limit = { can_release_ELF = yes }
+		ROOT = { activate_mission = annexation_ELF_CONQ }
+	}
+	#风声河谷
+	else_if = {
+		limit = { can_release_EWW = yes }
+		ROOT = { activate_mission = annexation_EWW_CONQ }
+	}
+	#叶落边境
+	else_if = {
+		limit = { can_release_ELW = yes }
+		ROOT = { activate_mission = annexation_ELW_CONQ }
+	}
+	#曦光圣域
+	else_if = {
+		limit = { can_release_ELG = yes }
+		ROOT = { activate_mission = annexation_ELG_CONQ }
+	}
+	#暮色林渊
+	else_if = {
+		limit = { can_release_EDW = yes }
+		ROOT = { activate_mission = annexation_EDW_CONQ }
+	}
+	#无垠之海
+	else_if = {
+		limit = { can_release_EBS = yes }
+		ROOT = { activate_mission = annexation_EBS_CONQ }
+	}
+	#希尔瓦尼亚城邦
+	else_if = {
+		limit = { can_release_EFC = yes }
+		ROOT = { activate_mission = annexation_EFC_CONQ }
+	}
+	#南美丛林区
+	else_if = {
+		limit = { can_release_SAJ = yes }
+		ROOT = { activate_mission = annexation_SAJ_CONQ }
+	}
+
+ #####  非洲   ####
+	#阿尔及利亚
+	else_if = {
+		limit = { can_release_ALG = yes }
+		ROOT = { activate_mission = annexation_ALG_CONQ }
+	}
+	#埃及
+	else_if = {
+		limit = { can_release_EGY = yes }
+		ROOT = { activate_mission = annexation_EGY_CONQ }
+	}
+	#西非海岸
+	else_if = {
+		limit = { can_release_WAF = yes }
+		ROOT = { activate_mission = annexation_WAF_CONQ }
+	}
+	#南非海岸
+	else_if = {
+		limit = { can_release_EAS = yes }
+		ROOT = { activate_mission = annexation_SAF_CONQ }
+	}
+	#中非
+	else_if = {
+		limit = { can_release_ZIM = yes }
+		ROOT = { activate_mission = annexation_MAF_CONQ }
+	}
+	#东非海岸
+	else_if = {
+		limit = { can_release_ETH = yes }
+		ROOT = { activate_mission = annexation_EAF_CONQ }
+	}
+	#马达加斯加
+	else_if = {
+		limit = { can_release_MAD = yes }
+		ROOT = { activate_mission = annexation_MAD_CONQ }
+	}
+	#刚果
+	else_if = {
+		limit = { can_release_COG = yes }
+		ROOT = { activate_mission = annexation_COG_CONQ }
+	}
+	#黎博利
+	else_if = {
+		limit = { can_release_MOR = yes }
+		ROOT = { activate_mission = annexation_MOR_CONQ }
+	}
+	#利比亚
+	else_if = {
+		limit = { can_release_LBA = yes }
+		ROOT = { activate_mission = annexation_LBA_CONQ }
+	}
+
+ #####
+}
+
+##领导人
+create_UKR_leader = {
+	hidden_effect = {
+		if = {
+			limit = { not = { has_global_flag = create_UKR_leader } }
+			set_global_flag = create_UKR_leader
+			UKR = {
+				create_country_leader = {
+					name = SOV_Lada   ##拉达
+					desc = ""
+					picture = "gfx/leaders/SOV/Gummy.dds"
+					expire = "1985.1.1"
+					ideology = leninism
+					traits = {}
+				}
+				create_country_leader = {
+					name = SOV_Kiev   ##基辅
+					desc = ""
+					picture = "gfx/leaders/SOV/Kiev.dds"
+					expire = "1985.1.1"
+					ideology = military_politicism
+					traits = {}
+				}
+				create_country_leader = {
+					name = UKR_putin   ##普京
+					desc = ""
+					picture = "gfx/leaders/UKR/buding.dds"
+					expire = "1985.1.1"
+					ideology = Guided_democracy
+					traits = {}
+				}
+				create_country_leader = {
+					name = UKR_Maximilian   ##马克西米利安
+					desc = ""
+					picture = "gfx/leaders/UKR/Maximilian.png"
+					expire = "1985.1.1"
+					ideology = fascism_ideology
+					traits = {}
+				}
+			}
+		}
+	}
+}
+
+create_RUS_leader = {
+	hidden_effect = {
+		if = {
+			limit = {
+				not = { has_global_flag = create_RUS_leader }
+				or = {
+					UKR = { exists = no }
+					has_global_flag = create_UKR_leader
+				}
+			}
+			set_global_flag = create_RUS_leader
+			RUS = {
+				create_country_leader = {
+					name = SOV_Nataliya   ##早露
+					desc = ""
+					picture = "gfx/leaders/SOV/Rosa.dds"
+					expire = "1985.1.1"
+					ideology = leninism
+					traits = {}
+				}
+				create_country_leader = {
+					name = SOV_Anastasia   ##阿纳斯塔西娅
+					desc = ""
+					picture = "gfx/leaders/UKR/Anastasia.dds"
+					expire = "1985.1.1"
+					ideology = Absolute_monarchy
+					traits = {}
+				}
+				create_country_leader = {
+					name = SOV_Kerensky   ##克伦酱
+					desc = ""
+					picture = "gfx/leaders/UKR/Kerensky.dds"
+					expire = "1985.1.1"
+					ideology = socialism
+					traits = {}
+				}
+				create_country_leader = {
+					name = SOV_Vlasov   ##安德烈·弗拉索夫
+					desc = ""
+					picture = "gfx/leaders/SOV/Vlasov.dds"
+					expire = "1985.1.1"
+					ideology = nazism
+					traits = {}
+				}
+			}
+		}
+	}
+}
+
+
+

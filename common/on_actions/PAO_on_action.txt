@@ -1,0 +1,515 @@
+on_actions = {
+    on_declare_war = {
+        effect = {
+            #落幕战争
+            if = {
+                limit = {
+                    ROOT = {
+                        has_completed_focus = PAO_wmsq
+                        or = {
+                            has_war_together_with = PAO
+                            tag = PAO
+                            is_in_faction_with = PAO
+                            is_subject_of = PAO
+                        }
+                    }
+                    FROM = {
+                        or = {
+                            tag = LHS
+                            is_in_faction_with = LHS
+                        }
+                    }
+                    not = {
+                        has_global_flag = LHS_wlgm
+                    }
+                }
+                hidden_effect = {
+                    set_global_flag = LHS_wlgm
+                    PAO = {
+                        mark_focus_tree_layout_dirty = yes
+                    }
+                    news_event = {
+                        id = PAO_news.5
+                        days = 0
+                    }
+                }
+            }
+        }
+    }
+    on_declare_war = {
+        effect = {
+            #诀别之战
+            if = {
+                limit = {
+                    FROM = {
+                        has_completed_focus = PAO_zhth
+                        or = {
+                            has_war_together_with = PAO
+                            tag = PAO
+                            is_in_faction_with = PAO
+                            is_subject_of = PAO
+                        }
+                    }
+                    ROOT = {
+                        or = {
+                            tag = LHS
+                            is_in_faction_with = LHS
+                        }
+                    }
+                    not = {
+                        has_global_flag = LHS_wlgm
+                    }
+                }
+                hidden_effect = {
+                    set_global_flag = LHS_wlgm
+                    PAO = {
+                        mark_focus_tree_layout_dirty = yes
+                    }
+                    news_event = {
+                        id = PAO_news.7
+                        days = 0
+                    }
+                }
+            }
+        }
+    }
+    on_annex = {
+        effect = {
+            if = {
+                #战胜野火
+                limit = {
+                    ROOT = {
+                        PAO = {has_country_flag = PAO_lxlygl}
+                    }
+                    FROM = {
+                        tag = LHS
+                    }
+                }
+                PAO = {
+                    if = {
+                        limit = {
+                            LHS = {
+                                has_country_flag = xueyi
+                            }
+                        }
+                        country_event = {
+                            hours = 6
+                            id = PAO.77
+                        }
+                    }
+                    if = {
+                        limit = {
+                            LHS = {
+                                has_country_flag = xiaofeng
+                            }
+                        }
+                        country_event = {
+                            hours = 6
+                            id = PAO.76
+                        }
+                    }
+                }
+            }
+        }
+    }
+    on_capitulation = {
+        effect = {
+            if = {
+                #战胜躁动的亡者
+                limit = {
+                    ROOT = {
+                        tag = WL1
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = PAO
+                                    has_war_together_with = PAO
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        not ={
+                            has_global_flag = PAO_shibai
+                        }
+                        PAO = {
+                            NOT = {
+                                has_completed_focus = PAO_zwzg
+                            }
+                        }
+                        or = {
+                            tag = PAO
+                        }
+
+                    }
+                }
+                PAO = {
+                    white_peace = {
+                        tag = WL1
+                        message = PAO_win_WL1
+                    }
+                    annex_country = {
+                        target = WL1
+                        transfer_troops = no
+                    }
+                    country_event = {
+                        days = 1
+                        id = PAO.2
+                    }
+                }
+            }
+            if = {
+                #反败为胜躁动的亡者
+                limit = {
+                    ROOT = {
+                        tag = WL1
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = PAO
+                                    has_war_together_with = PAO
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        has_global_flag = PAO_shibai
+                        or = {
+                            tag = PAO
+                        }
+
+                    }
+                }
+                PAO = {
+                    annex_country = {
+                        target = WL1
+                        transfer_troops = no
+                    }
+                    clr_global_flag = PAO_shibai
+                    country_event = {
+                        days = 1
+                        id = PAO.62
+                    }
+                }
+            }
+            if = {
+                #战胜夜莺之心
+                limit = {
+                    ROOT = {
+                        tag = WL1
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = PAO
+                                    has_war_together_with = PAO
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        or = {
+                            has_completed_focus = PAO_zwzg
+                        }
+                    }
+                }
+                PAO = {
+                    annex_country = {
+                        target = WL1
+                        transfer_troops = no
+                    }
+                    country_event = {
+                        days = 1
+                        id = PAO.110
+                    }
+                }
+            }
+            if = {
+                #ai战败补偿
+                limit = {
+                    ROOT = {
+                        tag = PAO
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = WL1
+                                    has_war_together_with = WL1
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        has_global_flag = PAO_shibai
+                        PAO = {
+                            is_ai = yes
+                        }
+                        or = {
+                            tag = WL1
+                        }
+
+                    }
+                }
+                PAO = {
+                    annex_country = {
+                        target = WL1
+                        transfer_troops = no
+                    }
+                    country_event = {
+                        days = 1
+                        id = PAO.62
+                    }
+                }
+            }
+            if = {
+                #战败躁动的亡者
+                limit = {
+                    ROOT = {
+                        tag = PAO
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = WL1
+                                    has_war_together_with = WL1
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        not ={
+                            has_global_flag = PAO_shibai
+                        }
+                        or = {
+                            tag = WL1
+                        }
+
+                    }
+                }
+                PAO = {
+                    set_global_flag = PAO_shibai
+                    white_peace = {
+                        tag = WL1
+                        message = PAO_lose_WL1
+                    }
+                    #annex_country = {
+                    #target = WL1
+                    #transfer_troops = no
+                    #}
+                    WL1 = {
+                        every_state = {
+                            limit = {
+                                not = {
+                                    or = {
+                                        state = 301
+                                        state = 848
+                                        state = 302
+                                    }
+                                }
+                                is_core_of = PAO
+                            }
+                            WL1 = {
+                                transfer_state = prev
+                            }
+                        }
+                    }
+                    country_event = {
+                        hours = 6
+                        id = PAO.61
+                    }
+                }
+            }
+
+
+            if = {
+                #战胜瓦伦蒂娜
+                limit = {
+                    ROOT = {
+                        tag = PAM
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = QYJ
+                                    has_war_together_with = QYJ
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        or = {
+                            tag = QYJ
+                            has_war_together_with = QYJ
+                        }
+
+                    }
+                }
+                set_global_flag = lwnygm2
+                PAO = {
+                    country_event = {
+                        hours = 2
+                        id = PAO.19
+                    }
+                    white_peace = {
+                        tag = PAM
+                        message = PAO_win_VALENTINA
+                    }
+                    hidden_effect = {
+                        scoped_play_song = "痛苦之村"
+                    }
+                    QYJ =  {
+                        white_peace = {
+                            tag = PAM
+                        }
+                    }
+                }
+            }
+
+            if = {
+                #战胜野火
+                limit = {
+                    ROOT = {
+                        tag = LHS
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    tag = PAO
+                                    has_war_together_with = PAO
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        or = {
+                            tag = PAO
+                            has_war_together_with = PAO
+                        }
+                        PAO = {has_country_flag = PAO_lxlygl}
+                    }
+                }
+                LHS =  {
+                    transfer_units_fraction= {
+                        target = PAO
+                        size = 1
+                        stockpile_ratio = 1
+                        keep_unit_leaders_trigger = {
+                            always = yes
+                        }
+                    }
+                }
+            }
+
+            if = {
+                #战胜魔法少女联盟
+                limit = {
+                    ROOT = {
+                        tag = MGU
+                        is_subject = no
+                        NOT = {
+                            any_enemy_country = {
+                                NOT = {
+                                    or = {
+                                        tag = PAO
+                                        is_in_faction_with = PAO
+                                        is_subject_of = PAO
+                                        tag = MGC
+                                        tag = MRB
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    FROM = {
+                        PAO = {
+                            has_country_flag = PAO_jiefangmgu
+                        }
+                        OR = {
+                            tag = pao
+                            tag = MGC
+                            tag = MRB
+                            tag = MGR
+                            is_in_faction_with = PAO
+                            is_subject_of = PAO
+                            has_war_together_with = PAO
+                        }
+                    }
+                }
+                PAO = {
+                    MGC = {
+                        MGU_Kasane_Ao = {
+                            set_nationality = PAO
+                        }
+                    }
+                    MGR = {
+                        MGU_Tamaki_Ui = {
+                            set_nationality = PAO
+                        }
+                    }
+                    MGU = {
+                        every_character = {
+                            limit = { is_general_advisor = no }
+                            set_nationality = PAO
+                        }
+                    }
+                    hidden_effect = {
+                        PAO = {
+                            MGU_Satomi_Toka = {
+                                set_nationality = MGU
+                            }
+                        }
+                    }
+
+                    MRB = {
+                        MGU_Oba_Juri = {
+                            set_nationality = PAO
+                        }
+                        MGU_Chizu_Ranka = {
+                            set_nationality = PAO
+                        }
+                    }
+                    MGC = {
+                        every_core_state = {
+                            add_claim_by = PAO
+                        }
+                    }
+                    MGU = {
+                        every_core_state = {
+                            add_claim_by = PAO
+                        }
+                    }
+                    MRB = {
+                        every_core_state = {
+                            add_claim_by = PAO
+                        }
+                    }
+                    MGR = {
+                        every_core_state = {
+                            add_claim_by = PAO
+                        }
+                    }
+                    annex_country = {
+                        target = MGC
+                        transfer_troops = yes
+                    }
+                    annex_country = {
+                        target = MGR
+                        transfer_troops = yes
+                    }
+                    annex_country = {
+                        target = MRB
+                        transfer_troops = yes
+                    }
+                }
+
+            }
+
+
+        }
+    }
+}
+
+
+

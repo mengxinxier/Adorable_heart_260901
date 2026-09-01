@@ -1,0 +1,90 @@
+
+
+PRC_instigate_workers_revolution = { ### 1/25
+	icon = GFX_operations_coup_government
+	map_icon = GFX_operations_coup_government_map
+	name = PRC_instigate_workers_revolution
+	desc = PRC_instigate_workers_revolution_desc
+	days = 180
+
+	allowed = {
+		original_tag = PRC
+	}
+	available = { 
+		has_completed_focus = PRC_Pioneer_of_Asian_Revolution
+	}
+	visible = {
+		has_completed_focus = PRC_Pioneer_of_Asian_Revolution
+		FROM = {
+			or = {
+				capital_scope = { is_on_continent = asia }
+				capital_scope = { is_on_continent = india }
+			}
+			NOT = { has_government = communism }
+		}
+	}
+	operatives = 1
+
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+	risk_modifiers = { operation_risk }
+
+	# Integer [0-100] - Every operation has a hard requirement of network strength in the target country
+	network_strength = 25
+
+	requirements = { #SCOPE_COUNTRY
+	}
+	
+	equipment = {
+		infantry_equipment = 5000
+		support_equipment = 500
+	}
+
+	on_start = {  # SCOPE_OPERATION
+		
+	}
+	outcome_potential = {
+		FROM = {
+			add_popularity = { ideology = communism popularity = 0.1 } 
+			add_stability = -0.1
+			add_war_support = -0.1
+		}
+	}
+	risk_chance = 0.2
+	outcome_extra_chance = 0.25
+	outcome_execute = {
+		FROM = {
+			add_popularity = { ideology = communism popularity = 0.1 }
+		}
+	}
+	# outcome is an effect that runs when the operation has completed
+	outcome_extra_execute = { # SCOPE_OPERATION
+		FROM = {
+			add_popularity = { ideology = communism popularity = 0.1 } 
+			add_stability = -0.1
+			add_war_support = -0.1
+		}
+	}
+	
+	# This is where all the separate phases are defined
+	# Each phase for an operation may have a single actual phase assigned to it, which is determined here
+	phases = { #infiltration 
+		infiltration_submarine = { base = 33 } 
+		infiltration_paradrop = { 
+			base = 33 
+			modifier = {
+				ROOT = { has_equipment = { transport_plane_equipment < 1 } }
+				factor = 0.1
+			}
+		} 
+		infiltration_diplomatic = { base = 33 } 
+	}
+	phases = { 
+		lar_communist_uprising_organise_cells = { base = 33 }
+		lar_communist_uprising_infiltrate_civil_service = { base = 33 }
+		lar_communist_uprising_organize_strikes = { base = 33 }
+	}
+	phases = { 
+		lar_communist_uprising_train_workers_militia = { base = 25 }
+	}
+}

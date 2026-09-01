@@ -1,0 +1,262 @@
+add_namespace = CAN
+add_namespace = CAN_news
+add_namespace = nee_unification
+add_namespace = can_nee_internal
+
+######################
+#####  �����¼�  #####
+######################
+	country_event = {
+		id = CAN.1
+		title = CAN.1.t
+		desc = CAN.1.d
+		fire_only_once = yes
+		is_triggered_only = yes
+		option = {
+			name = CAN.1.1
+		}
+	}
+	country_event = {
+		id = CAN.2
+		title = CAN.2.t
+		desc = CAN.2.d
+		fire_only_once = yes
+		is_triggered_only = yes
+		option = {
+			name = CAN.2.1
+			recruit_character = CAN_chaliman
+		}
+	}
+	country_event = {
+		id = CAN.3
+		title = CAN.3.t
+		desc = CAN.3.d
+		fire_only_once = yes
+		is_triggered_only = yes
+		option = {
+			name = CAN.3.1
+		}
+	}
+	country_event = {
+		id = CAN.10
+		title = CAN.10.t
+		desc = CAN.10.d
+		picture = GFX_report_event_usa_election_generic
+		is_triggered_only = yes
+
+		option = { 	
+			name = CAN.10.a
+			ai_chance = {
+				factor = 100
+			}		
+			add_country_leader_role = {
+				character = "CAN_Yiyuan"
+				country_leader = {
+					ideology = Guided_democracy
+					traits = { born_agitator }
+					expire = "1965.1.1.1"
+				}
+				promote_leader = yes
+			}
+		}
+
+		option = {
+			name = CAN.10.b
+			ai_chance = {
+				factor = 0
+			}		
+			add_country_leader_role = {
+				character = "CAN_Yiyuan"
+				country_leader = {
+					ideology = Guided_democracy
+					traits = { born_agitator }
+					expire = "1965.1.1.1"
+				}
+				promote_leader = yes
+			}
+		}
+	}
+	
+#####################
+##### Ȥζ�¼� ######
+#####################
+
+country_event = {
+	id = canada.50
+	title = canada.50.t	# Factory sabotaged
+	desc = canada.50.d	#
+	picture = GFX_report_event_generic_factory
+	fire_only_once = yes
+	trigger = {
+		tag = CAN
+		#####has_completed_focus = CAN_forced_quebec_conscription
+		any_owned_state = {
+			industrial_complex > 0
+		}
+	}
+	mean_time_to_happen = {
+		months = 3
+	}
+	option = {
+		name = canada.50.a
+		set_country_flag = can_quebec_sabotage_1
+		random_owned_state = {
+			limit = {
+				industrial_complex > 0
+			}
+			damage_building = {
+				type = industrial_complex
+				damage = 0.7
+			}
+		}
+	}
+}
+
+country_event = {
+	id = canada.51
+	title = canada.51.t
+	desc = canada.51.d
+	picture = GFX_report_event_generic_factory
+	fire_only_once = yes
+	trigger = {
+		tag = CAN
+		has_country_flag = can_quebec_sabotage_1
+		#####has_completed_focus = CAN_forced_quebec_conscription
+		any_owned_state = {
+			arms_factory > 0
+		}
+	}
+	mean_time_to_happen = {
+		months = 3
+	}
+	option = {
+		name = canada.51.a
+		set_country_flag = can_quebec_sabotage_2
+		random_owned_state = {
+			limit = {
+				arms_factory > 0
+			}
+			damage_building = {
+				type = arms_factory
+				damage = 0.5
+			}
+		}
+	}
+}
+
+country_event = {
+	id = canada.52
+	title = canada.52.t
+	desc = canada.52.d
+	picture = GFX_report_event_generic_factory
+	fire_only_once = yes
+	trigger = {
+		tag = CAN
+		has_country_flag = can_quebec_sabotage_2
+		#####has_completed_focus = CAN_forced_quebec_conscription
+		any_owned_state = {
+			arms_factory > 0
+		}
+	}
+	mean_time_to_happen = {
+		months = 3
+	}
+	option = {
+		name = canada.52.a
+		set_country_flag = can_quebec_sabotage_3
+		random_owned_state = {
+			limit = {
+				arms_factory > 0
+			}
+			damage_building = {
+				type = arms_factory
+				damage = 0.6
+			}
+		}
+	}
+}
+
+country_event = {
+	id = canada.53
+	title = canada.53.t
+	desc = canada.53.d
+	picture = GFX_report_event_RCMP
+	fire_only_once = yes
+	trigger = {
+		tag = CAN
+		has_country_flag = can_quebec_sabotage_3
+		#####has_completed_focus = CAN_forced_quebec_conscription
+		any_owned_state = {
+			arms_factory > 0
+		}
+	}
+	mean_time_to_happen = {
+		months = 2
+	}
+	option = {
+		name = canada.53.a
+		clr_country_flag = can_quebec_sabotage_1
+		clr_country_flag = can_quebec_sabotage_2
+		clr_country_flag = can_quebec_sabotage_3
+		random_owned_state = {
+			limit = {
+				arms_factory > 0
+			}
+			damage_building = {
+				type = arms_factory
+				damage = 0.4
+			}
+		}
+	}
+}
+
+
+###############################
+###########新英格兰内部干扰循环事件 ############
+###############################
+
+# 隐藏事件：循环触发英格兰干扰
+# 负责激活任务
+country_event = {
+	id = can_nee_internal.998
+	title = can_nee_internal.998.t
+	desc = can_nee_internal.998.d
+	is_triggered_only = yes
+	hidden = yes             
+
+	immediate = {
+		# 仅在整合尚未完成且NEE仍然存在时继续循环
+		if = {
+			limit = {
+				has_country_flag = CAN_NEE_integration_started
+				NEE = { exists = yes }
+			}
+			# 使用 activate_mission 显式重置/激活任务
+			activate_mission = CAN_NEE_british_interference
+		}
+	}
+}
+
+###############################
+###########加英整合事件############
+###############################
+country_event = {
+		id = nee_unification.1
+		title = nee_unification.1.t
+		desc = nee_unification.1.d
+		fire_only_once = yes
+		is_triggered_only = yes
+		option = {
+			name = nee_unification.1.1
+		}
+	}
+	country_event = {
+		id = nee_unification.2
+		title = nee_unification.2.t
+		desc = nee_unification.2.d
+		fire_only_once = yes
+		is_triggered_only = yes
+		option = {
+			name = nee_unification.2.1
+		}
+	}

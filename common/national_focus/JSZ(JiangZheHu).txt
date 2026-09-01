@@ -1,0 +1,367 @@
+focus_tree = {
+	id = JZS_focus
+	country = {
+		factor = 0
+		modifier = {
+			#add = 20
+			#tag = JSZ
+		}
+	}
+	shortcut = {
+		name = CHI_warlord_construction_shortcut
+		target = CWL_xiaojunfadamengxiang
+		scroll_wheel_factor = 1
+		trigger = {
+		}
+	}
+	shortcut = {
+		name = CHI_warlord_politics_shortcut
+		target = JSZ_Governor_still_exists
+		scroll_wheel_factor = 1
+		trigger = {
+		}
+	}
+	shortcut = {
+		name = BAY_army_shortcut
+		target = CWL_dongbeijiangwutang
+		scroll_wheel_factor = 1
+		trigger = {
+		}
+	}
+	shortcut = {
+		name = CHI_unit_shortcut
+		target = CWL_kaishichongjian
+		scroll_wheel_factor = 1
+		trigger = {
+		}
+	}
+	shortcut = {
+		name = china_governor_shortcut
+		target = CHI_shared_Ducu_Zongdu
+		scroll_wheel_factor = 1
+		trigger = {
+		}
+	}
+	shortcut = {
+		name = anti_JAP_shortcut
+		target = PRC_Great_War_Against_Sakura
+		scroll_wheel_factor = 1
+		trigger = {
+		}
+	}
+	default = no
+	shared_focus = CWL_xiaojunfadamengxiang
+	shared_focus = CWL_dongbeijiangwutang
+	shared_focus = CWL_kaishichongjian
+	shared_focus = CHI_shared_Ducu_Zongdu
+	shared_focus = PRC_Great_War_Against_Sakura
+	continuous_focus_position = {
+		x = 50
+		y = 1350
+	}
+	#南直隶总督府仍存
+	focus = {
+		id = JSZ_Governor_still_exists
+		icon = GFX_goal_generic_parliament
+		x = 18
+		y = 0
+		cost = 5
+		mutually_exclusive = {
+			focus = JSZ_Seventy_years_of_blood
+		}
+		mutually_exclusive = {
+			focus = JSZ_National_Revolution_victorious
+		}
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_political_power = 50
+		}
+	}
+	#归顺中央
+	focus = {
+		id = JSZ_Submit_to_central_government
+		icon = GFX_goal_generic_aristocratic_cooperation
+		prerequisite = {
+			focus = JSZ_Governor_still_exists
+		}
+		relative_position_id = JSZ_Governor_still_exists
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_stability = 0.1
+		}
+	}
+	#清君侧
+	focus = {
+		id = JSZ_Clear_kings_side
+		icon = GFX_goal_generic_army_purges
+		prerequisite = {
+			focus = JSZ_Governor_still_exists
+		}
+		relative_position_id = JSZ_Governor_still_exists
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_stability = 0.1
+		}
+	}
+	#逐鹿中原
+	focus = {
+		id = JSZ_Chasing_deer_in_CHI
+		icon = GFX_goal_generic_authority
+		prerequisite = {
+			focus = JSZ_Clear_kings_side
+			focus = JSZ_Seventy_years_of_blood
+			focus = JSZ_Independence_Revolution
+		}
+		relative_position_id = JSZ_Clear_kings_side
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			is_subject = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			ROOT_get_in_the_competition_for_China_reunification = yes
+			every_other_country = {
+					limit = {
+						is_chinese_country = yes
+						has_country_flag = Participate_in_the_competition_for_China_reunification
+						is_subject = no
+						not = {
+							or = {
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+								has_war_with = ROOT
+							}
+						}
+					}
+					ROOT = {
+						activate_targeted_decision = {
+							target = PREV
+							decision = CHI_generic_attck_FROM
+						}
+					}
+				}
+			every_other_country = {
+					limit = {
+						is_chinese_country = yes
+						not = { has_country_flag = Participate_in_the_competition_for_China_reunification }
+						is_subject = no
+						not = {
+							or = {
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+								has_war_with = ROOT
+							}
+						}
+					}
+					ROOT = {
+						activate_targeted_decision = {
+							target = PREV
+							decision = CHI_generic_Ask_FROM_for_submission
+						}
+					}
+			}
+		}
+	}
+	#一统中国
+	focus = {
+		id = JSZ_Unify_China
+		icon = GFX_focus_chi_one_china_policy
+		prerequisite = {
+			focus = JSZ_Chasing_deer_in_CHI
+		}
+		relative_position_id = JSZ_Chasing_deer_in_CHI
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = not_other_competiter_for_China_reunification
+				not = {
+					any_other_country = {
+						has_country_flag = Participate_in_the_competition_for_China_reunification
+						is_subject = no
+					}
+				}
+			}
+		}
+		completion_reward = {
+			if = {
+				limit = { has_completed_focus = JSZ_Governor_still_exists }
+				set_cosmetic_tag = CHI
+			}
+			else_if = {
+				limit = { has_completed_focus = JSZ_Seventy_years_of_blood }
+				set_cosmetic_tag = THK
+				set_province_name = {
+					id = 11913
+					name = "THK_VICTORY_POINTS_11913"
+				}
+			}
+			else_if = {
+				limit = { has_completed_focus = JSZ_National_Revolution_victorious }
+				set_cosmetic_tag = ROC
+			}
+			else = {
+				set_cosmetic_tag = CHI_generic
+			}
+			set_global_flag = CHI_REUNIT
+			save_global_event_target_as = china_uniter
+			add_ideas = ROC_crushed_country_1
+			set_country_flag = CHI_reclaim_concession_flag
+			unlock_decision_category_tooltip = CHI_reclaim_concession
+			unlock_decision_tooltip = CHI_seizure_HongKong
+			unlock_decision_tooltip = CHI_seizure_Macau
+			unlock_decision_tooltip = CHI_seizure_ShangHai
+			unlock_decision_tooltip = CHI_Train_Taiwan_column
+			unlock_decision_tooltip = CHI_seizure_Taiwan
+			every_controlled_state = {
+				limit = { not = { is_core_of = ROOT } }
+				add_compliance = 10
+			}
+			custom_effect_tooltip = {
+				localization_key = China_Industrial_Points_Var_up_tt
+				POINT = "25"
+			}
+			add_to_variable = {
+				var = China_Industrial_Points_Var
+				value = 25
+			}
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+	}
+	#国民革命胜利
+	focus = {
+		id = JSZ_National_Revolution_victorious
+		icon = GFX_goal_GXC_shinian
+		mutually_exclusive = {
+			focus = JSZ_Governor_still_exists
+		}
+		mutually_exclusive = {
+			focus = JSZ_Seventy_years_of_blood
+		}
+		x = 22
+		y = 0
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_political_power = 50
+		}
+	}
+	#独立革命
+	focus = {
+		id = JSZ_Independence_Revolution
+		icon = GFX_goal_GXC_gongheguo
+		prerequisite = {
+			focus = JSZ_National_Revolution_victorious
+		}
+		relative_position_id = JSZ_National_Revolution_victorious
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_stability = 0.1
+		}
+	}
+	#宁广合流
+	focus = {
+		id = JSZ_Ningguang_convergence
+		icon = GFX_befriend_ROC
+		prerequisite = {
+			focus = JSZ_National_Revolution_victorious
+		}
+		relative_position_id = JSZ_National_Revolution_victorious
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_stability = 0.1
+		}
+	}
+	#七十年太平血
+	focus = {
+		id = JSZ_Seventy_years_of_blood
+		icon = GFX_goal_generic_christian_education
+		mutually_exclusive = {
+			focus = JSZ_Governor_still_exists
+		}
+		mutually_exclusive = {
+			focus = JSZ_National_Revolution_victorious
+		}
+		x = 20
+		y = 0
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			always = no
+		}
+		available_if_capitulated = no
+		cancel_if_invalid = yes
+		completion_reward = {
+			add_political_power = 50
+			add_stability = 0.1
+		}
+	}
+}

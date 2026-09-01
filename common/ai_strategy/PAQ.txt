@@ -1,0 +1,376 @@
+PAQ_start = {
+	enable = {
+		tag = PAQ
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = pp_spend_amount
+		id = idea
+		value = 100
+	}
+	ai_strategy = {
+		type = role_ratio	#模板倾向
+		id = NFA_infantry
+		value = 800
+	}
+	ai_strategy = {
+		type = template_prio	#训练模板倾向
+		id = NFA_infantry
+		value = 800
+	}
+	# ai_strategy = {
+		# type = equipment_production_factor	#装备倾向
+		# id = infantry_weapons		
+		# value = 200
+	# }
+}
+
+PAQ_wants_civ = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		date < 1937.1.1
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = building_target
+		id = industrial_complex
+		value = 10000
+	}
+}
+
+PAQ_prio_military_even_at_peace = {
+    allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		date > 1937.1.1
+		date < 1941.1.1
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = building_target
+		id = arms_factory
+		value = 10000
+	}
+}
+
+PAQ_y_game = {
+	allowed = { 
+		tag = PAQ
+	}
+
+	enable = {
+		tag = PAQ
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_stockpile_surplus_ratio
+		value = -80 # reduce while we build up troops for africa etc
+	}
+}
+
+PAQ_tank_production = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		#has_tech = basic_medium_tank_chassis
+		has_tech = improved_medium_tank_chassis
+		date > 1940.1.1
+		arms_factory > 80
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 2
+	}
+	ai_strategy = {
+		type = role_ratio	#模板倾向
+		id = NFA_tank
+		value = 800
+	}
+	ai_strategy = {
+		type = template_prio	#训练模板倾向
+		id = NFA_tank
+		value = 800
+	}
+	ai_strategy = {
+		type = equipment_production_factor	#装备倾向
+		id = armor			
+		value = 200
+	}
+}
+
+PAQ_you_should_be_prepared_for_war = {
+	allowed = { 
+		tag = PAQ
+	}
+	enable = {
+		always = yes
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+        type = force_build_armies
+        value = 100
+    }
+}
+
+PAQ_time_to_war = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		date > 1936.3.1
+		country_exists = PA1
+		OR = {
+			has_war = no
+			has_war_with = PA1
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = prepare_for_war
+		id = PA1
+		value = 300
+	}
+}
+
+PAQ_war_with_PA1 = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		has_war_with = PA1
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = invade		#入侵
+		id = "PA1"			
+		value = 200
+	}
+	ai_strategy = {
+		type = conquer		#征服
+		id = "PA1"			
+		value = 200
+	}
+	ai_strategy = {
+		type = invasion_unit_request
+		tag = PA1
+		value = 0
+	}
+	
+	ai_strategy = {
+		type = front_unit_request #前线部队
+		tag = PA1
+		value = 200 # lets put more units, should be safe
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = PA1
+
+		ratio = 1
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+	
+}
+
+PAQ_time_to_war_2 = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		date > 1936.8.1
+		not = { country_exists = PA1 }
+		country_exists = ELF
+		OR = {
+			has_war = no
+			has_war_with = ELF
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = prepare_for_war
+		id = ELF
+		value = 300
+	}
+}
+
+PAQ_war_with_ELF = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		has_war_with = ELF
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = conquer		#征服
+		id = "ELF"			
+		value = 200
+	}
+	
+	ai_strategy = {
+		type = front_unit_request #前线部队
+		tag = ELF
+		value = 200 # lets put more units, should be safe
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = ELF
+
+		ratio = 1
+
+		priority = 100
+		ordertype = front
+		execution_type = rush_weak
+		execute_order = yes
+	}
+	
+}
+
+PAQ_war_with_MGU_or_LHS = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		OR = {
+			has_war_with = MGU
+			has_war_with = LHS
+			has_war_with = PAM
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_control
+
+		tag = LHS
+
+		ratio = 0.6
+
+		priority = 100
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = PAM
+
+		ratio = 0.6
+
+		priority = 100
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = MGU
+
+		ratio = 0.8
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = LFC
+
+		ratio = 0.8
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+	
+}
+
+PAQ_ai_research_38tank = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		#date > 1937.6.1
+		date > 1940.1.1
+		has_completed_focus = PAQ_30
+	}
+	abort = {
+		always = no
+	}
+	ai_strategy = { #基础型中型坦克底盘
+		type = research_tech	
+		id = basic_medium_tank_chassis
+		value = 800
+	}
+	ai_strategy = { #反坦克炮升级
+		type = research_tech	
+		id = antitank1
+		value = 800
+	}
+	ai_strategy = { #维修连
+		type = research_tech	
+		id = tech_maintenance_company
+		value = 800
+	}
+	ai_strategy = { #维修连
+		type = research_tech	
+		id = tech_maintenance_company2
+		value = 800
+	}
+}
+
+PAQ_ai_research_40tank = {
+	allowed = {
+		original_tag = PAQ
+	}
+	enable = {
+		date > 1940.1.1
+		has_tech = basic_medium_tank_chassis
+	}
+	abort = {
+		always = no
+	}
+	ai_strategy = { #改进型中型坦克底盘
+		type = research_tech	
+		id = improved_medium_tank_chassis
+		value = 800
+	}
+	ai_strategy = { #反坦克炮升级
+		type = research_tech	
+		id = antitank2
+		value = 900
+	}
+	ai_strategy = { #反坦克炮升级
+		type = research_tech	
+		id = antitank3
+		value = 900
+	}
+}

@@ -1,0 +1,6366 @@
+
+#德国外交部
+German_Foreign_Office = {
+	AUS_GER_REBUILD = {  ##德意志归来
+		###
+		icon = GFX_decision_congress
+		visible = {
+			is_subject = no
+			has_country_flag = AUS_L_GER
+			not = { has_global_flag = GER_REBUILD_ALREADY }
+		}
+		priority = 100
+		days_remove = 0
+		fire_only_once = yes
+		available = {
+			is_subject = no
+			has_government = fascism
+			has_war = no
+			64 = {
+				is_owned_and_controlled_by = GER
+			}
+			custom_trigger_tooltip = {
+				tooltip = unm_of_control_germany_state_bigger_25
+				check_variable = { unm_of_control_germany_state > 25 }
+			}
+		}
+		#is_good = yes
+		cancel_if_not_visible = yes
+		complete_effect = {
+			set_global_flag = AUS_GER_REBUILD
+			GER_BACK = yes
+			country_event = {
+				id = austria.15
+			}
+			clr_country_flag = start_GER_Renaissance_War
+			remove_dynamic_modifier = {
+				modifier = GER_Warzeal_modifer
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	GER_Demand_allies_hand_over_Berlin = {  ##要求盟友交出柏林
+		visible = {
+			TAG = GER
+			is_subject = no
+			NOT = {
+				64 = {
+					is_controlled_by = GER
+				}
+			}
+			has_country_flag = AUS_L_GER
+			not = { has_global_flag = GER_REBUILD_ALREADY }
+		}
+		available = {
+			TAG = GER
+			is_subject = no
+			NOT = {
+				controls_state = 64
+			}
+			any_allied_country = {
+				controls_state = 64
+			}
+		}
+		cost = 0
+		days_remove = 0
+		remove_effect = {
+			every_country = {
+				limit = {
+					64 = {
+						is_controlled_by = PREV
+					}
+					is_in_faction_with = GER
+					NOT = {
+						TAG = GER
+					}
+				}
+				GER = {
+					transfer_state = 64
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	AUS_attack_bolin_controler = {  ##夺回柏林
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_country_flag = AUS_L_GER
+			not = { has_global_flag = GER_REBUILD_ALREADY }
+		}
+		target_trigger = {
+			FROM = {
+				controls_state = 64
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+			has_country_flag = AUS_IS_READY
+			date > 1939.9.1
+			#has_global_flag = second_weltkrieg_has_started
+			has_war = no
+			is_subject = no
+		}
+		cost = 0
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+			setup_decision_attack_AI = yes
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				date > 1940.6.1
+				add = 300
+			}
+			modifier = {
+				and = {
+					DVL = {
+						any_home_area_neighbor_country = {
+							has_war_with = ROOT
+						}
+					}
+					date > 1940.3.1
+				}
+				add = 300
+			}
+		}
+	}
+	GER_invite_FROM_add_to_Vienna_Convention = {
+		icon = GFX_Vienna_Convention_decision
+		allowed = {
+			is_germany_tag = yes
+		}
+		target_trigger = {
+			ROOT = {
+				or = {
+					has_idea = GER_Vienna_Convention_idea
+					has_idea = GER_Vienna_Convention_idea_1
+				}
+				is_subject = no
+				is_faction_leader = yes
+			}
+			FROM = {
+				not_in_any_economy_faction = yes
+				not = { has_country_flag = GER_invite_FROM_add_to_Vienna_Convention }
+			}
+		}
+		target_array = allies
+		available = {
+			not = { has_war_with = FROM }
+		}
+		cost = 10
+		days_remove = 15
+		remove_effect = {
+			FROM = {
+				set_country_flag = GER_invite_FROM_add_to_Vienna_Convention
+				country_event = {
+					id = ah_germany.130
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	GER_end_axis_guarantee = {  ##取消三国互保
+		allowed = { tag = GER }
+		visible = {
+			is_subject = no
+			or = {
+				has_guaranteed = ITA
+				has_guaranteed = JAP
+				is_guaranteed_by = ITA
+				is_guaranteed_by = JAP
+			}
+		}
+		available = {
+		}
+		cost = 0
+		days_remove = 0
+		remove_effect = {
+			diplomatic_relation = {
+				country = ITA
+				relation = guarantee
+				active = no
+			}
+			diplomatic_relation = {
+				country = JAP
+				relation = guarantee
+				active = no
+			}
+			ITA = {
+				diplomatic_relation = {
+					country = JAP
+					relation = guarantee
+					active = no
+				}
+				diplomatic_relation = {
+					country = GER
+					relation = guarantee
+					active = no
+				}
+			}
+			JAP = {
+				diplomatic_relation = {
+					country = ITA
+					relation = guarantee
+					active = no
+				}
+				diplomatic_relation = {
+					country = GER
+					relation = guarantee
+					active = no
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+			modifier = {
+				factor = 0
+				not = { has_global_flag = AUS_GER_REBUILD }
+			}
+		}
+	}
+	GER_east_war = { ##东部计划
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_generic_06
+		}
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					or = {
+						is_core_of = POL
+						is_core_of = BAL
+						is_core_of = FIN
+						is_core_of = SOV
+						is_core_of = UKR
+						is_core_of = CZE
+					}
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				NOT = {
+					any_home_area_neighbor_country = {
+						has_war_with = ROOT
+					}
+				}
+				add = 30
+			}
+			modifier = {
+				has_country_flag = GER_war_plan_going_on
+				add = -30
+			}
+		}
+		complete_effect = {
+			set_country_flag = {
+				flag = GER_war_plan_going_on
+				value = 1
+				days = 60
+			}
+		}
+		cost = 10
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			setup_decision_attack_AI = yes
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+	}
+	GER_west_war = {  ##西部计划
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_generic_07
+		}
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					or = {
+						is_core_of = FRA
+						is_core_of = ENG
+						is_core_of = NPT
+						is_core_of = TRB
+					}
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				NOT = {
+					any_home_area_neighbor_country = {
+						has_war_with = ROOT
+					}
+				}
+				add = 30
+			}
+			modifier = {
+				has_country_flag = GER_war_plan_going_on
+				add = -30
+			}
+		}
+		complete_effect = {
+			set_country_flag = {
+				flag = GER_war_plan_going_on
+				value = 1
+				days = 60
+			}
+		}
+		cost = 10
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			setup_decision_attack_AI = yes
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+	}
+	GER_north_war = {  ##北部计划
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_generic_08
+		}
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					or = {
+						is_core_of = DEN
+						is_core_of = NOR
+						is_core_of = FIN
+					}
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				NOT = {
+					any_home_area_neighbor_country = {
+						has_war_with = ROOT
+					}
+				}
+				add = 30
+			}
+			modifier = {
+				has_country_flag = GER_war_plan_going_on
+				add = -30
+			}
+		}
+		complete_effect = {
+			set_country_flag = {
+				flag = GER_war_plan_going_on
+				value = 1
+				days = 60
+			}
+		}
+		cost = 10
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			setup_decision_attack_AI = yes
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+	}
+	GER_ber_war = {  ##巴尔干计划
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_generic_09
+		}
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					or = {
+						is_core_of = ROM
+						is_core_of = ALB
+						is_BA_state = yes
+						is_core_of = HUN
+						is_core_of = BUL
+						is_core_of = GRE
+					}
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				NOT = {
+					any_home_area_neighbor_country = {
+						has_war_with = ROOT
+					}
+				}
+				add = 30
+			}
+			modifier = {
+				has_country_flag = GER_war_plan_going_on
+				add = -30
+			}
+		}
+		complete_effect = {
+			set_country_flag = {
+				flag = GER_war_plan_going_on
+				value = 1
+				days = 60
+			}
+		}
+		cost = 10
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			setup_decision_attack_AI = yes
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+	}
+	GER_north_amercian_war = {  ##北美计划
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_generic_10
+		}
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					is_on_continent = north_america
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		cost = 10
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			setup_decision_attack_AI = yes
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+	}
+	GER_invite_Chinese_country = {  ##邀请老钟国家
+		visible = {
+			is_faction_leader = yes
+			or = {
+				has_completed_focus = GER_generic_11
+				has_completed_focus = GER_generic_12
+				has_completed_focus = GER_generic_13
+				has_completed_focus = GER_Germany_s_enemies_are_unforgivable
+			}
+		}
+		available = {
+			has_global_flag = CHI_REUNIT
+			FROM = {
+				not = { is_in_faction_with = ROOT }
+				is_subject = no
+			}
+			not = {
+				has_war_with = FROM
+			}
+			not = {
+				any_allied_country = {
+					has_war_with = FROM
+				}
+			}
+			is_faction_leader = yes
+			or = {
+				has_completed_focus = GER_generic_11
+				has_completed_focus = GER_generic_12
+				has_completed_focus = GER_generic_13
+				has_completed_focus = GER_Germany_s_enemies_are_unforgivable
+			}
+		}
+		target_trigger = {
+			FROM = {
+				is_chinese_country = yes
+				not = {
+					has_country_flag = GER_has_already_invited
+				}
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				or = {
+					has_government = fascism
+					has_government = neutrality
+				}
+			}
+			ROOT = {
+				is_faction_leader = yes
+				is_subject = no
+			}
+		}
+		cost = 10
+		days_remove = 10
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				any_country = {
+					or = {
+						is_in_faction_with = ROOT
+						tag = GER
+					}
+					FROM = {
+						or = {
+							any_allied_country = {
+								is_neighbor_of = PREV.PREV
+							}
+							is_neighbor_of = PREV
+						}
+					}
+				}
+				add = 30
+			}
+		}
+		remove_effect = {
+			FROM = {
+				set_country_flag = GER_has_already_invited
+				country_event = {
+					id = ah_germany.89
+				}
+			}
+		}
+	}
+	GER_invite_other_country = {  ##邀请太君、俄罗斯
+		visible = {
+			is_faction_leader = yes
+			or = {
+				has_completed_focus = GER_generic_11
+				has_completed_focus = GER_generic_12
+				has_completed_focus = GER_generic_13
+				has_completed_focus = GER_Germany_s_enemies_are_unforgivable
+			}
+		}
+		available = {
+			FROM = {
+				not = {
+					is_in_faction_with = ROOT
+				}
+				is_subject = no
+				or = {
+					has_government = fascism
+					has_government = neutrality
+				}
+			}
+			not = {
+				has_war_with = FROM
+			}
+			not = {
+				any_allied_country = {
+					has_war_with = FROM
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				or = {
+					tag = JAP
+					tag = RJE
+					tag = UKR
+				}
+				not = {
+					has_country_flag = GER_has_already_invited
+				}
+			}
+			ROOT = {
+				is_faction_leader = yes
+				is_subject = no
+			}
+		}
+		cost = 10
+		days_remove = 10
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				any_country = {
+					or = {
+						is_in_faction_with = ROOT
+						tag = GER
+					}
+					FROM = {
+						or = {
+							any_allied_country = {
+								is_neighbor_of = PREV.PREV
+							}
+							is_neighbor_of = PREV
+						}
+					}
+				}
+				add = 30
+			}
+		}
+		remove_effect = {
+			FROM = {
+				set_country_flag = GER_has_already_invited
+				country_event = {
+					id = ah_germany.89
+				}
+			}
+		}
+	}
+	GER_Eye_of_Rebirth_Project_attack_ENG = {  ##重生之眼-进攻圣杯
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_The_Spirit_of_the_Grail
+		}
+		target_trigger = {
+			FROM = {
+				controls_state = 126
+				NOT = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+			has_completed_focus = GER_The_Spirit_of_the_Grail
+			has_war = no
+			is_subject = no
+		}
+		cost = 0
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+			setup_decision_attack_AI = yes
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+				}
+				factor = 0
+			}
+		}
+	}
+	GER_Eye_of_Rebirth_Project_attack_FRA = {  ##重生之眼-进攻幻想乡
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_The_Underworld_of_Fantasy_Town
+		}
+		target_trigger = {
+			FROM = {
+				controls_state = 16
+				NOT = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+			has_completed_focus = GER_The_Underworld_of_Fantasy_Town
+			has_war = no
+			is_subject = no
+		}
+		cost = 0
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+			setup_decision_attack_AI = yes
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+				}
+				factor = 0
+			}
+		}
+	}
+	GER_Eye_of_Rebirth_Project_attack_POL = {  ##重生之眼-进攻执念
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_The_land_of_the_dead_obsessed
+		}
+		target_trigger = {
+			FROM = {
+				controls_state = 10
+				NOT = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+			has_completed_focus = GER_The_land_of_the_dead_obsessed
+			has_war = no
+			is_subject = no
+		}
+		cost = 0
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+			setup_decision_attack_AI = yes
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+				}
+				factor = 0
+			}
+		}
+	}
+	GER_Eye_of_Rebirth_Project_attack_SOV = {  ##重生之眼-进攻苏联
+		icon = GFX_decision_generic_ignite_civil_war
+		visible = {
+			has_completed_focus = GER_Russian_magic
+		}
+		target_trigger = {
+			FROM = {
+				controls_state = 219
+				NOT = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+			has_completed_focus = GER_Russian_magic
+			has_war = no
+			is_subject = no
+		}
+		cost = 0
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+			setup_decision_attack_AI = yes
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+				}
+				factor = 0
+			}
+		}
+	}
+}
+
+##关税同盟
+GER_Customs_Union = {
+	GER_invite_FROM_add_to_Customs_Union = {
+		icon = GFX_Customs_Union_decision
+		allowed = {
+			is_germany_tag = yes
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				is_faction_leader = yes
+			}
+			FROM = {
+				not_in_any_economy_faction = yes
+				not = { has_government = fascism }
+				not = { has_country_flag = GER_invite_FROM_add_to_Customs_Union }
+				not = { has_idea = GER_Customs_Union_idea }
+			}
+		}
+		target_array = allies
+		available = {
+			FROM = {
+				not = { has_government = fascism }
+			}
+			not = { has_war_with = FROM }
+		}
+		cost = 10
+		days_remove = 15
+		remove_effect = {
+			FROM = {
+				set_country_flag = GER_invite_FROM_add_to_Customs_Union
+				country_event = {
+					id = demGermany.011
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	GER_invite_FROM_add_to_Customs_Union_neutral = {
+		icon = GFX_Customs_Union_decision
+		allowed = {
+			always = no
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				is_faction_leader = yes
+			}
+			FROM = {
+				not_in_any_economy_faction = yes
+				not = { has_government = fascism }
+				not = { has_country_flag = GER_invite_FROM_add_to_Customs_Union }
+				not = { has_idea = GER_Customs_Union_idea }
+			}
+		}
+		available = {
+			FROM = {
+				not = { has_government = fascism }
+			}
+			not = { has_war_with = FROM }
+		}
+		cost = 10
+		days_remove = 15
+		remove_effect = {
+			FROM = {
+				set_country_flag = GER_invite_FROM_add_to_Customs_Union
+				country_event = {
+					id = demGermany.011
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+}
+
+#政治宣传部门
+AUS_pl_cat = {
+	##安分点，别以为我找不到你
+	AUS_publicity_A = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_completed_focus = AUS_Expand_Gestapo
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_A_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 1
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			stability_weekly = 0.01
+			war_support_weekly = 0.01
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 1
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_A_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##为祖国自豪
+	AUS_publicity_D = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_D_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 4
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			political_power_gain = 0.5
+			stability_weekly = 0.01
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 4
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_D_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##更多的坦克
+	AUS_publicity_E = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_completed_focus = AUS_Deutsche_United_production_line
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_E_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 5
+			}
+			AUS_set_pubilcity_slot = yes
+			add_ideas = AUS_publicity_E
+		}
+		modifier = {
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 5
+			}
+			AUS_clr_pubilcity_slot = yes
+			remove_ideas = AUS_publicity_E
+			add_to_variable = {
+				var = AUS_publicity_E_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##为国家生产
+	AUS_publicity_F = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_completed_focus = AUS_German_Labor_Culture
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_F_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 6
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			production_factory_max_efficiency_factor = 0.1
+			industrial_capacity_factory = 0.1
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 6
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_F_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##更多的工厂！
+	AUS_publicity_H = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_H_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 8
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.1
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 8
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_H_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##科技就是力量！
+	AUS_publicity_K = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_completed_focus = AUS_fund_the_vienna_college_of_technology
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_K_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 11
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			research_speed_factor = 0.08
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 11
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_K_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##闪电攻势
+	AUS_publicity_B = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_war = yes
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_B_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 2
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			army_armor_attack_factor = 0.1
+			army_armor_defence_factor = 0.1
+			army_speed_factor = 0.1
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 2
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_B_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##为德意志服役
+	AUS_publicity_C = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_war = yes
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_C_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 3
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			weekly_manpower = 20000
+			war_support_weekly = 0.01
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 3
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_C_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##殊死抵抗
+	AUS_publicity_G = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_war = yes
+			surrender_progress > 0.3
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_G_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 7
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			surrender_limit = 0.5
+			army_core_defence_factor = 0.15
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 7
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_G_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##祖国的天空斗士
+	AUS_publicity_I = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_war = yes
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_I_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 9
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			air_fuel_consumption_factor = -0.1
+			air_accidents = -0.1
+			air_weather_penalty = -0.1
+			air_attack_factor = 0.1
+			air_mission_efficiency = 0.1
+			air_night_penalty = -0.1
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 9
+			}
+			AUS_clr_pubilcity_slot = yes
+			add_to_variable = {
+				var = AUS_publicity_I_cost
+				value = 25
+				tooltip = AUS_publicity_cost_add_25
+			}
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	##为英雄提供粮食！
+	AUS_publicity_J = {
+		allowed = {
+			original_tag = GER
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = EMPTY_SPARE
+				AUS_propaganda_poster_slot_available = yes
+			}
+			has_war = yes
+		}
+		visible = {
+		}
+		days_remove = 100
+		cost = AUS_publicity_J_cost
+		days_re_enable = 100
+		complete_effect = {
+			set_variable = {
+				AUS_pub_temp = 10
+			}
+			AUS_set_pubilcity_slot = yes
+		}
+		modifier = {
+			consumer_goods_factor = -0.1
+			conscription = 0.01
+		}
+		remove_effect = {
+			set_variable = {
+				AUS_pub_temp = 10
+			}
+			AUS_clr_pubilcity_slot = yes
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+}
+
+##复国战争
+GER_Renaissance_War = {
+	##每月结算
+	GER_Count_Warzeal_monthly = {
+		icon = GFX_decision_eng_trade_unions_support
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 30
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		selectable_mission = yes
+		cancel_trigger = {
+			hidden_trigger = {
+				not = { has_country_flag = start_GER_Renaissance_War }
+			}
+		}
+		timeout_effect = {
+			if = {  ##巴伐利亚
+				limit = {
+					52 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 52_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 10
+					tooltip = warzeal_var_add_10
+				}
+				52 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##布拉格
+				limit = {
+					9 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 9_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 10
+					tooltip = warzeal_var_add_10
+				}
+				9 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##法兰克福
+				limit = {
+					55 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 55_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 5
+					tooltip = warzeal_var_add_5
+				}
+				55 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##科隆
+				limit = {
+					781 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 781_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 10
+					tooltip = warzeal_var_add_10
+				}
+				781 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##莱比锡
+				limit = {
+					65 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 65_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 10
+					tooltip = warzeal_var_add_10
+				}
+				65 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##汉堡
+				limit = {
+					58 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 58_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 10
+					tooltip = warzeal_var_add_10
+				}
+				58 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##纳萨力克
+				limit = {
+					1158 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 1158_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 15
+					tooltip = warzeal_var_add_15
+				}
+				1158 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			if = {  ##柏林
+				limit = {
+					64 = {
+						is_controlled_by_ROOT_or_ally = yes
+						not = { has_state_flag = GER_Count_Warzeal_monthly }
+					}
+				}
+				custom_effect_tooltip = 64_is_back
+				add_to_variable = {
+					var = warzeal_var
+					value = 20
+					tooltip = warzeal_var_add_20
+				}
+				64 = { set_state_flag = GER_Count_Warzeal_monthly }
+			}
+			add_to_variable = {
+				var = warzeal_var
+				value = warzeal_var_monthly
+				tooltip = GER_Count_Warzeal_monthly_TT
+			}
+			GER_Count_Warzeal = yes
+			hidden_effect = {
+				activate_mission = GER_Count_Warzeal_monthly
+			}
+		}
+	}
+	##配给柏飞丁
+	GER_Rationed_to_Buffettin = {
+		icon = GFX_Buffettin
+		allowed = { tag = GER }
+		visible = {
+		}
+		available = {
+			industrial_complex > 4
+		}
+		cost = 0
+		custom_cost_trigger = {
+			check_variable = {
+				var = ubs_save
+				value = 100
+				compare = greater_than_or_equals
+			}
+		}
+		custom_cost_text = HCP_100
+		days_remove = 90
+		days_re_enable = 100
+		complete_effect = {
+			add_to_variable = {
+				var = ubs_save
+				value = -100
+			}
+			UBS_bank_icon_frames = yes
+			add_to_variable = { warzeal_var_monthly = 5 }
+		}
+		modifier = {
+			civilian_factory_use = 5
+			custom_modifier_tooltip = warzeal_var_monthly_add_5
+			army_org_factor = 0.1
+			breakthrough_factor = 0.1
+			land_night_attack = 0.1
+			experience_loss_factor = 0.1
+			army_defence_factor = -0.1
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			add_to_variable = {
+				var = warzeal_var
+				value = -20
+				tooltip = warzeal_var_down_20
+			}
+			add_to_variable = { warzeal_var_monthly = -5 }
+			GER_Count_Warzeal = yes
+		}
+	}
+}
+
+#光复大德意志
+GER_GREAT_GERMANIA_PLAN = {
+	declare_bulid_of_GERMANIA = {
+		icon = GFX_decision_ger_reichskommissariats
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ALL_CONTROL_G_GER
+				NOT = {
+					any_state = {
+						has_state_flag = G_GER
+						NOT = {
+							or = {
+								state = 102
+								state = 103
+								state = 736
+								state = 683
+								state = 488
+								state = 783
+								state = 28
+							}
+						}
+						NOT = {
+							is_controlled_by = GER
+						}
+					}
+				}
+			}
+		}
+		fire_only_once = yes
+		cost = 0
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_Hiiragi_Utena
+					}
+				}
+				set_cosmetic_tag = GER_G_GER_occultism
+				hidden_effect = {
+					news_event = {
+						id = germany_news.03
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				set_cosmetic_tag = GER_G_GER_Strasserism
+				hidden_effect = {
+					news_event = {
+						id = germany_news.03
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_maiye
+					}
+				}
+				set_cosmetic_tag = G_GER_Goring_government
+				hidden_effect = {
+					news_event = {
+						id = germany_news.03
+					}
+				}
+			}
+			else = {
+				country_event = {
+					id = ah_germany.09
+				}
+			}
+		}
+	}
+	GREAT_GERMANIA_target_decision_declare_war = {
+		icon = GFX_decision_generic_ignite_civil_war
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					or = {
+						has_state_flag = G_GER
+						has_state_flag = L_GER
+					}
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+					has_war_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		cost = 10
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			set_country_flag = {
+				flag = GER_war_plan_going_on
+				value = 1
+				days = 60
+			}
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+			setup_decision_attack_AI = yes
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				NOT = {
+					any_home_area_neighbor_country = {
+						has_war_with = ROOT
+					}
+				}
+				add = 30
+			}
+			modifier = {
+				has_country_flag = GER_war_plan_going_on
+				add = -30
+			}
+		}
+	}
+	GREAT_GERMANIA_target_decision_transfer = {
+		icon = GFX_decision_generic_brainwash
+		target_trigger = {
+			any_country = {
+				AND = {
+					is_subject_of = GER
+					FROM = {
+						or = {
+							has_state_flag = G_GER
+						}
+						NOT = {
+							is_owned_and_controlled_by = GER
+						}
+						is_owned_and_controlled_by = PREV
+					}
+				}
+			}
+		}
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		#icon = decision_infiltrate_state
+		cost = 5
+		days_remove = 7
+		ai_will_do = {
+			factor = 10
+		}
+		remove_effect = {
+			ROOT = {
+				transfer_state = FROM
+			}
+		}
+	}
+}
+
+##大日耳曼妮娅计划
+GER_Greater_Germania_Plan = {
+	GER_build_Centre_Germania = {
+		icon = generic_construction
+		allowed = { tag = GER }
+		on_map_mode = decision_view_only
+		visible = {
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 50
+			owns_state = 64
+			controls_state = 64
+		}
+		fire_only_once = yes
+		cost = 15
+		days_remove = 100
+		highlight_states = {
+			highlight_provinces = { 6521 }
+		}
+		modifier = {
+			civilian_factory_use = 50
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			set_global_flag = GER_build_Centre_Germania
+			set_province_name = {
+				id = 6521
+				name = "Germania"
+			}
+			64 = { set_state_name = "WOrld_capital_Germania" }
+			set_victory_points = {
+				province = 6521
+				value = 100
+			}
+			custom_effect_tooltip = GER_build_volkshalle_landmark_tt
+			hidden_effect = {
+				64 = {
+					remove_building = {
+						type = landmark_berlin_reichstag
+						level = 1
+						province = 6521
+					}
+					add_building_construction = {
+						type = landmark_berlin_volkshalle
+						level = 1
+						instant_build = yes
+						province = 6521
+					}
+				}
+			}
+		}
+	}
+	GER_build_Germania_Northern = {
+		icon = generic_construction
+		allowed = { tag = GER }
+		on_map_mode = decision_view_only
+		visible = {
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 30
+			owns_state = 1163
+			controls_state = 1163
+		}
+		fire_only_once = yes
+		cost = 15
+		days_remove = 60
+		highlight_states = {
+			highlight_provinces = { 11444 }
+		}
+		modifier = {
+			civilian_factory_use = 30
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			custom_effect_tooltip = GER_build_Germania_Northern_tt
+			hidden_effect = {
+				set_province_name = {
+					id = 11444
+					name = "Germania_Northern_Quarters"
+				}
+				set_victory_points = {
+					province = 11444
+					value = 30
+				}
+			}
+		}
+	}
+	GER_build_Germania_Northwest = {
+		icon = generic_construction
+		allowed = { tag = GER }
+		on_map_mode = decision_view_only
+		visible = {
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 30
+			owns_state = 1163
+			controls_state = 1163
+		}
+		fire_only_once = yes
+		cost = 15
+		days_remove = 60
+		highlight_states = {
+			highlight_provinces = { 375 }
+		}
+		modifier = {
+			civilian_factory_use = 30
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			custom_effect_tooltip = GER_build_Germania_Northwest_tt
+			hidden_effect = {
+				set_province_name = {
+					id = 375
+					name = "Germania_Northwest_Quarters"
+				}
+				set_victory_points = {
+					province = 375
+					value = 30
+				}
+			}
+		}
+	}
+	GER_build_Germania_Southwest = {
+		icon = generic_construction
+		allowed = { tag = GER }
+		on_map_mode = decision_view_only
+		visible = {
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 30
+			owns_state = 1163
+			controls_state = 1163
+		}
+		fire_only_once = yes
+		cost = 15
+		days_remove = 60
+		highlight_states = {
+			highlight_provinces = { 3499 }
+		}
+		modifier = {
+			civilian_factory_use = 30
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			custom_effect_tooltip = GER_build_Germania_Southwest_tt
+			hidden_effect = {
+				set_province_name = {
+					id = 3499
+					name = "Germania_Southwest_Quarters"
+				}
+				set_victory_points = {
+					province = 3499
+					value = 30
+				}
+			}
+		}
+	}
+	GER_build_Germania_Eastern = {
+		icon = generic_construction
+		allowed = { tag = GER }
+		on_map_mode = decision_view_only
+		visible = {
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 30
+			owns_state = 1163
+			controls_state = 1163
+		}
+		fire_only_once = yes
+		cost = 15
+		days_remove = 60
+		highlight_states = {
+			highlight_provinces = { 11505 }
+		}
+		modifier = {
+			civilian_factory_use = 30
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			custom_effect_tooltip = GER_build_Germania_Eastern_tt
+			hidden_effect = {
+				set_province_name = {
+					id = 11505
+					name = "Germania_Eastern_Quarters"
+				}
+				set_victory_points = {
+					province = 11505
+					value = 30
+				}
+			}
+		}
+	}
+	GER_build_Germania_Southeast = {
+		icon = generic_construction
+		allowed = { tag = GER }
+		on_map_mode = decision_view_only
+		visible = {
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 30
+			owns_state = 1163
+			controls_state = 1163
+		}
+		fire_only_once = yes
+		cost = 15
+		days_remove = 60
+		highlight_states = {
+			highlight_provinces = { 9428 }
+		}
+		modifier = {
+			civilian_factory_use = 30
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		remove_effect = {
+			custom_effect_tooltip = GER_build_Germania_Southeast_tt
+			hidden_effect = {
+				set_province_name = {
+					id = 9428
+					name = "Germania_Southeast_Quarters"
+				}
+				set_victory_points = {
+					province = 9428
+					value = 30
+				}
+			}
+		}
+	}
+	DEBUG_GERMANIA = {
+		allowed = {
+		}
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		available = {
+			is_debug = yes
+			is_ai = no
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 0
+		complete_effect = {
+			set_global_flag = GER_build_Centre_Germania
+			set_province_name = {
+				id = 6521
+				name = "日耳曼妮娅"
+			}
+			64 = { set_state_name = "世界之都日耳曼妮娅" }
+			custom_effect_tooltip = GER_build_volkshalle_landmark_tt
+			hidden_effect = {
+				64 = {
+					remove_building = {
+						type = landmark_berlin_reichstag
+						level = 1
+						province = 6521
+					}
+					add_building_construction = {
+						type = landmark_berlin_volkshalle
+						level = 1
+						instant_build = yes
+						province = 6521
+					}
+				}
+			}
+			set_victory_points = {
+				province = 6521
+				value = 100
+			}
+			set_province_name = {
+				id = 11444
+				name = "日耳曼妮娅北城区"
+			}
+			set_victory_points = {
+				province = 11444
+				value = 30
+			}
+			set_province_name = {
+				id = 375
+				name = "日耳曼妮娅西北城区"
+			}
+			set_victory_points = {
+				province = 375
+				value = 30
+			}
+			set_province_name = {
+				id = 3499
+				name = "日耳曼妮娅西南城区"
+			}
+			set_victory_points = {
+				province = 3499
+				value = 30
+			}
+			set_province_name = {
+				id = 11505
+				name = "日耳曼妮娅东城区"
+			}
+			set_victory_points = {
+				province = 11505
+				value = 30
+			}
+			set_province_name = {
+				id = 9428
+				name = "日耳曼妮娅东南城区"
+			}
+			set_victory_points = {
+				province = 9428
+				value = 30
+			}
+		}
+	}
+}
+
+##梅福券
+GER_mefo_bills_category = {
+	##梅福券到期
+	GER_mefo_bills_mission = {
+		allowed = { always = no }
+		icon = ger_mefo_bills
+		available = {
+			hidden_trigger = { always = no }
+		}
+		days_mission_timeout = 180
+		is_good = yes
+		fire_only_once = yes
+		cancel_trigger = {
+			hidden_trigger = { not = { has_idea = GER_mefo_bills } }
+		}
+		remove_effect = {
+		}
+		complete_effect = {
+		}
+		priority = 10
+		timeout_effect = {
+			custom_effect_tooltip = GER_mefo_bills_Payouts_apply_add_100
+			add_to_variable = { GER_mefo_bills_Payouts_apply = 100 }
+			hidden_effect = { activate_mission = GER_mefo_bills_mission }
+		}
+		ai_will_do = {
+			factor = 200
+		}
+	}
+	##取消梅福券
+	GER_cancel_mefos = {
+		icon = ger_mefo_bills
+		available = {
+		}
+		cost = 0
+		fire_only_once = no
+		visible = {
+			hidden_trigger = { not = { has_country_flag = ger_has_cancelled_mefo } }
+		}
+		cancel_if_not_visible = yes
+		remove_effect = {
+			set_country_flag = ger_has_cancelled_mefo
+			remove_ideas = GER_mefo_bills
+			set_temp_variable = { GER_mefo_bills_Payouts_apply_monthly = GER_mefo_bills_Payouts_apply }
+			divide_temp_variable = { GER_mefo_bills_Payouts_apply_monthly = 50 }
+			add_timed_idea = {
+				idea = GER_mefo_bills_ended
+				months = GER_mefo_bills_Payouts_apply_monthly
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+
+##拓展德意志生存空间
+GER_LIVE_SPARE = {
+	GER_POL_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			10 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GOL = {
+				transfer_state = 10
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党卡西米尔支部"
+					name = "纳粹党卡西米尔支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 10
+				add_state_core = 90
+				add_state_core = 88
+				add_state_core = 91
+				add_state_core = 89
+				add_state_core = 92
+				add_state_core = 1088
+				add_state_core = 1182
+			}
+			set_autonomy = {
+				target = GOL
+				autonomy_state = autonomy_reichskommissariat
+			}
+			GOL = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GOL = {
+					set_cosmetic_tag = GOL_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_UKR_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			202 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GKR = {
+				transfer_state = 202
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党乌克兰支部"
+					name = "纳粹党乌克兰支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 194
+				add_state_core = 202
+				add_state_core = 95
+				add_state_core = 997
+				add_state_core = 93
+				add_state_core = 792
+				add_state_core = 201
+				add_state_core = 199
+				add_state_core = 791
+				add_state_core = 198
+				add_state_core = 203
+				add_state_core = 192
+				add_state_core = 241
+				add_state_core = 193
+				add_state_core = 225
+				add_state_core = 259
+				add_state_core = 226
+				add_state_core = 197
+				add_state_core = 228
+				add_state_core = 227
+				add_state_core = 821
+				add_state_core = 200
+				add_state_core = 221
+				add_state_core = 224
+				add_state_core = 220
+				add_state_core = 222
+				add_state_core = 258
+				add_state_core = 240
+				add_state_core = 260
+				add_state_core = 265
+				add_state_core = 245
+				add_state_core = 218
+			}
+			GKR = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			set_autonomy = {
+				target = GKR
+				autonomy_state = autonomy_reichskommissariat
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GKR = {
+					set_cosmetic_tag = GKR_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_FRA_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			16 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GRA = {
+				transfer_state = 16
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党幻想乡支部"
+					name = "纳粹党幻想乡支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 943
+				add_state_core = 760
+			}
+			set_autonomy = {
+				target = GRA
+				autonomy_state = autonomy_reichskommissariat
+			}
+			every_state = {
+				limit = {
+					has_state_flag = Gensokyo_Reichskommissariat
+				}
+				add_core_of = GRA
+			}
+			GRA = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GRA = {
+					set_cosmetic_tag = GRA_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_NPT_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			41 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GPT = {
+				transfer_state = 41
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党超次元支部"
+					name = "纳粹党超次元支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			set_autonomy = {
+				target = GPT
+				autonomy_state = autonomy_reichskommissariat
+			}
+			every_state = {
+				limit = {
+					has_state_flag = Iberia_Reichskommissariat
+					NOT = {
+						state = 118
+					}
+				}
+				add_core_of = GPT
+			}
+			GPT = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GPT = {
+					set_cosmetic_tag = GPT_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_ENG_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			126 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GEG = {
+				transfer_state = 126
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党不列颠支部"
+					name = "纳粹党不列颠支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			set_autonomy = {
+				target = GEG
+				autonomy_state = autonomy_reichskommissariat
+			}
+			every_state = {
+				limit = {
+					has_state_flag = Britain_Reichskommissariat
+				}
+				add_core_of = GEG
+			}
+			GEG = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GEG = {
+					set_cosmetic_tag = GEG_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_USA_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			361 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GSA = {
+				transfer_state = 361
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党北美支部"
+					name = "纳粹党北美支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			set_autonomy = {
+				target = GSA
+				autonomy_state = autonomy_reichskommissariat
+			}
+			every_state = {
+				limit = {
+					is_on_continent = north_america
+				}
+				add_core_of = GSA
+			}
+			GSA = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GSA = {
+					set_cosmetic_tag = GSA_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_DEN_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			1097 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GEN = {
+				transfer_state = 1097
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党北方领支部"
+					name = "纳粹党北方领支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			set_autonomy = {
+				target = GEN
+				autonomy_state = autonomy_reichskommissariat
+			}
+			every_state = {
+				limit = {
+					has_state_flag = Nordic_Reichskommissariat
+				}
+				add_core_of = GEN
+			}
+			GEN = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GEN = {
+					set_cosmetic_tag = GEN_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_KMK_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			925 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GRB = {
+				transfer_state = 925
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党雾之湖支部"
+					name = "纳粹党雾之湖支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			set_autonomy = {
+				target = GRB
+				autonomy_state = autonomy_reichskommissariat
+			}
+			every_state = {
+				limit = {
+					region = 5
+					not = {
+						has_state_flag = G_GER
+					}
+				}
+				add_core_of = GRB
+			}
+			GRB = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GRB = {
+					set_cosmetic_tag = GRB_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_FIN_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			842 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GIN = {
+				transfer_state = 842
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党东方领支部"
+					name = "纳粹党东方领支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 96
+				add_state_core = 94
+				add_state_core = 207
+				add_state_core = 204
+				add_state_core = 206
+				add_state_core = 655
+				#
+				add_state_core = 210
+				add_state_core = 755
+				add_state_core = 1087
+				add_state_core = 243
+			}
+			every_state = {
+				limit = {
+					has_state_flag = Baltic_Reichskommissariat
+				}
+				add_core_of = GIN
+			}
+			set_autonomy = {
+				target = GIN
+				autonomy_state = autonomy_reichskommissariat
+			}
+			GIN = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GIN = {
+					set_cosmetic_tag = GIN_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_SOV_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			219 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GOV = {
+				transfer_state = 219
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党莫斯科支部"
+					name = "纳粹党莫斯科支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 219
+				add_state_core = 247
+				add_state_core = 264
+				add_state_core = 248
+				add_state_core = 351
+				add_state_core = 253
+				add_state_core = 254
+				add_state_core = 252
+				add_state_core = 257
+				add_state_core = 255
+				add_state_core = 239
+				add_state_core = 401
+				add_state_core = 250
+				add_state_core = 251
+				add_state_core = 256
+				add_state_core = 249
+				add_state_core = 400
+				add_state_core = 399
+				add_state_core = 214
+				add_state_core = 397
+				add_state_core = 262
+				add_state_core = 398
+				add_state_core = 651
+				add_state_core = 652
+				add_state_core = 406
+				add_state_core = 242
+				add_state_core = 263
+				add_state_core = 246
+				add_state_core = 244
+				add_state_core = 205
+				add_state_core = 223
+				add_state_core = 573
+				add_state_core = 582
+				add_state_core = 1183
+			}
+			set_autonomy = {
+				target = GOV
+				autonomy_state = autonomy_reichskommissariat
+			}
+			GOV = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GOV = {
+					set_cosmetic_tag = GOV_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_GJS_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			217 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GJS = {
+				transfer_state = 217
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党高加索支部"
+					name = "纳粹党高加索支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 217
+				add_state_core = 581
+				add_state_core = 238
+				add_state_core = 237
+				add_state_core = 236
+				add_state_core = 234
+				add_state_core = 1006
+				add_state_core = 235
+				add_state_core = 787
+				add_state_core = 1080
+				add_state_core = 233
+				add_state_core = 961
+				add_state_core = 232
+				add_state_core = 229
+				add_state_core = 231
+			}
+			set_autonomy = {
+				target = GJS
+				autonomy_state = autonomy_reichskommissariat
+			}
+			GJS = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GJS = {
+					set_cosmetic_tag = GJS_GER_Strasserism
+				}
+			}
+		}
+	}
+	GER_ITA_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			2 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GTA = {
+				create_country_leader = {
+					name = "贝尼托·墨索里尼"
+					desc = ""
+					picture = "gfx/leaders/ITA/mosuolini.dds"
+					expire = "1985.1.1"
+					ideology = fascism_ideology
+					traits = {
+					}
+				}
+				transfer_state = 2
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党意大利支部"
+					name = "纳粹党意大利支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			every_state = {
+				limit = {
+					has_state_flag = Italy_Reichskommissariat
+					not = {
+						has_state_flag = G_GER
+					}
+				}
+				add_core_of = GTA
+			}
+			set_autonomy = {
+				target = GTA
+				autonomy_state = autonomy_reichskommissariat
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GTA = {
+					set_cosmetic_tag = GTA_GER_Strasserism_fascism
+				}
+			}
+		}
+	}
+	GER_SLO_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			70 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+		}
+		visible = {
+		}
+		complete_effect = {
+			GLO = {
+				transfer_state = 70
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党斯洛伐克支部"
+					name = "纳粹党斯洛伐克支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+				add_state_core = 70
+				add_state_core = 73
+				add_state_core = 1090
+			}
+			set_autonomy = {
+				target = GLO
+				autonomy_state = autonomy_reichskommissariat
+			}
+			GLO = {
+				GER = {
+					GER_get_a_governor_to_PREV = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_leader = {
+						ruling_only = yes
+						character = GER_joseph_goebbels
+					}
+				}
+				GLO = {
+					set_cosmetic_tag = GLO_GER_Strasserism_fascism
+				}
+			}
+		}
+	}
+	GER_HUN_CREATE = {
+		icon = GFX_decision_generic_form_nation
+		ai_will_do = {
+			factor = 1
+		}
+		fire_only_once = yes
+		available = {
+			155 = {
+				or = {
+					is_controlled_by = GER
+					any_other_country = {
+						is_subject_of = GER
+						controls_state = PREV
+					}
+				}
+			}
+			has_war = no
+			HUN = {
+				or ={
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		visible = {
+		}
+		complete_effect = {
+			HUN = {
+				transfer_state = 155
+				set_cosmetic_tag = GER_reichskommissariat
+				set_politics = {
+					ruling_party = fascism
+					last_election = "1936.1.1"
+					elections_allowed = no
+				}
+				set_party_name = {
+					ideology = fascism
+					long_name = "纳粹党宝石之国支部"
+					name = "纳粹党宝石之国支部"
+				}
+				set_popularities = {
+					fascism = 100
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 4000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 100
+				}
+				add_manpower = 40000
+				inherit_technology = GER
+			}
+			set_autonomy = {
+				target = HUN
+				autonomy_state = autonomy_reichskommissariat
+			}
+		}
+	}
+	#############################################
+	GER_POL_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GOL
+		}
+		available = {
+			GOL = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GOL
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GOL
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GOL
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GOL = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_FRA_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GRA
+		}
+		available = {
+			GRA = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GRA
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GRA
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GRA
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GRA = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_UKR_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GKR
+		}
+		available = {
+			GKR = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GKR
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GKR
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GKR
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GKR = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_NPT_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GPT
+		}
+		available = {
+			GPT = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GPT
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GPT
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GPT
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GPT = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_ENG_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GEG
+		}
+		available = {
+			GEG = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GEG
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GEG
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GEG
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GEG = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_USA_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GSA
+		}
+		available = {
+			GSA = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GSA
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GSA
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GSA
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GSA = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_DEN_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GEN
+		}
+		available = {
+			GEN = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GEN
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GEN
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GEN
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GEN = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_KMK_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GRB
+		}
+		available = {
+			GRB = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GRB
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GRB
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GRB
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GRB = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_FIN_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GIN
+		}
+		available = {
+			GIN = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GIN
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GIN
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GIN
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GIN = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_SOV_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GOV
+		}
+		available = {
+			GOV = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GOV
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GOV
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GOV
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GOV = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_GJS_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GJS
+		}
+		available = {
+			GJS = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GJS
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GJS
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GJS
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GJS = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_ITA_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GTA
+		}
+		available = {
+			GTA = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GTA
+					not = {
+						has_state_flag = G_GER
+					}
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GTA
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GTA
+					not = {
+						has_state_flag = G_GER
+					}
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GTA = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_SLO_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = GLO
+		}
+		available = {
+			GLO = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = GLO
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = GLO
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = GLO
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				GLO = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	GER_HUN_CREATE_1 = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+			tag = GER
+			country_exists = HUN
+		}
+		available = {
+			HUN = {
+				is_subject_of = GER
+			}
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = "GER_CREATE_kuozhang"
+				any_state = {
+					is_core_of = HUN
+					not = {
+						or = {
+							has_state_flag = G_GER
+							state = 70
+							state = 73
+							state = 1090
+						}
+					}
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							NOT = {
+								tag = HUN
+							}
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+			}
+		}
+		#icon = decision_infiltrate_state
+		cost = 0
+		days_remove = 0
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_core_of = HUN
+					not = {
+						or = {
+							has_state_flag = G_GER
+							state = 70
+							state = 73
+							state = 1090
+						}
+					}
+					or = {
+						is_controlled_by = GER
+						any_other_country = {
+							is_subject_of = GER
+							controls_state = PREV
+						}
+					}
+				}
+				HUN = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+	change_name_195 = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			195 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			195 = {
+				set_state_name = "兴登堡"
+			}
+			set_province_name = {
+				id = 3151
+				name = "兴登堡"
+			}
+		}
+	}
+	change_name_219 = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			219 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			219 = {
+				set_state_name = "阿道夫·莉莎"
+			}
+			set_province_name = {
+				id = 6380
+				name = "阿道夫·莉莎"
+			}
+		}
+	}
+	change_name_217 = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			217 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			217 = {
+				set_state_name = "巴巴罗萨"
+			}
+			set_province_name = {
+				id = 3529
+				name = "巴巴罗萨"
+			}
+		}
+	}
+	GER_Municipality_of_Crimea = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			137 = { is_controlled_by_ROOT_or_subject = yes }
+			196 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			add_state_core = 137
+			add_state_core = 196
+			137 = { subject_state_tranfer_to_ROOT = yes }
+			196 = { subject_state_tranfer_to_ROOT = yes }
+		}
+	}
+	GER_Municipality_of_Constantinople = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			773 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			add_state_core = 773
+			773 = { subject_state_tranfer_to_ROOT = yes }
+		}
+	}
+	GER_Municipality_of_753 = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			753 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			add_state_core = 753
+			753 = { subject_state_tranfer_to_ROOT = yes }
+		}
+	}
+	GER_Municipality_of_118 = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			118 = { is_controlled_by_ROOT_or_subject = yes }
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			add_state_core = 118
+			118 = { subject_state_tranfer_to_ROOT = yes }
+		}
+	}
+}
+
+##重建神圣罗马帝国
+GER_unit_HRR = {
+	GER_build_empire_HRR = {
+		icon = GFX_decision_generic_monarchy
+		visible = {
+		}
+		available = {
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = ALL_CONTROL_need_state
+				NOT = {
+					any_state = {
+						has_state_flag = HRR
+						NOT = {
+							is_controlled_by = ROOT
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+		}
+		remove_effect = {
+			set_cosmetic_tag = GER_HRR
+			every_state = {
+				limit = {
+					has_state_flag = HRR
+					not = {
+						is_core_of = ROOT
+					}
+				}
+				add_core_of = ROOT
+			}
+			add_country_leader_trait = Emperor_of_the_HRR
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_transfer_state_HRR = {
+		target_trigger = {
+			any_country = {
+				AND = {
+					is_subject_of = ROOT
+					FROM = {
+						has_state_flag = HRR
+						NOT = {
+							is_owned_and_controlled_by = ROOT
+						}
+						is_owned_and_controlled_by = PREV
+					}
+				}
+			}
+		}
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		#name = L_DVL_GER_target_decision_2
+		#icon = decision_infiltrate_state
+		cost = 5
+		days_remove = 7
+		ai_will_do = {
+			factor = 10
+		}
+		remove_effect = {
+			ROOT = {
+				transfer_state = FROM
+			}
+		}
+	}
+	GER_declare_war_HRR_country = {
+		icon = GFX_decision_generic_prepare_civil_war
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+		}
+		target_trigger = {
+			FROM = {
+				any_controlled_state = {
+					has_state_flag = HRR
+				}
+				NOT = {
+					is_in_faction_with = ROOT
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		cost = 10
+		days_remove = 30
+		ai_will_do = {
+			base = 0
+			modifier = {
+				NOT = {
+					any_home_area_neighbor_country = {
+						has_war_with = ROOT
+					}
+				}
+				add = 30
+			}
+		}
+		war_with_target_on_remove = yes
+		complete_effect = {
+			setup_decision_attack_AI = yes
+			FROM = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			clear_decision_attack_AI = yes
+			declare_war_on = {
+				target = FROM
+				type = take_state
+			}
+		}
+		cancel_effect = {
+			clear_decision_attack_AI = yes
+		}
+	}
+}
+
+##苏德冲突
+Soviet_German_conflict = {
+	SOV_Operation_Thunderstorm = {
+		icon = GFX_decision_category_SOV_civil_puppet_interaction
+		available = {
+			always = no
+		}
+		priority = 10
+		days_mission_timeout = 720
+		fire_only_once = yes
+		activation = {
+			always = no
+		}
+		visible = {
+			tag = SOV
+		}
+		cancel_trigger = {
+			or = {
+				has_war_with = GER
+				is_in_faction_with = GER
+				has_war_with = GEU
+				is_in_faction_with = GEU
+			}
+		}
+		is_good = yes
+		cancel_if_not_visible = yes
+		timeout_effect = {
+			add_timed_idea = {
+				idea = SOV_Operation_Thunderstorm_idea
+				days = 100
+			}
+			if = {
+				limit = {
+					GER = {
+						not = {
+							is_in_faction_with = SOV
+						}
+						exists = yes
+					}
+				}
+				declare_war_on = {
+					target = GER
+					type = liberate_wargoal
+				}
+			}
+			if = {
+				limit = {
+					GEU = {
+						not = {
+							is_in_faction_with = SOV
+						}
+						exists = yes
+					}
+				}
+				declare_war_on = {
+					target = GEU
+					type = liberate_wargoal
+				}
+			}
+			# hidden_effect = {
+			# 	news_event = {
+			# 		###大雷雨行动
+			# 		id = germany_news.06
+			# 	}
+			# }
+			# set_global_flag = SOV_Operation_Thunderstorm_coming
+		}
+		war_with_on_timeout = GER
+		war_with_on_timeout = GEU
+		complete_effect = {
+			if = {
+				limit = {
+					GER = {
+						not = {
+							is_in_faction_with = SOV
+						}
+						exists = yes
+					}
+				}
+				GER = { 
+					THIS_country_is_defender_and_ROOT_is_accacker = yes
+				}
+			}
+			if = {
+				limit = {
+					GEU = {
+						not = {
+							is_in_faction_with = SOV
+						}
+						exists = yes
+					}
+				}
+				GEU = { 
+					THIS_country_is_defender_and_ROOT_is_accacker = yes 
+				}
+			}
+		}
+	}
+	GER_An_imminent_invasion = {
+		icon = GFX_decision_generic_break_treaty
+		available = {
+			always = no
+		}
+		priority = 10
+		days_mission_timeout = 720
+		fire_only_once = yes
+		activation = {
+			always = no
+		}
+		visible = {
+			or = {
+				tag = GER
+				tag = GEU
+			}
+		}
+		cancel_trigger = {
+			or = {
+				has_war_with = SOV
+				is_in_faction_with = SOV
+			}
+		}
+		cancel_if_not_visible = yes
+		timeout_effect = {
+			effect_tooltip = {
+				SOV = {
+					add_timed_idea = {
+						idea = SOV_Operation_Thunderstorm_idea
+						days = 100
+					}
+					if = {
+						limit = {
+							GER = {
+								not = {
+									is_in_faction_with = SOV
+								}
+								exists = yes
+							}
+						}
+						declare_war_on = {
+							target = GER
+							type = liberate_wargoal
+						}
+					}
+					if = {
+						limit = {
+							GEU = {
+								not = {
+									is_in_faction_with = SOV
+								}
+								exists = yes
+							}
+						}
+						declare_war_on = {
+							target = GEU
+							type = liberate_wargoal
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+##恢复欧洲君主制
+GER_reich_Diplomacy_decisions = {
+	GER_Restoration_of_fra_monarchy = {
+		icon = GFX_decision_generic_monarchy
+		visible = {
+			has_completed_focus = GER_WW_41
+		}
+		available = {
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = CONTROL_any_fra_state
+				any_state = {
+					is_core_of = FRA
+					not = {
+						is_core_of = GER
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+			}
+			KMK = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		complete_effect = {
+		}
+		remove_effect = {
+			set_country_flag = GER_Restoration_of_fra_monarchy
+			every_state = {
+				limit = {
+					is_core_of = FRA
+					not = {
+						is_core_of = GER
+						is_core_of = KMK
+					}
+				}
+				add_core_of = KMK
+			}
+			every_state = {
+				limit = {
+					is_core_of = FRA
+					not = {
+						is_core_of = GER
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+				KMK = {
+					transfer_state = PREV
+				}
+			}
+			set_autonomy = {
+				target = KMK
+				autonomy_state = autonomy_puppet
+			}
+			MRY = {
+				every_character = {
+					limit = { is_general_advisor = no }
+					set_nationality = KMK
+				}
+			}
+			HKR = {
+				every_character = {
+					limit = { is_general_advisor = no }
+					set_nationality = KMK
+				}
+			}
+			FRA = {
+				every_character = {
+					limit = { is_general_advisor = no }
+					set_nationality = KMK
+				}
+			}
+			KMK = {
+				set_cosmetic_tag = KMK_FRA_Gensokyo
+				if = {
+					limit = {
+						has_character = KMK_Remilia
+					}
+					create_country_leader = {
+						name = "蕾米莉亚·斯卡蕾特"
+						desc = ""
+						picture = "gfx/leaders/KMK/KMK_Remilia_2.png"
+						expire = "1985.1.1"
+						ideology = Absolute_monarchy
+						traits = {
+						}
+					}
+				}
+				else = {
+					create_country_leader = {
+						name = "芙兰朵露·斯卡蕾特"
+						desc = ""
+						picture = "gfx/leaders/KMK/KMK_Flandre_2.png"
+						expire = "1985.1.1"
+						ideology = Absolute_monarchy
+						traits = {
+						}
+					}
+				}
+				add_ideas = GER_Sakuya_subjcet_idea
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_Restoration_of_rus_monarchy = {
+		icon = GFX_decision_generic_monarchy
+		visible = {
+			has_completed_focus = GER_WW_53
+		}
+		available = {
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = CONTROL_any_SOV_state
+				any_state = {
+					is_core_of = SOV
+					not = {
+						is_core_of = GER
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+			}
+			UKR = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		complete_effect = {
+		}
+		remove_effect = {
+			set_country_flag = GER_Restoration_of_rus_monarchy
+			every_state = {
+				limit = {
+					is_core_of = SOV
+					not = {
+						is_core_of = GER
+						is_core_of = UKR
+					}
+				}
+				add_core_of = UKR
+			}
+			every_state = {
+				limit = {
+					is_core_of = SOV
+					not = {
+						is_core_of = GER
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+				UKR = {
+					transfer_state = PREV
+				}
+			}
+			set_autonomy = {
+				target = UKR
+				autonomy_state = autonomy_integrated_puppet
+			}
+			UKR = {
+				create_country_leader = {
+					name = "SOV_Anastasia"
+					desc = ""
+					picture = "gfx/leaders/UKR/Anastasia.dds"
+					expire = "1985.1.1"
+					ideology = Absolute_monarchy
+					traits = {
+					}
+				}
+				set_cosmetic_tag = russia_green
+				add_ideas = GER_Vlasov_subjcet_idea
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_Restoration_of_eng_monarchy = {
+		icon = GFX_decision_generic_monarchy
+		visible = {
+			has_completed_focus = GER_WW_41
+		}
+		available = {
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = CONTROL_any_eng_state
+				any_state = {
+					is_on_continent = europe
+					is_core_of = ENG
+					not = {
+						is_core_of = GER
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+			}
+			ENG = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		complete_effect = {
+		}
+		remove_effect = {
+			set_country_flag = GER_Restoration_of_eng_monarchy
+			every_state = {
+				limit = {
+					is_on_continent = europe
+					is_core_of = ENG
+					not = {
+						is_core_of = GER
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+				ENG = {
+					transfer_state = PREV
+				}
+			}
+			set_autonomy = {
+				target = ENG
+				autonomy_state = autonomy_integrated_puppet
+			}
+			ENG = {
+				create_country_leader = {
+					name = "维多利亚一世"
+					desc = "GER_Viktoria_desc"
+					picture = "gfx/leaders/GER/GER_Viktoria.png"
+					expire = "1985.1.1"
+					ideology = Absolute_monarchy
+					traits = {
+					}
+				}
+				set_cosmetic_tag = GER_ENG_kingdom
+				add_ideas = GER_Siegfried_subjcet_idea
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_transfer_state_to_other = {
+		icon = GFX_decision_generic_brainwash
+		visible = {
+		}
+		target_trigger = {
+			or = {
+				and = {
+					FROM = {
+						tag = KMK
+					}
+					ROOT = {
+						has_country_flag = GER_Restoration_of_fra_monarchy
+					}
+				}
+				and = {
+					FROM = {
+						tag = ENG
+					}
+					ROOT = {
+						has_country_flag = GER_Restoration_of_eng_monarchy
+					}
+				}
+				and = {
+					FROM = {
+						tag = UKR
+					}
+					ROOT = {
+						has_country_flag = GER_Restoration_of_rus_monarchy
+					}
+				}
+			}
+			FROM = {
+				is_subject_of = ROOT
+			}
+			ROOT = {
+				is_subject = no
+			}
+			any_state = {
+				is_core_of = FROM
+				not = {
+					is_core_of = ROOT
+				}
+				not = {
+					is_owned_and_controlled_by = FROM
+				}
+				or = {
+					is_owned_and_controlled_by = ROOT
+					any_country = {
+						is_subject_of = ROOT
+						has_full_control_of_state = PREV
+					}
+				}
+			}
+		}
+		cost = 0
+		days_remove = 5
+		remove_effect = {
+			every_state = {
+				limit = {
+					is_core_of = FROM
+					not = {
+						is_core_of = ROOT
+					}
+					or = {
+						is_owned_and_controlled_by = ROOT
+						any_country = {
+							is_subject_of = ROOT
+							has_full_control_of_state = PREV
+						}
+					}
+				}
+				FROM = {
+					transfer_state = PREV
+				}
+			}
+		}
+	}
+}
+
+##重生之眼
+GER_Eye_of_Rebirth_Project = {
+	GER_Blood_Summoning_Ritual = {
+		icon = GFX_decision_generic_intelligence_operation
+		visible = {
+		}
+		available = {
+			is_subject = no
+			has_tech = magic_weapons3
+			or = {
+				controls_state = 126
+				any_allied_country = {
+					controls_state = 126
+				}
+			}
+			has_war = no
+		}
+        days_remove = 30
+		remove_effect = {
+			set_country_flag = GER_Blood_Summoning_Ritual
+			country_event = {
+				id = ah_germany.101
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_second_spring_snow_mutation = {
+		icon = GFX_decision_generic_intelligence_operation
+		visible = {
+		}
+		available = {
+			is_subject = no
+			has_manpower > 100000
+			#has_equipment = { infantry_equipment > 99999  }
+			or = {
+				controls_state = 16
+				any_allied_country = {
+					controls_state = 16
+				}
+			}
+			has_war = no
+		}
+        days_remove = 30
+		remove_effect = {
+			set_country_flag = GER_second_spring_snow_mutation
+			country_event = {
+				id = ah_germany.102
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_Slaughter_and_rebirth = {
+		icon = GFX_decision_generic_intelligence_operation
+		visible = {
+		}
+		available = {
+			is_subject = no
+			has_tech = magic_weapons3
+			or = {
+				controls_state = 10
+				any_allied_country = {
+					controls_state = 10
+				}
+			}
+			has_war = no
+		}
+        days_remove = 30
+		remove_effect = {
+			set_country_flag = GER_Slaughter_and_rebirth
+			country_event = {
+				id = ah_germany.103
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_Blood_colored_cherry_blossoms_on_Red_Square = {
+		icon = GFX_decision_generic_intelligence_operation
+		visible = {
+		}
+		available = {
+			is_subject = no
+			has_manpower > 100000
+			#has_equipment = { infantry_equipment > 99999  }
+			or = {
+				controls_state = 219
+				any_allied_country = {
+					controls_state = 219
+				}
+			}
+			has_war = no
+		}
+        days_remove = 30
+		remove_effect = {
+			set_country_flag = GER_Blood_colored_cherry_blossoms_on_Red_Square
+			country_event = {
+				id = ah_germany.104
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	GER_Start_the_clock_of_time = {
+		icon = GFX_decision_generic_merge_plant_materiel
+		visible = {
+			has_completed_focus = GER_Last_ditch_effort
+		}
+        days_remove = 30
+        modifier = {
+            industrial_capacity_factory = -0.8
+            line_change_production_efficiency_factor = -0.8
+            production_factory_max_efficiency_factor = -0.8
+            production_factory_efficiency_gain_factor = -0.8
+            consumer_goods_factor = 1
+        }
+		available = {
+			is_subject = no
+			has_war = no
+		}
+		complete_effect = {
+		}
+		remove_effect = {
+			country_event = {
+				id = ah_germany.105
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+
+##欧洲联盟
+GER_European_Union_decision_cate = {
+	###解放[FROM.Getname]
+	FRA_liberate_FROM = {
+		icon = GFX_decision_eng_trade_unions_support
+		target_trigger = {
+			FROM = {
+				is_subject_of = ROOT
+				capital_scope = { is_on_continent = europe }
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+		}
+		cost = 10
+		days_remove = 0
+		war_with_target_on_remove = yes
+		complete_effect = {
+			custom_effect_tooltip = country_liberated_will_always_support
+			FROM = {
+				end_puppet_this = yes
+				set_country_flag = country_liberated_for_EU
+				add_to_array = {
+					global.GER_European_Union_members_array = THIS
+				}
+			}
+			faction_leader = { add_to_faction = FROM }
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	##表决中：成立欧洲煤钢共同体
+	Build_European_Coal_and_Steel_Community_In_Voting = {
+		icon = ger_mefo_bills
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 7
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		cancel_trigger = {
+		}
+		timeout_effect = {
+			custom_effect_tooltip = After_the_passage_of_the_bill
+			effect_tooltip = {
+				custom_effect_tooltip = every_eu_country
+				add_ideas = FRA_European_Coal_and_Steel_Community_idea
+				add_to_variable = {
+					var = global.GER_EU_PIE_VAR
+					value = 25
+					tooltip = GER_European_Union_Integration_progress_add_25
+				}
+			}
+			custom_effect_tooltip = EU_Status_of_the_current_vote
+			clr_global_flag = EU_bill_going
+			hidden_effect = {
+				if = {
+					limit = {
+						not = {
+							check_variable = {
+								global.num_of_GER_European_Union_Vote_support < global.num_of_GER_European_Union_half_vote
+							}
+						}
+					}
+					add_to_variable = {
+						var = global.GER_EU_PIE_VAR
+						value = 25
+						tooltip = GER_European_Union_Integration_progress_add_25
+					}
+					for_each_scope_loop = {
+						array = global.GER_European_Union_members_array
+						add_ideas = FRA_European_Coal_and_Steel_Community_idea
+					}
+				}
+			}
+			every_country = {
+				set_variable = { GER_European_Union_attitude_VAR = 1 }
+			}
+			GER_Compute_European_Union = yes
+		}
+	}
+	###提案：成立欧洲煤钢共同体
+	Build_European_Coal_and_Steel_Community = {
+		icon = GFX_decision_steel
+		visible = {
+			has_country_flag = Build_European_Coal_and_Steel_Community_available
+		}
+		available = {
+			is_subject = no
+			not = { has_global_flag = EU_bill_going }
+		}
+		days_remove = 0
+		complete_effect = {
+			custom_effect_tooltip = European_Coal_and_Steel_Community_send_to_eu
+			set_global_flag = EU_bill_going
+			custom_effect_tooltip = After_the_passage_of_the_bill
+			effect_tooltip = {
+				custom_effect_tooltip = every_eu_country
+				add_ideas = FRA_European_Coal_and_Steel_Community_idea
+				add_to_variable = {
+					var = global.GER_EU_PIE_VAR
+					value = 25
+					tooltip = GER_European_Union_Integration_progress_add_25
+				}
+			}
+			hidden_effect = {
+				activate_mission = Build_European_Coal_and_Steel_Community_In_Voting
+				for_each_scope_loop = {
+					array = global.GER_European_Union_members_array
+					if = {
+						limit = { is_subject = no }
+						country_event = {
+							id = ah_germany.112
+						}
+					}
+				}
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	##表决中：成立欧洲经济共同体
+	Build_European_Economic_Community_In_Voting = {
+		icon = ger_mefo_bills
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 7
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		cancel_trigger = {
+		}
+		timeout_effect = {
+			custom_effect_tooltip = After_the_passage_of_the_bill
+			effect_tooltip = {
+				custom_effect_tooltip = every_eu_country
+				add_ideas = FRA_European_Economic_Community_idea
+				add_to_variable = {
+					var = global.GER_EU_PIE_VAR
+					value = 25
+					tooltip = GER_European_Union_Integration_progress_add_25
+				}
+			}
+			custom_effect_tooltip = EU_Status_of_the_current_vote
+			clr_global_flag = EU_bill_going
+			hidden_effect = {
+				if = {
+					limit = {
+						not = {
+							check_variable = {
+								global.num_of_GER_European_Union_Vote_support < global.num_of_GER_European_Union_half_vote
+							}
+						}
+					}
+					add_to_variable = {
+						var = global.GER_EU_PIE_VAR
+						value = 25
+						tooltip = GER_European_Union_Integration_progress_add_25
+					}
+					for_each_scope_loop = {
+						array = global.GER_European_Union_members_array
+						add_ideas = FRA_European_Economic_Community_idea
+					}
+				}
+			}
+			every_country = {
+				set_variable = { GER_European_Union_attitude_VAR = 1 }
+			}
+			GER_Compute_European_Union = yes
+		}
+	}
+	###提案：成立欧洲经济共同体
+	Build_European_Economic_Community = {
+		icon = GFX_decision_steel
+		visible = {
+			has_country_flag = Build_European_Economic_Community_available
+		}
+		available = {
+			is_subject = no
+			not = { has_global_flag = EU_bill_going }
+		}
+		days_remove = 0
+		complete_effect = {
+			custom_effect_tooltip = European_Economic_Community_send_to_eu
+			set_global_flag = EU_bill_going
+			custom_effect_tooltip = After_the_passage_of_the_bill
+			effect_tooltip = {
+				custom_effect_tooltip = every_eu_country
+				add_ideas = FRA_European_Economic_Community_idea
+				add_to_variable = {
+					var = global.GER_EU_PIE_VAR
+					value = 25
+					tooltip = GER_European_Union_Integration_progress_add_25
+				}
+			}
+			hidden_effect = {
+				activate_mission = Build_European_Economic_Community_In_Voting
+				for_each_scope_loop = {
+					array = global.GER_European_Union_members_array
+					if = {
+						limit = { is_subject = no }
+						country_event = {
+							id = ah_germany.113
+						}
+					}
+				}
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	##表决中：欧洲原子能共同体
+	Build_EURATOM_In_Voting = {
+		icon = ger_mefo_bills
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 7
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		cancel_trigger = {
+		}
+		timeout_effect = {
+			custom_effect_tooltip = After_the_passage_of_the_bill
+			effect_tooltip = {
+				custom_effect_tooltip = every_eu_country
+				add_ideas = FRA_EURATOM_idea
+				add_to_variable = {
+					var = global.GER_EU_PIE_VAR
+					value = 25
+					tooltip = GER_European_Union_Integration_progress_add_25
+				}
+			}
+			custom_effect_tooltip = EU_Status_of_the_current_vote
+			clr_global_flag = EU_bill_going
+			hidden_effect = {
+				if = {
+					limit = {
+						not = {
+							check_variable = {
+								global.num_of_GER_European_Union_Vote_support < global.num_of_GER_European_Union_half_vote
+							}
+						}
+					}
+					add_to_variable = {
+						var = global.GER_EU_PIE_VAR
+						value = 25
+						tooltip = GER_European_Union_Integration_progress_add_25
+					}
+					for_each_scope_loop = {
+						array = global.GER_European_Union_members_array
+						add_ideas = FRA_EURATOM_idea
+					}
+				}
+			}
+			every_country = {
+				set_variable = { GER_European_Union_attitude_VAR = 1 }
+			}
+			GER_Compute_European_Union = yes
+		}
+	}
+	###提案：欧洲原子能共同体
+	Build_EURATOM = {
+		icon = GFX_decision_steel
+		visible = {
+			has_country_flag = Build_EURATOM_available
+		}
+		available = {
+			is_subject = no
+			not = { has_global_flag = EU_bill_going }
+		}
+		days_remove = 0
+		complete_effect = {
+			custom_effect_tooltip = EURATOM_send_to_eu
+			set_global_flag = EU_bill_going
+			custom_effect_tooltip = After_the_passage_of_the_bill
+			effect_tooltip = {
+				custom_effect_tooltip = every_eu_country
+				add_ideas = FRA_EURATOM_idea
+				add_to_variable = {
+					var = global.GER_EU_PIE_VAR
+					value = 25
+					tooltip = GER_European_Union_Integration_progress_add_25
+				}
+			}
+			hidden_effect = {
+				activate_mission = Build_EURATOM_In_Voting
+				for_each_scope_loop = {
+					array = global.GER_European_Union_members_array
+					if = {
+						limit = { is_subject = no }
+						country_event = {
+							id = ah_germany.114
+						}
+					}
+				}
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+##黑日计划
+GER_black_sun_plan = {
+}
+
+##特别研究部门
+GER_special_tank = {
+	GER_special_light_tank = {
+		icon = GFX_decision_category_ger_military_buildup
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+		}
+		cost = 200
+		days_remove = 150
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			add_tech_bonus = {
+				bonus = 0.5
+				ahead_reduction = 0.5
+				uses = 1
+				category = cat_light_armor
+			}
+		}
+	}
+	GER_special_middle_tank = {
+		icon = GFX_decision_category_ger_military_buildup
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+		}
+		cost = 200
+		days_remove = 150
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			add_tech_bonus = {
+				bonus = 0.5
+				ahead_reduction = 0.5
+				uses = 1
+				category = cat_medium_armor
+			}
+		}
+	}
+	GER_special_magic_tank = {
+		icon = GFX_decision_category_ger_military_buildup
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+		}
+		cost = 200
+		days_remove = 150
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			add_tech_bonus = {
+				bonus = 0.5
+				ahead_reduction = 0.5
+				uses = 1
+				category = magic_tank
+			}
+		}
+	}
+	GER_special_heavy_tank = {
+		icon = GFX_decision_category_ger_military_buildup
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+		}
+		cost = 200
+		days_remove = 150
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			add_tech_bonus = {
+				bonus = 0.5
+				ahead_reduction = 0.5
+				uses = 1
+				category = cat_heavy_armor
+			}
+		}
+	}
+	GER_special_super_heavy_tank = {
+		icon = GFX_decision_category_ger_military_buildup
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+		}
+		cost = 200
+		days_remove = 150
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			add_tech_bonus = {
+				bonus = 0.5
+				ahead_reduction = 0.5
+				uses = 1
+				category = cat_super_heavy_armor
+			}
+		}
+	}
+	GER_special_super_modern_tank = {
+		icon = GFX_decision_category_ger_military_buildup
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+		}
+		cost = 200
+		days_remove = 150
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			add_tech_bonus = {
+				bonus = 0.5
+				ahead_reduction = 0.5
+				uses = 1
+				category = cat_modern_armor
+			}
+		}
+	}
+	##改进超重型坦克
+	GER_refine_super_heavy_armor = {
+		icon = GFX_science_decision
+		allowed = {
+		}
+		visible = {
+			or = {
+				has_completed_focus = GER_Behemoth_of_War
+				has_completed_focus = GEU_army_16
+			}
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+			has_tech = super_heavy_tank_chassis
+		}
+		cost = 200
+		days_remove = 150
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			country_event = {
+				id = ah_germany.127
+			}
+		}
+	}
+	##改进陆地巡洋舰
+	GER_refine_land_cruiser = {
+		icon = GFX_science_decision
+		allowed = {
+		}
+		visible = {
+			or = {
+				has_completed_focus = GER_Behemoth_of_War
+				has_completed_focus = GEU_army_16
+			}
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+			is_special_project_completed = sp:sp_land_land_cruiser
+		}
+		cost = 200
+		days_remove = 150
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			country_event = {
+				id = ah_germany.128
+			}
+		}
+	}
+	##改进核弹
+	GER_refine_nuclear = {
+		icon = GFX_science_decision
+		allowed = {
+		}
+		visible = {
+			or = {
+				has_completed_focus = GER_Behemoth_of_War
+				has_completed_focus = GEU_army_16
+			}
+		}
+		available = {
+			not = {
+				has_country_flag = GER_special_tank_on
+			}
+			is_special_project_completed = sp:sp_nuclear_bomb
+		}
+		cost = 200
+		days_remove = 150
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			set_country_flag = GER_special_tank_on
+		}
+		remove_effect = {
+			clr_country_flag = GER_special_tank_on
+			set_country_flag = GER_refine_nuclear
+            custom_effect_tooltip = RAJ_bathe_in_hellfire_desc_tt
+		}
+	}
+}
+
+##统一德意志
+Build_germany_decision_cate = {
+	Build_germany_decision = {
+		allowed = {
+		}
+		visible = {
+		}
+		available = {
+			64 = { is_owned_and_controlled_by = ROOT }
+			custom_trigger_tooltip = {
+				tooltip = unm_of_control_germany_state_bigger_20
+				check_variable = { unm_of_control_germany_state > 20 }
+			}
+		}
+		fire_only_once = yes
+		cost = 0
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			if = {
+				limit = { has_government = communism }
+				set_cosmetic_tag = German_Socialist_Republic
+			}
+			else = {
+				set_cosmetic_tag = GER
+			}
+			if = {
+				limit = { amount_research_slots < 4 }
+				set_research_slots = 4
+			}
+			if = {
+				limit = {
+					not = { has_global_flag = second_weltkrieg_has_started }
+				}
+				set_global_flag = second_weltkrieg_has_started
+			}
+			every_controlled_state = {
+				limit = { has_state_flag = L_GER }
+				add_core_of_ROOT = yes
+			}
+			every_state = {
+				limit = {
+					has_state_flag = L_GER
+					NOT = {
+						or = {
+							is_core_of = ROOT
+							is_claimed_by = ROOT
+						}
+					}
+				}
+				add_claim_by = ROOT
+			}
+			set_country_flag = Reunit_germany_country
+			if = {
+				limit = { controls_state = 64 }
+				set_capital = {
+					state = 64
+					remember_old_capital = no
+				}
+			}
+			if = {
+				limit = {
+					tag = BAY
+					has_government = communism
+				}
+				add_ideas = BAY_Inflated_administration_0
+				add_ideas = BAY_Bloated_sectors_of_conomy_0
+				hidden_effect = {
+					news_event = {
+						id = germany_union_news.0008
+						hours = 6
+					}
+				}
+			}
+		}
+	}
+	GER_target_decision_core = {
+		icon = generic_nationalism
+		target_trigger = {
+			FROM = {
+				NOT = { is_core_of = ROOT }
+				has_state_flag = L_GER
+			}
+			ROOT = {
+				has_country_flag = Reunit_germany_country
+			}
+		}
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_array = controlled_states
+		cost = 25
+		days_remove = 30
+		ai_will_do = {
+			factor = 100
+		}
+		remove_effect = {
+			FROM = { add_core_of_ROOT = yes }
+		}
+	}
+}
+
+##多瑙河冲突
+GER_Danube_Conflict = {
+	GER_ATTACK_HUN = {
+		icon = GFX_decision_generic_intelligence_operation
+		visible = {
+			tag = GER
+		}
+		available = {
+			country_exists = HUN
+			is_subject = no
+			HUN = {
+				exists = yes
+				not = {
+					or = {
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+						has_war_with = ROOT
+					}
+				}
+			}
+			SLO = {
+				exists = yes
+				is_subject = no
+			}
+		}
+		cost = 10
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			HUN = { THIS_country_is_defender_and_ROOT_is_accacker = yes }
+		}
+		remove_effect = {
+			add_ideas = GER_Danube_Conflict_idea
+			declare_war_on = {
+				target = HUN
+				type = annex_everything
+			}
+			SLO = {
+				declare_war_on = {
+					target = HUN
+					type = annex_everything
+				}
+			}
+			hidden_effect = {
+				HUN = { activate_mission = GER_Danube_Conflict_Mission }
+				GER = { activate_mission = GER_Danube_Conflict_Mission_kankan }
+				news_event = { id = austria_news.06 }
+			}
+		}
+		war_with_on_remove = HUN
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	GER_Danube_Conflict_Mission = {
+		icon = GFX_decision_hol_draw_up_staff_plans
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 60
+		fire_only_once = yes
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		cancel_trigger = {
+			or = {
+				has_capitulated = yes
+				GER = { surrender_progress > 0.2 }
+			}
+		}
+		cancel_effect = {
+			if = {
+				limit = { GER = { surrender_progress > 0.2 } }
+				set_global_flag = HUN_win_GER
+				set_global_flag = GER_Danube_Conflict_End
+				effect_tooltip = {
+					white_peace = { tag = GER }
+				}
+				hidden_effect = {
+					white_peace = {
+						tag = GER
+						message = HUN_win_GER
+					}
+				}
+			}
+		}
+		timeout_effect = {
+			set_global_flag = GER_Danube_Conflict_End
+			set_global_flag = HUN_win_GER
+			effect_tooltip = {
+				white_peace = { tag = GER }
+			}
+			hidden_effect = {
+				white_peace = {
+					tag = GER
+					message = HUN_win_GER
+				}
+			}
+		}
+	}
+	GER_Danube_Conflict_Mission_kankan = { #给德国看看用，实际效果在宝石
+		icon = GFX_decision_hol_draw_up_staff_plans
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 60
+		fire_only_once = yes
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		cancel_trigger = {
+			or = {
+				HUN = { has_capitulated = yes }
+				GER = { surrender_progress > 0.2 }
+			}
+		}
+		cancel_effect = {
+			effect_tooltip = {
+				if = {
+					limit = { GER = { surrender_progress > 0.2 } }
+					effect_tooltip = {
+						white_peace = { tag = HUN }
+					}
+				}
+			}
+		}
+		timeout_effect = {
+			effect_tooltip = {
+				white_peace = { tag = HUN }
+			}
+		}
+	}
+}
+
+##战车道联盟
+GER_Panzerfahren_union = {
+	Reorganize_Anzio = {
+		icon = GFX_decision_Anzio
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			2 = { is_controlled_by_ROOT_or_subject = yes }
+			ITA = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			ALS = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_Anzio
+			country_event = {
+				id = ah_germany.132
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = Anzio_trait
+			}
+		}
+	}
+	Reorganize_St_Gloriana = {
+		icon = GFX_decision_St_Gloriana
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			126 = { is_controlled_by_ROOT_or_subject = yes }
+			ENG = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_St_Gloriana
+			country_event = {
+				id = ah_germany.133
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = St_Gloriana_trait
+			}
+		}
+	}
+	Reorganize_Ooarai = {
+		icon = GFX_decision_Ooarai
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			1104 = { is_controlled_by_ROOT_or_subject = yes }
+			DEN = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_Ooarai
+			country_event = {
+				id = ah_germany.134
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = Ooarai_trait
+			}
+		}
+	}
+	Reorganize_Pravda = {
+		icon = GFX_decision_Pravda
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			219 = { is_controlled_by_ROOT_or_subject = yes }
+			SOV = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_Pravda
+			country_event = {
+				id = ah_germany.135
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = Pravda_trait
+			}
+		}
+	}
+	Reorganize_Continuation = {
+		icon = GFX_decision_Continuation
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			840 = { is_controlled_by_ROOT_or_subject = yes }
+			FIN = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_Continuation
+			country_event = {
+				id = ah_germany.136
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = Continuation_trait
+			}
+		}
+	}
+	Reorganize_BC_Freedom = {
+		icon = GFX_decision_BC_Freedom
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			373 = { is_controlled_by_ROOT_or_subject = yes }
+			NFA = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_BC_Freedom
+			country_event = {
+				id = ah_germany.137
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = BC_Freedom_trait
+			}
+		}
+	}
+	Reorganize_Saunders = {
+		icon = GFX_decision_Saunders
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			382 = { is_controlled_by_ROOT_or_subject = yes }
+			FRG = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_Saunders
+			country_event = {
+				id = ah_germany.138
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = Saunders_trait
+			}
+		}
+	}
+	Reorganize_Chi_Ha_Tan = {
+		icon = GFX_decision_Chi_Ha_Tan
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			282 = { is_controlled_by_ROOT_or_subject = yes }
+			JAP = {
+				or = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_Chi_Ha_Tan
+			country_event = {
+				id = ah_germany.139
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = Chi_Ha_Tan_trait
+			}
+		}
+	}
+	Reorganize_All_Star = {
+		icon = GFX_decision_All_Star
+		visible = {
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			has_country_flag = Reorganize_Anzio
+			has_country_flag = Reorganize_St_Gloriana
+			has_country_flag = Reorganize_Ooarai
+			has_country_flag = Reorganize_Pravda
+			has_country_flag = Reorganize_Continuation
+			has_country_flag = Reorganize_BC_Freedom
+			has_country_flag = Reorganize_Saunders
+			has_country_flag = Reorganize_Chi_Ha_Tan
+		}
+		#days_remove = 30
+		complete_effect = {
+			set_country_flag = Reorganize_All_Star
+			country_event = {
+				id = ah_germany.140
+			}
+			mio:HSF_ger = {
+				add_mio_size = 1
+				unlock_mio_trait_tooltip = All_Star_trait
+			}
+		}
+	}
+}
+
+##监狱中的元首
+Caught_xier = {
+	anfu_xier = {
+		icon = GFX_decision_ger_mefo_bills
+		visible = {
+		}
+		cost = 25
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			NOT = {
+				has_country_flag = xier_PRISON_RUNNING
+			}
+		}
+		modifier = {
+			civilian_factory_use = 10
+		}
+		days_remove = 30
+		complete_effect = {
+			set_country_flag = xier_PRISON_RUNNING
+		}
+		remove_effect = {
+			country_event = {
+				id = austria.09
+			}
+		}
+	}
+	xingxun_xier = {
+		icon = GFX_decision_generic_civil_support
+		visible = {
+		}
+		cost = 25
+		fire_only_once = yes
+		ai_will_do = {
+			base = 50
+		}
+		available = {
+			NOT = {
+				has_country_flag = xier_PRISON_RUNNING
+			}
+		}
+		days_remove = 1
+		complete_effect = {
+			set_country_flag = xier_PRISON_RUNNING
+		}
+		remove_effect = {
+			country_event = {
+				id = austria.11
+			}
+		}
+	}
+	xinao_xier = {
+		icon = GFX_decision_generic_research
+		visible = {
+		}
+		cost = 25
+		ai_will_do = {
+			base = 100
+		}
+		available = {
+			has_tech = magic_weapons2
+			NOT = {
+				has_country_flag = xier_PRISON_RUNNING
+			}
+		}
+		days_remove = 30
+		complete_effect = {
+			set_country_flag = xier_PRISON_RUNNING
+		}
+		remove_effect = {
+			country_event = {
+				id = austria.14
+			}
+		}
+	}
+}
+
+##调试决议
+GER_debug = {
+	GER_debug_go_back_home = {
+		complete_effect = {
+			annex_country = { target = DVL transfer_troops = no }
+			annex_country = { target = HUN transfer_troops = no }
+			every_state = {
+				limit = {
+					has_state_flag = L_GER
+					NOT = {
+						is_core_of = GER
+					}
+				}
+				add_core_of = GER
+			}
+			set_country_flag = AUS_L_GER
+			set_global_flag = AUS_GER_REBUILD
+			GER_BACK = yes
+			country_event = {
+				id = austria.15
+			}
+		}
+	}
+	GER_debug_come = {
+		complete_effect = {
+			country_event = {
+				id = austria.20
+			}
+			country_event = {
+				id = austria.21
+			}
+		}
+	}
+}
+
+political_actions = {
+	GEU_characters_ai = {
+		allowed = { tag = GEU }
+		fire_only_once = yes
+		visible = {
+			GER = { exists = no }
+			is_ai = yes
+		}
+		complete_effect = {
+			GER = {
+				GEU_Asuka_Langley_Soryu = { set_nationality = ROOT }
+				GEU_Illyasviel_von_Einzbern = { set_nationality = ROOT }
+				GEU_Werner_Karl_Heisenberg = { set_nationality = ROOT }
+				GEU_Lisa_Engel = { set_nationality = ROOT }
+				GEU_wente = { set_nationality = ROOT }
+				GEU_wolf = { set_nationality = ROOT }
+				GEU_loss = { set_nationality = ROOT }
+				GEU_andongne = { set_nationality = ROOT }
+				GEU_Ernst_Toller = { set_nationality = ROOT }
+				GEU_Herbert_Marcuse = { set_nationality = ROOT }
+				GEU_Karl_Korsch = { set_nationality = ROOT }
+				GEU_Carlo_Mierendorff = { set_nationality = ROOT }
+				GEU_Rudolf_Hilferding = { set_nationality = ROOT }
+				GEU_Anisufia = { set_nationality = ROOT }
+				GEU_Yufiria = { set_nationality = ROOT }
+				GEU_Groth = { set_nationality = ROOT }
+				GEU_Hechler = { set_nationality = ROOT }
+				GEU_Schulhoff = { set_nationality = ROOT }
+				GEU_Wieters = { set_nationality = ROOT }
+				GEU_Elsner = { set_nationality = ROOT }
+				GEU_Speckmann = { set_nationality = ROOT }
+				GEU_Nishikigi_Chisato = { set_nationality = ROOT }
+				GEU_Inoue_Takina = { set_nationality = ROOT }
+				GEU_Ayanami_Rei = { set_nationality = ROOT }
+			}
+			GEU_Asuka_Langley_Soryu = {
+				if = {
+					limit = { can_be_country_leader = yes }
+					ROOT = { promote_character = GEU_Asuka_Langley_Soryu }
+				}
+				else = {
+					add_country_leader_role = {
+						country_leader = {
+							desc = ""
+							ideology = Spartacus
+							traits = {
+								mother_of_relov
+								Pragmatic_Marxist
+							}
+							expire = "1999.1.1.1"
+							id = -1
+						}
+						promote_leader = yes
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+}
+
+
+

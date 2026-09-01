@@ -1,0 +1,230 @@
+on_actions = {
+	on_annex = {
+		effect = {
+			#德国战败
+			if = {
+				limit = {
+					not = {
+						has_global_flag = adorable_heart_FALL_OF_AUS
+					}
+					ROOT = {
+						is_germany_tag = no
+					}
+					FROM = {
+						tag = GER
+						has_character = GER_xier
+					}
+					not = {
+						has_global_flag = GER_REBUILD_ALREADY
+					}
+				}
+				set_global_flag = adorable_heart_FALL_OF_AUS
+				news_event = {
+					id = austria_news.04
+					days = 1
+				}
+			}
+			if = {
+				limit = {
+					not = {
+						has_global_flag = adorable_heart_FALL_OF_AUS
+					}
+					ROOT = {
+						is_germany_tag = no
+					}
+					FROM = {
+						tag = GER
+						has_character = GER_xier
+					}
+					has_global_flag = GER_REBUILD_ALREADY
+				}
+				set_global_flag = adorable_heart_FALL_OF_AUS
+				news_event = {
+					id = germany_news.04
+					days = 1
+				}
+			}
+		}
+	}
+	on_capitulation = {
+		effect = {
+			if = {
+				#德共胜利
+				limit = {
+					ROOT = {
+						tag = GER
+						is_subject = no
+						NOT = {
+							any_enemy_country = {
+								NOT = {
+									tag = GEU
+								}
+							}
+						}
+					}
+					FROM = {
+						tag = GEU
+					}
+				}
+				GEU = {
+					white_peace = {
+						tag = GER
+						message = GEU_WIN_GER
+					}
+					annex_country = {
+						target = GER
+						transfer_troops = no
+					}
+				}
+			}
+			if = {
+				#纳粹胜利
+				limit = {
+					ROOT = {
+						tag = GEU
+						is_subject = no
+						NOT = {
+							any_enemy_country = {
+								NOT = {
+									tag = GER
+								}
+							}
+						}
+					}
+					FROM = {
+						tag = GER
+					}
+				}
+				GER = {
+					white_peace = {
+						tag = GEU
+						message = GER_WIN_GEU
+					}
+					annex_country = {
+						target = GEU
+						transfer_troops = no
+					}
+				}
+			}
+			if = {
+				#基尔沦陷
+				limit = {
+					ROOT = {
+						tag = SHL
+						is_subject = no
+						has_character = GEU_Ayanami_Rei
+					}
+					FROM = {
+						tag = DVL
+					}
+				}
+				BAY = {
+					country_event = {
+						id = germany_union.0037
+					}
+				}
+			}
+		}
+	}
+	on_startup = {
+		effect = {
+			GER = {
+				clear_array = Hiiragi_Utena_note_page_array
+				add_to_array = { Hiiragi_Utena_note_page_array = 0 }
+				clear_array = Hiiragi_Utena_note_new
+				add_to_array = { Hiiragi_Utena_note_new = 0 }
+				set_variable = { Hiiragi_Utena_note_page_num = 0 }
+				GER_compute_germany_state_num = yes
+				GER_compute_germany_state_ascription = yes
+				GER_Count_Warzeal = yes
+				mio:HSF_ger = { complete_mio_trait = Black_Forest_trait }
+				mio:GER_mauser = { set_mio_flag = mio_on_industrial_manufacturer_assigned }
+				mio:GER_dwm_organisation = { set_mio_flag = mio_on_industrial_manufacturer_assigned }
+				mio:AUS_hirtenberger_organization = { set_mio_flag = mio_on_industrial_manufacturer_assigned }
+				mio:HSF_ger = { set_mio_flag = mio_on_industrial_manufacturer_assigned }
+				mio:GER_hanomag = { set_mio_flag = mio_on_industrial_manufacturer_assigned }
+			}
+			64 = { set_state_flag = has_city_story }
+			1158 = { set_state_flag = has_city_story }
+			KMS = { add_manpower = 82024 }
+			#GER = { GER_hasso_von_manteuffel = { set_nationality = PAQ } }
+			GER = { every_character = { limit = { is_general_advisor = no } set_character_flag = GER_Nazi_flag } }
+			SHL = { every_character = { limit = { is_general_advisor = no } set_character_flag = GER_KPD_flag } }
+			BAY = { every_character = { limit = { is_general_advisor = no } set_character_flag = GER_KPD_flag } }
+			RHI = { every_character = { limit = { is_general_advisor = no } set_character_flag = GER_BDR_flag } }
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_GER_HUN_war_ai_behavior_SELECTION
+						option = GER_HUN_war_ai_GAME_RULE_1
+					}
+				}
+				GER = { add_ideas = GER_HUN_war_buff_GER }
+				SLO = { add_ideas = GER_HUN_war_buff_GER }
+			}
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_GER_HUN_war_ai_behavior_SELECTION
+						option = GER_HUN_war_ai_GAME_RULE_2
+					}
+				}
+				HUN = { add_ideas = GER_HUN_war_buff_HUN }
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = { is_germany_tag = yes }
+					FROM.FROM = { has_state_flag = L_GER }
+				}
+				GER_compute_germany_state_num = yes
+				GER_compute_germany_state_ascription = yes
+			}
+		}
+	}
+	on_mio_industrial_manufacturer_assigned = {
+		effect = {
+			if = {
+				limit = { FROM = { tag = GER } }
+				ROOT = {
+					set_mio_flag = mio_on_industrial_manufacturer_assigned
+				}
+			}
+		}
+	}
+	on_mio_industrial_manufacturer_unassigned = {
+		effect = {
+			if = {
+				limit = { FROM = { tag = GER } }
+				ROOT = {
+					clr_mio_flag = mio_on_industrial_manufacturer_assigned
+				}
+			}
+		}
+	}
+	on_mio_size_increased = {
+		effect = {
+			if = {
+				limit = {
+					FROM = { tag = GER }
+					ROOT = {
+						is_military_industrial_organization  = HSF_ger
+						has_mio_policy_active = mio_policy_general_iron_dogma
+					}
+				}
+				FROM = {
+					random_military_industrial_organization = {
+						limit = {
+							has_mio_flag = mio_on_industrial_manufacturer_assigned
+							not = { is_military_industrial_organization  = HSF_ger }
+						}
+						add_mio_size = 1
+					}
+				}
+			}
+		}
+	}
+}

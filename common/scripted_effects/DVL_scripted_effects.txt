@@ -1,0 +1,5133 @@
+###  计算经济  ###
+DVL_Calculate_Undead_Economy = {
+	hidden_effect = {
+		clamp_variable = {
+			var = jobless_rate 
+			min = 2
+			max = 100
+		}
+		clamp_variable = {
+			var = undead_substitution_rate
+			min = 0
+			max = 100
+		}
+	###  消费品  ###
+		if = {
+			limit = { not = { check_variable = { undead_substitution_rate > 19 } } }
+			set_variable = { Undead_economy_consumer_goods_expected_value = 0.4 }
+		}
+		else_if = {
+			limit = { check_variable = { undead_substitution_rate > 79 } }
+			set_variable = { Undead_economy_consumer_goods_expected_value = 0.2 }
+		}
+		else_if = {
+			limit = { check_variable = { undead_substitution_rate > 59 } }
+			set_variable = { Undead_economy_consumer_goods_expected_value = 0.25 }
+		}
+		else_if = {
+			limit = { check_variable = { undead_substitution_rate > 39 } }
+			set_variable = { Undead_economy_consumer_goods_expected_value = 0.3 }
+		}
+		else_if = {
+			limit = { check_variable = { undead_substitution_rate > 19 } }
+			set_variable = { Undead_economy_consumer_goods_expected_value = 0.35 }
+		}
+	###  建造速度  ###
+		set_variable = { Undead_economy_production_speed_buildings_factor = undead_substitution_rate }
+		divide_variable = { Undead_economy_production_speed_buildings_factor = 400 }
+	###  失业率  ###
+		set_variable = { Undead_economy_conscription_factor = jobless_rate }
+		divide_variable = { Undead_economy_conscription_factor = 100 }
+		set_variable = { Undead_economy_stability_factor = jobless_rate }
+		subtract_from_variable = { Undead_economy_stability_factor = 30 }
+		clamp_variable = { var = Undead_economy_stability_factor min = 0 }
+		divide_variable = { Undead_economy_stability_factor = -100 }
+		if = {
+			limit = { check_variable = { jobless_rate > 10 } }
+			set_variable = { Undead_economy_consumer_goods_expected_value_EX = jobless_rate }
+			divide_variable = { Undead_economy_consumer_goods_expected_value_EX = 100 }
+			subtract_from_variable = { Undead_economy_consumer_goods_expected_value_EX = 0.1 }
+			add_to_variable = { Undead_economy_consumer_goods_expected_value = Undead_economy_consumer_goods_expected_value_EX }
+		}
+	###  刷新  ###
+		force_update_dynamic_modifier = yes
+	}
+}
+
+###  计算亚托莉  ###
+DVL_Calculate_ATRI = {
+	clamp_variable = {
+		var = temp_Army_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = temp_Naval_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = temp_AirForce_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = temp_Financial_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = temp_Political_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = temp_mood_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = Army_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = Naval_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = AirForce_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = Financial_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = Political_capabilities_of_ATRI
+		max = 160
+		min = 0
+	}
+	clamp_variable = {
+		var = mood_of_ATRI
+		max = 160
+		min = 0
+	}
+	set_variable = { DVL_mood_of_ATRI_percent = temp_mood_of_ATRI }
+	divide_variable = { DVL_mood_of_ATRI_percent = 1.6 }
+}
+
+###  亚托莉刷新  ###
+DVL_Refresh_ATRI = {
+	set_variable = { temp_mood_of_ATRI = mood_of_ATRI }
+	set_variable = { temp_Army_capabilities_of_ATRI = Army_capabilities_of_ATRI }
+	set_variable = { temp_Naval_capabilities_of_ATRI = Naval_capabilities_of_ATRI }
+	set_variable = { temp_AirForce_capabilities_of_ATRI = AirForce_capabilities_of_ATRI }
+	set_variable = { temp_Financial_capabilities_of_ATRI = Financial_capabilities_of_ATRI }
+	set_variable = { temp_Political_capabilities_of_ATRI = Political_capabilities_of_ATRI }
+	set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 1 }
+	set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 1 }
+	set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 1 }
+	set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 1 }
+	set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 1 }
+	set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 1 }
+	DVL_Calculate_ATRI = yes
+}
+
+###  亚托莉行程  ###
+DVL_ATRI_Itinerary_01_effect = {
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 2 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 9
+				tooltip = Army_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 8
+				tooltip = Army_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 7
+				tooltip = Army_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 6
+				tooltip = Army_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 5
+				tooltip = Army_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 4
+				tooltip = Army_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 3
+				tooltip = Army_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 2
+				tooltip = Army_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 10
+				tooltip = Army_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 3 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 9
+				tooltip = Naval_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 8
+				tooltip = Naval_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 7
+				tooltip = Naval_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 6
+				tooltip = Naval_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 5
+				tooltip = Naval_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 4
+				tooltip = Naval_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 3
+				tooltip = Naval_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 2
+				tooltip = Naval_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 10
+				tooltip = Naval_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 4 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 9
+				tooltip = AirForce_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 8
+				tooltip = AirForce_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 7
+				tooltip = AirForce_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 6
+				tooltip = AirForce_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 5
+				tooltip = AirForce_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 4
+				tooltip = AirForce_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 3
+				tooltip = AirForce_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 2
+				tooltip = AirForce_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = AirForce_capabilities_of_ATRI
+				value = 10
+				tooltip = AirForce_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 5 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 9
+				tooltip = Financial_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 8
+				tooltip = Financial_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 7
+				tooltip = Financial_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 6
+				tooltip = Financial_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 5
+				tooltip = Financial_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 4
+				tooltip = Financial_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 3
+				tooltip = Financial_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 2
+				tooltip = Financial_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 10
+				tooltip = Financial_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 6 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 9
+				tooltip = Political_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 8
+				tooltip = Political_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 7
+				tooltip = Political_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 6
+				tooltip = Political_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 5
+				tooltip = Political_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 4
+				tooltip = Political_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 3
+				tooltip = Political_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 2
+				tooltip = Political_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 10
+				tooltip = Political_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 7 } }
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = 40
+			tooltip = mood_of_ATRI_up_40
+		}
+		DVL_ATRI_paly_event = yes
+	}
+	if = {
+		limit = { check_variable = { mood_of_ATRI = 0 } }
+		set_country_flag = AH_achievements_Angry_ATRI
+	}
+}
+DVL_ATRI_Itinerary_02_effect = {
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 2 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 9
+				tooltip = Army_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 8
+				tooltip = Army_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 7
+				tooltip = Army_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 6
+				tooltip = Army_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 5
+				tooltip = Army_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 4
+				tooltip = Army_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 3
+				tooltip = Army_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 2
+				tooltip = Army_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 10
+				tooltip = Army_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 3 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 9
+				tooltip = Naval_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 8
+				tooltip = Naval_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 7
+				tooltip = Naval_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 6
+				tooltip = Naval_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 5
+				tooltip = Naval_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 4
+				tooltip = Naval_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 3
+				tooltip = Naval_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 2
+				tooltip = Naval_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 10
+				tooltip = Naval_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 4 } }
+			if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 80 }
+					not = { check_variable = { mood_of_ATRI < 70 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 9
+					tooltip = AirForce_capabilities_of_ATRI_up_9
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 70 }
+					not = { check_variable = { mood_of_ATRI < 60 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 8
+					tooltip = AirForce_capabilities_of_ATRI_up_8
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 60 }
+					not = { check_variable = { mood_of_ATRI < 50 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 7
+					tooltip = AirForce_capabilities_of_ATRI_up_7
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 50 }
+					not = { check_variable = { mood_of_ATRI < 40 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 6
+					tooltip = AirForce_capabilities_of_ATRI_up_6
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 40 }
+					not = { check_variable = { mood_of_ATRI < 30 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 5
+					tooltip = AirForce_capabilities_of_ATRI_up_5
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 30 }
+					not = { check_variable = { mood_of_ATRI < 20 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 4
+					tooltip = AirForce_capabilities_of_ATRI_up_4
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 20 }
+					not = { check_variable = { mood_of_ATRI < 10 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 3
+					tooltip = AirForce_capabilities_of_ATRI_up_3
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 10 }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 2
+					tooltip = AirForce_capabilities_of_ATRI_up_2
+				}
+			}
+			else = {
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 10
+					tooltip = AirForce_capabilities_of_ATRI_up_10
+				}
+			}
+			add_to_variable = {
+				var = mood_of_ATRI
+				value = -20
+				tooltip = mood_of_ATRI_down_20
+			}
+			DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 5 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 9
+				tooltip = Financial_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 8
+				tooltip = Financial_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 7
+				tooltip = Financial_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 6
+				tooltip = Financial_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 5
+				tooltip = Financial_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 4
+				tooltip = Financial_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 3
+				tooltip = Financial_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 2
+				tooltip = Financial_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 10
+				tooltip = Financial_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 6 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 9
+				tooltip = Political_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 8
+				tooltip = Political_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 7
+				tooltip = Political_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 6
+				tooltip = Political_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 5
+				tooltip = Political_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 4
+				tooltip = Political_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 3
+				tooltip = Political_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 2
+				tooltip = Political_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 10
+				tooltip = Political_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 7 } }
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = 40
+			tooltip = mood_of_ATRI_up_40
+		}
+		DVL_ATRI_paly_event = yes
+	}
+	if = {
+		limit = { check_variable = { mood_of_ATRI = 0 } }
+		set_country_flag = AH_achievements_Angry_ATRI
+	}
+}
+DVL_ATRI_Itinerary_03_effect = {
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 2 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 9
+				tooltip = Army_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 8
+				tooltip = Army_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 7
+				tooltip = Army_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 6
+				tooltip = Army_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 5
+				tooltip = Army_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 4
+				tooltip = Army_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 3
+				tooltip = Army_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 2
+				tooltip = Army_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 10
+				tooltip = Army_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 3 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 9
+				tooltip = Naval_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 8
+				tooltip = Naval_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 7
+				tooltip = Naval_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 6
+				tooltip = Naval_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 5
+				tooltip = Naval_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 4
+				tooltip = Naval_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 3
+				tooltip = Naval_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 2
+				tooltip = Naval_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 10
+				tooltip = Naval_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 4 } }
+			if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 80 }
+					not = { check_variable = { mood_of_ATRI < 70 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 9
+					tooltip = AirForce_capabilities_of_ATRI_up_9
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 70 }
+					not = { check_variable = { mood_of_ATRI < 60 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 8
+					tooltip = AirForce_capabilities_of_ATRI_up_8
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 60 }
+					not = { check_variable = { mood_of_ATRI < 50 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 7
+					tooltip = AirForce_capabilities_of_ATRI_up_7
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 50 }
+					not = { check_variable = { mood_of_ATRI < 40 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 6
+					tooltip = AirForce_capabilities_of_ATRI_up_6
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 40 }
+					not = { check_variable = { mood_of_ATRI < 30 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 5
+					tooltip = AirForce_capabilities_of_ATRI_up_5
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 30 }
+					not = { check_variable = { mood_of_ATRI < 20 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 4
+					tooltip = AirForce_capabilities_of_ATRI_up_4
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 20 }
+					not = { check_variable = { mood_of_ATRI < 10 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 3
+					tooltip = AirForce_capabilities_of_ATRI_up_3
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 10 }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 2
+					tooltip = AirForce_capabilities_of_ATRI_up_2
+				}
+			}
+			else = {
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 10
+					tooltip = AirForce_capabilities_of_ATRI_up_10
+				}
+			}
+			add_to_variable = {
+				var = mood_of_ATRI
+				value = -20
+				tooltip = mood_of_ATRI_down_20
+			}
+			DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 5 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 9
+				tooltip = Financial_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 8
+				tooltip = Financial_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 7
+				tooltip = Financial_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 6
+				tooltip = Financial_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 5
+				tooltip = Financial_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 4
+				tooltip = Financial_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 3
+				tooltip = Financial_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 2
+				tooltip = Financial_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 10
+				tooltip = Financial_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 6 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 9
+				tooltip = Political_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 8
+				tooltip = Political_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 7
+				tooltip = Political_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 6
+				tooltip = Political_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 5
+				tooltip = Political_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 4
+				tooltip = Political_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 3
+				tooltip = Political_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 2
+				tooltip = Political_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 10
+				tooltip = Political_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 7 } }
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = 40
+			tooltip = mood_of_ATRI_up_40
+		}
+		DVL_ATRI_paly_event = yes
+	}
+	if = {
+		limit = { check_variable = { mood_of_ATRI = 0 } }
+		set_country_flag = AH_achievements_Angry_ATRI
+	}
+}
+DVL_ATRI_Itinerary_04_effect = {
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 2 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 9
+				tooltip = Army_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 8
+				tooltip = Army_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 7
+				tooltip = Army_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 6
+				tooltip = Army_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 5
+				tooltip = Army_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 4
+				tooltip = Army_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 3
+				tooltip = Army_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 2
+				tooltip = Army_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 10
+				tooltip = Army_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 3 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 9
+				tooltip = Naval_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 8
+				tooltip = Naval_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 7
+				tooltip = Naval_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 6
+				tooltip = Naval_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 5
+				tooltip = Naval_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 4
+				tooltip = Naval_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 3
+				tooltip = Naval_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 2
+				tooltip = Naval_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 10
+				tooltip = Naval_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 4 } }
+			if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 80 }
+					not = { check_variable = { mood_of_ATRI < 70 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 9
+					tooltip = AirForce_capabilities_of_ATRI_up_9
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 70 }
+					not = { check_variable = { mood_of_ATRI < 60 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 8
+					tooltip = AirForce_capabilities_of_ATRI_up_8
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 60 }
+					not = { check_variable = { mood_of_ATRI < 50 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 7
+					tooltip = AirForce_capabilities_of_ATRI_up_7
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 50 }
+					not = { check_variable = { mood_of_ATRI < 40 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 6
+					tooltip = AirForce_capabilities_of_ATRI_up_6
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 40 }
+					not = { check_variable = { mood_of_ATRI < 30 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 5
+					tooltip = AirForce_capabilities_of_ATRI_up_5
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 30 }
+					not = { check_variable = { mood_of_ATRI < 20 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 4
+					tooltip = AirForce_capabilities_of_ATRI_up_4
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 20 }
+					not = { check_variable = { mood_of_ATRI < 10 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 3
+					tooltip = AirForce_capabilities_of_ATRI_up_3
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 10 }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 2
+					tooltip = AirForce_capabilities_of_ATRI_up_2
+				}
+			}
+			else = {
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 10
+					tooltip = AirForce_capabilities_of_ATRI_up_10
+				}
+			}
+			add_to_variable = {
+				var = mood_of_ATRI
+				value = -20
+				tooltip = mood_of_ATRI_down_20
+			}
+			DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 5 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 9
+				tooltip = Financial_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 8
+				tooltip = Financial_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 7
+				tooltip = Financial_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 6
+				tooltip = Financial_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 5
+				tooltip = Financial_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 4
+				tooltip = Financial_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 3
+				tooltip = Financial_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 2
+				tooltip = Financial_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 10
+				tooltip = Financial_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 6 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 9
+				tooltip = Political_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 8
+				tooltip = Political_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 7
+				tooltip = Political_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 6
+				tooltip = Political_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 5
+				tooltip = Political_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 4
+				tooltip = Political_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 3
+				tooltip = Political_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 2
+				tooltip = Political_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 10
+				tooltip = Political_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 7 } }
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = 40
+			tooltip = mood_of_ATRI_up_40
+		}
+		DVL_ATRI_paly_event = yes
+	}
+	if = {
+		limit = { check_variable = { mood_of_ATRI = 0 } }
+		set_country_flag = AH_achievements_Angry_ATRI
+	}
+}
+DVL_ATRI_Itinerary_05_effect = {
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 2 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 9
+				tooltip = Army_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 8
+				tooltip = Army_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 7
+				tooltip = Army_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 6
+				tooltip = Army_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 5
+				tooltip = Army_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 4
+				tooltip = Army_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 3
+				tooltip = Army_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 2
+				tooltip = Army_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 10
+				tooltip = Army_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 3 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 9
+				tooltip = Naval_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 8
+				tooltip = Naval_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 7
+				tooltip = Naval_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 6
+				tooltip = Naval_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 5
+				tooltip = Naval_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 4
+				tooltip = Naval_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 3
+				tooltip = Naval_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 2
+				tooltip = Naval_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 10
+				tooltip = Naval_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 4 } }
+			if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 80 }
+					not = { check_variable = { mood_of_ATRI < 70 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 9
+					tooltip = AirForce_capabilities_of_ATRI_up_9
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 70 }
+					not = { check_variable = { mood_of_ATRI < 60 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 8
+					tooltip = AirForce_capabilities_of_ATRI_up_8
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 60 }
+					not = { check_variable = { mood_of_ATRI < 50 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 7
+					tooltip = AirForce_capabilities_of_ATRI_up_7
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 50 }
+					not = { check_variable = { mood_of_ATRI < 40 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 6
+					tooltip = AirForce_capabilities_of_ATRI_up_6
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 40 }
+					not = { check_variable = { mood_of_ATRI < 30 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 5
+					tooltip = AirForce_capabilities_of_ATRI_up_5
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 30 }
+					not = { check_variable = { mood_of_ATRI < 20 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 4
+					tooltip = AirForce_capabilities_of_ATRI_up_4
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 20 }
+					not = { check_variable = { mood_of_ATRI < 10 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 3
+					tooltip = AirForce_capabilities_of_ATRI_up_3
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 10 }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 2
+					tooltip = AirForce_capabilities_of_ATRI_up_2
+				}
+			}
+			else = {
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 10
+					tooltip = AirForce_capabilities_of_ATRI_up_10
+				}
+			}
+			add_to_variable = {
+				var = mood_of_ATRI
+				value = -20
+				tooltip = mood_of_ATRI_down_20
+			}
+			DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 5 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 9
+				tooltip = Financial_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 8
+				tooltip = Financial_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 7
+				tooltip = Financial_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 6
+				tooltip = Financial_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 5
+				tooltip = Financial_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 4
+				tooltip = Financial_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 3
+				tooltip = Financial_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 2
+				tooltip = Financial_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 10
+				tooltip = Financial_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 6 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 9
+				tooltip = Political_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 8
+				tooltip = Political_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 7
+				tooltip = Political_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 6
+				tooltip = Political_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 5
+				tooltip = Political_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 4
+				tooltip = Political_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 3
+				tooltip = Political_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 2
+				tooltip = Political_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 10
+				tooltip = Political_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 7 } }
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = 40
+			tooltip = mood_of_ATRI_up_40
+		}
+		DVL_ATRI_paly_event = yes
+	}
+	if = {
+		limit = { check_variable = { mood_of_ATRI = 0 } }
+		set_country_flag = AH_achievements_Angry_ATRI
+	}
+}
+DVL_ATRI_Itinerary_06_effect = {
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 2 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 9
+				tooltip = Army_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 8
+				tooltip = Army_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 7
+				tooltip = Army_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 6
+				tooltip = Army_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 5
+				tooltip = Army_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 4
+				tooltip = Army_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 3
+				tooltip = Army_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 2
+				tooltip = Army_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Army_capabilities_of_ATRI
+				value = 10
+				tooltip = Army_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 3 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 9
+				tooltip = Naval_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 8
+				tooltip = Naval_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 7
+				tooltip = Naval_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 6
+				tooltip = Naval_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 5
+				tooltip = Naval_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 4
+				tooltip = Naval_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 3
+				tooltip = Naval_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 2
+				tooltip = Naval_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Naval_capabilities_of_ATRI
+				value = 10
+				tooltip = Naval_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 4 } }
+			if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 80 }
+					not = { check_variable = { mood_of_ATRI < 70 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 9
+					tooltip = AirForce_capabilities_of_ATRI_up_9
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 70 }
+					not = { check_variable = { mood_of_ATRI < 60 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 8
+					tooltip = AirForce_capabilities_of_ATRI_up_8
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 60 }
+					not = { check_variable = { mood_of_ATRI < 50 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 7
+					tooltip = AirForce_capabilities_of_ATRI_up_7
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 50 }
+					not = { check_variable = { mood_of_ATRI < 40 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 6
+					tooltip = AirForce_capabilities_of_ATRI_up_6
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 40 }
+					not = { check_variable = { mood_of_ATRI < 30 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 5
+					tooltip = AirForce_capabilities_of_ATRI_up_5
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 30 }
+					not = { check_variable = { mood_of_ATRI < 20 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 4
+					tooltip = AirForce_capabilities_of_ATRI_up_4
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 20 }
+					not = { check_variable = { mood_of_ATRI < 10 } }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 3
+					tooltip = AirForce_capabilities_of_ATRI_up_3
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { mood_of_ATRI < 10 }
+				}
+				custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 2
+					tooltip = AirForce_capabilities_of_ATRI_up_2
+				}
+			}
+			else = {
+				add_to_variable = {
+					var = AirForce_capabilities_of_ATRI
+					value = 10
+					tooltip = AirForce_capabilities_of_ATRI_up_10
+				}
+			}
+			add_to_variable = {
+				var = mood_of_ATRI
+				value = -20
+				tooltip = mood_of_ATRI_down_20
+			}
+			DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 5 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 9
+				tooltip = Financial_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 8
+				tooltip = Financial_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 7
+				tooltip = Financial_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 6
+				tooltip = Financial_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 5
+				tooltip = Financial_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 4
+				tooltip = Financial_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 3
+				tooltip = Financial_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 2
+				tooltip = Financial_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Financial_capabilities_of_ATRI
+				value = 10
+				tooltip = Financial_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 6 } }
+		if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 80 }
+				not = { check_variable = { mood_of_ATRI < 70 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_10_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 9
+				tooltip = Political_capabilities_of_ATRI_up_9
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 70 }
+				not = { check_variable = { mood_of_ATRI < 60 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_20_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 8
+				tooltip = Political_capabilities_of_ATRI_up_8
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 60 }
+				not = { check_variable = { mood_of_ATRI < 50 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_30_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 7
+				tooltip = Political_capabilities_of_ATRI_up_7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 50 }
+				not = { check_variable = { mood_of_ATRI < 40 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_40_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 6
+				tooltip = Political_capabilities_of_ATRI_up_6
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 40 }
+				not = { check_variable = { mood_of_ATRI < 30 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_50_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 5
+				tooltip = Political_capabilities_of_ATRI_up_5
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 30 }
+				not = { check_variable = { mood_of_ATRI < 20 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_60_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 4
+				tooltip = Political_capabilities_of_ATRI_up_4
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 20 }
+				not = { check_variable = { mood_of_ATRI < 10 } }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_70_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 3
+				tooltip = Political_capabilities_of_ATRI_up_3
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { mood_of_ATRI < 10 }
+			}
+			custom_effect_tooltip = DVL_ATRI_Study_Plan_Efficiency_down_80_percent
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 2
+				tooltip = Political_capabilities_of_ATRI_up_2
+			}
+		}
+		else = {
+			add_to_variable = {
+				var = Political_capabilities_of_ATRI
+				value = 10
+				tooltip = Political_capabilities_of_ATRI_up_10
+			}
+		}
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = -20
+			tooltip = mood_of_ATRI_down_20
+		}
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { check_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 7 } }
+		add_to_variable = {
+			var = mood_of_ATRI
+			value = 40
+			tooltip = mood_of_ATRI_up_40
+		}
+		DVL_ATRI_paly_event = yes
+	}
+	if = {
+		limit = { check_variable = { mood_of_ATRI = 0 } }
+		set_country_flag = AH_achievements_Angry_ATRI
+	}
+	DVL_Refresh_ATRI = yes
+}
+
+###  亚托莉奖励结算  ###
+DVL_ATRI_Reward_Settlement = {
+  ##陆军##
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 10 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_01 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_01
+		country_event = {
+			id = WizardCountry_ATRI.001
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 20 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_02 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_02
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 30 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_03 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_03
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+		DVL_ATRI_random_army_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 40 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_04 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_04
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 50 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_05 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_05
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 60 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_06 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_06
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+		DVL_ATRI_random_army_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 70 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_07 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_07
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 80 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_08 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_08
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 90 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_09 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_09
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+		DVL_ATRI_random_army_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 100 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_10 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_10
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 110 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_11 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_11
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 120 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_12 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_12
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+		DVL_ATRI_random_army_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 130 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_13 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_13
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 140 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_14 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_14
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 150 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_15 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_15
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+		DVL_ATRI_random_army_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 160 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Army_16 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Army_16
+		country_event = {
+			id = WizardCountry_ATRI.002
+		}
+	}
+  ##海军##
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 10 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_01 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_01
+		country_event = {
+			id = WizardCountry_ATRI.003
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 20 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_02 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_02
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 30 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_03 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_03
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+		DVL_ATRI_random_navy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 40 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_04 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_04
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 50 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_05 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_05
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 60 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_06 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_06
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+		DVL_ATRI_random_navy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 70 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_07 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_07
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 80 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_08 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_08
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 90 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_09 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_09
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+		DVL_ATRI_random_navy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 100 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_10 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_10
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 110 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_11 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_11
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 120 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_12 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_12
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+		DVL_ATRI_random_navy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 130 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_13 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_13
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 140 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_14 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_14
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 150 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_15 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_15
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+		DVL_ATRI_random_navy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Naval_capabilities_of_ATRI < 160 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Navy_16 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Navy_16
+		country_event = {
+			id = WizardCountry_ATRI.004
+		}
+	}
+  ##空军##
+	if = {
+		limit = {
+			not = { check_variable = { AirForce_capabilities_of_ATRI < 30 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Air_03 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Air_03
+		DVL_ATRI_random_air_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { AirForce_capabilities_of_ATRI < 60 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Air_06 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Air_06
+		DVL_ATRI_random_air_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { AirForce_capabilities_of_ATRI < 90 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Air_09 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Air_09
+		DVL_ATRI_random_air_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { AirForce_capabilities_of_ATRI < 120 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Air_12 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Air_12
+		DVL_ATRI_random_air_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { AirForce_capabilities_of_ATRI < 160 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Air_16 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Air_16
+		DVL_ATRI_random_air_event = yes
+	}
+  ##经济##
+	if = {
+		limit = {
+			not = { check_variable = { Financial_capabilities_of_ATRI < 30 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Financial_03 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Financial_03
+		DVL_ATRI_random_economy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Financial_capabilities_of_ATRI < 60 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Financial_06 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Financial_06
+		DVL_ATRI_random_economy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Financial_capabilities_of_ATRI < 90 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Financial_09 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Financial_09
+		DVL_ATRI_random_economy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Financial_capabilities_of_ATRI < 120 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Financial_12 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Financial_12
+		DVL_ATRI_random_economy_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Financial_capabilities_of_ATRI < 160 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Financial_16 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Financial_16
+		DVL_ATRI_random_economy_event = yes
+	}
+  ##政治##
+	if = {
+		limit = {
+			not = { check_variable = { Political_capabilities_of_ATRI < 30 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Political_03 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Political_03
+		DVL_ATRI_random_political_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Political_capabilities_of_ATRI < 60 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Political_06 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Political_06
+		DVL_ATRI_random_political_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Political_capabilities_of_ATRI < 90 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Political_09 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Political_09
+		DVL_ATRI_random_political_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Political_capabilities_of_ATRI < 120 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Political_12 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Political_12
+		DVL_ATRI_random_political_event = yes
+	}
+	if = {
+		limit = {
+			not = { check_variable = { Political_capabilities_of_ATRI < 160 } }
+			not = { has_country_flag = DVL_ATRI_Reward_Political_16 }
+		}
+		set_country_flag = DVL_ATRI_Reward_Political_16
+		DVL_ATRI_random_political_event = yes
+		if = {
+			limit = {
+				not = { check_variable = { Army_capabilities_of_ATRI < 160 } }
+				not = { check_variable = { Naval_capabilities_of_ATRI < 160 } }
+				not = { check_variable = { AirForce_capabilities_of_ATRI < 160 } }
+				not = { check_variable = { Financial_capabilities_of_ATRI < 160 } }
+			}
+			#亚托莉宰相彩蛋事件
+			country_event = {
+				id = WizardCountry_ATRI.007
+				days = 7
+			}
+		}
+	}
+  ##毕业
+	if = {
+		limit = {
+			not = { check_variable = { Army_capabilities_of_ATRI < 160 } }
+			not = { check_variable = { Naval_capabilities_of_ATRI < 160 } }
+			not = { check_variable = { AirForce_capabilities_of_ATRI < 160 } }
+			not = { check_variable = { Financial_capabilities_of_ATRI < 160 } }
+			not = { check_variable = { Political_capabilities_of_ATRI < 160 } }
+			has_country_flag = Start_DVL_ATRI_Study_Plan
+		}
+		#亚托莉毕业计算事件
+		country_event = { id = WizardCountry_ATRI.006 }
+	}
+}
+
+###  亚托莉行程AI  ###
+DVL_ATRI_Itinerary_for_ai = {
+	if = {
+		limit = { not = { check_variable = { temp_mood_of_ATRI > 120 } } }
+		set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 7 }
+		add_to_variable = { temp_mood_of_ATRI = 40 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Financial_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 5 }
+		add_to_variable = { temp_Financial_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Political_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 6 }
+		add_to_variable = { temp_Political_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Army_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 2 }
+		add_to_variable = { temp_Army_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Naval_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 3 }
+		add_to_variable = { temp_Naval_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_AirForce_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_1_VAR = 4 }
+		add_to_variable = { temp_AirForce_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { not = { check_variable = { temp_mood_of_ATRI > 120 } } }
+		set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 7 }
+		add_to_variable = { temp_mood_of_ATRI = 40 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Financial_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 5 }
+		add_to_variable = { temp_Financial_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Political_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 6 }
+		add_to_variable = { temp_Political_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Army_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 2 }
+		add_to_variable = { temp_Army_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Naval_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 3 }
+		add_to_variable = { temp_Naval_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_AirForce_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_2_VAR = 4 }
+		add_to_variable = { temp_AirForce_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { not = { check_variable = { temp_mood_of_ATRI > 120 } } }
+		set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 7 }
+		add_to_variable = { temp_mood_of_ATRI = 40 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Financial_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 5 }
+		add_to_variable = { temp_Financial_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Political_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 6 }
+		add_to_variable = { temp_Political_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Army_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 2 }
+		add_to_variable = { temp_Army_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Naval_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 3 }
+		add_to_variable = { temp_Naval_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_AirForce_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_3_VAR = 4 }
+		add_to_variable = { temp_AirForce_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { not = { check_variable = { temp_mood_of_ATRI > 120 } } }
+		set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 7 }
+		add_to_variable = { temp_mood_of_ATRI = 40 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Army_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 2 }
+		add_to_variable = { temp_Army_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Naval_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 3 }
+		add_to_variable = { temp_Naval_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_AirForce_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 4 }
+		add_to_variable = { temp_AirForce_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Financial_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 5 }
+		add_to_variable = { temp_Financial_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Political_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_4_VAR = 6 }
+		add_to_variable = { temp_Political_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { not = { check_variable = { temp_mood_of_ATRI > 120 } } }
+		set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 7 }
+		add_to_variable = { temp_mood_of_ATRI = 40 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Army_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 2 }
+		add_to_variable = { temp_Army_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Naval_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 3 }
+		add_to_variable = { temp_Naval_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_AirForce_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 4 }
+		add_to_variable = { temp_AirForce_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Financial_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 5 }
+		add_to_variable = { temp_Financial_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Political_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_5_VAR = 6 }
+		add_to_variable = { temp_Political_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	if = {
+		limit = { not = { check_variable = { temp_mood_of_ATRI > 120 } } }
+		set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 7 }
+		add_to_variable = { temp_mood_of_ATRI = 40 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Army_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 2 }
+		add_to_variable = { temp_Army_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Naval_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 3 }
+		add_to_variable = { temp_Naval_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_AirForce_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 4 }
+		add_to_variable = { temp_AirForce_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Financial_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 5 }
+		add_to_variable = { temp_Financial_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	else_if = {
+		limit = { check_variable = { temp_Political_capabilities_of_ATRI < 160 } }
+		set_variable = { DVL_ATRI_Study_Plan_project_6_VAR = 6 }
+		add_to_variable = { temp_Political_capabilities_of_ATRI = 10 }
+		add_to_variable = { temp_mood_of_ATRI = -20 }
+		DVL_Calculate_ATRI = yes
+	}
+	set_country_flag = ban_DVL_ATRI_Reset_Study_Plan
+	activate_mission = DVL_ATRI_Itinerary_01
+}
+
+###  亚托莉陆军随机事件  ###
+DVL_ATRI_random_army_event = {
+	hidden_effect = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_army_event_01
+				}
+				country_event = { id = WizardCountry_ATRI.010 }
+				set_country_flag = DVL_ATRI_random_army_event_01
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_army_event_02
+				}
+				country_event = { id = WizardCountry_ATRI.011 }
+				set_country_flag = DVL_ATRI_random_army_event_02
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_army_event_03
+				}
+				country_event = { id = WizardCountry_ATRI.012 }
+				set_country_flag = DVL_ATRI_random_army_event_03
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_army_event_04
+				}
+				country_event = { id = WizardCountry_ATRI.013 }
+				set_country_flag = DVL_ATRI_random_army_event_04
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_army_event_05
+				}
+				country_event = { id = WizardCountry_ATRI.014 }
+				set_country_flag = DVL_ATRI_random_army_event_05
+			}
+		}
+	}
+}
+
+###  亚托莉海军随机事件  ###
+DVL_ATRI_random_navy_event = {
+	hidden_effect = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_navy_event_01
+				}
+				country_event = { id = WizardCountry_ATRI.015 }
+				set_country_flag = DVL_ATRI_random_navy_event_01
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_navy_event_02
+				}
+				country_event = { id = WizardCountry_ATRI.016 }
+				set_country_flag = DVL_ATRI_random_navy_event_02
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_navy_event_03
+				}
+				country_event = { id = WizardCountry_ATRI.017 }
+				set_country_flag = DVL_ATRI_random_navy_event_03
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_navy_event_04
+				}
+				country_event = { id = WizardCountry_ATRI.018 }
+				set_country_flag = DVL_ATRI_random_navy_event_04
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_navy_event_05
+				}
+				country_event = { id = WizardCountry_ATRI.019 }
+				set_country_flag = DVL_ATRI_random_navy_event_05
+			}
+		}
+	}
+}
+
+###  亚托莉空军随机事件  ###
+DVL_ATRI_random_air_event = {
+	hidden_effect = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_air_event_01
+				}
+				country_event = { id = WizardCountry_ATRI.020 }
+				set_country_flag = DVL_ATRI_random_air_event_01
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_air_event_02
+				}
+				country_event = { id = WizardCountry_ATRI.021 }
+				set_country_flag = DVL_ATRI_random_air_event_02
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_air_event_03
+				}
+				country_event = { id = WizardCountry_ATRI.022 }
+				set_country_flag = DVL_ATRI_random_air_event_03
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_air_event_04
+				}
+				country_event = { id = WizardCountry_ATRI.023 }
+				set_country_flag = DVL_ATRI_random_air_event_04
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_air_event_05
+				}
+				country_event = { id = WizardCountry_ATRI.024 }
+				set_country_flag = DVL_ATRI_random_air_event_05
+			}
+		}
+	}
+}
+
+###  亚托莉经济随机事件  ###
+DVL_ATRI_random_economy_event = {
+	hidden_effect = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_economy_event_01
+				}
+				country_event = { id = WizardCountry_ATRI.025 }
+				set_country_flag = DVL_ATRI_random_economy_event_01
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_economy_event_02
+				}
+				country_event = { id = WizardCountry_ATRI.026 }
+				set_country_flag = DVL_ATRI_random_economy_event_02
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_economy_event_03
+				}
+				country_event = { id = WizardCountry_ATRI.027 }
+				set_country_flag = DVL_ATRI_random_economy_event_03
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_economy_event_04
+				}
+				country_event = { id = WizardCountry_ATRI.028 }
+				set_country_flag = DVL_ATRI_random_economy_event_04
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_economy_event_05
+				}
+				country_event = { id = WizardCountry_ATRI.029 }
+				set_country_flag = DVL_ATRI_random_economy_event_05
+			}
+		}
+	}
+}
+
+###  亚托莉政治随机事件  ###
+DVL_ATRI_random_political_event = {
+	hidden_effect = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_political_event_01
+				}
+				country_event = { id = WizardCountry_ATRI.030 }
+				set_country_flag = DVL_ATRI_random_political_event_01
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_political_event_02
+				}
+				country_event = { id = WizardCountry_ATRI.031 }
+				set_country_flag = DVL_ATRI_random_political_event_02
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_political_event_03
+				}
+				country_event = { id = WizardCountry_ATRI.032 }
+				set_country_flag = DVL_ATRI_random_political_event_03
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_political_event_04
+				}
+				country_event = { id = WizardCountry_ATRI.033 }
+				set_country_flag = DVL_ATRI_random_political_event_04
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_ATRI_random_political_event_05
+				}
+				country_event = { id = WizardCountry_ATRI.034 }
+				set_country_flag = DVL_ATRI_random_political_event_05
+			}
+		}
+	}
+}
+
+###  亚托莉成为内阁  ###
+DVL_ATRI_be_political_advisor = {
+	if = {
+		limit = {
+			or = {
+				not = { check_variable = { AirForce_capabilities_of_ATRI < 30 } }
+				not = { check_variable = { Financial_capabilities_of_ATRI < 30 } }
+				not = { check_variable = { Political_capabilities_of_ATRI < 30 } }
+			}
+			not = { has_country_flag = DVL_ATRI_political_advisor_usable }
+		}
+		set_country_flag = DVL_ATRI_political_advisor_usable
+		# DVL_ATRI_political_advisor = { custom_effect_tooltip = be_an_available_advisor }
+		# show_ideas_tooltip = DVL_ATRI_political_advisor
+		add_dynamic_modifier = { modifier = DVL_ATRI_dynamic_modifer }
+	}
+}
+
+###  移除所有副领袖  ###
+DVL_remove_all_ideas = {
+	hidden_effect = {
+		remove_ideas = {
+			DVL_Albedo_idea
+			DVL_Demiurge_idea
+			DVL_Sebas_Tian_idea
+			DVL_MoMo_idea
+			DVL_ATRI_idea
+			DVL_Chino_idea
+			DVL_Ainz_Ooal_Gown_idea
+		}
+	}
+}
+
+###  随机增加一项属性一点（作用域：将领）  ###
+DVL_unit_leader_get_random_skill = {
+	custom_effect_tooltip = DVL_unit_leader_get_random_skill_tt
+	hidden_effect = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					attack_skill_level > 8
+				}
+				add_attack = 1
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					defense_skill_level > 8
+				}
+				add_defense = 1
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					planning_skill_level > 8
+				}
+				add_planning = 1
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					logistics_skill_level > 8
+				}
+				add_logistics = 1
+			}
+		}
+	}
+}
+
+###  日记  ###
+DVL_add_to_diary = {
+	##add_to_array = { DVL_diary_of_Anzi_button_array = 1 }
+	add_to_array = { DVL_diary_of_Anzi_history_time = global.date }
+	add_to_array = { DVL_diary_of_Anzi_new = 1 }
+	add_to_variable = { num_DVL_diary_of_Anzi = 1 }
+}
+
+###  卡牌结算  ###
+DVL_Card_settlement = {
+	if = {  ##左
+		limit = {
+			or = {
+				check_variable = { Get_DVL_selected_card_var = 01 }
+				check_variable = { Get_DVL_selected_card_var = 28 }
+				check_variable = { Get_DVL_selected_card_var = 29 }
+				check_variable = { Get_DVL_selected_card_var = 30 }
+				check_variable = { Get_DVL_selected_card_var = 33 }
+				check_variable = { Get_DVL_selected_card_var = 07 }
+				check_variable = { Get_DVL_selected_card_var = 09 }
+				check_variable = { Get_DVL_selected_card_var = 10 }
+				check_variable = { Get_DVL_selected_card_var = 11 }
+				check_variable = { Get_DVL_selected_card_var = 12 }
+				check_variable = { Get_DVL_selected_card_var = 19 }
+				check_variable = { Get_DVL_selected_card_var = 20 }
+				check_variable = { Get_DVL_selected_card_var = 21 }
+				check_variable = { Get_DVL_selected_card_var = 22 }
+			}
+		}
+		add_to_variable = { DVL_Battle_for_prime_ministers_var = 10 }
+		add_to_variable = { DVL_Battle_for_prime_ministers_var_right = -10 }
+	}
+	if = {  ##右
+		limit = {
+			or = {
+				check_variable = { Get_DVL_selected_card_var = 02 }
+				check_variable = { Get_DVL_selected_card_var = 31 }
+				check_variable = { Get_DVL_selected_card_var = 32 }
+				check_variable = { Get_DVL_selected_card_var = 34 }
+				check_variable = { Get_DVL_selected_card_var = 08 }
+				check_variable = { Get_DVL_selected_card_var = 13 }
+				check_variable = { Get_DVL_selected_card_var = 14 }
+				check_variable = { Get_DVL_selected_card_var = 15 }
+				check_variable = { Get_DVL_selected_card_var = 16 }
+				check_variable = { Get_DVL_selected_card_var = 23 }
+				check_variable = { Get_DVL_selected_card_var = 24 }
+				check_variable = { Get_DVL_selected_card_var = 25 }
+				check_variable = { Get_DVL_selected_card_var = 26 }
+			}
+		}
+		add_to_variable = { DVL_Battle_for_prime_ministers_var = -10 }
+		add_to_variable = { DVL_Battle_for_prime_ministers_var_right = 10 }
+	}
+	clamp_variable = {
+		var = DVL_Battle_for_prime_ministers_var
+		min = 0
+		max = 100
+	}
+	clamp_variable = {
+		var = DVL_Battle_for_prime_ministers_var_right
+		min = 0
+		max = 100
+	}
+}
+
+###  抽卡  ###
+DVL_Gacha_effect = {
+	add_political_power = -50
+	random_list = {
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_01
+			}
+			set_variable = { Get_DVL_New_card_var = 01 }
+			set_country_flag = Get_DVL_New_card_var_01
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_02
+			}
+			set_variable = { Get_DVL_New_card_var = 02 }
+			set_country_flag = Get_DVL_New_card_var_02
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_28
+			}
+			set_variable = { Get_DVL_New_card_var = 28 }
+			set_country_flag = Get_DVL_New_card_var_28
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_29
+			}
+			set_variable = { Get_DVL_New_card_var = 29 }
+			set_country_flag = Get_DVL_New_card_var_29
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_30
+			}
+			set_variable = { Get_DVL_New_card_var = 30 }
+			set_country_flag = Get_DVL_New_card_var_30
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_31
+			}
+			set_variable = { Get_DVL_New_card_var = 31 }
+			set_country_flag = Get_DVL_New_card_var_31
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_32
+			}
+			set_variable = { Get_DVL_New_card_var = 32 }
+			set_country_flag = Get_DVL_New_card_var_32
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_33
+			}
+			set_variable = { Get_DVL_New_card_var = 33 }
+			set_country_flag = Get_DVL_New_card_var_33
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_34
+			}
+			set_variable = { Get_DVL_New_card_var = 34 }
+			set_country_flag = Get_DVL_New_card_var_34
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_09
+			}
+			set_variable = { Get_DVL_New_card_var = 09 }
+			set_country_flag = Get_DVL_New_card_var_09
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_10
+			}
+			set_variable = { Get_DVL_New_card_var = 10 }
+			set_country_flag = Get_DVL_New_card_var_10
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_11
+			}
+			set_variable = { Get_DVL_New_card_var = 11 }
+			set_country_flag = Get_DVL_New_card_var_11
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_12
+			}
+			set_variable = { Get_DVL_New_card_var = 12 }
+			set_country_flag = Get_DVL_New_card_var_12
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_13
+			}
+			set_variable = { Get_DVL_New_card_var = 13 }
+			set_country_flag = Get_DVL_New_card_var_13
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_14
+			}
+			set_variable = { Get_DVL_New_card_var = 14 }
+			set_country_flag = Get_DVL_New_card_var_14
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_15
+			}
+			set_variable = { Get_DVL_New_card_var = 15 }
+			set_country_flag = Get_DVL_New_card_var_15
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = Get_DVL_New_card_var_16
+			}
+			set_variable = { Get_DVL_New_card_var = 16 }
+			set_country_flag = Get_DVL_New_card_var_16
+		}
+	}
+}
+
+###  琪诺彩蛋  ###
+DVL_Chino_painted_eggshell = {
+	if = {
+		limit = {
+			is_in_array = { DVL_card_library_array = 13 }
+			is_in_array = { DVL_card_library_array = 14 }
+			is_in_array = { DVL_card_library_array = 15 }
+			is_in_array = { DVL_card_library_array = 16 }
+		}
+		country_event = {
+			id = WizardCountry.040
+			days = 1
+		}
+	}
+}
+
+###  宰相之治事件  ###
+DVL_Battle_for_prime_ministers_event = {
+	set_variable = { DVL_Battle_for_prime_ministers_event_id = 0 }
+	if = {
+		limit = {
+			has_country_flag = DVL_Battle_for_prime_ministers_event_01
+			has_country_flag = DVL_Battle_for_prime_ministers_event_02
+			has_country_flag = DVL_Battle_for_prime_ministers_event_03
+			has_country_flag = DVL_Battle_for_prime_ministers_event_04
+			has_country_flag = DVL_Battle_for_prime_ministers_event_05
+			has_country_flag = DVL_Battle_for_prime_ministers_event_06
+			has_country_flag = DVL_Battle_for_prime_ministers_event_07
+			has_country_flag = DVL_Battle_for_prime_ministers_event_08
+			has_country_flag = DVL_Battle_for_prime_ministers_event_09
+			has_country_flag = DVL_Battle_for_prime_ministers_event_10
+			has_country_flag = DVL_Battle_for_prime_ministers_event_11
+			has_country_flag = DVL_Battle_for_prime_ministers_event_12
+			has_country_flag = DVL_Battle_for_prime_ministers_event_15
+		}
+		country_event = {
+			id = WizardCountry.057
+			days = 10
+		}
+	}
+	else = {
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_01
+				}
+				country_event = {
+					id = WizardCountry.041
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_01
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_02
+				}
+				country_event = {
+					id = WizardCountry.042
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_02
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_03
+				}
+				country_event = {
+					id = WizardCountry.043
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_03
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_04
+				}
+				country_event = {
+					id = WizardCountry.044
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_04
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_05
+				}
+				country_event = {
+					id = WizardCountry.045
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_05
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_06
+				}
+				country_event = {
+					id = WizardCountry.046
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_06
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_07
+				}
+				country_event = {
+					id = WizardCountry.047
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_07
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_08
+				}
+				country_event = {
+					id = WizardCountry.048
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_08
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_09
+				}
+				country_event = {
+					id = WizardCountry.049
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_09
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_10
+				}
+				country_event = {
+					id = WizardCountry.050
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_10
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_11
+				}
+				country_event = {
+					id = WizardCountry.051
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_11
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_12
+				}
+				country_event = {
+					id = WizardCountry.052
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_12
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_country_flag = DVL_Battle_for_prime_ministers_event_15
+				}
+				country_event = {
+					id = WizardCountry.055
+					days = 30
+				}
+				set_country_flag = DVL_Battle_for_prime_ministers_event_15
+			}
+		}
+	}
+}
+
+###  亚托莉游玩事件  ###
+DVL_ATRI_paly_event = {
+	random_list = {
+		50 = {
+			custom_effect_tooltip = nothing_happen
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_01
+			}
+			country_event = {
+				id = WizardCountry_ATRI.035
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_01
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_02
+			}
+			country_event = {
+				id = WizardCountry_ATRI.036
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_02
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_03
+			}
+			country_event = {
+				id = WizardCountry_ATRI.037
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_03
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_04
+			}
+			country_event = {
+				id = WizardCountry_ATRI.038
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_04
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_05
+			}
+			country_event = {
+				id = WizardCountry_ATRI.039
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_05
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_06
+			}
+			country_event = {
+				id = WizardCountry_ATRI.040
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_06
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_07
+			}
+			country_event = {
+				id = WizardCountry_ATRI.041
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_07
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = DVL_ATRI_paly_event_08
+			}
+			country_event = {
+				id = WizardCountry_ATRI.042
+				days = 1
+			}
+			set_country_flag = DVL_ATRI_paly_event_08
+		}
+	}
+}
+
+###  柏林经济协定领袖buff计算  ###
+DVL_Berlin_Economic_Agreement_effect = {
+	clear_array = global.Berlin_Economic_Agreement_member
+	set_variable = { global.num_of_Berlin_Economic_Agreement = 0 }
+	every_country = {
+		limit = { check_variable = { THIS.economy_faction_var = 3 } }
+		add_to_array = { global.Berlin_Economic_Agreement_member = THIS }
+		add_to_variable = { global.num_of_Berlin_Economic_Agreement = 1 }
+	}
+	set_variable = { global.DVL_Berlin_Economic_Agreement_leader_global_building_slots_factor = global.num_of_Berlin_Economic_Agreement }
+	divide_variable = { global.DVL_Berlin_Economic_Agreement_leader_global_building_slots_factor = 100 }
+	set_variable = { global.DVL_Berlin_Economic_Agreement_leader_production_speed_buildings_factor = global.num_of_Berlin_Economic_Agreement }
+	divide_variable = { global.DVL_Berlin_Economic_Agreement_leader_production_speed_buildings_factor = 200 }
+	every_country = {
+		limit = { is_DVL_Governorate = yes }
+		add_to_variable = { global.DVL_Berlin_Economic_Agreement_leader_global_building_slots_factor = 0.01 }
+		add_to_variable = { global.DVL_Berlin_Economic_Agreement_leader_production_speed_buildings_factor = 0.01 }
+	}
+	if = {
+		limit = { DVL = { has_completed_focus = DVL_Nasalik_Scientific_Research_Society_foucs } }
+		set_variable = { global.DVL_Berlin_Economic_Agreement_leader_research_speed_factor = global.num_of_Berlin_Economic_Agreement }
+		divide_variable = { global.DVL_Berlin_Economic_Agreement_leader_research_speed_factor = 200 }
+		every_country = {
+			limit = { is_DVL_Governorate = yes }
+			add_to_variable = { global.DVL_Berlin_Economic_Agreement_leader_research_speed_factor = 0.01 }
+		}
+	}
+	###  刷新经济阵营GDP
+	compute_global_gdp = yes
+}

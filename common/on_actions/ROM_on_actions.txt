@@ -1,0 +1,58 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			every_state = {
+				limit = {
+					is_controlled_by = GRE
+				}
+				set_state_flag = GRE_orginal_state
+			}
+			every_state = {
+				limit = {
+					is_controlled_by = ROM
+				}
+				set_state_flag = ROM_orginal_state
+			}
+		}
+	}
+	on_daily_ROM = {
+		effect = {
+			if = {
+				limit = {
+					not = {
+						has_global_flag = UBF_united_balkan_federation_has_built
+					}
+					has_global_flag = UBF_united_balkan_federation_will_start
+				}
+				clear_array = global.Balkan_integration_members
+				every_country = {
+					limit = {
+						exists = yes
+						is_subject = no
+						has_country_flag = jion_in_the_Balkan_integration
+						capital_scope = {
+							BUL_is_balkan_state = yes
+						}
+					}
+					add_to_array = {
+						global.Balkan_integration_members = THIS
+					}
+				}
+				get_sorted_scored_countries = {
+					scorer = Balkan_integration_scorer
+					array = global.Balkan_integration_members
+				}
+				for_each_scope_loop = {
+					array = global.Balkan_integration_members
+					add_to_variable = {
+						global.Balkan_integration_members_index = 1
+					}
+					set_variable = {
+						Balkan_integration_ranking = global.Balkan_integration_members_index
+					}
+				}
+				clear_variable = global.Balkan_integration_members_index
+			}
+		}
+	}
+}

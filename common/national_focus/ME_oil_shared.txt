@@ -1,0 +1,295 @@
+	shared_focus = {
+		id = MEOIL_remake_oil_treaty
+		icon = GFX_goal_SAU_duoqu_oil
+		x = 15
+		y = 4
+		cost = 8
+		ai_will_do = { factor = 0 }
+		allow_branch = {
+			OR = {
+				has_global_flag = ME_oil_occur_flag
+				is_debug = yes
+			}
+		}
+		available = {
+			NOT = { has_war_with = ENG }
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			ENG = { country_event = saudi_arabia.35 }
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_buy_oil_treaty
+		icon = GFX_focus_generic_concessions
+		prerequisite = { focus = MEOIL_remake_oil_treaty }
+		mutually_exclusive = { focus = MEOIL_sanction_oil_company }
+		relative_position_id = MEOIL_remake_oil_treaty
+		x = -2
+		y = 1
+		cost = 8
+		ai_will_do = { factor = 7 }
+		available = {
+			hidden_trigger = { has_country_flag = MEOIL_remake_oil_treaty_success_flag }
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			add_political_power = -100
+			add_timed_idea = { idea = MEOIL_buy_oil_treaty days = 90 }
+			ENG = {
+				add_political_power = 100
+				country_event = saudi_arabia.34
+				add_timed_idea = { idea = MEOIL_buy_oil_treaty_ENG days = 90 }
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_disassemble_equipment
+		icon = GFX_focus_generic_energy
+		prerequisite = { focus = MEOIL_buy_oil_treaty }
+		relative_position_id = MEOIL_buy_oil_treaty
+		x = -1
+		y = 1
+		cost = 4
+		ai_will_do = { factor = 7 }
+		available = {
+			
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			add_tech_bonus = {
+				name = MEOIL_disassemble_equipment
+				bonus = 1
+				uses = 2
+				category = cat_synth_oil
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_improve_drilling_well
+		icon = GFX_focus_generic_stockpile_fuel
+		prerequisite = { focus = MEOIL_buy_oil_treaty }
+		relative_position_id = MEOIL_buy_oil_treaty
+		x = 1
+		y = 1
+		cost = 4
+		ai_will_do = { factor = 7 }
+		available = {
+			
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			add_tech_bonus = {
+				name = MEOIL_improve_drilling_well
+				bonus = 1
+				uses = 1
+				category = synth_resources
+			}
+			random_owned_state = {
+				limit = { is_core_of = ROOT }
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_buy_oil_company
+		icon = GFX_focus_chi_british_cooperation
+		prerequisite = { focus = MEOIL_disassemble_equipment }
+		prerequisite = { focus = MEOIL_improve_drilling_well }
+		relative_position_id = MEOIL_disassemble_equipment
+		x = 1
+		y = 1
+		cost = 2
+		ai_will_do = { factor = 7 }
+		available = {
+			
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			if = {
+				limit = { YEM = { is_subject = no } }
+				YEM = { country_event = saudi_arabia.36 }
+			}
+			else = {
+				YEM = {
+					overlord = {
+						country_event = saudi_arabia.36
+					}
+				}
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_sanction_oil_company
+		icon = GFX_focus_generic_provoke_border_clashes
+		prerequisite = { focus = MEOIL_remake_oil_treaty }
+		mutually_exclusive = { focus = MEOIL_buy_oil_treaty }
+		relative_position_id = MEOIL_remake_oil_treaty
+		x = 2
+		y = 1
+		cost = 8
+		ai_will_do = { factor = 7 }
+		available = {
+			hidden_trigger = { has_country_flag = MEOIL_remake_oil_treaty_failed_flag }
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			YEM = { add_ideas = yunshu_qieduan }
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_expel_oil_company
+		icon = GFX_focus_ger_break_anglo_french_colonial_hegemony
+		prerequisite = { focus = MEOIL_sanction_oil_company }
+		relative_position_id = MEOIL_sanction_oil_company
+		x = 0
+		y = 1
+		cost = 8
+		ai_will_do = { factor = 7 }
+		available = {
+			
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			every_state = {
+				limit = {
+					is_core_of = YEM
+					NOT = { is_core_of = ROOT }
+					is_controlled_by = YEM
+					is_on_continent = middle_east
+				}
+				add_core_of = ROOT
+			}
+			create_wargoal = {
+				target = YEM
+				type = take_core_state
+			}
+			custom_effect_tooltip = MEOIL_expel_oil_company_tt
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_peace_con
+		icon = GFX_goal_generic_forceful_treaty
+		prerequisite = { focus = MEOIL_expel_oil_company }
+		relative_position_id = MEOIL_expel_oil_company
+		x = 0
+		y = 1
+		cost = 2
+		ai_will_do = { factor = 7 }
+		available = {
+			YEM = {
+				has_war_with = ROOT
+				all_controlled_state = {
+					NOT = { is_on_continent = middle_east }
+				}
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = yes
+		available_if_capitulated = no
+		completion_reward = {
+			effect_tooltip = { white_peace = YEM }
+			hidden_effect = {
+				white_peace = {
+					tag = YEM
+					message = MEOIL_peace_con_message_tt
+				}
+				every_country = {
+					limit = {
+						is_in_faction_with = YEM
+						has_war_with = ROOT
+					}
+					ROOT = { white_peace = PREV }
+				}
+			}
+			every_state = {
+				limit = {
+					is_core_of = YEM
+					is_core_of = ROOT
+					is_on_continent = middle_east
+				}
+				ROOT = { transfer_state = PREV }
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = MEOIL_liquid_gold
+		icon = GFX_focus_generic_gold
+		prerequisite = {
+			focus = MEOIL_buy_oil_company
+			focus = MEOIL_peace_con
+		}
+		relative_position_id = MEOIL_buy_oil_company
+		x = 2
+		y = 1
+		cost = 8
+		ai_will_do = { factor = 7 }
+		available = {
+			
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		completion_reward = {
+			random_owned_state = {
+				limit = { is_core_of = ROOT }
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+			random_owned_state = {
+				limit = { is_core_of = ROOT }
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+			random_owned_state = {
+				limit = { is_core_of = ROOT }
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+			random_owned_state = {
+				limit = { is_core_of = ROOT }
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+			random_owned_state = {
+				limit = { is_core_of = ROOT }
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+		}
+	}

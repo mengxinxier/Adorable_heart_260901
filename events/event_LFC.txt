@@ -1,0 +1,2504 @@
+add_namespace = LFC_event
+add_namespace = LFC_news
+add_namespace = LFC_event_forest
+add_namespace = LFC_event_foc
+
+#雨林事件
+	#雨林机制事件
+		country_event = {  #选择补给
+			id = LFC_event_forest.1
+			title = LFC_event_forest.1.t
+			desc = LFC_event_forest.1.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #标准补给
+				name = LFC_event_forest.1.a
+				set_variable = {
+					LFC_VAR_Rainforest_supply = 100
+				}
+				custom_effect_tooltip = ENG_tooltip_var_hcp_jian_100
+				custom_effect_tooltip = LFC_tooltip_rf_supply_chushi_100
+				country_event = LFC_event_forest.2
+			}
+
+			option = { #较多补给
+				name = LFC_event_forest.1.b
+				trigger = {
+					check_variable = {
+						ubs_save > 150
+					}
+				}
+				set_variable = {
+					LFC_VAR_Rainforest_supply = 150
+				}
+				custom_effect_tooltip = ENG_tooltip_var_hcp_jian_150
+				custom_effect_tooltip = LFC_tooltip_rf_supply_chushi_150
+				country_event = LFC_event_forest.2
+			}
+
+			option = { #丰厚补给
+				name = LFC_event_forest.1.c
+				trigger = {
+					check_variable = {
+						ubs_save > 200
+					}
+				}
+				set_variable = {
+					LFC_VAR_Rainforest_supply = 200
+				}
+				custom_effect_tooltip = ENG_tooltip_var_hcp_jian_200
+				custom_effect_tooltip = LFC_tooltip_rf_supply_chushi_200
+				country_event = LFC_event_forest.2
+			}
+
+			option = { #容我三思
+				name = LFC_event_forest.1.e
+				custom_effect_tooltip = LFC_tooltip_rf_rwss
+			}
+		}
+
+		country_event = {  #选择装备等级
+			id = LFC_event_forest.2
+			title = LFC_event_forest.2.t
+			desc = LFC_event_forest.2.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #普通装备
+				name = LFC_event_forest.2.a
+				set_variable = {
+					VAR_LFC_Rainforest_equipment = 1
+				}
+				country_event = LFC_event_forest.3
+			}
+
+			option = { #机械化
+				name = LFC_event_forest.2.b
+				trigger = {
+					has_equipment = {
+						motorized_equipment > 100
+					}	
+					has_equipment = {
+						support_equipment > 60
+					}
+				}
+				set_variable = {
+					VAR_LFC_Rainforest_equipment = 2
+				}
+				country_event = LFC_event_forest.3	
+			}
+
+			option = { #构装骑士
+				name = LFC_event_forest.2.c
+				trigger = {
+					has_equipment = {
+						construct_knight_equipment > 6
+					}
+				}
+				set_variable = {
+					VAR_LFC_Rainforest_equipment = 3
+				}
+				country_event = LFC_event_forest.3
+			}
+
+			option = { #容我三思
+				name = LFC_event_forest.2.e
+				custom_effect_tooltip = LFC_tooltip_rf_rwss
+			}
+		}
+
+		country_event = {  #选择人力
+			id = LFC_event_forest.3
+			title = LFC_event_forest.3.t
+			desc = LFC_event_forest.3.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #小型远征队
+				name = LFC_event_forest.3.a
+				add_manpower = -2000
+				set_variable = {
+					LFC_VAR_Rainforest_manpower = 2000
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_man_chushi_2000
+				#扣除装备
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 1
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -1000
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -40
+						}
+					}
+
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 2
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -1000
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -60
+						}
+						add_equipment_to_stockpile = {
+							type = motorized_equipment
+							amount = -100
+						}
+					}
+
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 3
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -1000
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -40
+						}
+						add_equipment_to_stockpile = {
+							type = construct_knight_equipment
+							amount = -12
+						}
+					}
+
+
+
+				#扣除资金		
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 100
+							}
+						}
+						add_to_variable = { ubs_save = -100 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_100
+					}
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 150
+							}
+						}
+						add_to_variable = { ubs_save = -150 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_150
+					}
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 200
+							}
+						}
+						add_to_variable = { ubs_save = -200 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_200
+					}
+
+				#触发事件	
+					set_country_flag = FLAG_LFC_Rainforest_Acting
+					set_variable = { LFC_VAR_Rainforest_progress = 0 }
+					LFC_Preset_yulin_event_effect_0 = yes
+				#	
+			}
+
+			option = { #中型远征队
+				name = LFC_event_forest.3.b
+				trigger = {
+					has_manpower > 3000
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 1
+							}
+						}
+						has_equipment = {
+							infantry_equipment > 1500
+						}	
+						has_equipment = {
+							support_equipment > 60
+						}
+					}
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 2
+							}
+						}
+						has_equipment = {
+							infantry_equipment > 1500
+						}
+						has_equipment = {
+							motorized_equipment > 150
+						}	
+						has_equipment = {
+							support_equipment > 90
+						}
+					}
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 3
+							}
+						}
+						has_equipment = {
+							infantry_equipment > 1500
+						}	
+						has_equipment = {
+							support_equipment > 60
+						}
+						has_equipment = {
+							construct_knight_equipment > 9
+						}
+					}				
+				}
+				add_manpower = -3000
+				set_variable = {
+					LFC_VAR_Rainforest_manpower = 3000
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_man_chushi_3000
+				#扣除装备
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 1
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -1500
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -60
+						}
+					}
+
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 2
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -1500
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -90
+						}
+						add_equipment_to_stockpile = {
+							type = motorized_equipment
+							amount = -150
+						}
+					}
+
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 3
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -1500
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -60
+						}
+						add_equipment_to_stockpile = {
+							type = construct_knight_equipment
+							amount = -18
+						}
+					}
+
+				#扣除资金		
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 100
+							}
+						}
+						add_to_variable = { ubs_save = -100 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_100
+					}
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 150
+							}
+						}
+						add_to_variable = { ubs_save = -150 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_150
+					}
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 200
+							}
+						}
+						add_to_variable = { ubs_save = -200 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_200
+					}
+
+				#触发事件
+					set_country_flag = FLAG_LFC_Rainforest_Acting
+					set_variable = { LFC_VAR_Rainforest_progress = 0 }
+					LFC_Preset_yulin_event_effect_0 = yes
+				#	
+			}
+
+			option = { #大型远征队
+				name = LFC_event_forest.3.c
+				trigger = {
+					has_manpower > 4000
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 1
+							}
+						}
+						has_equipment = {
+							infantry_equipment > 2000
+						}	
+						has_equipment = {
+							support_equipment > 80
+						}
+					}
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 2
+							}
+						}
+						has_equipment = {
+							infantry_equipment > 2000
+						}
+						has_equipment = {
+							motorized_equipment > 200
+						}	
+						has_equipment = {
+							support_equipment > 120
+						}
+					}
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 3
+							}
+						}
+						has_equipment = {
+							infantry_equipment > 2000
+						}	
+						has_equipment = {
+							support_equipment > 80
+						}
+						has_equipment = {
+							construct_knight_equipment > 12
+						}
+					}				
+				}
+				add_manpower = -4000
+				set_variable = {
+					LFC_VAR_Rainforest_manpower = 4000
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_man_chushi_4000
+				#扣除装备
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 1
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -2000
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -80
+						}
+					}
+
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 2
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -2000
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -120
+						}
+						add_equipment_to_stockpile = {
+							type = motorized_equipment
+							amount = -200
+						}
+					}
+
+					if = {
+						limit = {
+							check_variable = {
+								VAR_LFC_Rainforest_equipment = 3
+							}
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = -2000
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -80
+						}
+						add_equipment_to_stockpile = {
+							type = construct_knight_equipment
+							amount = -24
+						}
+					}
+
+				#扣除资金		
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 100
+							}
+						}
+						add_to_variable = { ubs_save = -100 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_100
+					}
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 150
+							}
+						}
+						add_to_variable = { ubs_save = -150 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_150
+					}
+					if = {
+						limit = {
+							check_variable = {
+								LFC_VAR_Rainforest_supply = 200
+							}
+						}
+						add_to_variable = { ubs_save = -200 }
+						#custom_effect_tooltip = ENG_tooltip_var_hcp_jian_200
+					}
+
+				#触发事件	
+					set_country_flag = FLAG_LFC_Rainforest_Acting
+					set_variable = { LFC_VAR_Rainforest_progress = 0 }
+					LFC_Preset_yulin_event_effect_0 = yes
+				#	
+			}
+
+			option = { #容我三思
+				name = LFC_event_forest.3.e
+				custom_effect_tooltip = LFC_tooltip_rf_rwss
+			}
+		}
+
+		country_event = {  #补给不足
+			id = LFC_event_forest.4
+			title = LFC_event_forest.4.t
+			desc = LFC_event_forest.4.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #下一次的后勤筹备必须更加严密
+				name = LFC_event_forest.4.a
+				clr_country_flag = FLAG_LFC_Rainforest_Acting
+				if = {
+					limit = {
+						check_variable = {
+							LFC_VAR_Rainforest_manpower > 0
+						}
+					}
+					add_manpower = LFC_VAR_Rainforest_manpower
+				}
+				army_experience = 25
+				add_mastery = {#学说精通
+					amount = 25
+					#days = 365
+					#name = LFC_rf_tssb
+					folder = land  #陆海空军
+					#grand_doctrine = grand_battleplan  #大学说
+					#sub_doctrine = commandos  #子学说
+					#track = infantry  #哪个类型的子学说
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_kantan_jieshu
+			}
+
+		}
+
+		country_event = {  #人员枯竭
+			id = LFC_event_forest.5
+			title = LFC_event_forest.5.t
+			desc = LFC_event_forest.5.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #一次惨痛但必要的教训
+				name = LFC_event_forest.5.a
+				clr_country_flag = FLAG_LFC_Rainforest_Acting
+				if = {
+					limit = {
+						check_variable = {
+							LFC_VAR_Rainforest_manpower > 0
+						}
+					}
+					add_manpower = LFC_VAR_Rainforest_manpower
+				}
+				army_experience = 25
+				add_mastery = {#学说精通
+					amount = 25
+					#days = 365
+					#name = LFC_rf_tssb
+					folder = land  #陆海空军
+					#grand_doctrine = grand_battleplan  #大学说
+					#sub_doctrine = commandos  #子学说
+					#track = infantry  #哪个类型的子学说
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_kantan_jieshu
+			}
+
+		}
+
+		country_event = {  #勘探行动圆满成功
+			id = LFC_event_forest.6
+			title = LFC_event_forest.6.t
+			desc = LFC_event_forest.6.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #稳扎稳打，步步为营
+				name = LFC_event_forest.6.a
+				clr_country_flag = FLAG_LFC_Rainforest_Acting
+
+				if = {
+					limit = {
+						check_variable = {
+							LFC_VAR_Rainforest_manpower > 0
+						}
+					}
+					add_manpower = LFC_VAR_Rainforest_manpower
+				}
+
+				add_political_power = 50
+				add_stability = 0.05
+				add_war_support = 0.05
+
+				add_to_variable = { ubs_save = 50 }
+				custom_effect_tooltip = ENG_tooltip_var_hcp_add_50
+
+				army_experience = 50
+
+				add_mastery = {#学说精通
+					amount = 50
+					#days = 365
+					#name = LFC_rf_tssb
+					folder = land  #陆海空军
+					#grand_doctrine = grand_battleplan  #大学说
+					#sub_doctrine = commandos  #子学说
+					#track = infantry  #哪个类型的子学说
+				}
+				LFC_yulin_dikuai_control_effect = yes
+				custom_effect_tooltip = LFC_tooltip_rf_kantan_jieshu
+
+				
+			}
+
+		}
+
+
+
+	#雨林负面事件
+		country_event = {  #活体迷宫
+			id = LFC_event_forest.11
+			title = LFC_event_forest.11.t
+			desc = LFC_event_forest.11.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #原地驻扎，等待魔术师解析结界
+				name = LFC_event_forest.11.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_11_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #依靠炸药，强行开路
+				name = LFC_event_forest.11.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_11_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_20
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_500
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #辨识‘主干’的生长方向
+				name = LFC_event_forest.11.c
+				trigger = {
+					#has_completed_focus = LFC_13_gyxd
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_yaojing
+				custom_effect_tooltip = LFC_tooltip_forest_event_11_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -10 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_10
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #千面之雾
+			id = LFC_event_forest.12
+			title = LFC_event_forest.12.t
+			desc = LFC_event_forest.12.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #启动车辆的空气循环系统
+				name = LFC_event_forest.12.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_12_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #强行冲出雾区
+				name = LFC_event_forest.12.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_12_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_25
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #制作天然的过滤器
+				name = LFC_event_forest.12.c
+				trigger = {
+					has_completed_focus = LFC_13_gyxd
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_yaojing
+				custom_effect_tooltip = LFC_tooltip_forest_event_12_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #深渊裂谷
+			id = LFC_event_forest.13
+			title = LFC_event_forest.13.t
+			desc = LFC_event_forest.13.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #建造一座临时桥梁
+				name = LFC_event_forest.13.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_13_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #寻找绕行的道路
+				name = LFC_event_forest.13.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_13_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_25
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #发现“巨人之脊”
+				name = LFC_event_forest.13.c
+				trigger = {
+					has_completed_focus = LFC_13_gyxd
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_yaojing
+				custom_effect_tooltip = LFC_tooltip_forest_event_13_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #变质的口粮
+			id = LFC_event_forest.14
+			title = LFC_event_forest.14.t
+			desc = LFC_event_forest.14.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #原地修正，依靠士兵的体质硬撑过去
+				name = LFC_event_forest.14.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_14_a
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -800 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_800
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #动用珍贵的药物进行治疗
+				name = LFC_event_forest.14.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_14_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -25 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_25
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #施展群体治愈术
+				name = LFC_event_forest.14.c
+				trigger = {
+					has_completed_focus = LFC_9_kthz
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_mfsn
+				custom_effect_tooltip = LFC_tooltip_forest_event_14_c
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #日晷之锁
+			id = LFC_event_forest.15
+			title = LFC_event_forest.15.t
+			desc = LFC_event_forest.15.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #架设一个巨大的反射镜系统
+				name = LFC_event_forest.15.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_15_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #尝试从侧面进行爆破
+				name = LFC_event_forest.15.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_15_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_20
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_500
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #用魔法解决
+				name = LFC_event_forest.15.c
+				trigger = {
+					has_completed_focus = LFC_9_kthz
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_mfsn
+				custom_effect_tooltip = LFC_tooltip_forest_event_15_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #血蝇瘟疫
+			id = LFC_event_forest.16
+			title = LFC_event_forest.16.t
+			desc = LFC_event_forest.16.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #分发驱虫药剂，进行全面涂抹
+				name = LFC_event_forest.16.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_16_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #组织捕杀小队，手动清除蝇群
+				name = LFC_event_forest.16.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_16_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_20
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_500
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #释放冰霜法术，冻结它们
+				name = LFC_event_forest.16.c
+				trigger = {
+					has_completed_focus = LFC_9_kthz
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_mfsn
+				custom_effect_tooltip = LFC_tooltip_forest_event_16_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #河道塌方
+			id = LFC_event_forest.17
+			title = LFC_event_forest.17.t
+			desc = LFC_event_forest.17.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #呼叫空军进行紧急吊运
+				name = LFC_event_forest.17.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_17_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #在风暴来临前清理出一条通路
+				name = LFC_event_forest.17.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_17_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_20
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_500
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #让工程部队清理道路
+				name = LFC_event_forest.17.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 2
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_jxh
+				custom_effect_tooltip = LFC_tooltip_forest_event_17_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #崩塌的遗迹
+			id = LFC_event_forest.18
+			title = LFC_event_forest.18.t
+			desc = LFC_event_forest.18.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #派出工兵进行挖掘
+				name = LFC_event_forest.18.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_18_a
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -800 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_800
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #使用工程炸药进行爆破
+				name = LFC_event_forest.18.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_18_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -25 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_25
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #让构装骑士清理障碍
+				name = LFC_event_forest.18.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_18_c
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #剧毒瘴气林
+			id = LFC_event_forest.19
+			title = LFC_event_forest.19.t
+			desc = LFC_event_forest.19.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #呼叫攻击机，投放燃烧弹
+				name = LFC_event_forest.19.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_19_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #派遣一支穿着重型防护服的突击小队
+				name = LFC_event_forest.19.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_19_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_20
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_500
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #让骑士作为开路先锋
+				name = LFC_event_forest.19.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_19_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #无尽的绿海
+			id = LFC_event_forest.20
+			title = LFC_event_forest.20.t
+			desc = LFC_event_forest.20.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #呼叫侦察机，进行高空三角定位
+				name = LFC_event_forest.20.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_20_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -40 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_40
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #派遣侦察兵，向所有方向进行探索
+				name = LFC_event_forest.20.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_20_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_20
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -500 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_500
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #利用构装骑士的的雷达系统
+				name = LFC_event_forest.20.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_20_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -30 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_30
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+	#雨林战斗事件	
+
+		country_event = {  #丛林中的伏击
+			id = LFC_event_forest.21
+			title = LFC_event_forest.21.t
+			desc = LFC_event_forest.21.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #组成环形防线，正面迎敌
+				name = LFC_event_forest.21.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_21_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -15 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_15
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -999 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_999
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #集中火力，重点突破
+				name = LFC_event_forest.21.b
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 2
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_jxh
+				custom_effect_tooltip = LFC_tooltip_forest_event_21_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -10 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_10
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #让构装骑士发起突击
+				name = LFC_event_forest.21.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_21_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -5 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_5
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -200 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #交替掩护撤退，我们绕路走
+				name = LFC_event_forest.21.e
+				trigger = {
+
+				}
+				custom_effect_tooltip = LFC_tooltip_forest_event_21_e
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -65 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_65
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #蜥人部落
+			id = LFC_event_forest.22
+			title = LFC_event_forest.22.t
+			desc = LFC_event_forest.22.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #发动一次果断的突袭
+				name = LFC_event_forest.22.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_22_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -15 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_15
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -999 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_999
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #让机械化部队主导进攻
+				name = LFC_event_forest.22.b
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 2
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_jxh
+				custom_effect_tooltip = LFC_tooltip_forest_event_22_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -10 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_10
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #投入构装骑士，碾碎他们
+				name = LFC_event_forest.22.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_22_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -5 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_5
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -200 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #我们没必要招惹它们，绕路走
+				name = LFC_event_forest.22.e
+				trigger = {
+
+				}
+				custom_effect_tooltip = LFC_tooltip_forest_event_22_e
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -65 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_65
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #太阳引擎
+			id = LFC_event_forest.23
+			title = LFC_event_forest.23.t
+			desc = LFC_event_forest.23.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #用火箭筒抵近射击
+				name = LFC_event_forest.23.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_23_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -15 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_15
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -999 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_999
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #用车载火炮轰击敌人
+				name = LFC_event_forest.23.b
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 2
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_jxh
+				custom_effect_tooltip = LFC_tooltip_forest_event_23_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -10 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_10
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #让构装骑士发起突击
+				name = LFC_event_forest.23.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_23_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -5 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_5
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -200 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #呼叫空中支援，进行一次精确打击
+				name = LFC_event_forest.23.e
+				trigger = {
+
+				}
+				custom_effect_tooltip = LFC_tooltip_forest_event_23_e
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -65 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_65
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #火蜥蜴
+			id = LFC_event_forest.24
+			title = LFC_event_forest.24.t
+			desc = LFC_event_forest.24.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #组织步兵，向火力点发起反击
+				name = LFC_event_forest.24.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_24_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -15 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_15
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -999 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_999
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #用压倒性的火力清除威胁
+				name = LFC_event_forest.24.b
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 2
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_jxh
+				custom_effect_tooltip = LFC_tooltip_forest_event_24_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -10 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_10
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #启动热成像索敌，进行精确清除
+				name = LFC_event_forest.24.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_24_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -5 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_5
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -200 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #呼叫空中支援，进行一次“焦土”打击
+				name = LFC_event_forest.24.e
+				trigger = {
+
+				}
+				custom_effect_tooltip = LFC_tooltip_forest_event_24_e
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -65 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_65
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+		country_event = {  #死亡之翼
+			id = LFC_event_forest.25
+			title = LFC_event_forest.25.t
+			desc = LFC_event_forest.25.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #就地寻找掩护，组织对空火力网
+				name = LFC_event_forest.25.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_25_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -15 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_15
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -999 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_999
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+				
+			}
+
+			option = { #展开防空火力，进行区域封锁
+				name = LFC_event_forest.25.b
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 2
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_jxh
+				custom_effect_tooltip = LFC_tooltip_forest_event_25_b
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -10 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_10
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -600 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_600
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #启动火控雷达，进行精确打击
+				name = LFC_event_forest.25.c
+				trigger = {
+					check_variable = {
+						VAR_LFC_Rainforest_equipment = 3
+					}
+				}
+				custom_effect_tooltip = LFC_tooltip_rf_tiaojian_gzqs
+				custom_effect_tooltip = LFC_tooltip_forest_event_25_c
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -5 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_5
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = -200 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_jian_200
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #释放烟雾弹，掩护部队通过
+				name = LFC_event_forest.25.e
+				trigger = {
+
+				}
+				custom_effect_tooltip = LFC_tooltip_forest_event_25_e
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = -65 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_jian_65
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+				
+				LFC_yulin_xuanxiang_effect = yes
+			}
+		}
+
+	#雨林正面事件	
+
+		country_event = {  #静谧林地
+			id = LFC_event_forest.31
+			title = LFC_event_forest.31.t
+			desc = LFC_event_forest.31.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #采集此地的果实和水源
+				name = LFC_event_forest.31.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_31_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_add_20
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #在林地中休整，治疗伤员
+				name = LFC_event_forest.31.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_31_b
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = 400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_add_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #仔细勘探这片区域
+				name = LFC_event_forest.31.c
+				custom_effect_tooltip = LFC_tooltip_forest_event_31_c
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 40 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_40
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+		}
+
+		country_event = {  #遗忘的前哨
+			id = LFC_event_forest.32
+			title = LFC_event_forest.32.t
+			desc = LFC_event_forest.32.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #搜刮前哨站的仓库
+				name = LFC_event_forest.32.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_32_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_add_20
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #检查前哨站的医务室
+				name = LFC_event_forest.32.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_32_b
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = 400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_add_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #调查指挥官的办公室
+				name = LFC_event_forest.32.c
+				custom_effect_tooltip = LFC_tooltip_forest_event_32_c
+
+				add_to_variable = { LFC_VAR_Rainforest_product = 50 }
+				custom_effect_tooltip = LFC_tooltip_rf_product_add_50
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+		}
+
+		country_event = {  #林中偶遇
+			id = LFC_event_forest.33
+			title = LFC_event_forest.33.t
+			desc = LFC_event_forest.33.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #提议分享物资
+				name = LFC_event_forest.33.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_33_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_add_20
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #说服她们加入探险队
+				name = LFC_event_forest.33.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_33_b
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = 400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_add_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #询问周围的道路
+				name = LFC_event_forest.33.c
+				custom_effect_tooltip = LFC_tooltip_forest_event_33_c
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 40 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_40
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+		}
+
+		country_event = {  #意外的援军
+			id = LFC_event_forest.34
+			title = LFC_event_forest.34.t
+			desc = LFC_event_forest.34.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #接受她们赠予的礼物
+				name = LFC_event_forest.34.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_34_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_add_20
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #说服她们与我们同行
+				name = LFC_event_forest.34.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_34_b
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = 400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_add_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #向她们询问周围的情况
+				name = LFC_event_forest.34.c
+				custom_effect_tooltip = LFC_tooltip_forest_event_34_c
+
+				add_to_variable = { LFC_VAR_Rainforest_product = 50 }
+				custom_effect_tooltip = LFC_tooltip_rf_product_add_50
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+		}
+
+		country_event = {  #蛇神金字塔
+			id = LFC_event_forest.35
+			title = LFC_event_forest.35.t
+			desc = LFC_event_forest.35.d
+			fire_only_once = no
+			is_triggered_only = yes
+			
+			option = { #探索金字塔的储藏室
+				name = LFC_event_forest.35.a
+				custom_effect_tooltip = LFC_tooltip_forest_event_35_a
+
+				add_to_variable = { LFC_VAR_Rainforest_supply = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_supply_add_20
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #搜寻金字塔的净化池
+				name = LFC_event_forest.35.b
+				custom_effect_tooltip = LFC_tooltip_forest_event_35_b
+
+				add_to_variable = { LFC_VAR_Rainforest_manpower = 400 }
+				custom_effect_tooltip = LFC_tooltip_rf_man_add_400
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+			option = { #调查金字塔的核心密室
+				name = LFC_event_forest.35.c
+				custom_effect_tooltip = LFC_tooltip_forest_event_35_c
+
+				add_to_variable = { LFC_VAR_Rainforest_product = 50 }
+				custom_effect_tooltip = LFC_tooltip_rf_product_add_50
+
+				add_to_variable = { LFC_VAR_Rainforest_progress = 20 }
+				custom_effect_tooltip = LFC_tooltip_rf_progress_add_20
+
+				LFC_yulin_xuanxiang_effect = yes
+			}
+
+		}
+
+
+
+
+
+
+
+
+#遗迹探索事件
+	country_event = {  #发现先驱者神殿都市
+		id = LFC_event_forest.51
+		title = LFC_event_forest.51.t
+		desc = LFC_event_forest.51.d
+		fire_only_once = no
+		is_triggered_only = yes
+		
+		option = { #一处极具解析价值的地脉中枢
+			name = LFC_event_forest.51.a			
+		}
+	}
+	country_event = {  #发现先驱者建筑群
+		id = LFC_event_forest.52
+		title = LFC_event_forest.52.t
+		desc = LFC_event_forest.52.d
+		fire_only_once = no
+		is_triggered_only = yes
+		
+		option = { #掩埋在藤蔓下的远古奥秘
+			name = LFC_event_forest.52.a			
+		}
+	}
+	country_event = {  #发现小型先驱者建筑
+		id = LFC_event_forest.53
+		title = LFC_event_forest.53.t
+		desc = LFC_event_forest.53.d
+		fire_only_once = no
+		is_triggered_only = yes
+		
+		option = { #一座静默演算的远古观测站
+			name = LFC_event_forest.53.a			
+		}
+	}
+	country_event = {  #彻底损毁的先驱者废墟
+		id = LFC_event_forest.54
+		title = LFC_event_forest.54.t
+		desc = LFC_event_forest.54.d
+		fire_only_once = no
+		is_triggered_only = yes
+		
+		option = { #至少我们在废墟中抢救出了一些残片
+			name = LFC_event_forest.54.a	
+			add_to_variable = { LFC_VAR_Rainforest_product = 50 }
+			custom_effect_tooltip = LFC_tooltip_rf_supply_add_20		
+		}
+	}
+	country_event = {  #毫无收获的搜寻
+		id = LFC_event_forest.55
+		title = LFC_event_forest.55.t
+		desc = LFC_event_forest.55.d
+		fire_only_once = no
+		is_triggered_only = yes
+		
+		option = { #绿海中总是充斥着虚假的幻象
+			name = LFC_event_forest.55.a			
+		}
+	}
+#总督府决议事件
+		country_event = {  #调整与本土的经济联系
+			id = LFC_event.2
+			title = LFC_event.2.t
+			desc = LFC_event.2.d
+			fire_only_once = no
+			is_triggered_only = yes
+
+			option = { #保持最低限度的经济联系
+				name = LFC_event.2.a
+				trigger = {
+					NOT = { has_idea = LFC_idea_jjlx_1 }
+				}
+				if = {
+					limit = { 
+						has_idea = LFC_idea_jjlx_2 
+					}
+					swap_ideas = { 
+						remove_idea = LFC_idea_jjlx_2 
+						add_idea = LFC_idea_jjlx_1 
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = LFC_idea_jjlx_3
+					}
+					swap_ideas = {
+						remove_idea = LFC_idea_jjlx_3
+						add_idea = LFC_idea_jjlx_1
+					}
+				}
+				else = {
+					add_ideas = LFC_idea_jjlx_1
+				}
+				LFC_Preset_monthly_license_calculation = yes
+			}
+			option = { #加深与本土的经济联系
+				name = LFC_event.2.b
+				trigger = {
+					NOT = { has_idea = LFC_idea_jjlx_2 }
+				}
+				if = {
+					limit = {
+						has_idea = LFC_idea_jjlx_1
+					}
+					swap_ideas = {
+						remove_idea = LFC_idea_jjlx_1
+						add_idea = LFC_idea_jjlx_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = LFC_idea_jjlx_3
+					}
+					swap_ideas = {
+						remove_idea = LFC_idea_jjlx_3
+						add_idea = LFC_idea_jjlx_2
+					}
+				}
+				else = {
+					add_ideas = LFC_idea_jjlx_2
+				}
+				LFC_Preset_monthly_license_calculation = yes
+			}
+			option = { #建立全面的经济联系
+				name = LFC_event.2.c
+				trigger = {
+					NOT = { has_idea = LFC_idea_jjlx_3 }
+				}
+				if = {
+					limit = {
+						has_idea = LFC_idea_jjlx_1
+					}
+					swap_ideas = {
+						remove_idea = LFC_idea_jjlx_1
+						add_idea = LFC_idea_jjlx_3
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = LFC_idea_jjlx_2
+					}
+					swap_ideas = {
+						remove_idea = LFC_idea_jjlx_2
+						add_idea = LFC_idea_jjlx_3
+					}
+				}
+				else = {
+					add_ideas = LFC_idea_jjlx_3
+				}
+				LFC_Preset_monthly_license_calculation = yes
+			}
+		}
+
+#国策事件
+	country_event = { #能源安全保障法
+		id = LFC_event_foc.1
+		title = LFC_event_foc.1.t
+		desc = LFC_event_foc.1.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #有限保障（外资≤75%）
+			name = LFC_event_foc.1.a
+			ai_chance = {
+        		base = 0
+			}
+
+			add_ideas = { LFC_idea_nybzyx }
+			add_to_variable = { ubs_save = 200 } 
+			custom_effect_tooltip = ENG_tooltip_var_hcp_add_200
+			
+		}
+
+		option = { #明确主导权（外资≤49%）
+			name = LFC_event_foc.1.b
+			ai_chance = {
+        		base = 100
+			}
+
+			add_ideas = { LFC_idea_nymqzddq }
+		}
+
+		option = { #严格管控（外资≤25%）
+			name = LFC_event_foc.1.c
+			ai_chance = {
+        		base = 0
+			}
+
+			add_ideas = { LFC_idea_nyyggk }
+			COST_200_UBS_LOAD = yes
+		}
+	}
+
+
+	country_event = { #海上油田开发谈判
+		id = LFC_event_foc.2
+		title = LFC_event_foc.2.t
+		desc = LFC_event_foc.2.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #贸易协会主导（25-75）
+			name = LFC_event_foc.2.a
+			COST_100_UBS_LOAD = yes
+			set_variable = {
+				LFC_VAR_oil_investment = 1
+			}
+			country_event = {
+				id = LFC_event_foc.3
+				days = 180
+			}
+		}
+
+		option = { #对等合作（50-50）
+			name = LFC_event_foc.2.b
+			COST_200_UBS_LOAD = yes
+			set_variable = {
+				LFC_VAR_oil_investment = 2
+			}
+			country_event = {
+				id = LFC_event_foc.3
+				days = 270
+			}
+		}
+
+		option = { #政府主导（75-25）
+			name = LFC_event_foc.2.c
+			COST_300_UBS_LOAD = yes
+			set_variable = {
+				LFC_VAR_oil_investment = 3
+			}
+			country_event = {
+				id = LFC_event_foc.3
+				days = 360
+			}
+		}
+	}
+
+	country_event = { #深渊海脊油田井喷
+		id = LFC_event_foc.3
+		title = LFC_event_foc.3.t
+		desc = LFC_event_foc.3.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #我国的能源未来有了保障
+			name = LFC_event_foc.3.a
+			if = {
+				limit = {
+					check_variable = { LFC_VAR_oil_investment = 1 }
+				}
+				add_to_variable = {
+					ubs_save = 200
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { LFC_VAR_oil_investment = 2 }
+				}
+				add_to_variable = {
+					ubs_save = 400
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { LFC_VAR_oil_investment = 3 }
+				}
+				add_to_variable = {
+					ubs_save = 600
+				}
+			}
+			1199 = {
+				add_resource = {
+					type = oil
+					amount = 48
+				}	#威弗利+48石油
+			}
+		}
+	}
+
+
+	country_event = { #进口学园都市煤炭
+		id = LFC_event_foc.4
+		title = LFC_event_foc.4.t
+		desc = LFC_event_foc.4.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #同意派出代表团
+			name = LFC_event_foc.4.a
+			ai_chance = {
+        		base = 100
+			}
+			AST = { 
+				country_event = { 
+					id = LFC_event_foc.8 
+					days = 1 
+				} 
+			}
+		}
+
+		option = { #不同意
+			name = LFC_event_foc.4.b
+			ai_chance = {
+        		base = 0
+			}
+			add_political_power = 10	#政治点数+10
+		}
+	}
+
+	country_event = { #露斯契亚商业代表团抵达
+		id = LFC_event_foc.8
+		title = LFC_event_foc.8.t
+		desc = LFC_event_foc.8.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #只同意进口资源
+			name = LFC_event_foc.8.a
+			ai_chance = {
+        		base = 0
+			}
+			LFC = { 
+				country_event = { 
+					id = LFC_event_foc.5 
+					days = 1 
+				} 
+			}
+		}
+
+		option = { #进口+出售鲍恩盆地煤矿开采权
+			name = LFC_event_foc.8.b
+			ai_chance = {
+        		base = 0
+			}
+			LFC = { 
+				country_event = { 
+					id = LFC_event_foc.6 
+					days = 1 
+				} 
+			}
+		}
+
+		option = { #进口+煤矿+中背山脉铁矿开采权
+			name = LFC_event_foc.8.c
+			ai_chance = {
+        		base = 100
+			}
+			LFC = { 
+				country_event = { 
+					id = LFC_event_foc.7 
+					days = 1 
+				} 
+			}
+		}
+	}
+
+	country_event = { #进口煤炭协议达成（仅进口）
+		id = LFC_event_foc.5
+		title = LFC_event_foc.5.t
+		desc = LFC_event_foc.5.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #签订进口协议
+			name = LFC_event_foc.5.a
+			COST_100_UBS_LOAD = yes
+			AST = { 			
+				country_event = { 
+					id = LFC_event_foc.9 
+					days = 1 
+				} 
+				effect_tooltip = {
+					add_ideas = { LFC_idea_ast_xylscqkmt }
+				}
+			}
+		}
+	}
+
+	country_event = { #进口煤炭+购买鲍恩盆地煤矿（煤矿+进口）
+		id = LFC_event_foc.6
+		title = LFC_event_foc.6.t
+		desc = LFC_event_foc.6.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #签订进口协议
+			name = LFC_event_foc.6.a
+			ai_chance = {
+        		base = 0
+			}
+
+			COST_100_UBS_LOAD = yes
+			AST = { 			
+				country_event = { 
+					id = LFC_event_foc.9 
+					days = 1 
+				} 
+				effect_tooltip = {
+					add_ideas = { LFC_idea_ast_xylscqkmt }
+				}
+			}
+		}
+
+		option = { #进口+购买煤矿开采权
+			name = LFC_event_foc.6.b
+			ai_chance = {
+        		base = 100
+			}
+
+			COST_300_UBS_LOAD = yes
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				add_to_variable = {
+					ubs_save = 200
+				}
+			}
+			AST = {
+				give_resource_rights = {
+					receiver = LFC
+					state = 1177
+				}
+			}
+			AST = { 
+				country_event = { 
+					id = LFC_event_foc.10 
+					days = 1 
+				} 
+				effect_tooltip = {
+					add_ideas = { LFC_idea_ast_xylscqkmt }
+					custom_effect_tooltip = ENG_tooltip_var_hcp_add_200
+				}
+			}
+		}
+	}
+
+	country_event = { #进口煤炭+购买矿产开采权（全买）
+		id = LFC_event_foc.7
+		title = LFC_event_foc.7.t
+		desc = LFC_event_foc.7.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #只进口
+			name = LFC_event_foc.7.a
+			ai_chance = {
+        		base = 0
+			}
+
+			COST_100_UBS_LOAD = yes
+			AST = { 			
+				country_event = { 
+					id = LFC_event_foc.9 
+					days = 1 
+				} 
+				effect_tooltip = {
+					add_ideas = { LFC_idea_ast_xylscqkmt }
+				}
+			}
+		}
+
+		option = { #进口+购买煤矿
+			name = LFC_event_foc.7.b
+			ai_chance = {
+        		base = 0
+			}
+
+			COST_300_UBS_LOAD = yes
+			AST = {
+				give_resource_rights = {
+					receiver = LFC
+					state = 1177
+				}
+			}
+			AST = { 
+				country_event = { 
+					id = LFC_event_foc.10 
+					days = 1 
+				} 
+				effect_tooltip = {
+					add_ideas = { LFC_idea_ast_xylscqkmt }
+					custom_effect_tooltip = ENG_tooltip_var_hcp_add_200
+				}
+			}
+		}
+
+		option = { #进口+购买煤矿+购买铁矿
+			name = LFC_event_foc.7.c
+			ai_chance = {
+        		base = 100
+			}
+
+			COST_500_UBS_LOAD = yes
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				add_to_variable = {
+					ubs_save = 400
+				}
+			}
+			AST = {
+				give_resource_rights = {
+					receiver = LFC
+					state = 1177
+				}
+				give_resource_rights = {
+					receiver = LFC
+					state = 1178
+				}
+			}
+			AST = { 
+				country_event = { 
+					id = LFC_event_foc.11
+					days = 1 
+				} 
+				effect_tooltip = {
+					add_ideas = { LFC_idea_ast_xylscqkmt }
+					custom_effect_tooltip = ENG_tooltip_var_hcp_add_400
+				}
+			}
+		}
+	}
+
+	country_event = { #露斯契亚交易完成（仅进口）
+		id = LFC_event_foc.9
+		title = LFC_event_foc.9.t
+		desc = LFC_event_foc.9.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #合作愉快
+			name = LFC_event_foc.9.a
+			add_ideas = { LFC_idea_ast_xylscqkmt }
+		}
+	}
+
+	country_event = { #露斯契亚交易完成（进口+煤矿）
+		id = LFC_event_foc.10
+		title = LFC_event_foc.10.t
+		desc = LFC_event_foc.10.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #合作愉快
+			name = LFC_event_foc.10.a
+			add_to_variable = { ubs_save = 200 }
+			custom_effect_tooltip = ENG_tooltip_var_hcp_add_200
+			add_ideas = { LFC_idea_ast_xylscqkmt }
+		}
+	}
+
+	country_event = { #露斯契亚交易完成（全买）
+		id = LFC_event_foc.11
+		title = LFC_event_foc.11.t
+		desc = LFC_event_foc.11.d
+		fire_only_once = yes
+		is_triggered_only = yes
+
+		option = { #合作愉快
+			name = LFC_event_foc.11.a
+			add_to_variable = { ubs_save = 400 }
+			custom_effect_tooltip = ENG_tooltip_var_hcp_add_400
+			add_ideas = { LFC_idea_ast_xylscqkmt }
+		}
+	}
+
+	
+#
+
+#
+
+#其他
+	country_event = {  #神滨-新安普顿协定
+		id = LFC_event.1
+		title = LFC_event.1.t
+		desc = LFC_event.1.d
+		fire_only_once = no
+		is_triggered_only = yes
+		
+		option = {
+			name = LFC_event.1.a
+			ai_chance = {
+				factor = 100
+			}
+			LFC = {
+				add_to_faction = MGU		
+			}
+			hidden_effect = {
+				ROOT = { set_major = yes }
+			}
+			
+		}
+
+		option = {
+			name = LFC_event.1.b
+			ai_chance = {
+				factor = 0
+			}
+			trigger = {
+				NOT = {
+					has_country_flag = MGU_yuki_enter
+				}
+			}
+		}
+
+		option = {
+			name = LFC_event.1.c
+			ai_chance = {
+				factor = 0
+			}
+			MGU = {
+				add_to_faction = LFC
+			}
+			hidden_effect = {
+				ROOT = { set_major = yes }
+			}
+			trigger = {
+				NOT = {
+					has_country_flag = MGU_yuki_enter
+				}
+			}
+		}
+	}
+
+
+	#经济危机波及我国
+	country_event = {
+		id = LFC_event.101
+		title = LFC_event.101.t
+		desc = LFC_event.101.d
+		fire_only_once = yes
+		is_triggered_only = yes
+		
+		option = {
+			name = LFC_event.101.a
+			add_ideas = LFC_idea_jjwj
+		}
+	}
+

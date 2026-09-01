@@ -1,0 +1,161 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			601 = { set_demilitarized_zone = yes }
+			1224 = { set_demilitarized_zone = yes }
+			605 = { set_demilitarized_zone = yes }
+			SIC = { activate_mission = SIC_weekly_refresh }
+			PRC = { country_event = { id = china_generic.012 hours = 1 } }
+			PRC = {
+				PRC_national_construction_state_select_initialization = yes
+				set_power_balance = {
+					id = PRC_Line_struggle_bop
+					left_side = PRC_Line_struggle_bop_left_side
+					right_side = PRC_Line_struggle_bop_right_side
+					set_default = yes
+				}
+				country_event = {
+					id = PRC_add.32
+					days = 3
+				}
+				country_event = {
+					id = PRC_add.33
+					days = 22
+				}
+				country_event = {
+					id = PRC_add.34
+					days = 15
+				}
+				country_event = {
+					id = PRC_add.35
+					days = 35
+				}
+				country_event = {
+					id = PRC_add.36
+					days = 90
+				}
+				country_event = {
+					id = PRC_add.38
+					days = 57
+				}
+				country_event = {
+					id = PRC_add.64
+					days = 320
+				}
+				country_event = {
+					id = PRC_add.30
+					days = 1600
+				}
+				PRC_national_construction_state_index_initialization = yes
+				PRC_national_construction_state_index_calculate = yes
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					not = { has_global_flag = Peaceful_liberation_of_Beijing }
+					ROOT = {
+						tag = PRC
+						has_government = communism
+						is_subject = no
+						has_war_with = FROM
+					}
+					FROM.FROM = {
+						is_owned_by = FROM
+						is_core_of = FROM
+						or = {
+							state = 609
+							state = 608
+							state = 614
+							state = 611
+							state = 1184
+						}
+					}
+					608 = { owner = { not = { tag = PRC } } }
+					FROM = { is_chinese_country = yes }
+				}
+				ROOT = { country_event = { id = PRC_add.60 } }
+				set_global_flag = Peaceful_liberation_of_Beijing
+			}
+			if = {
+				limit = {
+					FROM.FROM = { state = 743 }
+					ROOT = { tag = PRC }
+					not = { has_global_flag = PRC_Lin_flag }
+				}
+				ROOT = { country_event = { id = PRC_add.102 } }
+				set_global_flag = PRC_Lin_flag
+			}
+			if = {
+				limit = {
+					FROM.FROM = { state = 604 }
+					ROOT = { tag = PRC }
+					not = { has_global_flag = PRC_Yunli_flag }
+				}
+				ROOT = { country_event = { id = PRC_add.104 } }
+				set_global_flag = PRC_Yunli_flag
+			}
+		}
+	}
+	on_declare_war = {
+		effect = {
+			#第二次中樱战争
+			if = {
+				limit = {
+					ROOT = {
+						tag = PRC
+					}
+					FROM = {
+						tag = JAP
+						is_subject = no
+					}
+					not = { has_global_flag = second_asia_war_has_started }
+					has_global_flag = JAP_Fading_Sun
+				}
+				hidden_effect = {
+					ROOT = { news_event = { id = PRC_news.08 } }
+				}
+			}
+		}
+	}
+	on_monthly_PRC = {
+		effect = {
+			PRC = {
+				if = {
+					limit = { has_dynamic_modifier = { modifier = PRC_republic_construction_modifier } }
+					PRC_national_construction_monthly_effect = yes
+					PRC_national_construction_state_index_calculate = yes
+					PRC_state_select_PCDM_modifier_calculate = yes
+				}
+			}
+		}
+	}
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				#SKW胜利
+				limit = {
+					ROOT = {
+						tag = JAP
+						is_subject = no
+					}
+					FROM = {
+						tag = SKW
+					}
+				}
+				FROM = {
+					white_peace = {
+						tag = JAP
+						message = SKW_win_JAP
+					}
+					annex_country = {
+						target = JAP
+						transfer_troops = yes
+					}
+				}
+			}
+		}
+	}
+}

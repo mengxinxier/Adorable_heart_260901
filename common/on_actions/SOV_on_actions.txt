@@ -1,0 +1,167 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			219 = { set_state_flag = has_city_story }
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_SOV_UKR_war_ai_behavior_SELECTION
+						option = SOV_UKR_war_GAME_RULE_2
+					}
+				}
+				UKR = { add_ideas = SOV_UKR_war_buff }
+			}
+			UKR = {
+				every_state = {
+					limit = { region = 37 }
+					enable_state_integration_80_compliance = yes
+				}
+				every_state = {
+					limit = { has_state_flag = is_little_POL_state_area }
+					enable_state_integration_80_compliance = yes
+				}
+				every_state = {
+					limit = { region = 39 }
+					enable_state_integration_50_compliance = yes
+				}
+				SOV = { enable_country_integration_50_compliance = yes }
+			}
+			SOV = {
+				every_state = {
+					limit = { region = 37 }
+					enable_state_integration_80_compliance = yes
+				}
+				every_state = {
+					limit = { has_state_flag = is_little_POL_state_area }
+					enable_state_integration_80_compliance = yes
+				}
+				every_state = {
+					limit = { region = 39 }
+					enable_state_integration_50_compliance = yes
+				}
+				UKR = { enable_country_integration_50_compliance = yes }
+			}
+		}
+	}
+	
+	on_state_control_changed = { 
+		effect = {
+			#特别军事行动-苏联
+			if = {
+				limit = {
+					SOV = {  has_country_flag = SOV_special_operation_failure_decsison }
+					FROM = { tag = SOV }
+					FROM.FROM = {
+						is_core_of = SOV
+						state = 219
+					}
+					ROOT = { tag = UKR }
+				}
+				SOV = {
+					clr_country_flag = SOV_special_military_operations_start
+				}
+				UKR = {
+					SOV = {
+						country_event = SOV_end.1
+					}
+					country_event = { id = ukr_politics.9 days = 2 }
+					remove_mission = UKR_a_vigorous_attack
+					if = {
+						limit = {
+							any_enemy_country = {
+								has_country_flag = UKR_intervene_in_war_soviet
+							}
+						}
+						country_event = { id = rus_for.11 hours = 12 }
+					}
+				}
+			}
+			# #特别军事行动-基辅公国
+			# if = {
+			# 	limit = {
+			# 		SOV = {  has_country_flag = SOV_special_military_operations_start }
+			# 		FROM = { tag = UKR }
+			# 		FROM.FROM = {
+			# 			is_core_of = UKR
+			# 			state = 202
+			# 		}
+			# 		ROOT = {
+			# 			OR = {
+			# 				tag = SOV 
+			# 				is_in_faction_with = SOV
+			# 			}
+			# 		}
+			# 	}
+			# 	SOV = {
+			# 		white_peace = {
+			# 			tag = UKR
+			# 			message = SOV_win_UKR
+			# 		}
+			# 		annex_country = {
+			# 			target = UKR
+			# 			transfer_troops = no
+			# 		}
+			# 		if = {
+			# 			limit = { has_country_flag = SOV_special_operation_failure_decsison }
+			# 			clr_country_flag = SOV_special_operation_failure_decsison
+			# 			country_event = { id = SOV_flavor.20 days = 1 }
+			# 		}
+			# 		clr_country_flag = SOV_special_military_operations_start
+			# 		country_event = SOV_flavor.23
+			# 		news_event = { id = SOV_news.7 hours = 6 }
+			# 	}
+			# }
+		}
+	}
+
+	on_weekly_SOV = { 
+		effect = { 
+			SOV = {
+				SOV_flexible_economic_policy = yes
+			}
+		} 
+	}
+
+	on_annex = {
+		effect = {
+			#机魂不悦，改成古法触发了
+			# if = {  ##腐乳
+			# 	limit = {
+			# 		not = {
+			# 			has_global_flag = surrender_of_SOV
+			# 		}
+			# 		ROOT = {
+			# 			not = { tag = SOV }
+			# 		}
+			# 		FROM = {
+			# 			tag = SOV
+			# 		}
+			# 	}
+			# 	set_global_flag = surrender_of_SOV
+			# 	news_event = {
+			# 		id = SOV_news.13
+			# 		days = 1
+			# 	}
+			# }
+		}
+	}
+
+	on_war = {
+		effect = {
+			if = {
+				limit = { 
+					has_idea = SOV_comecon_buff 
+					has_war_with = SOV
+				}
+				remove_ideas = SOV_comecon_buff
+			}
+		}
+	}
+
+	on_declare_war = {
+		effect = {
+			FIN_winter_war_effect = yes
+		}
+	}
+	
+}

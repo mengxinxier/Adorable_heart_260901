@@ -1,0 +1,3710 @@
+is_ally_of_ROOT = {
+	custom_trigger_tooltip = {
+		tooltip = AH_is_an_ally
+		exists = yes
+		is_ally_with = ROOT
+		NOT = {
+			tag = ROOT
+		}
+	}
+}
+
+is_ally_of_PREVPREV = {
+		exists = yes
+		is_ally_with = PREV.PREV
+		NOT = {
+			tag = PREV.PREV
+		}
+}
+
+is_independent_ally_of_ROOT = {
+	custom_trigger_tooltip = {
+		tooltip = AH_is_an_ally
+		exists = yes
+		is_ally_with = ROOT
+		is_subject = no
+		NOT = {
+			tag = ROOT
+		}
+	}
+}
+
+# in state scope
+is_claim_or_core_of_ROOT = {
+	OR = {
+		is_claimed_by = ROOT
+		is_core_of = ROOT
+		ROOT = { has_variable = can_integrate_@PREV }
+	}
+}
+
+is_claim_or_core_of_FROM = {
+	OR = {
+		is_claimed_by = FROM
+		is_core_of = FROM
+	}
+}
+
+annexations_no_occupation_penalty = {
+	OR = {
+		has_state_flag = no_occupation_penalty
+		has_variable = can_integrate_@ROOT
+	}
+}
+
+# Useful triggers for the annexation codebase
+is_valid_annexation_state = {
+	is_owned_by = ROOT
+	is_claim_or_core_of_ROOT = no
+	# hidden_trigger = {
+	# 	NOT = {
+	# 		has_state_flag = occupied_by_@ROOT
+	# 	}
+	# 	NOT = {
+	# 		has_variable = occupied_by_@THIS
+	# 	}
+	# }
+}
+#####  德国   ####
+	##德国
+	can_release_germany = {
+		OR = {
+			state = 64		#Brandenburg
+			state = 781		#Western Rhineland
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		count_triggers = {
+			amount = 2
+			52 = {
+				is_valid_annexation_state = yes
+			}
+			#Upper Bavaria
+			59 = {
+				is_valid_annexation_state = yes
+			}
+			#Hanover
+			AND = {
+				state = 64			#Brandenburg
+				781 = {
+					is_valid_annexation_state = yes
+				}
+				#Western Rhineland
+			}
+			AND = {
+				state = 781			#Western Rhineland
+				64 = {
+					is_valid_annexation_state = yes
+				}
+				#Brandenburg
+			}
+		}
+		ROOT = {
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = GER_CONQ
+			}
+		}
+	}
+	should_release_germany_first = {
+		OR = {
+			is_germany_tag = yes
+			country_exists = GER
+			country_exists = GEU
+			country_exists = WUR
+			has_country_flag = GER_CONQ
+			AND = {
+				64 = {
+					is_valid_annexation_state = no
+				}
+				#Brandenburg
+				781 = {
+					is_valid_annexation_state = no
+				}
+				#Western Rhineland
+			}
+			NOT = {
+				count_triggers = {
+					amount = 2
+					52 = {
+						is_valid_annexation_state = yes
+					}
+					#Upper Bavaria
+					59 = {
+						is_valid_annexation_state = yes
+					}
+					#Hanover
+					AND = {
+						PREV = {
+							state = 64
+						}
+						#Brandenburg
+						781 = {
+							is_valid_annexation_state = yes
+						}
+						#Western Rhineland
+					}
+					AND = {
+						PREV = {
+							state = 781
+						}
+						#Western Rhineland
+						64 = {
+							is_valid_annexation_state = yes
+						}
+						#Brandenburg
+					}
+				}
+			}
+		}
+	}
+	#普鲁士
+	can_release_Prussia = {
+		is_Prussia = yes
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		count_triggers = {
+			amount = 2
+			5 = {
+				is_valid_annexation_state = yes
+			}
+			777 = {
+				is_valid_annexation_state = yes
+			}
+			776 = {
+				is_valid_annexation_state = yes
+			}
+			86 = {
+				is_valid_annexation_state = yes
+			}
+		}
+		ROOT = {
+			should_release_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = PRE_CONQ
+			}
+		}
+	}
+	#莱茵兰
+	can_release_rhineland = {
+		state = 781	#Western Rhineland
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = RHI_CONQ
+			}
+		}
+	}
+	should_release_rhineland_first = {
+		OR = {
+			is_germany_tag = yes
+			has_country_flag = RHI_CONQ
+			781 = {is_valid_annexation_state = no}
+		}
+	}
+	#北德
+	can_release_north_germany = {
+		state = 64
+		count_triggers = {
+			amount = 2
+			56 = { is_valid_annexation_state = yes }
+			1222 = { is_valid_annexation_state = yes }
+			68 = { is_valid_annexation_state = yes }
+			55 = { is_valid_annexation_state = yes }
+		}
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = NORTH_GER_CONQ
+			}
+		}
+	}
+	should_release_north_germany_first = {
+		if = {
+			limit = {
+				64 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					56 = { is_valid_annexation_state = yes }
+					1222 = { is_valid_annexation_state = yes }
+					68 = { is_valid_annexation_state = yes }
+					55 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = NORTH_GER_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	#南德
+	can_release_SGER = {
+		state = 4
+		4 = { is_valid_annexation_state = yes }
+		52 = { is_valid_annexation_state = yes }
+		50 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = South_GER_CONQ
+			}
+		}
+	}
+	should_release_south_germany_first = {
+		or = {
+			AND = {
+				4 = { is_valid_annexation_state = yes }
+				52 = { is_valid_annexation_state = yes }
+				50 = { is_valid_annexation_state = yes }
+				has_country_flag = South_GER_CONQ
+			}
+			not = {
+				and = {
+					4 = { is_valid_annexation_state = yes }
+					52 = { is_valid_annexation_state = yes }
+					50 = { is_valid_annexation_state = yes }
+				}
+			}
+		}
+	}
+	can_release_AUS = {
+		state = 4
+		4 = { is_valid_annexation_state = yes }
+		775 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_south_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = AUS_CONQ
+			}
+		}
+	}
+	should_release_AUS_first = {
+		or = {
+			and = {
+				4 = { is_valid_annexation_state = yes }
+				775 = { is_valid_annexation_state = yes }
+				has_country_flag = AUS_CONQ
+			}
+			not = {
+				4 = { is_valid_annexation_state = yes }
+				775 = { is_valid_annexation_state = yes }
+			}
+		}
+	}
+	can_release_BAY = {
+		state = 52
+		53 = { is_valid_annexation_state = yes }
+		52 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_south_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = BAY_CONQ
+			}
+		}
+	}
+	can_release_SIL = {
+		state = 66
+		66 = { is_valid_annexation_state = yes }
+		67 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = SIL_CONQ
+			}
+		}
+	}
+	can_release_KSH = {
+		state = 62
+		62 = { is_valid_annexation_state = yes }
+		63 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = KSH_CONQ
+			}
+		}
+	}
+	can_release_SHL = {
+		state = 1222
+		58 = { is_valid_annexation_state = yes }
+		1222 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = SHL_CONQ
+			}
+		}
+	}
+	can_release_HAN = {
+		state = 56
+		56 = { is_valid_annexation_state = yes }
+		#57 = { is_valid_annexation_state = yes }
+		59 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = HAN_CONQ
+			}
+		}
+	}
+	can_release_SAX = {
+		state = 60
+		60 = { is_valid_annexation_state = yes }
+		65 = { is_valid_annexation_state = yes }
+		147 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = SAX_CONQ
+			}
+		}
+	}
+	can_release_MEK = {
+		state = 61
+		61 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = MEK_CONQ
+			}
+		}
+	}
+	can_release_DDR = {
+		state = 64
+		64 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				is_germany_tag = yes
+				has_country_flag = DDR_CONQ
+			}
+		}
+	}
+	can_release_AUS_TRENT = {
+		state = 39
+		39 = { is_valid_annexation_state = yes }
+		783 = { is_valid_annexation_state = yes }
+		NOT = { is_claimed_by = ROOT }
+		ROOT = {
+			should_release_germany_first = yes
+			should_release_south_germany_first = yes
+			should_release_AUS_first = yes
+			should_release_ITA_first = yes
+			NOT = {
+				or = {
+					tag = ITA
+					tag = ALS
+				}
+				is_germany_tag = yes
+				has_country_flag = AUS_TRENT_CONQ
+			}
+		}
+		or = {
+			var:4.owner = {
+				is_germany_tag = yes
+				is_ally_with = ROOT
+			}
+			var:2.owner = {
+				or = {
+					tag = ITA
+					tag = ALS
+				}
+				is_ally_with = ROOT
+			}
+		}
+	}
+#####  幻想乡   ####
+	#幻想乡
+	can_release_france = {
+		OR = {
+			AND = {
+				state = 16 #Paris
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		16 = { is_valid_annexation_state = yes }
+		25 = { is_valid_annexation_state = yes }
+		32 = { is_valid_annexation_state = yes }
+		ROOT = {
+			is_french_tag = no
+			NOT = { has_country_flag = FRA_CONQ }
+		}
+	}
+	should_release_FRA_first = {
+		if = {
+			limit = {
+				16 = { is_valid_annexation_state = yes }
+				25 = { is_valid_annexation_state = yes }
+				32 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = FRA_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	#红魔馆
+	can_release_KMK = {
+		OR = {
+			AND = {
+				state = 925
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		925 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = KMK_CONQ }
+		}
+	}
+	should_release_KMK_first = {
+		if = {
+			limit = {
+				925 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = KMK_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	#雾之湖
+	can_release_KNM = {
+		OR = {
+			AND = {
+				state = 7
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		7 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			should_release_KMK_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = KNM_CONQ }
+		}
+	}
+	#玄武之泽
+	can_release_GNS = {
+		OR = {
+			AND = {
+				state = 980
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		980 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = GNS_CONQ }
+		}
+	}
+	#月都-迷途森林
+	can_release_COM = {
+		OR = {
+			AND = {
+				state = 32
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		20 = { is_valid_annexation_state = yes }
+		32 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = COM_CONQ }
+		}
+	}
+	#魔法之森
+	can_release_GOS = {
+		OR = {
+			AND = {
+				state = 25
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		25 = { is_valid_annexation_state = yes }
+		33 = { is_valid_annexation_state = yes }
+		26 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = GOS_CONQ }
+		}
+	}
+	#白玉楼
+	can_release_BRI = {
+		OR = {
+			AND = {
+				state = 14
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		14 = { is_valid_annexation_state = yes }
+		983 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = BRI_CONQ }
+		}
+	}
+	#地灵殿
+	can_release_PES = {
+		OR = {
+			AND = {
+				state = 23
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		23 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = PES_CONQ }
+		}
+	}
+	#博丽神社
+	can_release_HKR = {
+		OR = {
+			state = 28
+			state = 785
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		OR = {
+			28 = { is_valid_annexation_state = yes }
+			785 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = HKR_CONQ }
+		}
+	}
+	#守矢神社
+	can_release_MRY = {
+		OR = {
+			AND = {
+				state = 763
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		763 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = MRY_CONQ }
+		}
+	}
+	should_release_MRY_first = {
+		if = {
+			limit = {
+				763 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = MRY_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	#命莲寺
+	can_release_MYO = {
+		OR = {
+			AND = {
+				state = 15
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		15 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = MYO_CONQ }
+		}
+	}
+	#人间之里
+	can_release_NOS = {
+		OR = {
+			AND = {
+				state = 16
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		16 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = NOS_CONQ }
+		}
+	}
+	#冥界
+	can_release_MEI = {
+		OR = {
+			AND = {
+				state = 31
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		19 = { is_valid_annexation_state = yes }
+		31 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_FRA_first = yes
+			is_french_tag = no
+			NOT = { has_country_flag = MEI_CONQ }
+		}
+	}
+
+#####  枫丹   ####
+	can_release_FOT = {
+		OR = {
+			AND = {
+				state = 1157
+				NOT = { is_claimed_by = ROOT }
+			}
+		}
+		NOT = { is_claimed_by = ROOT }
+		1157 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = { has_country_flag = FOT_CONQ }
+		}
+	}
+
+#####  伊比利亚   ####
+	can_release_NPT = {
+		or = {
+			state = 41
+			state = 165
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		41 = {
+			is_valid_annexation_state = yes
+		}
+		165 = {
+			is_valid_annexation_state = yes
+		}
+		ROOT = {
+			NOT = {
+				tag = NPT
+				has_country_flag = NPT_CONQ
+			}
+		}
+	}
+	should_release_NPT_first = {
+		if = {
+			limit = {
+				41 = { is_valid_annexation_state = yes }
+				165 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = NPT_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_PPT = {
+		or = {
+			state = 1081
+			state = 41
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1081 = { is_valid_annexation_state = yes }
+		41 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_NPT_first = yes
+			NOT = {
+				is_Iberian_country = yes
+				has_country_flag = PPT_CONQ
+			}
+		}
+	}
+	can_release_LOW = {
+		or = {
+			state = 181
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		181 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_NPT_first = yes
+			NOT = {
+				is_Iberian_country = yes
+				has_country_flag = LOW_CONQ
+			}
+		}
+	}
+	can_release_LEA = {
+		or = {
+			state = 173
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		173 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_NPT_first = yes
+			NOT = {
+				is_Iberian_country = yes
+				has_country_flag = LEA_CONQ
+			}
+		}
+	}
+	can_release_LAS = {
+		or = {
+			state = 166
+			state = 165
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		165 = { is_valid_annexation_state = yes }
+		166 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_NPT_first = yes
+			NOT = {
+				is_Iberian_country = yes
+				has_country_flag = LAS_CONQ
+			}
+		}
+	}
+
+#####  不列颠   ####
+	can_release_ENG = {
+		or = {
+			state = 126
+			state = 132
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		126 = { is_valid_annexation_state = yes }
+		132 = { is_valid_annexation_state = yes }
+		128 = { is_valid_annexation_state = yes }
+		133 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				or = {
+					tag = ENG
+					tag = ELA
+				}
+				has_country_flag = ENG_CONQ
+			}
+		}
+	}
+	should_release_ENG_first = {
+		if = {
+			limit = {
+				126 = { is_valid_annexation_state = yes }
+				132 = { is_valid_annexation_state = yes }
+				128 = { is_valid_annexation_state = yes }
+				133 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = ENG_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_ELA = {
+		or = {
+			state = 126
+			state = 132
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		126 = { is_valid_annexation_state = yes }
+		132 = { is_valid_annexation_state = yes }
+		128 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ENG_first = yes
+			NOT = {
+				or = {
+					tag = ENG
+					tag = ELA
+				}
+				has_country_flag = ELA_CONQ
+			}
+		}
+	}
+	can_release_SCO = {
+		or = {
+			state = 133
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		133 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ENG_first = yes
+			NOT = {
+				or = {
+					tag = ENG
+					tag = ELA
+				}
+				has_country_flag = SCO_CONQ
+			}
+		}
+	}
+	can_release_WLS = {
+		or = {
+			state = 122
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		122 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ENG_first = yes
+			NOT = {
+				or = {
+					tag = ENG
+					tag = ELA
+				}
+				has_country_flag = WLS_CONQ
+			}
+		}
+	}
+	can_release_IRE = {
+		or = {
+			state = 113
+			state = 119
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		113 = { is_valid_annexation_state = yes }
+		119 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ENG_first = yes
+			NOT = {
+				or = {
+					tag = ENG
+					tag = ELA
+				}
+				has_country_flag = IRE_CONQ
+			}
+		}
+	}
+
+#####  火车   ####
+	can_release_TRB = {
+		or = {
+			state = 3
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		count_triggers = {
+			amount = 2
+			3 = {
+				is_valid_annexation_state = yes
+			}
+			1091 = {
+				is_valid_annexation_state = yes
+			}
+			943 = {
+				is_valid_annexation_state = yes
+			}
+			151 = {
+				is_valid_annexation_state = yes
+			}
+		}
+		ROOT = {
+			NOT = {
+				tag = TRB
+				has_country_flag = TRB_CONQ
+			}
+		}
+	}
+	should_release_TRB_first = {
+		if = {
+			limit = {
+				3 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					3 = { is_valid_annexation_state = yes }
+					1091 = { is_valid_annexation_state = yes }
+					943 = { is_valid_annexation_state = yes }
+					151 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = TRB_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_Wanggong = {
+		or = {
+			state = 943
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		943 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_TRB_first = yes
+			should_release_FRA_first = yes
+			should_release_MRY_first = yes
+			or = {
+				var:763.owner = {
+					is_french_tag = yes
+					is_ally_with = ROOT
+				}
+				TRB = { is_ally_with = ROOT }
+			}
+			NOT = {
+				or = {
+					tag = TRB
+					is_french_tag = yes
+				}
+			}
+		}
+	}
+
+#####  意大利   ####
+	can_release_ITA = {
+		or = {
+			state = 2
+			state = 159
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		count_triggers = {
+			amount = 2
+			2 = { is_valid_annexation_state = yes }
+			159 = { is_valid_annexation_state = yes }
+			160 = { is_valid_annexation_state = yes }
+			838 = { is_valid_annexation_state = yes }
+			117 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				or = {
+					tag = ITA
+					tag = ALS
+				}
+				has_country_flag = ITA_CONQ
+			}
+		}
+	}
+	should_release_ITA_first = {
+		or = {
+			and = {
+				or = {
+					2 = { is_valid_annexation_state = yes }
+					159 = { is_valid_annexation_state = yes }
+				}
+				count_triggers = {
+					amount = 2
+					2 = { is_valid_annexation_state = yes }
+					159 = { is_valid_annexation_state = yes }
+					160 = { is_valid_annexation_state = yes }
+					838 = { is_valid_annexation_state = yes }
+					117 = { is_valid_annexation_state = yes }
+				}
+				has_country_flag = ITA_CONQ
+			}
+			not = {
+				and = {
+					or = {
+						2 = { is_valid_annexation_state = yes }
+						159 = { is_valid_annexation_state = yes }
+					}
+					count_triggers = {
+						amount = 2
+						2 = { is_valid_annexation_state = yes }
+						159 = { is_valid_annexation_state = yes }
+						160 = { is_valid_annexation_state = yes }
+						838 = { is_valid_annexation_state = yes }
+						117 = { is_valid_annexation_state = yes }
+					}
+				}
+			}
+		}
+	}
+	can_release_ALS = {
+		or = {
+			state = 117
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		count_triggers = {
+			amount = 2
+			117 = { is_valid_annexation_state = yes }
+			837 = { is_valid_annexation_state = yes }
+			115 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_ITA_first = yes
+			NOT = {
+				or = {
+					tag = ITA
+					tag = ALS
+				}
+				has_country_flag = ALS_CONQ
+			}
+		}
+	}
+#####  JK   ####
+	can_release_CZE = {
+		or = {
+			state = 9
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		9 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = CZE
+				has_country_flag = CZE_CONQ
+			}
+		}
+	}
+#####  斯连教国   ####
+	can_release_SLO = {
+		or = {
+			state = 70
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		70 = { is_valid_annexation_state = yes }
+		73 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = SLO
+				has_country_flag = SLO_CONQ
+			}
+		}
+	}
+
+#####  宝石之国   ####
+	can_release_HUN = {
+		or = {
+			state = 43
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		count_triggers = {
+			amount = 2
+			43 = {
+				is_valid_annexation_state = yes
+			}
+			155 = {
+				is_valid_annexation_state = yes
+			}
+			154 = {
+				is_valid_annexation_state = yes
+			}
+			664 = {
+				is_valid_annexation_state = yes
+			}
+		}
+		ROOT = {
+			NOT = {
+				tag = HUN
+				has_country_flag = HUN_CONQ
+			}
+		}
+	}
+	should_release_HUN_first = {
+		if = {
+			limit = {
+				43 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					43 = {
+						is_valid_annexation_state = yes
+					}
+					155 = {
+						is_valid_annexation_state = yes
+					}
+					154 = {
+						is_valid_annexation_state = yes
+					}
+					664 = {
+						is_valid_annexation_state = yes
+					}
+				}
+			}
+			has_country_flag = HUN_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+#####  基沃托斯   ####
+	can_release_KVO = {
+		or = {
+			state = 107
+			state = 766
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		or = {
+			107 = { is_valid_annexation_state = yes }
+			766 = { is_valid_annexation_state = yes }
+		}
+		count_triggers = {
+			amount = 2
+			109 = {
+				is_valid_annexation_state = yes
+			}
+			765 = {
+				is_valid_annexation_state = yes
+			}
+			1139 = {
+				is_valid_annexation_state = yes
+			}
+			794 = {
+				is_valid_annexation_state = yes
+			}
+		}
+		ROOT = {
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = KVO_CONQ
+			}
+		}
+	}
+	should_release_KVO_first = {
+		if = {
+			limit = {
+				or = {
+					107 = { is_valid_annexation_state = yes }
+					766 = { is_valid_annexation_state = yes }
+				}
+				count_triggers = {
+					amount = 2
+					109 = { is_valid_annexation_state = yes }
+					765 = { is_valid_annexation_state = yes }
+					1139 = { is_valid_annexation_state = yes }
+					794 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = KVO_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_ABY = {
+		or = {
+			state = 109
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		109 = { is_valid_annexation_state = yes }
+		or = {
+			1093 = { is_valid_annexation_state = yes }
+			1137 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = ABY_CONQ
+			}
+		}
+	}
+	can_release_ARI = {
+		or = {
+			state = 1133
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1133 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = ARI_CONQ
+			}
+		}
+	}
+	can_release_GEH = {
+		or = {
+			state = 1139
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1139 = { is_valid_annexation_state = yes }
+		or = {
+			1094 = { is_valid_annexation_state = yes }
+			1138 = { is_valid_annexation_state = yes }
+			163 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = GEH_CONQ
+			}
+		}
+	}
+	can_release_AKK = {
+		or = {
+			state = 1140
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1140 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = AKK_CONQ
+			}
+		}
+	}
+	can_release_MIL = {
+		or = {
+			state = 765
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		765 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = MIL_CONQ
+			}
+		}
+	}
+	can_release_RED = {
+		or = {
+			state = 794
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		794 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = RED_CONQ
+			}
+		}
+	}
+	can_release_SHJ = {
+		or = {
+			state = 841
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		841 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = SHJ_CONQ
+			}
+		}
+	}
+	can_release_SRT = {
+		or = {
+			state = 1134
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1134 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = SRT_CONQ
+			}
+		}
+	}
+	can_release_TRY = {
+		or = {
+			state = 1136
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1136 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = TRY_CONQ
+			}
+		}
+	}
+	can_release_VAL = {
+		or = {
+			state = 108
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		108 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = VAL_CONQ
+			}
+		}
+	}
+	can_release_SCH = {
+		or = {
+			state = 766
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		766 = { is_valid_annexation_state = yes }
+		or = {
+			1135 = { is_valid_annexation_state = yes }
+			107 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = SCH_CONQ
+			}
+		}
+	}
+	can_release_HRA = {
+		or = {
+			state = 1221
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1221 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_KVO_first = yes
+			NOT = {
+				Kivotos_is_kivotos_country = yes
+				has_country_flag = HRA_CONQ
+			}
+		}
+	}
+#####  北欧   ####
+ #杜伦布
+	can_release_DEN = {
+		or = {
+			state = 37
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		37 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = DEN
+				has_country_flag = DEN_CONQ
+			}
+		}
+	}
+	should_release_DEN_first = {
+		if = {
+			limit = {
+				37 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = DEN_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #瑞典
+	can_release_SWE = {
+		or = { state = 1097 }
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1097 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 2
+			139 = { is_valid_annexation_state = yes }
+			140 = { is_valid_annexation_state = yes }
+			778 = { is_valid_annexation_state = yes }
+			909 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = SWE
+				has_country_flag = SWE_CONQ
+			}
+		}
+	}
+	should_release_SWE_first = {
+		if = {
+			limit = {
+				1097 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					139 = { is_valid_annexation_state = yes }
+					140 = { is_valid_annexation_state = yes }
+					778 = { is_valid_annexation_state = yes }
+					909 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = SWE_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #卡尔马
+	can_release_KAL = {
+		or = {
+			state = 1104
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		1104 = { is_valid_annexation_state = yes }
+		138 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_DEN_first = yes
+			should_release_SWE_first = yes
+			NOT = {
+				or = {
+					tag = DEN
+					tag = SWE
+				}
+				has_country_flag = KAL_CONQ
+			}
+		}
+	}
+ #哥得兰
+	can_release_Gotland = {
+		or = {
+			state = 124
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		124 = { is_valid_annexation_state = yes }
+		ROOT = {
+			#should_release_DEN_first = yes
+			should_release_SWE_first = yes
+			should_release_germany_first = yes
+			should_release_north_germany_first = yes
+			NOT = {
+				or = {
+					tag = DEN
+					tag = SWE
+				}
+				has_country_flag = Gotland_CONQ
+			}
+		}
+	}
+ #索米
+	can_release_FIN = {
+		or = {
+			state = 840
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		840 = { is_valid_annexation_state = yes }
+		or = {
+			863 = { is_valid_annexation_state = yes }
+			844 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = FIN
+				has_country_flag = FIN_CONQ
+			}
+		}
+	}
+	should_release_FIN_first = {
+		if = {
+			limit = {
+				840 = { is_valid_annexation_state = yes }
+				or = {
+					863 = { is_valid_annexation_state = yes }
+					844 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = FIN_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #卡累利阿
+	can_release_KAR = {
+		or = {
+			state = 146
+			state = 216
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		or = {
+			146 = { is_valid_annexation_state = yes }
+			216 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_FIN_first = yes
+			should_release_RUS_first = yes
+			NOT = {
+				or ={
+					tag = FIN
+					tag = KAR
+					#is_russia_uniter_tag = yes
+				}
+				has_country_flag = KAR_CONQ
+			}
+		}
+	}
+ #挪威
+	can_release_NOR = {
+		or = {
+			state = 110
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		110 = { is_valid_annexation_state = yes }
+		1128 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = NOR
+				has_country_flag = NOR_CONQ
+			}
+		}
+	}
+ #冰岛
+	can_release_ICE = {
+		or = {
+			state = 100
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		100 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = ICE
+				has_country_flag = ICE_CONQ
+			}
+		}
+	}
+#####  巴尔干   ####
+ ##保加利亚
+	can_release_BUL = {
+		or = {
+			state = 48
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		48 = {
+			is_valid_annexation_state = yes
+		}
+		771 = {
+			is_valid_annexation_state = yes
+		}
+		ROOT = {
+			NOT = {
+				tag = BUL
+				has_country_flag = BUL_CONQ
+			}
+		}
+	}
+	should_release_BUL_first = {
+		if = {
+			limit = {
+				48 = { is_valid_annexation_state = yes }
+				771 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = BUL_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##阿尔巴尼亚
+	can_release_ALB = {
+		or = {
+			state = 44
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		44 = {
+			is_valid_annexation_state = yes
+		}
+		ROOT = {
+			NOT = {
+				tag = ALB
+				has_country_flag = ALB_CONQ
+			}
+		}
+	}
+ ##马其顿
+	can_release_MAC = {
+		or = {
+			state = 106
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		106 = {
+			is_valid_annexation_state = yes
+		}
+		ROOT = {
+			NOT = {
+				tag = MAC
+				has_country_flag = MAC_CONQ
+			}
+		}
+	}
+ ##特兰西瓦尼亚
+	can_release_TRA = {
+		or = {
+			state = 84
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		84 = {
+			is_valid_annexation_state = yes
+		}
+		82 = {
+			is_valid_annexation_state = yes
+		}
+		ROOT = {
+			should_release_HUN_first = yes
+			should_release_ROM_first = yes
+			NOT = {
+				tag = TRA
+				has_country_flag = TRS_CONQ
+			}
+		}
+	}
+ ##希腊
+	can_release_GRE = {
+		or = {
+			state = 47
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		47 = { is_valid_annexation_state = yes }
+		186 = { is_valid_annexation_state = yes }
+		768 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = GRE
+				has_country_flag = GRE_CONQ
+			}
+		}
+	}
+	should_release_GRE_first = {
+		if = {
+			limit = {
+				47 = { is_valid_annexation_state = yes }
+				186 = { is_valid_annexation_state = yes }
+				768 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = GRE_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##色雷斯
+	can_release_Thrace = {
+		or = {
+			state = 184
+			state = 769
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		184 = { is_valid_annexation_state = yes }
+		769 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_BUL_first = yes
+			should_release_GRE_first = yes
+			NOT = {
+				tag = GRE
+				has_country_flag = Thrace_CONQ
+			}
+		}
+	}
+ ##罗马尼亚
+	can_release_ROM = {
+		or = {
+			state = 46
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		46 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 2
+			81 = { is_valid_annexation_state = yes }
+			772 = { is_valid_annexation_state = yes }
+			79 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = ROM
+				has_country_flag = ROM_CONQ
+			}
+		}
+	}
+	should_release_ROM_first = {
+		if = {
+			limit = {
+				46 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					81 = { is_valid_annexation_state = yes }
+					772 = { is_valid_annexation_state = yes }
+					79 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = ROM_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##比萨拉比亚
+	can_release_Basarabia = {
+		or = {
+			state = 78
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		78 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ROM_first = yes
+			should_release_RUS_first = yes
+			should_release_UKR_first = yes
+			NOT = {
+				tag = ROM
+				has_country_flag = Basarabia_CONQ
+			}
+		}
+	}
+ ##埃迪尔内
+	can_release_Edirne = {
+		or = {
+			state = 341
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		341 = { is_valid_annexation_state = yes }
+		773 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_TUR_first = yes
+			should_release_GRE_first = yes
+			NOT = {
+				tag = GRE
+				has_country_flag = Edirne_CONQ
+			}
+		}
+	}
+ ##罗德岛
+	can_release_RIS = {
+		or = {
+			state = 164
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		164 = { is_valid_annexation_state = yes }
+		183 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_TUR_first = yes
+			should_release_GRE_first = yes
+			NOT = {
+				tag = RIS
+				has_country_flag = RIS_CONQ
+			}
+		}
+	}
+#####  东欧   ####
+ ##波罗的
+	can_release_LAT = {
+		or = {
+			state = 842
+		}
+		NOT = { is_claimed_by = ROOT }
+		13 = { is_valid_annexation_state = yes }
+		842 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			NOT = {
+				tag = BAL
+				has_country_flag = BAL_CONQ
+			}
+		}
+	}
+ ##卡西米尔
+	can_release_POL = {
+		or = {
+			state = 10
+		}
+		NOT = { is_claimed_by = ROOT }
+		10 = { is_valid_annexation_state = yes }
+		90 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = POL
+				has_country_flag = POL_CONQ
+			}
+		}
+	}
+	should_release_POL_first = {
+		if = {
+			limit = {
+				10 = { is_valid_annexation_state = yes }
+				90 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = POL_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##加利西亚
+	can_release_GLC = {
+		or = {
+			state = 88
+		}
+		NOT = { is_claimed_by = ROOT }
+		88 = { is_valid_annexation_state = yes }
+		91 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_POL_first = yes
+			NOT = {
+				or = {
+					tag = POL
+					tag = GLC
+				}
+				has_country_flag = GLC_CONQ
+			}
+		}
+	}
+	should_release_GLC_first = {
+		if = {
+			limit = {
+				88 = { is_valid_annexation_state = yes }
+				91 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = POL_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##斯坦尼斯瓦武夫
+	can_release_Stanislaw = {
+		or = {
+			state = 89
+		}
+		NOT = { is_claimed_by = ROOT }
+		89 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_POL_first = yes
+			should_release_GLC_first = yes
+			NOT = {
+				or = {
+					tag = POL
+					tag = GLC
+				}
+				has_country_flag = GLC_EX_CONQ
+			}
+		}
+	}
+ ##白俄罗斯
+	can_release_BLR = {
+		or = {
+			state = 206
+		}
+		NOT = { is_claimed_by = ROOT }
+		206 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			NOT = {
+				tag = BLR
+				has_country_flag = BLR_CONQ
+			}
+		}
+	}
+ ##乌克兰
+	can_release_UKR = {
+		or = {
+			state = 202
+		}
+		NOT = { is_claimed_by = ROOT }
+		202 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 2
+			221 = { is_valid_annexation_state = yes }
+			227 = { is_valid_annexation_state = yes }
+			201 = { is_valid_annexation_state = yes }
+			192 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_RUS_first = yes
+			NOT = {
+				tag = UKR
+				has_country_flag = UKR_CONQ
+			}
+		}
+	}
+	should_release_UKR_first = {
+		if = {
+			limit = {
+				202 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					221 = { is_valid_annexation_state = yes }
+					227 = { is_valid_annexation_state = yes }
+					201 = { is_valid_annexation_state = yes }
+					192 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = UKR_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##克里米亚
+	can_release_Crimean = {
+		or = {
+			state = 137
+		}
+		NOT = { is_claimed_by = ROOT }
+		137 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_UKR_first = yes
+			should_release_RUS_first = yes
+			NOT = {
+				or = {
+					tag = UKR
+					#tag = RUS
+					tag = SOV
+				}
+				has_country_flag = Crimean_CONQ
+			}
+		}
+	}
+ ##俄罗斯
+	can_release_RUS = {
+		or = {
+			state = 219
+			state = 195
+			state = 217
+		}
+		NOT = { is_claimed_by = ROOT }
+		count_triggers = {
+			amount = 2
+			219 = { is_valid_annexation_state = yes }
+			195 = { is_valid_annexation_state = yes }
+			217 = { is_valid_annexation_state = yes }
+		}
+		or = {
+			242 = { is_valid_annexation_state = yes }
+			249 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				is_russia_uniter_tag = yes
+				has_country_flag = RUS_CONQ
+			}
+		}
+	}
+	should_release_RUS_first = {
+		if = {
+			limit = {
+				count_triggers = {
+					amount = 2
+					219 = { is_valid_annexation_state = yes }
+					195 = { is_valid_annexation_state = yes }
+					217 = { is_valid_annexation_state = yes }
+				}
+				or = {
+					242 = { is_valid_annexation_state = yes }
+					249 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = RUS_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_SIB = {
+		or = {
+			state = 653
+		}
+		NOT = { is_claimed_by = ROOT }
+		count_triggers = {
+			amount = 2
+			566 = { is_valid_annexation_state = yes }
+			572 = { is_valid_annexation_state = yes }
+			570 = { is_valid_annexation_state = yes }
+		}
+		653 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			NOT = {
+				is_russia_uniter_tag = yes
+				has_country_flag = SIB_CONQ
+			}
+		}
+	}
+	should_release_SIB_first = {
+		if = {
+			limit = {
+				count_triggers = {
+					amount = 2
+					566 = { is_valid_annexation_state = yes }
+					572 = { is_valid_annexation_state = yes }
+					570 = { is_valid_annexation_state = yes }
+				}
+				653 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = SIB_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_EAM = {
+		or = {
+			state = 562
+		}
+		NOT = { is_claimed_by = ROOT }
+		562 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			should_release_SIB_first = yes
+			NOT = {
+				is_russia_uniter_tag = yes
+				has_country_flag = EAM_CONQ
+			}
+		}
+	}
+	should_release_EAM_first = {
+		if = {
+			limit = {
+				562 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = EAM_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##格鲁吉亚
+	can_release_GEO = {
+		or = {
+			state = 231
+		}
+		NOT = { is_claimed_by = ROOT }
+		231 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			should_release_KUB_first = yes
+			NOT = {
+				tag = GEO
+				has_country_flag = GEO_CONQ
+			}
+		}
+	}
+ ##阿塞拜疆
+	can_release_AZR = {
+		or = {
+			state = 229
+		}
+		NOT = { is_claimed_by = ROOT }
+		229 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			should_release_KUB_first = yes
+			NOT = {
+				tag = AZR
+				has_country_flag = AZR_CONQ
+			}
+		}
+	}
+ ##亚美尼亚
+	can_release_ARM = {
+		or = {
+			state = 230
+		}
+		NOT = { is_claimed_by = ROOT }
+		230 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			should_release_KUB_first = yes
+			NOT = {
+				tag = ARM
+				has_country_flag = ARM_CONQ
+			}
+		}
+	}
+ ##库班
+	can_release_KUB = {
+		or = {
+			state = 218
+		}
+		NOT = { is_claimed_by = ROOT }
+		218 = { is_valid_annexation_state = yes }
+		234 = { is_valid_annexation_state = yes }
+		or = {
+			245 = { is_valid_annexation_state = yes }
+			238 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_RUS_first = yes
+			NOT = {
+				tag = KUB
+				has_country_flag = KUB_CONQ
+			}
+		}
+	}
+	should_release_KUB_first = {
+		if = {
+			limit = {
+				218 = { is_valid_annexation_state = yes }
+				234 = { is_valid_annexation_state = yes }
+				or = {
+					245 = { is_valid_annexation_state = yes }
+					238 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = KUB_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+#####  中东   ####
+ ##土耳其
+	can_release_TUR = {
+		or = {
+			state = 49
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		49 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 2
+			1111 = { is_valid_annexation_state = yes }
+			1121 = { is_valid_annexation_state = yes }
+			339 = { is_valid_annexation_state = yes }
+			1109 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = TUR
+				has_country_flag = TUR_CONQ
+			}
+		}
+	}
+	should_release_TUR_first = {
+		if = {
+			limit = {
+				49 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					1111 = { is_valid_annexation_state = yes }
+					1121 = { is_valid_annexation_state = yes }
+					339 = { is_valid_annexation_state = yes }
+					1109 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = TUR_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##库尔德
+	can_release_KUR = {
+		or = {
+			state = 350
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		350 = { is_valid_annexation_state = yes }
+		352 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_TUR_first = yes
+			NOT = {
+				tag = KUR
+				has_country_flag = KUR_CONQ
+			}
+		}
+	}
+ ##卡兹戴尔
+	can_release_PAL = {
+		or = {
+			state = 454
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		454 = { is_valid_annexation_state = yes }
+		992 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = PAL
+				has_country_flag = PAL_CONQ
+			}
+		}
+	}
+ ##塞鲁托布尔
+	can_release_LEB = {
+		or = {
+			state = 553
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		553 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = LEB
+				has_country_flag = LEB_CONQ
+			}
+		}
+	}
+ ##霍布雷
+	can_release_SYR = {
+		or = {
+			state = 554
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		554 = { is_valid_annexation_state = yes }
+		677 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = SYR
+				has_country_flag = SYR_CONQ
+			}
+		}
+	}
+ ##梅洛马格
+	can_release_IRQ = {
+		or = {
+			state = 291
+			state = 679
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		291 = { is_valid_annexation_state = yes }
+		679 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 2
+			812 = { is_valid_annexation_state = yes }
+			754 = { is_valid_annexation_state = yes }
+			292 = { is_valid_annexation_state = yes }
+			676 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = IRQ
+				has_country_flag = IRQ_CONQ
+			}
+		}
+	}
+	should_release_IRQ_first = {
+		if = {
+			limit = {
+				291 = { is_valid_annexation_state = yes }
+				679 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					812 = { is_valid_annexation_state = yes }
+					754 = { is_valid_annexation_state = yes }
+					292 = { is_valid_annexation_state = yes }
+					676 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = IRQ_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ ##南阿拉伯半岛
+	can_release_YEM = {
+		or = {
+			state = 293
+		}
+		NOT = {
+			is_claimed_by = ROOT
+		}
+		293 = { is_valid_annexation_state = yes }
+		294 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_IRQ_first = yes
+			NOT = {
+				tag = YEM
+				has_country_flag = YEM_CONQ
+			}
+		}
+	}
+#####  特雷森   ####
+	can_release_TAM = {
+		or = {
+			state = 407
+			state = 266
+			state = 267
+		}
+		NOT = { is_claimed_by = ROOT }
+		count_triggers = {
+			amount = 3
+			407 = { is_valid_annexation_state = yes }
+			266 = { is_valid_annexation_state = yes }
+			267 = { is_valid_annexation_state = yes }
+			589 = { is_valid_annexation_state = yes }
+			416 = { is_valid_annexation_state = yes }
+			419 = { is_valid_annexation_state = yes }
+			413 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				is_Tresen_tag = yes
+				has_country_flag = TAM_CONQ
+			}
+		}
+	}
+	should_release_TAM_first = {
+		if = {
+			limit = {
+				or = {
+					407 = { is_valid_annexation_state = yes }
+					266 = { is_valid_annexation_state = yes }
+					267 = { is_valid_annexation_state = yes }
+				}
+				count_triggers = {
+					amount = 3
+					407 = { is_valid_annexation_state = yes }
+					266 = { is_valid_annexation_state = yes }
+					267 = { is_valid_annexation_state = yes }
+					589 = { is_valid_annexation_state = yes }
+					416 = { is_valid_annexation_state = yes }
+					419 = { is_valid_annexation_state = yes }
+					413 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = TAM_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_PAK = {
+		or = {
+			state = 443
+			state = 891
+		}
+		NOT = { is_claimed_by = ROOT }
+		443 = { is_valid_annexation_state = yes }
+		891 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_TAM_first = yes
+			should_release_RAJ_first = yes
+			NOT = {
+				#is_Tresen_tag = yes
+				has_country_flag = PAK_CONQ
+			}
+		}
+	}
+#####  樱花   ####
+	can_release_JAP = {
+		or = {
+			state = 282
+		}
+		NOT = { is_claimed_by = ROOT }
+		282 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 4
+			528 = { is_valid_annexation_state = yes }
+			529 = { is_valid_annexation_state = yes }
+			531 = { is_valid_annexation_state = yes }
+			1152 = { is_valid_annexation_state = yes }
+			532 = { is_valid_annexation_state = yes }
+			533 = { is_valid_annexation_state = yes }
+			536 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				is_japan_tag = yes
+				has_country_flag = JAP_CONQ
+			}
+		}
+	}
+	should_release_JAP_first = {
+		if = {
+			limit = {
+				282 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 4
+					528 = { is_valid_annexation_state = yes }
+					529 = { is_valid_annexation_state = yes }
+					531 = { is_valid_annexation_state = yes }
+					1152 = { is_valid_annexation_state = yes }
+					532 = { is_valid_annexation_state = yes }
+					533 = { is_valid_annexation_state = yes }
+					536 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = JAP_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_SOUTH_JAP = {
+		or = {
+			state = 282
+		}
+		NOT = { is_claimed_by = ROOT }
+		282 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 3
+			531 = { is_valid_annexation_state = yes }
+			532 = { is_valid_annexation_state = yes }
+			1152 = { is_valid_annexation_state = yes }
+			528 = { is_valid_annexation_state = yes }
+			529 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			should_release_JAP_first = yes
+			NOT = {
+				is_japan_tag = yes
+				has_country_flag = CHB_CONQ
+			}
+		}
+	}
+	can_release_NORTH_JAP = {
+		or = {
+			state = 1156
+		}
+		NOT = { is_claimed_by = ROOT }
+		1156 = { is_valid_annexation_state = yes }
+		536 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_JAP_first = yes
+			NOT = {
+				is_japan_tag = yes
+				has_country_flag = SGU_CONQ
+			}
+		}
+	}
+#####  中国   ####
+	can_release_CHI = {
+		or = {
+			state = 608
+			state = 613
+			state = 743
+			state = 1048
+			state = 592
+			state = 650
+			state = 799
+			state = 1072
+			state = 1047
+		}
+		NOT = { is_claimed_by = ROOT }
+		count_triggers = {
+			amount = 3
+			608 = { is_valid_annexation_state = yes }
+			613 = { is_valid_annexation_state = yes }
+			743 = { is_valid_annexation_state = yes }
+			1048 = { is_valid_annexation_state = yes }
+			592 = { is_valid_annexation_state = yes }
+			650 = { is_valid_annexation_state = yes }
+			799 = { is_valid_annexation_state = yes }
+			1072 = { is_valid_annexation_state = yes }
+			1047 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				is_chinese_country = yes
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				has_country_flag = CHI_CONQ
+			}
+		}
+	}
+	should_release_china_first = {
+		if = {
+			limit = {
+				count_triggers = {
+					amount = 3
+					608 = { is_valid_annexation_state = yes }
+					613 = { is_valid_annexation_state = yes }
+					743 = { is_valid_annexation_state = yes }
+					1048 = { is_valid_annexation_state = yes }
+					592 = { is_valid_annexation_state = yes }
+					650 = { is_valid_annexation_state = yes }
+					799 = { is_valid_annexation_state = yes }
+					1072 = { is_valid_annexation_state = yes }
+					1047 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = CHI_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+	can_release_SIK = {
+		state = 617
+		NOT = { is_claimed_by = ROOT }
+		617 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_china_first = yes
+			NOT = {
+				is_chinese_country = yes
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				has_country_flag = SIK_CONQ
+			}
+		}
+	}
+	can_release_MON = {
+		state = 330
+		NOT = { is_claimed_by = ROOT }
+		330 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_china_first = yes
+			NOT = {
+				is_chinese_country = yes
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				has_country_flag = MON_CONQ
+			}
+		}
+	}
+	can_release_MAN = {
+		state = 716
+		NOT = { is_claimed_by = ROOT }
+		716 = { is_valid_annexation_state = yes }
+		885 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_china_first = yes
+			NOT = {
+				is_chinese_country = yes
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				has_country_flag = MAN_CONQ
+			}
+		}
+	}
+	can_release_TIB = {
+		state = 322
+		NOT = { is_claimed_by = ROOT }
+		322 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_china_first = yes
+			NOT = {
+				is_chinese_country = yes
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				has_country_flag = TIB_CONQ
+			}
+		}
+	}
+
+#####  其它亚洲国家   ####
+ #印度
+	can_release_RAJ = {
+		or = {
+			state = 439
+		}
+		NOT = { is_claimed_by = ROOT }
+		439 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 2
+			431 = { is_valid_annexation_state = yes }
+			427 = { is_valid_annexation_state = yes }
+			429 = { is_valid_annexation_state = yes }
+			435 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = RAJ
+				has_country_flag = RAJ_CONQ
+			}
+		}
+	}
+	should_release_RAJ_first = {
+		if = {
+			limit = {
+				439 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 2
+					431 = { is_valid_annexation_state = yes }
+					427 = { is_valid_annexation_state = yes }
+					429 = { is_valid_annexation_state = yes }
+					435 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = RAJ_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #缅甸
+	can_release_MMR = {
+		or = {
+			state = 288
+		}
+		NOT = { is_claimed_by = ROOT }
+		288 = { is_valid_annexation_state = yes }
+		640 = { is_valid_annexation_state = yes }
+		790 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = MMR
+				has_country_flag = MMR_CONQ
+			}
+		}
+	}
+ #琉球
+	can_release_RYU = {
+		or = {
+			state = 526
+		}
+		NOT = { is_claimed_by = ROOT }
+		526 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_JAP_first = yes
+			NOT = {
+				tag = RYU
+				has_country_flag = RYU_CONQ
+			}
+		}
+	}
+ #朝鲜
+	can_release_KOR = {
+		or = {
+			state = 525
+		}
+		NOT = { is_claimed_by = ROOT }
+		525 = { is_valid_annexation_state = yes }
+		527 = { is_valid_annexation_state = yes }
+		1147 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				or =  {
+					tag = KOR
+					tag = DPR
+				}
+				has_country_flag = KOR_CONQ
+			}
+		}
+	}
+ #印度支那
+	can_release_VIN = {
+		or = {
+			state = 286
+			state = 671
+		}
+		NOT = { is_claimed_by = ROOT }
+		or = {
+			286 = { is_valid_annexation_state = yes }
+			671 = { is_valid_annexation_state = yes }
+		}
+		827 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = VIN
+				has_country_flag = VIN_CONQ
+			}
+		}
+	}
+ #泰国
+	can_release_SIA = {
+		or = {
+			state = 289
+		}
+		NOT = { is_claimed_by = ROOT }
+		289 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = SIA
+				has_country_flag = SIA_CONQ
+			}
+		}
+	}
+ #夏连特拉
+	can_release_MAL = {
+		or = {
+			state = 1016
+		}
+		NOT = { is_claimed_by = ROOT }
+		1016 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 4
+			846 = { is_valid_annexation_state = yes }
+			1021 = { is_valid_annexation_state = yes }
+			1020 = { is_valid_annexation_state = yes }
+			335 = { is_valid_annexation_state = yes }
+			333 = { is_valid_annexation_state = yes }
+			1019 = { is_valid_annexation_state = yes }
+			336 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = MAL
+				has_country_flag = MAL_CONQ
+			}
+		}
+	}
+ #菲律宾
+	can_release_PHI = {
+		or = {
+			state = 327
+		}
+		NOT = { is_claimed_by = ROOT }
+		327 = { is_valid_annexation_state = yes }
+		627 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = PHI
+				has_country_flag = PHI_CONQ
+			}
+		}
+	}
+ #太平洋群岛
+	can_release_Pacific_Islands = {
+		is_on_continent = australia
+		not = {
+			or = {
+				is_AST_state = yes
+				region = 157  #新西兰
+				state = 629  #珊瑚宫
+			}
+		}
+		NOT = { is_claimed_by = ROOT }
+		any_state = {
+			is_on_continent = australia
+			not = {
+				or = {
+					is_AST_state = yes
+					region = 157  #新西兰
+					state = 629  #珊瑚宫
+				}
+			}
+			is_valid_annexation_state = yes
+		}
+		ROOT = {
+			NOT = {
+				has_country_flag = Pacific_Islands_CONQ
+			}
+		}
+	}
+ #武侦高校
+	can_release_AST = {
+		or = {
+			state = 285
+		}
+		NOT = { is_claimed_by = ROOT }
+		285 = { is_valid_annexation_state = yes }
+		517 = { is_valid_annexation_state = yes }
+		522 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = AST
+				has_country_flag = AST_CONQ
+			}
+		}
+	}
+ #新西兰
+	can_release_NZL = {
+		or = {
+			state = 284
+		}
+		NOT = { is_claimed_by = ROOT }
+		284 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = NZL
+				has_country_flag = NZL_CONQ
+			}
+		}
+	}
+ #珊瑚宫
+	can_release_HAW = {
+		or = {
+			state = 629
+		}
+		NOT = { is_claimed_by = ROOT }
+		629 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = HAW
+				has_country_flag = HAW_CONQ
+			}
+		}
+	}
+
+#####  北美   ####
+ #晴空
+	can_release_CAN = {
+		or = {
+			state = 276
+		}
+		NOT = { is_claimed_by = ROOT }
+		276 = { is_valid_annexation_state = yes }
+		832 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = CAN
+				has_country_flag = CAN_CONQ
+			}
+		}
+	}
+	should_release_CAN_first = {
+		if = {
+			limit = {
+				276 = { is_valid_annexation_state = yes }
+				832 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = CAN_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #精灵之国
+	can_release_USA = {
+		or = {
+			state = 361
+		}
+		NOT = { is_claimed_by = ROOT }
+		361 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 3
+			360 = { is_valid_annexation_state = yes }
+			975 = { is_valid_annexation_state = yes }
+			261 = { is_valid_annexation_state = yes }
+			393 = { is_valid_annexation_state = yes }
+			365 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = USA
+				has_country_flag = USA_CONQ
+			}
+		}
+	}
+	should_release_USA_first = {
+		if = {
+			limit = {
+				361 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 3
+					360 = { is_valid_annexation_state = yes }
+					975 = { is_valid_annexation_state = yes }
+					261 = { is_valid_annexation_state = yes }
+					393 = { is_valid_annexation_state = yes }
+					365 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = USA_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #阿拉斯加
+	can_release_ASK = {
+		or = {
+			state = 463
+		}
+		NOT = { is_claimed_by = ROOT }
+		463 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_RUS_first = yes
+			should_release_SIB_first = yes
+			should_release_EAM_first = yes
+			NOT = {
+				tag = ASK
+				has_country_flag = ASK_CONQ
+			}
+		}
+	}
+ #新英格兰
+	can_release_NEE = {
+		or = {
+			state = 932
+		}
+		NOT = { is_claimed_by = ROOT }
+		930 = { is_valid_annexation_state = yes }
+		932 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_CAN_first = yes
+			should_release_USA_first = yes
+			NOT = {
+				tag = NEE
+				has_country_flag = NEE_CONQ
+			}
+		}
+	}
+ #北美汉语区
+	can_release_NGD = {
+		or = {
+			state = 797
+		}
+		NOT = { is_claimed_by = ROOT }
+		797 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 3
+			798 = { is_valid_annexation_state = yes }
+			378 = { is_valid_annexation_state = yes }
+			385 = { is_valid_annexation_state = yes }
+			386 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = NGD
+				has_country_flag = NGD_CONQ
+			}
+		}
+	}
+ #北美法语区
+	can_release_NFA = {
+		or = {
+			state = 373
+		}
+		NOT = { is_claimed_by = ROOT }
+		373 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 3
+			371 = { is_valid_annexation_state = yes }
+			395 = { is_valid_annexation_state = yes }
+			394 = { is_valid_annexation_state = yes }
+			391 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = NFA
+				has_country_flag = NFA_CONQ
+			}
+		}
+	}
+	should_release_NFA_first = {
+		if = {
+			limit = {
+				373 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 3
+					371 = { is_valid_annexation_state = yes }
+					395 = { is_valid_annexation_state = yes }
+					394 = { is_valid_annexation_state = yes }
+					391 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = NFA_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #齐亚德
+	can_release_FRG = {
+		or = {
+			state = 382
+		}
+		NOT = { is_claimed_by = ROOT }
+		382 = { is_valid_annexation_state = yes }
+		375 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_NFA_first = yes
+			NOT = {
+				tag = FRG
+				has_country_flag = FRG_CONQ
+			}
+		}
+	}
+ #中美洲
+	can_release_MA = {
+		or = {
+			state = 304
+		}
+		NOT = { is_claimed_by = ROOT }
+		304 = { is_valid_annexation_state = yes }
+		1123 = { is_valid_annexation_state = yes }
+		317 = { is_valid_annexation_state = yes }
+		485 = { is_valid_annexation_state = yes }
+		482 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				or = {
+					tag = PAN
+					tag = PAJ
+					tag = GUA
+				}
+				has_country_flag = MA_CONQ
+			}
+		}
+	}
+	should_release_MA_first = {
+		if = {
+			limit = {
+				304 = { is_valid_annexation_state = yes }
+				1123 = { is_valid_annexation_state = yes }
+				317 = { is_valid_annexation_state = yes }
+				485 = { is_valid_annexation_state = yes }
+				482 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = MA_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+ #废墟图书馆
+	can_release_PAJ = {
+		or = {
+			state = 482
+		}
+		NOT = { is_claimed_by = ROOT }
+		482 = { is_valid_annexation_state = yes }
+		483 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_MA_first = yes
+			NOT = {
+				or = {
+					tag = PAN
+					tag = PAJ
+					tag = GUA
+				}
+				has_country_flag = PAJ_CONQ
+			}
+		}
+	}
+ #瓦尔哈拉社
+	can_release_PAN = {
+		or = {
+			state = 304
+		}
+		NOT = { is_claimed_by = ROOT }
+		304 = { is_valid_annexation_state = yes }
+		1123 = { is_valid_annexation_state = yes }
+		317 = { is_valid_annexation_state = yes }
+		485 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_MA_first = yes
+			NOT = {
+				or = {
+					tag = PAN
+					tag = PAJ
+					tag = GUA
+				}
+				has_country_flag = PAN_CONQ
+			}
+		}
+	}
+ #生命之树
+	can_release_CUB = {
+		or = {
+			state = 315
+		}
+		NOT = { is_claimed_by = ROOT }
+		315 = { is_valid_annexation_state = yes }
+		820 = { is_valid_annexation_state = yes }
+		319 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = CUB
+				has_country_flag = CUB_CONQ
+			}
+		}
+	}
+ #西印度群岛
+	can_release_West_indies = {
+		or = {
+			state = 686
+		}
+		NOT = { is_claimed_by = ROOT }
+		686 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = PAS
+				has_country_flag = PAS_CONQ
+			}
+		}
+	}
+	
+
+#####  南美   ####
+
+ #斯塔王国
+	can_release_PA1 = {
+		or = {
+			state = 306
+		}
+		NOT = { is_claimed_by = ROOT }
+		306 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = PA1
+				has_country_flag = PA1_CONQ
+			}
+		}
+	}
+
+ #莉兰迪亚
+	can_release_PAM = {
+		or = {
+			state = 845
+			state = 279
+		}
+		NOT = { is_claimed_by = ROOT }
+		512 = { is_valid_annexation_state = yes }
+		845 = { is_valid_annexation_state = yes }
+		279 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				or = {
+					is_lwny_country = yes
+					is_lwny2_country = yes
+				}
+				has_country_flag = CHL_CONQ
+			}
+		}
+	}
+	should_release_PAM_first = {
+		if = {
+			limit = {
+				512 = { is_valid_annexation_state = yes }
+				845 = { is_valid_annexation_state = yes }
+				279 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = CHL_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+
+ #夜莺
+	can_release_PAO = {
+		or = {
+			state = 301
+		}
+		NOT = { is_claimed_by = ROOT }
+		301 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_PAM_first = yes
+			NOT = {
+				or = {
+					is_lwny_country = yes
+					is_lwny2_country = yes
+				}
+				has_country_flag = PAO_CONQ
+			}
+		}
+	}
+
+ #军团
+	can_release_PAU = {
+		or = {
+			state = 509
+		}
+		NOT = { is_claimed_by = ROOT }
+		509 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = PAU
+				has_country_flag = PAU_CONQ
+			}
+		}
+	}
+
+ #魔法少女
+	can_release_MGU = {
+		or = {
+			state = 500
+		}
+		NOT = { is_claimed_by = ROOT }
+		500 = { is_valid_annexation_state = yes }
+		502 = { is_valid_annexation_state = yes }
+		501 = { is_valid_annexation_state = yes }
+		499 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = MGU
+				has_country_flag = MGU_CONQ
+			}
+		}
+	}
+	should_release_MGU_first = {
+		if = {
+			limit = {
+				500 = { is_valid_annexation_state = yes }
+				502 = { is_valid_annexation_state = yes }
+				501 = { is_valid_annexation_state = yes }
+				499 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = MGU_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+
+ #艾硫希欧
+	can_release_PAQ = {
+		or = {
+			state = 307
+		}
+		NOT = { is_claimed_by = ROOT }
+		307 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 3
+			486 = { is_valid_annexation_state = yes }
+			849 = { is_valid_annexation_state = yes }
+			1036 = { is_valid_annexation_state = yes }
+			1031 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				tag = PAQ
+				has_country_flag = PAQ_CONQ
+			}
+		}
+	}
+
+ #妖精
+	can_release_ELF = {
+		or = {
+			state = 1194
+		}
+		NOT = { is_claimed_by = ROOT }
+		1194 = { is_valid_annexation_state = yes }
+		count_triggers = {
+			amount = 3
+			1190 = { is_valid_annexation_state = yes }
+			1196 = { is_valid_annexation_state = yes }
+			1197 = { is_valid_annexation_state = yes }
+			1195 = { is_valid_annexation_state = yes }
+			1142 = { is_valid_annexation_state = yes }
+			1191 = { is_valid_annexation_state = yes }
+		}
+		ROOT = {
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = ELF_CONQ
+			}
+		}
+	}
+	should_release_ELF_first = {
+		if = {
+			limit = {
+				1194 = { is_valid_annexation_state = yes }
+				count_triggers = {
+					amount = 3
+					1190 = { is_valid_annexation_state = yes }
+					1196 = { is_valid_annexation_state = yes }
+					1197 = { is_valid_annexation_state = yes }
+					1195 = { is_valid_annexation_state = yes }
+					1142 = { is_valid_annexation_state = yes }
+					1191 = { is_valid_annexation_state = yes }
+				}
+			}
+			has_country_flag = ELF_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+
+ #风声河谷
+	can_release_EWW = {
+		or = {
+			state = 1196
+		}
+		NOT = { is_claimed_by = ROOT }
+		1196 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ELF_first = yes
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = EWW_CONQ
+			}
+		}
+	}
+
+ #叶落边境
+	can_release_ELW = {
+		or = {
+			state = 1197
+		}
+		NOT = { is_claimed_by = ROOT }
+		1197 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ELF_first = yes
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = ELW_CONQ
+			}
+		}
+	}
+
+ #曦光圣域
+	can_release_ELG = {
+		or = {
+			state = 1195
+		}
+		NOT = { is_claimed_by = ROOT }
+		1195 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ELF_first = yes
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = ELG_CONQ
+			}
+		}
+	}
+
+ #暮色林渊
+	can_release_EDW = {
+		or = {
+			state = 1142
+		}
+		NOT = { is_claimed_by = ROOT }
+		1142 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ELF_first = yes
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = EDW_CONQ
+			}
+		}
+	}
+
+ #无垠之海
+	can_release_EBS = {
+		or = {
+			state = 1191
+		}
+		NOT = { is_claimed_by = ROOT }
+		1191 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ELF_first = yes
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = EBS_CONQ
+			}
+		}
+	}
+	should_release_EBS_first = {
+		if = {
+			limit = {
+				1191 = { is_valid_annexation_state = yes }
+			}
+			has_country_flag = EBS_CONQ
+		}
+		else = {
+			always = yes
+		}
+	}
+
+ #希尔瓦尼亚城邦
+	can_release_EFC = {
+		or = {
+			state = 1190
+		}
+		NOT = { is_claimed_by = ROOT }
+		1190 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_ELF_first = yes
+			NOT = {
+				is_elf_tag = yes
+				has_country_flag = EFC_CONQ
+			}
+		}
+	}
+
+ #南美丛林区
+	can_release_SAJ = {
+		or = {
+			state = 896
+		}
+		NOT = { is_claimed_by = ROOT }
+		896 = { is_valid_annexation_state = yes }
+		ROOT = {
+			should_release_MGU_first = yes
+			should_release_EBS_first = yes
+			NOT = {
+				tag = LFC
+				has_country_flag = SAJ_CONQ
+			}
+		}
+	}
+
+#####  非洲   ####
+
+ #阿尔及利亚
+	can_release_ALG = {
+		or = {
+			state = 459
+		}
+		NOT = { is_claimed_by = ROOT }
+		459 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				or = {
+					tag = ALG
+					tag = LIB
+				}
+				has_country_flag = ALG_CONQ
+			}
+		}
+	}
+
+ #埃及
+	can_release_EGY = {
+		or = {
+			state = 446
+		}
+		NOT = { is_claimed_by = ROOT }
+		446 = { is_valid_annexation_state = yes }
+		447 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = EGY
+				has_country_flag = EGY_CONQ
+			}
+		}
+	}
+
+ #西非海岸
+	can_release_WAF = {
+		or = {
+			state = 298
+		}
+		NOT = { is_claimed_by = ROOT }
+		298 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = SAF
+				has_country_flag = SAF_CONQ
+			}
+		}
+	}
+
+ #南非海岸
+	can_release_EAS = {
+		or = {
+			state = 275
+		}
+		NOT = { is_claimed_by = ROOT }
+		275 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = EAS
+				has_country_flag = EAS_CONQ
+			}
+		}
+	}
+
+ #中非
+	can_release_ZIM = {
+		or = {
+			state = 545
+		}
+		NOT = { is_claimed_by = ROOT }
+		545 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = ZIM
+				has_country_flag = ZIM_CONQ
+			}
+		}
+	}
+
+ #东非海岸
+	can_release_ETH = {
+		or = {
+			state = 271
+		}
+		NOT = { is_claimed_by = ROOT }
+		269 = { is_valid_annexation_state = yes }
+		271 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = ETH
+				has_country_flag = ETH_CONQ
+			}
+		}
+	}
+
+ #马达加斯加
+	can_release_MAD = {
+		or = {
+			state = 543
+		}
+		NOT = { is_claimed_by = ROOT }
+		543 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = MAD
+				has_country_flag = MAD_CONQ
+			}
+		}
+	}
+
+ #刚果
+	can_release_COG = {
+		or = {
+			state = 295
+		}
+		NOT = { is_claimed_by = ROOT }
+		295 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = COG
+				has_country_flag = COG_CONQ
+			}
+		}
+	}
+
+ #黎博利
+	can_release_MOR = {
+		or = {
+			state = 461
+		}
+		NOT = { is_claimed_by = ROOT }
+		461 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = MOR
+				has_country_flag = MOR_CONQ
+			}
+		}
+	}
+
+ #利比亚
+	can_release_LBA = {
+		or = {
+			state = 448
+		}
+		NOT = { is_claimed_by = ROOT }
+		448 = { is_valid_annexation_state = yes }
+		ROOT = {
+			NOT = {
+				tag = LBA
+				has_country_flag = LBA_CONQ
+			}
+		}
+	}
+
+#####

@@ -1,0 +1,109 @@
+on_actions = {
+	on_offer_join_faction = {
+		effect = {
+			FROM = {
+				#clear any embargoes
+				every_other_country = {
+					limit = { is_ally_with = PREV }
+					clear_embargo_PREV = yes
+				}
+
+				if = {
+					limit = { has_global_flag = TEMPORARY_DISABLED_FACTION_POPUP }
+					clr_global_flag = TEMPORARY_DISABLED_FACTION_POPUP
+				}
+				else_if = {
+					limit = { NOT = { is_in_array = { global.faction_joining_alerts = THIS } } }
+					set_variable = { faction_joining_progressbar_value = -317 }
+					set_variable = { faction_joining_alert_timer = 0 }
+					add_to_array = { global.faction_joining_alerts = THIS }
+					sound_effect = diplomatic_notification
+					set_variable_to_random = global.Adorable_heart_alerts_dirty
+					country_event = { id = generic.2024 hours = 1 }
+				}
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			### Integration Check
+			FROM.FROM = {
+				if = {
+					limit = {
+						has_variable = can_integrate_@ROOT
+						NOT = { is_core_of = ROOT }
+						impassable = no
+					}
+					ROOT = { 
+						set_variable = { global.previous_compliance = has_collaboration@FROM }
+						multiply_variable = { global.previous_compliance = 100 }
+					#	log = "顺从度为[?global.previous_compliance]"
+					}
+					start_state_integration_resistance = yes
+				}
+				else = {
+					clear_state_integration_resistance = yes
+				}
+			}
+		}
+	}
+	on_annex = {
+		effect = {
+			FROM = {
+				# clear notifications
+				if = {
+					limit = { is_in_array = { global.faction_joining_alerts = THIS } }
+					clear_faction_joining_alert = yes
+				}
+				for_each_loop = {
+					array = state_integration_alerts
+					clear_variable = integration_alert_timer_@var:v
+					clear_variable = integration_progressbar_value_@var:v
+				}
+				for_each_loop = {
+					array = country_integration_alerts
+					clear_variable = integration_alert_timer_@var:v
+					clear_variable = integration_progressbar_value_@var:v
+				}
+				clear_array = state_integration_alerts
+				clear_array = country_integration_alerts
+			}
+		}
+	}
+	on_war = {
+		effect = {
+			if = {
+				limit = { check_variable = { adorable_heart_automatic_high_army_fund_var = 2 } }
+				remove_all_army_fund_ideas = yes
+				add_ideas = army_fund_11
+				set_variable = { army_fund_progress_bar_ball_var1 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var2 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var3 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var4 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var5 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var6 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var7 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var8 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var9 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var10 = 1 }
+				set_variable = { army_fund_progress_bar_ball_var11 = 2 }
+			}
+			if = {
+				limit = { check_variable = { adorable_heart_automatic_high_navy_fund_var = 2 } }
+				remove_all_navy_fund_ideas = yes
+				add_ideas = navy_fund_11
+				set_variable = { navy_fund_progress_bar_ball_var1 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var2 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var3 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var4 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var5 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var6 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var7 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var8 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var9 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var10 = 1 }
+				set_variable = { navy_fund_progress_bar_ball_var11 = 2 }
+			}
+		}
+	}
+}

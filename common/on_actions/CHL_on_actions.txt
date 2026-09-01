@@ -1,0 +1,92 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			SOV = {
+				activate_targeted_decision = { target = CHL decision = SOV_invite_dec_to_join_comecon_outside_allies }
+				activate_targeted_decision = { target = CHL decision = SOV_aid_dec_western_front }
+				activate_targeted_decision = { target = PAR decision = SOV_invite_dec_to_join_comecon_outside_allies }
+				activate_targeted_decision = { target = PAR decision = SOV_aid_dec_western_front }
+			}
+		}
+	}
+	on_capitulation = {
+		effect = {
+			#阿根廷投降
+			if = {
+				limit = {
+					ROOT = {
+						tag = ARG
+						NOT = {
+							any_enemy_country = {
+								NOT = {
+									or = {
+										tag = CHL
+										tag = PAR
+									}
+								}
+							}
+						}
+					}
+					FROM = {
+						or = {
+							tag = CHL
+							tag = PAR
+						}
+					}
+				}
+				FROM = {
+					faction_leader = {
+						white_peace = {
+							tag = ARG
+							message = CHL_and_PAR_win_ARG
+						}
+						puppet = ARG
+					}
+				}
+				if = {
+					limit = {
+						901 = {
+							owner = ARG
+						}
+					}
+					PAR = {
+						transfer_state = 901
+					}
+				}
+			}
+			#南美工人投降
+			if = {
+				limit = {
+					ROOT = {
+						tag = CHL
+						NOT = {
+							any_enemy_country = {
+								NOT = {
+									tag = ARG
+								}
+							}
+						}
+					}
+					FROM = {
+						tag = ARG
+					}
+				}
+				ROOT = {
+					faction_leader = {
+						white_peace = {
+							tag = ARG
+							message = ARG_win_CHL_and_PAR
+						}
+					}
+				}
+				ARG = {
+					puppet = CHL
+					annex_country = {
+						target = PAR
+						transfer_troops = no
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,305 @@
+SOV_propaganda_poster_slot_available = {
+	custom_trigger_tooltip = {
+		tooltip = SOV_propaganda_poster_slot_available_tt
+		OR = {
+			check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+			check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+			check_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+	}
+}
+
+SOV_inadequately_prepared_collectivization = {
+	custom_trigger_tooltip = {
+		tooltip = SOV_inadequately_prepared_collectivization_tt
+		NOT = {
+			has_idea = SOV_incipient_land_reform
+			has_idea = SOV_incipient_land_reform2
+			has_idea = SOV_incipient_land_reform3
+			has_idea = SOV_incipient_land_reform4
+			has_idea = SOV_incipient_land_reform5
+		}
+	}
+}
+
+is_SOV_always_path_plan = {
+	OR = {
+		has_game_rule = {
+			rule = AH_SOV_ai_behavior_SELECTION
+			option = DEFAULT
+		}
+		has_game_rule = {
+			rule = AH_SOV_ai_behavior_SELECTION
+			option = SOV_GAME_RULE_1
+		}
+		has_game_rule = {
+			rule = AH_SOV_ai_behavior_SELECTION
+			option = SOV_GAME_RULE_2
+		}
+		has_game_rule = {
+			rule = AH_SOV_ai_behavior_SELECTION
+			option = SOV_GAME_RULE_3
+		}
+		has_game_rule = {
+			rule = AH_SOV_ai_behavior_SELECTION
+			option = SOV_GAME_RULE_4
+		}
+		has_game_rule = {
+			rule = AH_SOV_ai_behavior_SELECTION
+			option = SOV_GAME_RULE_5
+		}
+	}
+}
+
+#on the target's scope
+is_stronger_than_ROOT_and_not_vulnerable = {
+	strength_ratio = { tag = ROOT ratio > 1 }
+	enemies_strength_ratio < 1
+	surrender_progress < 0.1
+}
+#on the target's scope
+is_stronger_than_ROOT_and_not_vulnerable_consider_naval_strength = {
+	OR = {
+		strength_ratio = { tag = ROOT ratio > 1 }
+		AND = {
+			naval_strength_comparison = {
+				other = ROOT
+				ratio > 1
+				sub_unit_def_weights = {
+					submarine = 0.75
+					destroyer = 0.75
+					light_cruiser = 0.75
+					heavy_cruiser = 1
+					battle_cruiser = 1
+					battleship = 1
+					carrier = 1
+				}
+			}
+			enemies_naval_strength_ratio < 0.8
+		}
+	}
+	enemies_strength_ratio < 1
+	surrender_progress < 0.1
+}
+
+#on the target's scope
+faction_leader_is_stronger_than_ROOT_and_not_vulnerable = {
+	if = {
+		limit = { ROOT = { has_war = yes } }
+		is_in_faction = yes
+		is_faction_leader = no
+		faction_leader = {
+			OR = {
+				strength_ratio = { tag = ROOT ratio > 0.7 }
+				is_major = yes
+			}
+			enemies_strength_ratio < 1.5
+			surrender_progress < 0.2
+		}
+	}
+	else = {
+		is_in_faction = yes
+		is_faction_leader = no
+		faction_leader = {
+			strength_ratio = { tag = ROOT ratio > 0.7 }
+			enemies_strength_ratio < 1
+			surrender_progress < 0.2
+		}
+	}
+}
+
+#on the target's scope
+faction_leader_is_stronger_than_ROOT_and_not_vulnerable_consider_naval_strength = {
+	if = {
+		limit = { ROOT = { has_war = yes } }
+		is_in_faction = yes
+		is_faction_leader = no
+		faction_leader = {
+			OR = {
+				strength_ratio = { tag = ROOT ratio > 0.7 }
+				naval_strength_comparison = {
+					other = ROOT
+					ratio > 0.8
+					sub_unit_def_weights = {
+						submarine = 0.75
+						destroyer = 0.75
+						light_cruiser = 0.75
+						heavy_cruiser = 1
+						battle_cruiser = 1
+						battleship = 1
+						carrier = 1
+					}
+				}
+				is_major = yes
+			}
+			enemies_strength_ratio < 1.5
+			surrender_progress < 0.2
+		}
+	}
+	else = {
+		is_in_faction = yes
+		is_faction_leader = no
+		faction_leader = {
+			OR = {
+				strength_ratio = { tag = ROOT ratio > 0.8 }
+				AND = {
+					naval_strength_comparison = {
+						other = ROOT
+						ratio > 1
+						sub_unit_def_weights = {
+							submarine = 0.75
+							destroyer = 0.75
+							light_cruiser = 0.75
+							heavy_cruiser = 1
+							battle_cruiser = 1
+							battleship = 1
+							carrier = 1
+						}
+					}
+					enemies_naval_strength_ratio < 0.8
+				}
+			}
+			enemies_strength_ratio < 1
+			surrender_progress < 0.1
+		}
+	}
+}
+
+#on the target's scope
+overlord_is_stronger_than_ROOT_and_not_vulnerable = {
+	is_subject = yes
+	overlord = {
+		strength_ratio = { tag = ROOT ratio > 0.8 }
+		enemies_strength_ratio < 1
+		surrender_progress < 0.1
+	}
+}
+
+#on the target's scope
+overlord_is_stronger_than_ROOT_and_not_vulnerable_consider_naval_strength = {
+	is_subject = yes
+	overlord = {
+		OR = {
+			strength_ratio = { tag = ROOT ratio > 0.8 }
+			AND = {
+				naval_strength_comparison = {
+					other = ROOT
+					ratio > 1
+					sub_unit_def_weights = {
+						submarine = 0.75
+						destroyer = 0.75
+						light_cruiser = 0.75
+						heavy_cruiser = 1
+						battle_cruiser = 1
+						battleship = 1
+						carrier = 1
+					}
+				}
+				enemies_naval_strength_ratio < 0.8
+			}
+		}
+		enemies_strength_ratio < 1
+		surrender_progress < 0.1
+	}
+}
+
+default_attack_AI_trigger_FROM = {
+	OR = {
+		is_stronger_than_ROOT_and_not_vulnerable = yes
+		overlord_is_stronger_than_ROOT_and_not_vulnerable = yes
+		faction_leader_is_stronger_than_ROOT_and_not_vulnerable = yes
+	}
+}
+
+default_attack_AI_trigger_FROM_consider_naval_strength = {
+	OR = {
+		is_stronger_than_ROOT_and_not_vulnerable_consider_naval_strength = yes
+		overlord_is_stronger_than_ROOT_and_not_vulnerable_consider_naval_strength = yes
+		faction_leader_is_stronger_than_ROOT_and_not_vulnerable_consider_naval_strength = yes
+	}
+}
+
+is_Central_Asian_states = {
+	state = 584
+	state = 732
+	state = 804
+	state = 1042
+	state = 586
+	state = 405
+	state = 861
+	state = 587
+	state = 712
+	state = 407
+	state = 589
+	state = 407
+}
+
+is_surplus_Central_Asian_state = {
+	state = 404
+	state = 810
+	state = 590
+	state = 402
+	state = 406
+}
+
+is_russia_tag = {
+	OR = {
+		original_tag = SOV
+		original_tag = UKR
+		original_tag = EAM
+		original_tag = TAM
+		original_tag = SIB
+		original_tag = RUS
+		original_tag = TRM
+		original_tag = VLA
+		original_tag = ASK
+	}
+}
+
+is_russia_uniter_tag = {
+	OR = {
+		original_tag = SOV
+		original_tag = UKR
+		original_tag = EAM
+		original_tag = SIB
+		original_tag = RUS
+		original_tag = TRM
+		original_tag = VLA
+		original_tag = ASK
+	}
+}
+
+is_Tresen_tag = {
+	OR = {
+		original_tag = TAM
+		original_tag = PER
+		original_tag = AFG
+	}
+}
+
+has_SOV_comecon_buff = {
+	OR = {
+		has_idea = SOV_comecon_buff
+		has_idea = SOV_comecon_buff2
+	}
+}
+
+# 一些不加会报错的原版内容
+SOV_we_want_to_send_ultimatums = {
+	always = yes
+	# OR = {
+	# 	has_completed_focus = SOV_claims_in_baltic
+	# 	focus_progress = {
+	# 		focus = SOV_claims_in_baltic
+	# 		progress > 0.01
+	# 	}
+	# }
+	# any_other_country = {
+	# 	OR = {
+	# 		original_tag = LIT
+	# 		original_tag = LAT
+	# 		original_tag = EST
+	# 	}
+	# 	NOT = { has_country_flag = SOV_ultimatum_sent_flag }
+	# }
+}

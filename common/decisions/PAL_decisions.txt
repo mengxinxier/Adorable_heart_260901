@@ -1,0 +1,793 @@
+PAL_storm_watch_decision_catrgory = {
+	PAL_chase_murderer = {
+		icon = GFX_decision_generic_scorched_earth
+		visible = { has_global_flag = Telaviv_Shooting_case_flag }
+		ai_will_do = { factor = 0 }
+		available = {
+			has_country_flag = PAL_submit_report_flag
+		}
+		days_mission_timeout = 90
+		activation = {
+			has_global_flag = Telaviv_Shooting_case_flag
+			NOT = { has_country_flag = PAL_submit_report_flag }
+		}
+		#fixed_random_seed = no
+		fire_only_once = yes
+		is_good = no
+		timeout_effect = {
+			custom_effect_tooltip = PAL_chase_murderer_tt
+			set_country_flag = PAL_submit_report_flag
+			if = {
+				limit = { NOT = { has_country_flag = PAL_add_a_fire_flag } }
+				LAN = { country_event = saudi_arabia.2 }
+				ENG = { country_event = saudi_arabia.3 }
+			}
+			else = {
+				LAN = { country_event = saudi_arabia.4 }
+				ENG = { country_event = saudi_arabia.5 }
+			}
+		}
+	}
+	PAL_add_a_fire = {
+		icon = GFX_decision_generic_scorched_earth
+		visible = {
+			has_global_flag = Telaviv_Shooting_case_flag
+			NOT = { has_country_flag = PAL_submit_report_flag }
+		}
+		cost = 10
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = Telaviv_Shooting_case_flag
+			NOT = { has_country_flag = PAL_submit_report_flag }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_political_power = -15
+			#set_country_flag = PAL_submit_report_flag
+			set_country_flag = PAL_add_a_fire_flag
+			#LAN = { country_event = saudi_arabia.4 }
+			#ENG = { country_event = saudi_arabia.5 }
+		}
+	}
+	PAL_chase_murderer_ai = {
+		icon = GFX_decision_generic_scorched_earth
+		visible = { has_global_flag = Telaviv_Shooting_case_flag }
+		ai_will_do = { factor = 100 }
+		visible = { is_ai = yes }
+		available = {
+			OR = {
+				has_country_flag = PAL_submit_report_flag
+				has_country_flag = PAL_add_a_fire_flag
+			}
+		}
+		days_mission_timeout = 7
+		activation = {
+			has_global_flag = Telaviv_Shooting_case_flag
+			NOT = { has_country_flag = PAL_submit_report_flag }
+			NOT = { has_country_flag = PAL_add_a_fire_flag }
+			is_ai = yes
+		}
+		fire_only_once = yes
+		is_good = yes
+		timeout_effect = {
+			#add_political_power = -15
+			#set_country_flag = PAL_submit_report_flag
+			set_country_flag = PAL_add_a_fire_flag
+			#LAN = { country_event = saudi_arabia.4 }
+			#ENG = { country_event = saudi_arabia.5 }
+		}
+	}
+}
+
+PAL_Diplomatic_matters = {
+	PAL_diplo_attck_FROM = {
+		icon = GFX_decision_generic_ignite_civil_war
+		allowed = {
+			always = no
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			#FROM = {
+			#	not = {
+			#		or = {
+			#			has_war_with = ROOT
+			#			is_in_faction_with = ROOT
+			#			is_subject_of = ROOT
+			#		}
+			#	}
+			#}
+		}
+		available = {
+			FROM = {
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			not = {
+				has_country_flag = PAL_war_plan_going_on
+			}
+			or = {
+				any_home_area_neighbor_country = {
+					or = {
+						tag = FROM
+						is_in_faction_with = FROM
+					}
+				}
+				any_allied_country = {
+					any_home_area_neighbor_country = {
+						or = {
+							tag = FROM
+							is_in_faction_with = FROM
+						}
+					}
+				}
+			}
+		}
+		cost = 10
+		days_remove = 15
+		war_with_target_on_remove = yes
+		complete_effect = {
+			set_country_flag = PAL_war_plan_going_on
+			FROM_country_is_defender_and_ROOT_is_accacker = yes
+		}
+		remove_effect = {
+			clr_country_flag = PAL_war_plan_going_on
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+				}
+				factor = 0
+			}
+		}
+	}
+	PAL_diplo_invite_FROM = {
+		icon = GFX_decision_CHL_grant_full_rights_to_the_mapuche
+		allowed = {
+			always = no
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				is_faction_leader = yes
+			}
+			FROM = {
+				not = { has_country_flag = PAL_diplo_invite_FROM }
+			}
+		}
+		available = {
+			is_faction_leader = yes
+			has_government = communism
+			FROM = {
+				has_government = communism
+				is_in_faction = no
+			}
+			not = {
+				or = {
+					has_war_with = FROM
+					is_in_faction_with = FROM
+				}
+			}
+			if = {
+				limit = {
+					FROM = { is_chinese_country = yes }
+				}
+				has_global_flag = CHI_REUNIT
+			}
+			if = {
+				limit = {
+					FROM = { is_north_american_tag = yes }
+				}
+				has_global_flag = NA_has_been_united
+			}
+			if = {
+				limit = {
+					FROM = { is_Iberian_country = yes }
+				}
+				has_war = no
+			}
+		}
+		cost = 10
+		days_remove = 15
+		war_with_target_on_remove = yes
+		remove_effect = {
+			FROM = {
+				set_country_flag = PAL_diplo_invite_FROM
+				country_event = {
+					id = generic.2008
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	PAL_join_ME = {
+		icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+			is_in_faction = no
+			LAN = { is_faction_leader = yes }
+			has_country_flag = faction_available
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 10
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+			NOT = { has_country_flag = FACTION_ASKING }
+			is_in_faction = no
+			is_subject = no
+			LAN = {
+				exists = yes
+				is_faction_leader = yes
+				has_government = ROOT
+			}
+		}
+		complete_effect = {
+			set_country_flag = FACTION_ASKING
+		}
+		remove_effect = {
+			clr_country_flag = FACTION_ASKING
+			LAN = {
+				country_event = generic.2002
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	PAL_join_TUR = {
+		icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+			is_in_faction = no
+			TUR = { is_faction_leader = yes }
+			has_country_flag = faction_available
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 10
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+			NOT = { has_country_flag = FACTION_ASKING }
+			is_in_faction = no
+			is_subject = no
+			TUR = {
+				exists = yes
+				is_faction_leader = yes
+				has_government = ROOT
+			}
+		}
+		complete_effect = {
+			set_country_flag = FACTION_ASKING
+		}
+		remove_effect = {
+			clr_country_flag = FACTION_ASKING
+			TUR = {
+				country_event = generic.2002
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	PAL_join_SOV = {
+		icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+			is_in_faction = no
+			SOV = { is_faction_leader = yes }
+			has_country_flag = faction_available
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 10
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+			NOT = { has_country_flag = FACTION_ASKING }
+			is_in_faction = no
+			is_subject = no
+			SOV = {
+				exists = yes
+				is_faction_leader = yes
+				has_government = ROOT
+			}
+		}
+		complete_effect = {
+			set_country_flag = FACTION_ASKING
+		}
+		remove_effect = {
+			clr_country_flag = FACTION_ASKING
+			SOV = {
+				country_event = generic.2002
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	PAL_join_ENG = {
+		icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+			is_in_faction = no
+			ENG = { is_faction_leader = yes }
+			has_country_flag = faction_available
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 10
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+			NOT = { has_country_flag = FACTION_ASKING }
+			is_in_faction = no
+			is_subject = no
+			ENG = {
+				exists = yes
+				is_faction_leader = yes
+				has_government = ROOT
+			}
+		}
+		complete_effect = {
+			set_country_flag = FACTION_ASKING
+		}
+		remove_effect = {
+			clr_country_flag = FACTION_ASKING
+			ENG = {
+				country_event = generic.2002
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	PAL_join_DVL = {
+		icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+			is_in_faction = no
+			DVL = { is_faction_leader = yes }
+			has_country_flag = faction_available
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 10
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+			NOT = { has_country_flag = FACTION_ASKING }
+			is_in_faction = no
+			is_subject = no
+			DVL = {
+				exists = yes
+				is_faction_leader = yes
+				has_government = ROOT
+			}
+		}
+		complete_effect = {
+			set_country_flag = FACTION_ASKING
+		}
+		remove_effect = {
+			clr_country_flag = FACTION_ASKING
+			DVL = {
+				country_event = generic.2002
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	PAL_own_faction = {
+		icon = GFX_decision_category_hol_war_on_pacifism
+		visible = {
+			is_in_faction = no
+			has_country_flag = faction_available
+		}
+		fire_only_once = yes
+		cost = 0
+		days_remove = 10
+		available = {
+			NOT = { has_country_flag = FACTION_ASKING }
+			is_in_faction = no
+			is_subject = no
+			is_major = yes
+		}
+		complete_effect = {
+		}
+		remove_effect = {
+			if = {
+				limit = { has_cosmetic_tag = Babel }
+				create_faction_from_template = faction_template_Tyra_Federation
+			}
+			else = {
+				create_faction_from_template = {
+					template = faction_template_Tyra_Federation
+					name = Kazdel_Treaty
+					icon = GFX_faction_logo_Kazdel_Treaty
+				}
+			}
+			hidden_effect = {
+				every_country = {
+					limit = {
+						has_government = ROOT
+						is_in_faction = no
+						is_subject = no
+						not = {
+							or = {
+								has_war_with = ROOT
+								is_in_faction_with = ROOT
+							}
+						}
+						not = { tag = AHM }
+						or = {
+							tag = GRE
+							tag = TUR
+							tag = SYR
+							tag = IRQ
+							tag = LAN
+						}
+					}
+					ROOT = {
+						activate_targeted_decision = {
+							target = PREV
+							decision = PAL_diplo_invite_FROM
+						}
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+}
+
+PAL_Kazdel_clique = {
+	##稳定魔王情绪
+	PAL_Stabilize_Civilight_eterna_mood = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+			NOT = {
+				has_country_leader = {
+					ruling_only = yes
+					character = PAL_theresia
+				}
+			}
+		}
+		modifier = { civilian_factory_use = 5 }
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = Civilight_eterna_power_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = Civilight_eterna_power_var
+			}
+			add_to_variable = {
+				var = situation_of_Civilight_eterna_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = situation_of_Civilight_eterna_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##打击魔王忠诚派
+	PAL_Fight_Civilight_eterna_loyalists = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+		}
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			add_stability = -0.05
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = Civilight_eterna_power_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = Civilight_eterna_power_var
+			}
+			add_to_variable = {
+				var = situation_of_Civilight_eterna_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = situation_of_Civilight_eterna_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##下放权力到氏族
+	PAL_Decentralization_to_clan = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+			not = { has_completed_focus = PAL_Eliminate_old_system }
+		}
+		modifier = { political_power_factor = -0.1 }
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = Kazdel_Royal_Court_power_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = Kazdel_Royal_Court_power_var
+			}
+			add_to_variable = {
+				var = situation_of_Kazdel_Royal_Court_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = situation_of_Kazdel_Royal_Court_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##收回氏族权力
+	PAL_Take_back_clan_power = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+			not = { has_completed_focus = PAL_Eliminate_old_system }
+		}
+		modifier = { political_power_factor = -0.1 }
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = Kazdel_Royal_Court_power_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = Kazdel_Royal_Court_power_var
+			}
+			add_to_variable = {
+				var = situation_of_Kazdel_Royal_Court_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = situation_of_Kazdel_Royal_Court_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##提高军费
+	PAL_Increase_military_spending = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+			NOT = {
+				has_country_leader = {
+					ruling_only = yes
+					character = PAL_Theresis
+				}
+			}
+		}
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			COST_50_UBS_LOAD = yes
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = War_council_power_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = War_council_power_var
+			}
+			add_to_variable = {
+				var = situation_of_War_council_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = situation_of_War_council_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##和平与建设
+	PAL_Peace_and_construction = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+			NOT = {
+				has_country_leader = {
+					ruling_only = yes
+					character = PAL_Theresis
+				}
+			}
+		}
+		modifier = { consumer_goods_factor = 0.1 }
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = War_council_power_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = War_council_power_var
+			}
+			add_to_variable = {
+				var = situation_of_War_council_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = situation_of_War_council_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##促进多民族交融
+	PAL_Promote_multiethnic_integration = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+		}
+		modifier = { political_power_factor = -0.1 }
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = Old_Babel_Ministry_power_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = Old_Babel_Ministry_power_var
+			}
+			add_to_variable = {
+				var = situation_of_Old_Babel_Ministry_var
+				value = 5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_up_5_green
+				CHARACTER = situation_of_Old_Babel_Ministry_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	##宣传卡兹戴尔民族主义
+	PAL_Propaganda_of_Kazdale_nationalism = {
+		#icon = GFX_decision_category_generic_foreign_policy
+		visible = {
+		}
+		#
+		cost = 10
+		days_remove = 15
+		available = {
+			not = { has_country_flag = PAL_Kazdel_clique_ing }
+		}
+		modifier = { political_power_factor = -0.1 }
+		complete_effect = {
+			set_country_flag = PAL_Kazdel_clique_ing
+		}
+		remove_effect = {
+			clr_country_flag = PAL_Kazdel_clique_ing
+			add_to_variable = {
+				var = Old_Babel_Ministry_power_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = Old_Babel_Ministry_power_var
+			}
+			add_to_variable = {
+				var = situation_of_Old_Babel_Ministry_var
+				value = -5
+			}
+			custom_effect_tooltip = {
+				localization_key = var_down_5_red
+				CHARACTER = situation_of_Old_Babel_Ministry_var
+			}
+			PAL_compute_Kazdel_clique = yes
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+}
+
+

@@ -1,0 +1,1156 @@
+RIS_World_Conflict_decision_category = {
+	RIS_World_Conflict_TEST_decisions = {
+		icon = generic_civil_support
+
+		available = {
+			always = yes
+			#is_in_array = { 
+			#	array = ris_world_conflict_ui_list_array
+			#	value = AmericaCW
+			#}
+			#check_variable = { Conflict_id = 2 }
+		}
+
+		visible = {
+			always = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			clear_array = ROOT.ris_world_conflict_ui_list_array
+			set_variable = { Conflict_id = 0 }
+			add_to_variable = { Conflict_id = 1 }
+			add_to_array = {
+				array = ris_world_conflict_ui_list_array
+				value = SOV
+			}
+			#add_to_array = {
+			#	array = ris_world_conflict_ui_list_array
+			#	value = UKR
+			#}
+			add_to_variable = { Conflict_id = 1 }
+			add_to_array = {
+				array = ris_world_conflict_ui_list_array
+				value = USA
+			}
+			#remove_from_array = {
+			#	array = ris_world_conflict_ui_list_array
+			#	value = SovietUkraineSMO
+			#}
+		}
+	}
+}
+
+RIS_on_the_island_decision_category = {
+	RIS_power_decision = {
+		icon = generic_civil_support
+		available = { always = yes }
+		visible = { always = yes }
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 20
+				political_power_daily > 0.80
+				NOT = { has_country_flag = RIS_power_flag }
+			}
+			modifier = {
+				factor = 10
+				political_power_daily > 0.40
+				NOT = { has_country_flag = RIS_power_flag }
+			}
+			modifier = {
+				factor = 5
+				political_power_daily > 0.20
+				NOT = { has_country_flag = RIS_power_flag }
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0
+				NOT = { has_country_flag = RIS_power_flag }
+			}
+			modifier = {
+				factor = 100
+				political_power_daily < 0.10
+				has_country_flag = RIS_power_flag
+			}
+		}
+		cost = 50
+		days_re_enable = 50
+		complete_effect = {
+			if = {
+				limit = { has_active_mission = RIS_power_mission }
+				hidden_effect = { clr_country_flag = RIS_power_flag }
+				remove_mission = RIS_bullion_mission
+				RIS_remove_power_idea = yes
+			}
+			else = {
+				hidden_effect = { set_country_flag = RIS_power_flag }
+				activate_mission = RIS_power_mission
+				add_ideas = RIS_power_idea
+			}
+		}
+	}
+	
+	RIS_bullion_decision = {
+		icon = generic_civil_support
+		available = { always = yes }
+		visible = { always = yes }
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 20
+				political_power_daily > 0.80
+				NOT = { has_country_flag = RIS_bullion_flag }
+			}
+			modifier = {
+				factor = 10
+				political_power_daily > 0.40
+				NOT = { has_country_flag = RIS_bullion_flag }
+			}
+			modifier = {
+				factor = 5
+				political_power_daily > 0.20
+				NOT = { has_country_flag = RIS_bullion_flag }
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0
+				NOT = { has_country_flag = RIS_bullion_flag }
+			}
+			modifier = {
+				factor = 100
+				political_power_daily < 0.10
+				has_country_flag = RIS_bullion_flag
+			}
+		}
+		cost = 50
+		days_re_enable = 50
+		complete_effect = {
+			if = {
+				limit = { has_active_mission = RIS_bullion_mission }
+				hidden_effect = { clr_country_flag = RIS_bullion_flag }
+				remove_mission = RIS_bullion_mission
+				RIS_remove_bullion_idea = yes
+			}
+			else = {
+				hidden_effect = { set_country_flag = RIS_bullion_flag }
+				activate_mission = RIS_bullion_mission
+				add_ideas = RIS_bullion_idea
+			}
+		}
+	}
+	
+	RIS_money_decision = {
+		icon = generic_civil_support
+		available = { always = yes }
+		visible = { always = yes }
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 20
+				political_power_daily > 0.80
+				NOT = { has_country_flag = RIS_money_flag }
+			}
+			modifier = {
+				factor = 10
+				political_power_daily > 0.40
+				NOT = { has_country_flag = RIS_money_flag }
+			}
+			modifier = {
+				factor = 5
+				political_power_daily > 0.20
+				NOT = { has_country_flag = RIS_money_flag }
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0
+				NOT = { has_country_flag = RIS_money_flag }
+			}
+			modifier = {
+				factor = 100
+				political_power_daily < 0.10
+				has_country_flag = RIS_money_flag
+			}
+		}
+		cost = 50
+		days_re_enable = 50
+		complete_effect = {
+			if = {
+				limit = { has_active_mission = RIS_money_mission }
+				hidden_effect = { clr_country_flag = RIS_money_flag }
+				remove_mission = RIS_money_mission
+				RIS_remove_money_idea = yes
+			}
+			else = {
+				hidden_effect = { set_country_flag = RIS_money_flag }
+				activate_mission = RIS_money_mission
+				add_ideas = RIS_money_idea
+			}
+		}
+	}
+	
+	RIS_power_mission = {
+		icon = generic_civil_support
+		available = { always = no }
+		activation = { has_country_flag = RIS_power_flag }
+		ai_will_do = { factor = 1 }
+		days_mission_timeout = 45
+		is_good = yes
+		complete_effect = {
+			custom_effect_tooltip = RIS_on_the_island_mission_show_tt
+			if = {
+				limit = { has_idea = RIS_power_idea }
+				show_ideas_tooltip = RIS_power_idea
+			}
+			if = {
+				limit = { has_idea = RIS_power_idea_1 }
+				show_ideas_tooltip = RIS_power_idea_1
+			}
+			if = {
+				limit = { has_idea = RIS_power_idea_2 }
+				show_ideas_tooltip = RIS_power_idea_2
+			}
+			if = {
+				limit = { has_idea = RIS_power_idea_3 }
+				show_ideas_tooltip = RIS_power_idea_3
+			}
+			if = {
+				limit = { has_idea = RIS_power_idea_4 }
+				show_ideas_tooltip = RIS_power_idea_4
+			}
+		}
+		timeout_effect = {
+			RIS_power_up = yes
+			activate_mission = RIS_power_mission
+		}
+	}
+	RIS_bullion_mission = {
+		icon = generic_civil_support
+		available = { always = no }
+		activation = { has_country_flag = RIS_bullion_flag }
+		ai_will_do = { factor = 1 }
+		days_mission_timeout = 45
+		is_good = yes
+		complete_effect = {
+			custom_effect_tooltip = RIS_on_the_island_mission_show_tt
+			if = {
+				limit = { has_idea = RIS_bullion_idea }
+				show_ideas_tooltip = RIS_bullion_idea
+			}
+			if = {
+				limit = { has_idea = RIS_bullion_idea_1 }
+				show_ideas_tooltip = RIS_bullion_idea_1
+			}
+			if = {
+				limit = { has_idea = RIS_bullion_idea_2 }
+				show_ideas_tooltip = RIS_bullion_idea_2
+			}
+			if = {
+				limit = { has_idea = RIS_bullion_idea_3 }
+				show_ideas_tooltip = RIS_bullion_idea_3
+			}
+			if = {
+				limit = { has_idea = RIS_bullion_idea_4 }
+				show_ideas_tooltip = RIS_bullion_idea_4
+			}
+		}
+		timeout_effect = {
+			RIS_bullion_up = yes
+			activate_mission = RIS_bullion_mission
+		}
+	}
+	
+	RIS_money_mission = {
+		icon = generic_civil_support
+		available = { always = no }
+		activation = { has_country_flag = RIS_money_flag }
+		ai_will_do = { factor = 1 }
+		days_mission_timeout = 45
+		is_good = yes
+		complete_effect = {
+			custom_effect_tooltip = RIS_on_the_island_mission_show_tt
+			if = {
+				limit = { has_idea = RIS_money_idea }
+				show_ideas_tooltip = RIS_money_idea
+			}
+			if = {
+				limit = { has_idea = RIS_money_idea_1 }
+				show_ideas_tooltip = RIS_money_idea_1
+			}
+			if = {
+				limit = { has_idea = RIS_money_idea_2 }
+				show_ideas_tooltip = RIS_money_idea_2
+			}
+			if = {
+				limit = { has_idea = RIS_money_idea_3 }
+				show_ideas_tooltip = RIS_money_idea_3
+			}
+			if = {
+				limit = { has_idea = RIS_money_idea_4 }
+				show_ideas_tooltip = RIS_money_idea_4
+			}
+		}
+		timeout_effect = {
+			RIS_money_up = yes
+			activate_mission = RIS_money_mission
+		}
+	}
+}
+
+RIS_crusades_action_category = {
+	RIS_crusades_action_mission = {
+		icon = generic_ignite_civil_war
+		available = { has_country_flag = RIS_crusades_action_happen_flag }
+		activation = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = { factor = 10 }
+		days_mission_timeout = 365
+		is_good = yes
+		timeout_effect = {
+			if = {
+				limit = { has_country_flag = RIS_state_confirm_flag }
+				country_event = { id = ottoman.5 hours = 2 }
+			}
+			else = {
+				country_event = { id = ottoman.4 hours = 2 }
+			}
+			effect_tooltip = {
+				OTT = {
+					declare_war_on = {
+						target = TUR
+						type = annex_everything
+					}
+				}
+			}
+			hidden_effect = {
+				remove_ideas = RIS_dusk_of_ottoman_empire
+			}
+		}
+	}
+	
+	RIS_crusades_action_decision = {
+		icon = generic_prepare_civil_war
+		available = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			if = {
+				limit = { is_debug = no }
+				custom_trigger_tooltip = {
+					tooltip = RIS_crusades_action_decision_ttt
+					check_variable = { RIS_num_of_ottoman_army > 5 }
+				}
+			}
+			else = {
+				if = {
+					limit = { is_ai = yes }
+					always = no
+				}
+				else = { always = yes }
+			}
+		}
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 20
+				has_global_flag = Middle_East_War_flag
+			}
+		}
+		cost = 0
+		fire_only_once = yes
+		complete_effect = {
+			add_political_power = 150
+			set_country_flag = RIS_crusades_action_happen_flag
+			if = {
+				limit = { has_country_flag = RIS_state_confirm_flag }
+				country_event = { id = ottoman.5 hours = 2 }
+			}
+			else = {
+				country_event = { id = ottoman.4 hours = 2 }
+			}
+			effect_tooltip = {
+				OTT = {
+					declare_war_on = {
+						target = TUR
+						type = annex_everything
+					}
+				}
+			}
+			hidden_effect = {
+				remove_ideas = RIS_dusk_of_ottoman_empire
+			}
+		}
+	}
+	
+	RIS_meeting_with_ottoman_general_decision = {
+		icon = generic_army_support
+		available = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_political_power > 49
+		}
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 100
+				has_political_power > 99
+			}
+		}
+		cost = 50
+		days_re_enable = 30
+		fire_only_once = no
+		complete_effect = {
+			add_to_variable = { RIS_cost_of_crusades_var = 10 }
+			add_political_power = -50
+			add_command_power = 50
+		}
+	}
+	
+	RIS_support_from_HMS_decision = {
+		icon = generic_merge_plant_ship
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 25
+			modifier = {
+				factor = 0
+				has_country_flag = RIS_support_from_RAF_flag
+			}
+		}
+		cost = var:support_from_eng_var
+		fire_only_once = yes
+		complete_effect = {
+			custom_effect_tooltip = RIS_support_from_HMS_decision_tt
+			hidden_effect = {
+				multiply_variable = { support_from_eng_var = 2 }
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = RIS_support_from_HMS_decision_tt_2
+			OTT = { set_country_flag = OTT_support_from_HMS_flag }
+		}
+		cancel_trigger = {
+			has_country_flag = RIS_crusades_action_happen_flag
+		}
+	}
+	
+	RIS_support_from_RAF_decision = {
+		icon = generic_merge_plant_aircraft
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 25
+			modifier = {
+				factor = 0
+				has_country_flag = RIS_support_from_HMS_flag
+			}
+		}
+		cost = var:support_from_eng_var
+		fire_only_once = yes
+		complete_effect = {
+			custom_effect_tooltip = RIS_support_from_RAF_decision_tt
+			hidden_effect = {
+				multiply_variable = { support_from_eng_var = 2 }
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = RIS_support_from_RAF_decision_tt_2
+			OTT = { set_country_flag = OTT_support_from_RAF_flag }
+		}
+		cancel_trigger = {
+			has_country_flag = RIS_crusades_action_happen_flag
+		}
+	}
+	
+	RIS_show_ott_infantry_training_decision = {
+		icon = generic_military
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			NOT = { has_country_flag = RIS_show_ott_infantry_training_flag }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 0
+		fire_only_once = no
+		complete_effect = {
+			set_country_flag = RIS_show_ott_infantry_training_flag
+		}
+	}
+	
+	RIS_hide_ott_infantry_training_decision = {
+		icon = generic_military
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+		}
+		ai_will_do = {
+			base = 0
+		}
+		cost = 0
+		fire_only_once = no
+		complete_effect = {
+			clr_country_flag = RIS_show_ott_infantry_training_flag
+		}
+	}
+	
+	RIS_ott_infantry_2502_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 14
+		}
+		custom_cost_text = decision_cost_CP_15
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -15 
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+			set_country_flag = { flag = OTT_infantry_2502_flag value = 1 days = 365 }
+			OTT = { set_country_flag = OTT_infantry_2502_flag }
+		}
+	}
+	
+	RIS_ott_crack_infantry_2502_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+			has_country_flag = OTT_infantry_2502_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = decision_cost_CP_10
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -10
+			}
+			clr_country_flag = OTT_infantry_2502_flag
+			OTT = {
+				clr_country_flag = OTT_infantry_2502_flag
+				set_country_flag = OTT_crack_infantry_2502_flag
+			}
+			custom_effect_tooltip = RIS_ott_crack_infantry_2502_decision_tt
+		}
+	}
+	
+	RIS_ott_infantry_2504_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 14
+		}
+		custom_cost_text = decision_cost_CP_15
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -15 
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+			set_country_flag = { flag = OTT_infantry_2504_flag value = 1 days = 365 }
+			OTT = { set_country_flag = OTT_infantry_2504_flag }
+		}
+	}
+	
+	RIS_ott_crack_infantry_2504_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+			has_country_flag = OTT_infantry_2504_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = decision_cost_CP_10
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -10
+			}
+			clr_country_flag = OTT_infantry_2504_flag
+			OTT = {
+				clr_country_flag = OTT_infantry_2504_flag
+				set_country_flag = OTT_crack_infantry_2504_flag
+			}
+			custom_effect_tooltip = RIS_ott_crack_infantry_2504_decision_tt
+		}
+	}
+	
+	RIS_ott_infantry_2505_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 14
+		}
+		custom_cost_text = decision_cost_CP_15
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -15 
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+			set_country_flag = { flag = OTT_infantry_2505_flag value = 1 days = 365 }
+			OTT = { set_country_flag = OTT_infantry_2505_flag }
+		}
+	}
+	
+	RIS_ott_crack_infantry_2505_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+			has_country_flag = OTT_infantry_2505_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = decision_cost_CP_10
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -10
+			}
+			clr_country_flag = OTT_infantry_2505_flag
+			OTT = {
+				clr_country_flag = OTT_infantry_2505_flag
+				set_country_flag = OTT_crack_infantry_2505_flag
+			}
+			custom_effect_tooltip = RIS_ott_crack_infantry_2505_decision_tt
+		}
+	}
+	
+	RIS_ott_infantry_2506_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 14
+		}
+		custom_cost_text = decision_cost_CP_15
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -15 
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+			set_country_flag = { flag = OTT_infantry_2506_flag value = 1 days = 365 }
+			OTT = { set_country_flag = OTT_infantry_2506_flag }
+		}
+	}
+	
+	RIS_ott_crack_infantry_2506_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+			has_country_flag = OTT_infantry_2506_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = decision_cost_CP_10
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -10
+			}
+			clr_country_flag = OTT_infantry_2506_flag
+			OTT = {
+				clr_country_flag = OTT_infantry_2506_flag
+				set_country_flag = OTT_crack_infantry_2506_flag
+			}
+			custom_effect_tooltip = RIS_ott_crack_infantry_2506_decision_tt
+		}
+	}
+	
+	RIS_ott_infantry_common_decision = {
+		icon = generic_reorganize_irregulars
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 24
+		}
+		custom_cost_text = decision_cost_CP_25
+		fire_only_once = no
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25 
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+		}
+	}
+	
+	RIS_show_ott_armor_training_decision = {
+		icon = generic_military
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			NOT = { has_country_flag = RIS_show_ott_armor_training_flag }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 0
+		fire_only_once = no
+		complete_effect = {
+			set_country_flag = RIS_show_ott_armor_training_flag
+		}
+	}
+	
+	RIS_hide_ott_armor_training_decision = {
+		icon = generic_military
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_armor_training_flag
+		}
+		ai_will_do = {
+			base = 0
+		}
+		cost = 0
+		fire_only_once = no
+		complete_effect = {
+			clr_country_flag = RIS_show_ott_armor_training_flag
+		}
+	}
+	
+	RIS_ott_armor_2501_decision = {
+		icon = generic_tank
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_armor_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 14
+		}
+		custom_cost_text = decision_cost_CP_15
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -15 
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+			set_country_flag = { flag = OTT_armor_2501_flag value = 1 days = 365 }
+			OTT = { set_country_flag = OTT_armor_2501_flag }
+		}
+	}
+	
+	RIS_ott_crack_armor_2501_decision = {
+		icon = generic_tank
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+			has_country_flag = OTT_armor_2501_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = decision_cost_CP_10
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -10
+			}
+			clr_country_flag = OTT_armor_2501_flag
+			OTT = {
+				clr_country_flag = OTT_armor_2501_flag
+				set_country_flag = OTT_crack_armor_2501_flag
+			}
+			custom_effect_tooltip = RIS_ott_crack_armor_2501_decision_tt
+		}
+	}
+	
+	RIS_ott_armor_2503_decision = {
+		icon = generic_tank
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_armor_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 14
+		}
+		custom_cost_text = decision_cost_CP_15
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -15 
+			}
+			set_country_flag = { flag = OTT_armor_2503_flag value = 1 days = 365 }
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+			OTT = { set_country_flag = OTT_armor_2503_flag }
+		}
+	}
+	
+	RIS_ott_crack_armor_2503_decision = {
+		icon = generic_tank
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_infantry_training_flag
+			has_country_flag = OTT_armor_2503_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 9
+		}
+		custom_cost_text = decision_cost_CP_10
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -10
+			}
+			clr_country_flag = OTT_armor_2503_flag
+			OTT = {
+				clr_country_flag = OTT_armor_2503_flag
+				set_country_flag = OTT_crack_armor_2503_flag
+			}
+			custom_effect_tooltip = RIS_ott_crack_armor_2503_decision_tt
+		}
+	}
+	
+	RIS_ott_armor_common_decision = {
+		icon = generic_tank
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_show_ott_armor_training_flag
+		}
+		ai_will_do = {
+			base = 10
+		}
+		custom_cost_trigger = {
+			command_power > 24
+		}
+		custom_cost_text = decision_cost_CP_25
+		fire_only_once = no
+		complete_effect = {
+			hidden_effect = { 
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25
+			}
+			add_to_variable = { RIS_num_of_ottoman_army = 1 }
+		}
+	}
+	
+	RIS_keep_quite_decision = {
+		icon = generic_assassination
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			NOT = { has_country_flag = RIS_action_modifier_flag }
+		}
+		ai_will_do = {
+			base = 5
+		}
+		custom_cost_trigger = {
+			command_power > 24
+			has_political_power > 24
+		}
+		custom_cost_text = decision_cost_CP_25_pp_25
+		days_remove = 30
+		fire_only_once = no
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25
+				add_political_power = -25
+			}
+			set_country_flag = RIS_action_modifier_flag
+			custom_effect_tooltip = RIS_keep_quite_decision_tt
+			OTT = {
+				add_to_variable = { OTT_at_AAF_var = 0.05 }
+				add_to_variable = { OTT_at_ADF_var = 0.05 }
+				subtract_from_variable = { OTT_at_AOF_var = 0.05 }
+				subtract_from_variable = { OTT_at_AMF_var = 0.05 }
+			}
+		}
+		remove_effect = {
+			clr_country_flag = RIS_action_modifier_flag
+		}
+	}
+	
+	RIS_encourage_org_decision = {
+		icon = generic_speech
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			NOT = { has_country_flag = RIS_action_modifier_flag }
+		}
+		ai_will_do = {
+			base = 5
+		}
+		custom_cost_trigger = {
+			command_power > 24
+			has_political_power > 24
+		}
+		custom_cost_text = decision_cost_CP_25_pp_25
+		days_remove = 30
+		fire_only_once = no
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25
+				add_political_power = -25
+			}
+			set_country_flag = RIS_action_modifier_flag
+			custom_effect_tooltip = RIS_encourage_org_decision_tt
+			OTT = {
+				add_to_variable = { OTT_at_AOF_var = 0.05 }
+				add_to_variable = { OTT_at_AMF_var = 0.05 }
+				subtract_from_variable = { OTT_at_AAF_var = 0.05 }
+				subtract_from_variable = { OTT_at_ADF_var = 0.05 }
+			}
+		}
+		remove_effect = {
+			clr_country_flag = RIS_action_modifier_flag
+		}
+	}
+	
+	RIS_state_antalya_decision = {
+		icon = generic_air
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_state_confirm_flag }
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+		}
+		ai_will_do = {
+			base = 5
+		}
+		custom_cost_trigger = {
+			command_power > 24
+			has_political_power > 14
+		}
+		custom_cost_text = decision_cost_CP_25_pp_15
+		days_remove = 7
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25
+				add_political_power = -15
+			}
+			set_variable = { RIS_state_confirm_var = 1107 }
+			OTT = { set_country_flag = OTT_state_turkey_antalya_flag }
+			set_country_flag = RIS_state_confirm_flag
+		}
+		remove_effect = {
+			effect_tooltip = { 1107 = { add_core_of = OTT } }
+		}
+	}
+	
+	RIS_state_melsin_decision = {
+		icon = generic_air
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_state_confirm_flag }
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+		}
+		ai_will_do = {
+			base = 5
+		}
+		custom_cost_trigger = {
+			command_power > 24
+			has_political_power > 14
+		}
+		custom_cost_text = decision_cost_CP_25_pp_15
+		days_remove = 7
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25
+				add_political_power = -15
+			}
+			set_variable = { RIS_state_confirm_var = 1108 }
+			OTT = {
+				set_country_flag = OTT_state_turkey_melsin_flag
+			}
+			set_country_flag = RIS_state_confirm_flag
+		}
+		remove_effect = {
+			effect_tooltip = { 1108 = { add_core_of = OTT } }
+		}
+	}
+	
+	RIS_recon_target_state_decision = {
+		icon = generic_air
+		available = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			has_country_flag = RIS_state_confirm_flag
+		}
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 5
+		}
+		custom_cost_trigger = {
+			command_power > 24
+			has_political_power > 14
+		}
+		custom_cost_text = decision_cost_CP_25_pp_15
+		days_remove = 14
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -25
+				add_political_power = -15
+			}
+		}
+		remove_effect = {
+			
+		}
+		cancel_trigger = {
+			has_country_flag = RIS_crusades_action_happen_flag
+		}
+	}
+	
+	RIS_add_spy_decision = {
+		icon = generic_intelligence_operation
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 0
+		}
+		custom_cost_trigger = {
+			command_power > 4
+			has_political_power > 24
+		}
+		custom_cost_text = decision_cost_CP_5_pp_25
+		days_re_enable = 30
+		fire_only_once = no
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { RIS_cost_of_crusades_var = 10 }
+				add_command_power = -5
+				add_political_power = -25
+			}
+			add_political_power = 50
+		}
+	}
+	
+	RIS_Blaze_as_advisor_decision = {
+		icon = generic_break_treaty
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = {
+			NOT = { has_country_flag = RIS_crusades_action_happen_flag }
+			NOT = { has_country_flag = RIS_Blaze_as_advisor_flag }
+		}
+		ai_will_do = {
+			base = 5
+		}
+		cost = 25
+		fire_only_once = yes
+		complete_effect = {
+			add_to_variable = { RIS_cost_of_crusades_var = 10 }
+			add_political_power = 10
+			effect_tooltip = { OTT = { add_political_power = -10 } }
+			set_country_flag = RIS_Blaze_as_advisor_flag
+		}
+	}
+	
+	RIS_cancel_action_decision = {
+		icon = generic_arrest
+		available = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		visible = { NOT = { has_country_flag = RIS_crusades_action_happen_flag } }
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 50
+				date > 1936.12.1
+			}
+			modifier = {
+				factor = 0
+				has_global_flag = Middle_East_War_flag
+			}
+		}
+		cost = var:RIS_cost_of_crusades_var
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				remove_ideas = RIS_dusk_of_ottoman_empire
+			}
+			add_stability = 0.10
+		}
+	}
+}

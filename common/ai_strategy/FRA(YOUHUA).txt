@@ -1,0 +1,739 @@
+FRA_stop_disbanding_your_army = {#ai部署陆军倾向（扩军期）
+    allowed = {
+        original_tag = FRA
+    }
+    enable = {
+        num_divisions < 700
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 800
+    }
+}
+
+FRA_army_soft_cap = {#ai部署陆军倾向（稳定期）
+    allowed = {
+        original_tag = FRA
+    }
+    enable = {
+        num_divisions > 699
+        num_divisions < 901
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = -200
+    }
+}
+FRA_stop_disbanding_your_army2 = {#ai部署陆军倾向（裁军期）
+    allowed = {
+        original_tag = FRA
+    }
+    enable = {
+        num_divisions > 900
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = -1500
+    }
+}
+
+FRA_state_is_zhanlue = {#老爷爷，我给你踩地来咯
+    allowed={
+        original_tag = FRA
+    }
+    enable = {
+        any_enemy_country = {
+            strength_ratio = {
+                tag = FRA
+                ratio < 1.4
+            }
+        }
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort = {
+        and = {
+            or = {
+                any_enemy_country = {
+                    strength_ratio = {
+                        tag = FRA
+                        ratio > 1.4
+                    }
+                }
+            }
+        }
+
+    }
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_coastal = yes
+            controller = { has_war_with = FRA }
+        }
+        ratio = 0.2
+        priority = 20000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_control
+
+        state_trigger = {
+            FROM = { has_war_with = FROM.FROM }
+            FROM = {
+                divisions_in_state = { state = ROOT size = 0 }
+            }
+        }
+        priority = 90000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_control
+
+        state_trigger = {
+            FROM = { has_war_with = FROM.FROM }
+            FROM = {
+                divisions_in_state = { state = ROOT size < 3 }
+            }
+        }
+
+        ratio = 0.8
+
+        priority = 5000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = { has_war_with = FRA }
+            OR = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+                is_coastal = yes
+            }
+        }
+        priority = 8000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+
+}
+FRA_wants_arms_factory11 = { #搓军工
+    allowed = {
+        original_tag = FRA
+    }
+    enable = {
+        date > 1938.1.1
+        has_country_flag = KNM_ai
+    }
+    abort = {
+        num_of_military_factories > 500
+    }
+    ai_strategy = {
+        type = building_target
+        id = arms_factory
+        value = 100
+    }
+    ai_strategy = {
+        type = building_target
+        id = industrial_complex
+        value = -50
+    }
+}
+FRA_wartime_air_superiority = {#全力争夺制空权
+    allowed = { original_tag = FRA }
+    enable = {
+        num_of_military_factories > 50
+        OR = {
+            has_tech = basic_small_airframe
+        }
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+    #大幅提升战斗机产能
+    ai_strategy = {
+        type = equipment_production_factor
+        id = fighter
+        value = 150
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = fighter
+        value = 12
+    }
+    #CAS配合地面攻势
+    ai_strategy = {
+        type = equipment_production_factor
+        id = cas
+        value = 100
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = cas
+        value = 8
+    }
+    #提升空军工厂分配
+    ai_strategy = {
+        type = air_factory_balance
+        value = 15
+    }
+
+}
+FRA_crisis_iron_wall = {#身后就是人间之里
+    allowed = { original_tag = FRA }
+    enable = {
+        surrender_progress > 0.20
+        has_war = yes
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort = {
+        OR = {
+            surrender_progress < 0.13
+            has_capitulated = yes
+        }
+    }
+
+    #全面转为防守
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_controlled_by = FRA
+        }
+        priority = 20000
+        ordertype = front
+        execution_type = careful
+        manual_attack = no
+    }
+    #大量补充部队到核心州防线
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_core_of = FRA
+            is_controlled_by = FRA
+            any_neighbor_state = {
+                controller = { has_war_with = FRA }
+            }
+        }
+        value = 200
+    }
+    #抽回非核心区的兵力
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            NOT = { is_core_of = FRA }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+        }
+        value = -100
+    }
+    #大幅提升步枪和炮兵补充
+    ai_strategy = {
+        type = equipment_production_factor
+        id = infantry
+        value = 300
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = artillery
+        value = 200
+    }
+    #停止装甲生产先活下去
+    ai_strategy = {
+        type = equipment_production_factor
+        id = armor
+        value = -200
+    }
+    #增加驻军保住占领地
+    ai_strategy = {
+        type = garrison
+        value = 100
+    }
+    #爆兵
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 2000
+    }
+}
+FRA_unit= { #单位倾向
+    allowed = {
+        original_tag = FRA
+    }
+    enable = {
+        num_divisions < 800
+        has_country_flag = KNM_ai
+    }
+
+    abort = {
+        always = no
+    }
+
+    ai_strategy = {
+        type = air_factory_balance
+        value = 10
+    }
+    ai_strategy = { #驻军
+        type = role_ratio
+        id = garrison
+        value = 0
+    }
+    ai_strategy = { #空降
+        type = role_ratio
+        id = paratroopers
+        value = 0
+    }
+
+    ai_strategy = {
+        type = role_ratio
+        id = mountaineers_FRA
+        value = 0
+    }
+
+    ai_strategy = { #魔装
+        type = role_ratio
+        id = magic_assault
+        value = 0
+    }
+
+    ai_strategy = {
+        type = role_ratio
+        id = cavalry
+        value = 0
+    }
+    ai_strategy = {
+        type = template_prio
+        id = KFL_infantry
+        value = 100
+    }
+    ai_strategy = {
+        type = build_army
+        id = KFL_infantry
+        value = 100
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = KFL_infantry
+        value = 100
+    }
+
+    ai_strategy = {
+        type = railway_gun_divisions_ratio
+        value = 5
+    }
+}
+FRAIfyouhavethemusethem2 = {
+    allowed = {
+        or = {
+            original_tag = FRA
+        }
+    }
+    enable = {
+        has_country_flag = KNM_ai
+        
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = build_army
+        id = armor
+        value = 100
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 800
+    }
+    ai_strategy = {
+        type = template_prio
+        id = KFL_armor
+        value = 800
+    }
+
+}
+
+
+
+
+
+
+
+
+
+FRAPushForMoreTANK = {
+    allowed = {
+        or = {
+            original_tag = FRA
+        }
+    }
+    enable = {
+        has_country_flag = KNM_ai
+        has_manpower < 1500000
+        arms_factory > 45
+        has_equipment = {infantry_equipment > 25000}
+        
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 30
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = armor
+        value = 20
+    }
+
+}
+
+MajorsBuildTanksWithManpowerFRA = {
+    allowed = {
+        or = {
+            original_tag = FRA
+        }
+    }
+    enable = {
+        has_country_flag = KNM_ai
+        is_major = yes
+        has_equipment = {infantry_equipment > 50000}
+        
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 50
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = armor
+        value = 50
+    }
+}
+FRA_capital_shield = {#身后就是幻想乡
+    allowed = { original_tag = FRA }
+    enable = {
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+    #首都及其周边州请求额外部队
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            OR = {
+                is_capital = yes
+                AND = {
+                    any_neighbor_state = { is_capital = yes }
+                    is_controlled_by = FRA
+                }
+            }
+        }
+        value = 80
+    }
+    #首都周边执行谨慎模式
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            any_neighbor_state = { is_capital = yes }
+            is_controlled_by = FRA
+            any_neighbor_state = {
+                controller = { has_war_with = FRA }
+            }
+        }
+        priority = 25000
+        ordertype = front
+        execution_type = careful
+        manual_attack = no
+    }
+
+}
+FRA_end_pocket = {#包围快速歼灭
+    allowed={
+        original_tag = FRA
+    }
+    enable = {
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = intelligence_agency_branch_desire_factor
+        id = branch_defense  #反间谍
+        value = 1500
+    }
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_controlled_by = FROM.FROM
+                    NOT = {
+                        is_fully_controlled_by = FROM.FROM
+                    }
+                }
+                controller = {
+                    has_war_with = FROM.FROM
+                }
+            }
+            all_neighbor_state = {
+                controller = {
+                    NOT = {
+                        has_war_with = FROM.FROM
+                    }
+                }
+            }
+        }
+        ratio = 0.0
+        priority = 9999999
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+
+    }
+
+    ai_strategy = {
+
+        type = front_unit_request
+
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_controlled_by = FROM.FROM
+                    NOT = {
+                        is_fully_controlled_by = FROM.FROM
+                    }
+                }
+                controller = {
+                    has_war_with = FROM.FROM
+                }
+            }
+            all_neighbor_state = {
+                controller = {
+                    NOT = {
+                        has_war_with = FROM.FROM
+                    }
+                }
+            }
+        }
+        value = 40
+    }
+}
+FRA_victory_phase1_crack = {
+    allowed = { original_tag = FRA }
+    enable = {
+        has_war = yes
+        any_enemy_country = {
+            surrender_progress > 0.05
+            surrender_progress < 0.20
+        }
+        NOT = { surrender_progress > 0.15 }
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = { has_war_with = FRA }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = { is_controlled_by = FRA }
+        }
+        priority = 12000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = garrison
+        value = -150
+    }
+    ai_strategy = {
+        type = spare_unit_factor
+        value = -20
+    }
+}
+
+FRA_victory_phase2_exploit = {
+    allowed = { original_tag = FRA }
+    enable = {
+        has_war = yes
+        any_enemy_country = {
+            surrender_progress > 0.20
+            surrender_progress < 0.45
+        }
+        NOT = { surrender_progress > 0.15 }
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            owner = {
+                has_war_with = FRA
+                surrender_progress > 0.20
+            }
+            is_capital = yes
+            any_neighbor_state = { is_controlled_by = FRA }
+        }
+        priority = 40000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = FRA
+                surrender_progress > 0.20
+            }
+        }
+        priority = 15000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = spare_unit_factor
+        value = -40
+    }
+    ai_strategy = {
+        type = garrison
+        value = -200
+    }
+}
+
+FRA_victory_phase3_annihilate = {
+    allowed = { original_tag = FRA }
+    enable = {
+        has_war = yes
+        any_enemy_country = { surrender_progress > 0.45 }
+        NOT = { surrender_progress > 0.15 }
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = FRA
+                surrender_progress > 0.45
+            }
+        }
+        priority = 60000
+        ratio = 0.95
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = spare_unit_factor
+        value = -100
+    }
+    ai_strategy = {
+        type = garrison
+        value = -300
+    }
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 300
+    }
+}
+FRA_strategic_withdrawal = {#主动收缩
+    allowed = { original_tag = FRA }
+    enable = {
+        has_war = yes
+        surrender_progress > 0.05
+        surrender_progress < 0.20
+        has_country_flag = KNM_ai
+        is_in_faction_with = KNM
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FRA
+            NOT = { is_core_of = FRA }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = { is_capital = yes }
+            any_neighbor_state = { controller = { has_war_with = FRA } }
+        }
+        value = -150
+    }
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_core_of = FRA
+            is_controlled_by = FRA
+            any_neighbor_state = { controller = { has_war_with = FRA } }
+        }
+        value = 150
+    }
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_core_of = FRA
+            is_controlled_by = FRA
+            any_neighbor_state = { controller = { has_war_with = FRA } }
+        }
+        priority = 10000
+        ordertype = front
+        execution_type = careful
+        manual_attack = no
+    }
+}

@@ -1,0 +1,316 @@
+# Typos in category name preserved for compatibility: 'compltetion'
+CAN_NEE_unification_compltetion_cat = {
+	# -------------------------------------------------------------------------
+	# 核心倒计时任务 / CORE COUNTDOWN MISSION
+	# -------------------------------------------------------------------------
+	# ~1.5 Years (540 days).
+	CAN_NEE_independence_crisis = {
+		icon = generic_disaster_icon
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = no }
+		}
+		days_mission_timeout = 540
+		is_good = no
+		selectable_mission = no
+		fire_only_once = yes
+		timeout_effect = {
+			CAN = {
+				log = "[GetDateText]: Mission Failed - NEE Independence"
+				clr_country_flag = CAN_NEE_integration_started
+			}
+			NEE = {
+				country_event = { id = nee_unification.2 } 
+				add_stability = 0.10
+			}
+		}
+	}
+	# -------------------------------------------------------------------------
+	# 英国/NEE 抵抗循环任务 / RECURRING RESISTANCE MISSION
+	# -------------------------------------------------------------------------
+	CAN_NEE_british_interference = {
+		icon = generic_spy_intel
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			always = no
+		}
+		days_mission_timeout = 30
+		is_good = no
+		selectable_mission = no
+		fire_only_once = no 
+		timeout_effect = {
+			add_to_variable = { var = eng_nee_influence value = 10 }
+			log = "[GetDateText]: British/NEE interference succeeded. Influence lost."
+			CAN = { 
+				country_event = { 
+					id = can_nee_internal.998 
+					days = 30 
+					random_days = 15
+				}
+			}
+		}
+	}
+	# -------------------------------------------------------------------------
+	# 对抗抵抗决议 / COUNTER-INTERFERENCE DECISION
+	# -------------------------------------------------------------------------
+	CAN_NEE_counter_interference = {
+		icon = generic_intel_bonus
+		allowed = { tag = CAN }
+		# Only appears when the interference mission is active
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			is_decision_active = CAN_NEE_british_interference
+		}
+		available = {
+			is_decision_active = CAN_NEE_british_interference
+		}
+		cost = 50
+		fire_only_once = no
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_political_power < 50
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = CAN_NEE_gain_influence_small_tt
+			hidden_effect = {
+				add_to_variable = { var = can_nee_influence value = 2 }
+			}
+			log = "[GetDateText]: Interference countered by agent action."
+			remove_mission = CAN_NEE_british_interference
+			CAN = { 
+				country_event = { 
+					id = can_nee_internal.998 
+					days = 60
+					random_days = 30
+				} 
+			}
+		
+		}
+	}
+	# -------------------------------------------------------------------------
+	# 终结决议 / FINAL INTEGRATION
+	# -------------------------------------------------------------------------
+	CAN_NEE_integrate_newengland = {
+		icon = generic_form_nation
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+			check_variable = { var = can_nee_influence value = eng_nee_influence compare = greater_than }
+			check_variable = { var = can_nee_influence value = 50 compare = greater_than }
+		}
+		cost = 100
+		fire_only_once = yes
+		ai_will_do = { factor = 100 }
+		complete_effect = {
+			custom_effect_tooltip = CAN_NEE_gain_influence_medium_tt
+			CAN = {
+				annex_country = { target = NEE transfer_troops = yes }
+				log = "[GetDateText]: Mission Success - NEE Annexed"
+				clr_country_flag = CAN_NEE_integration_started
+				remove_mission = CAN_NEE_british_interference
+				remove_mission = CAN_NEE_independence_crisis
+			}
+		}
+	}
+	# -------------------------------------------------------------------------
+	# 影响力决议 / INFLUENCE DECISIONS
+	# -------------------------------------------------------------------------
+	# Recurring: Politcal Propaganda (+3)
+	CAN_NEE_promote_unification = {
+		icon = generic_nationalism
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			always = no
+		}
+		targets = { NEE }
+		target_trigger = { FROM = { tag = NEE } }
+		cost = 15
+		days_remove = 60
+		days_re_enable = 15
+		fire_only_once = no 
+		ai_will_do = { factor = 1 }
+		complete_effect = {
+			hidden_effect = {
+				add_to_variable = { var = can_nee_influence value = 3 }
+			}
+		
+		}
+		remove_effect = {
+			NEE = {
+				add_popularity = {
+					ideology = democratic
+					popularity = 0.02
+				}
+			}
+		}
+	}
+	# One-Time: Infra (+15, Long Term Factorries)
+	CAN_NEE_infrastructure_investment = {
+		icon = generic_construction
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			always = no
+		}
+		targets = { NEE }
+		target_trigger = { FROM = { tag = NEE } }
+		cost = 50
+		days_remove = 90
+		fire_only_once = yes
+		modifier = { civilian_factory_use = 2 }
+		complete_effect = {
+			custom_effect_tooltip = CAN_NEE_gain_influence_huge_tt
+			hidden_effect = {
+				add_to_variable = { var = can_nee_influence value = 15 }
+			}
+		
+		}
+		remove_effect = {
+			932 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			468 = {
+				add_building_construction = { 
+					type = infrastructure
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	# One-time: Railroads (+10, Supply)
+	CAN_NEE_link_railroads = {
+		icon = generic_railway_gun
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			always = no
+		}
+		targets = { NEE }
+		target_trigger = { FROM = { tag = NEE } }
+		cost = 25
+		days_remove = 45
+		fire_only_once = yes
+		complete_effect = {
+			custom_effect_tooltip = CAN_NEE_gain_influence_large_tt
+			hidden_effect = {
+				add_to_variable = { var = can_nee_influence value = 10 }
+			}
+		
+		}
+		remove_effect = {
+			build_railway = {
+				level = 3
+				start_province = 3778 
+				target_province = 6732 
+			}
+			build_railway = {
+				level = 2
+				start_province = 7361
+				target_province = 6732 
+			}
+		}
+	}
+	# One-time: Education (+10, Tech Bonus)
+	CAN_NEE_common_education = {
+		icon = generic_research
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+			NOT = { has_dynamic_modifier = CAN_nee_education_bonus }
+		}
+		cost = 30
+		days_remove = 60
+		fire_only_once = yes
+		modifier = { political_power_gain = -0.1 }
+		complete_effect = {
+			custom_effect_tooltip = CAN_NEE_gain_influence_large_tt
+			hidden_effect = {
+				add_to_variable = { var = can_nee_influence value = 10 }
+			}
+			add_dynamic_modifier = {
+				modifier = CAN_nee_education_bonus
+				days = 730
+			}
+		
+		}
+	}
+	# One-time: Currency (+12, Econ Bonus)
+	CAN_NEE_currency_exchange = {
+		icon = generic_trade
+		allowed = { tag = CAN }
+		visible = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+		}
+		available = {
+			CAN = { has_completed_focus = CAN_The_Halifax_talks }
+			has_country_flag = CAN_NEE_integration_started
+			NEE = { exists = yes }
+			NOT = { has_dynamic_modifier = CAN_nee_economic_bonus }
+		}
+		cost = 50
+		days_remove = 60
+		fire_only_once = yes
+		complete_effect = {
+			custom_effect_tooltip = CAN_NEE_gain_influence_large_tt
+			hidden_effect = {
+				add_to_variable = { var = can_nee_influence value = 12 }
+			}
+			add_dynamic_modifier = {
+				modifier = CAN_nee_economic_bonus
+				days = 730
+			}
+		
+		}
+	}
+}

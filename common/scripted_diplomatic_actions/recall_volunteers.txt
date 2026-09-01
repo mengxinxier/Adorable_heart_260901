@@ -1,0 +1,263 @@
+## ROOT is the diplomatic action initiator
+## FROM is the target
+## Default scope is FROM
+
+scripted_diplomatic_actions = {
+	recall_volunteers = {  ##召回志愿军
+		allowed = { always = yes }
+		visible = {
+			has_volunteers_amount_from = { tag = ROOT count > 0 }
+			NOT = { ROOT = { has_country_flag = recalling_volunteers_from_@PREV } }
+		}
+		cost = 0
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		send_description = RECALL_VOLUNTEERS_ACTION_SEND_DESC
+		complete_effect = {
+			if = {
+				limit = {
+					ROOT = { is_ai = no }
+				}
+				log = "[ROOT.GetName] is recalling volunteers from [FROM.GetName] due to player choice"
+			}
+			else_if = {
+				limit = {
+					ROOT = { NOT = { has_country_flag = sent_volunteers_@PREV } }
+				}
+				log = "[ROOT.GetName] is recalling volunteers from [FROM.GetName] due to a scripted AI change"
+			}
+			else_if = {
+				limit = {
+					ROOT = { has_country_flag = imminent_war }
+				}
+				log = "[ROOT.GetName] is recalling volunteers from [FROM.GetName] due to an imminent war"
+			}
+			else = {
+				log = "[ROOT.GetName] is recalling volunteers from [FROM.GetName] due to an ongoing justification or wargoal"
+			}
+			ROOT = {
+				set_country_flag = { flag = recalling_volunteers_from_@PREV days = 30 value = 1 }
+				recall_volunteers_from = PREV
+				clear_volunteers_to_PREV = yes
+			}
+		}
+		ai_desire = {
+			base = 0
+		}
+	}
+	Ask_for_tribute = {  ##要求朝贡
+		allowed = { ROOT = { tag = CHI } }
+		visible = {
+			ROOT = {
+				tag = CHI
+				is_major = yes
+				is_faction_leader = yes
+				has_country_flag = CHI_feudal_foreign_domain_flag
+			}
+			FROM = {
+				is_subject = no
+				not = {
+					or = {
+						has_idea = CTS_Imperial_Tributary_idea
+						has_idea = CTS_Imperial_Province_idea
+						has_idea = CTS_Imperial_Domain_idea
+						has_idea = CTS_Imperial_Duhufu_idea
+						has_idea = CTS_Imperial_Vassal_idea
+					}
+				}
+			}
+		}
+		selectable = {
+			FROM = { is_major = no }
+			FROM = { is_subject = no }
+			FROM = { not_in_any_economy_faction = yes }
+		}
+		cost = 30
+		requires_acceptance = yes
+		show_acceptance_on_action_button = yes
+		send_description = ASK_FOR_TRIBUTE_ACTION_SEND_DESC
+		complete_effect = {
+			FROM = { add_ideas = CTS_Imperial_Tributary_idea }
+			give_guarantee = FROM
+		}
+		ai_desire = {
+			base = 0
+		}
+
+		ai_acceptance = {
+			ai_reason_base_reluctance = {
+				base = -20
+			}
+			ai_reason_ally = {
+				base = 0
+				modifier = {
+					add = 20
+					FROM = { is_in_faction_with = ROOT }
+				}
+			}
+			ai_reason_opinion = {
+				base = 0
+				modifier = {
+					add = FROM.opinion@ROOT
+				}
+				modifier = {
+					factor = 0.5
+				}
+			}
+			ai_reason_same_government_type = {
+				base = 0
+				modifier = {
+					add = 15
+					FROM = { has_government = ROOT }
+				}
+			}
+			ai_reason_communism = {
+				base = 0
+				modifier = {
+					add = -1000
+					FROM = { has_government = communism }
+				}
+			}
+			ai_reason_GDP_high = {
+				base = 10
+				modifier = {
+					factor = temp_gdp_rate
+					set_temp_variable = { temp_gdp_rate = ROOT.AHES_Total_income }
+					divide_temp_variable = { temp_gdp_rate = FROM.AHES_Total_income }
+					check_variable = {
+						var = temp_gdp_rate
+						value = 1
+						compare = greater_than_or_equals
+					}
+				}
+				modifier = {
+					factor = 0
+					set_temp_variable = { temp_gdp_rate = ROOT.AHES_Total_income }
+					divide_temp_variable = { temp_gdp_rate = FROM.AHES_Total_income }
+					check_variable = {
+						temp_gdp_rate < 1
+					}
+				}
+			}
+			ai_reason_too_far = {
+				base = -10
+				modifier = {
+					add = -35
+					FROM = { capital_scope = { is_on_continent = europe } }
+				}
+				modifier = {
+					add = -35
+					FROM = { capital_scope = { is_on_continent = north_america } }
+				}
+				modifier = {
+					add = -45
+					FROM = { capital_scope = { is_on_continent = south_america } }
+				}
+				modifier = {
+					add = -20
+					FROM = { capital_scope = { is_on_continent = australia } }
+				}
+				modifier = {
+					add = -30
+					FROM = { capital_scope = { is_on_continent = africa } }
+				}
+				modifier = {
+					add = -40
+					FROM = { capital_scope = { is_on_continent = central_america } }
+				}
+				modifier = {
+					add = -20
+					FROM = { capital_scope = { is_on_continent = middle_east } }
+				}
+				modifier = {
+					add = -10
+					FROM = { capital_scope = { is_on_continent = india } }
+				}
+			}
+		}
+	}
+	feudal_foreign_domain = {  ##晋封外藩
+		allowed = { ROOT = { tag = CHI } }
+		visible = {
+			ROOT = {
+				tag = CHI
+				is_major = yes
+				is_faction_leader = yes
+				has_country_flag = CHI_feudal_foreign_domain_flag
+			}
+			FROM = {
+				or = {
+					and = {
+						is_subject_of = ROOT
+						not = {
+							or = {
+								has_autonomy_state = China_Provinces
+								has_autonomy_state = China_Domain
+								has_autonomy_state = chi_duhufu_puppet
+								has_autonomy_state = China_Vassal
+							}
+						}
+					}
+					has_idea = CTS_Imperial_Tributary_idea
+				}
+			}
+		}
+		selectable = {
+			if = {
+				limit = { FROM = { is_subject = no } }
+				power_balance_value = {
+					id = CHI_Mandate_of_Heaven_bop
+					value > 0
+				}
+			}
+		}
+		cost = 0
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		send_description = FEUDAL_FOREIGN_DOMAIN_ACTION_SEND_DESC
+		complete_effect = {
+			FROM = {
+				country_event = {
+					id = China.070
+				}
+			}
+		}
+		ai_desire = {
+			base = 100
+		}
+	}
+	Internalization_of_outer_domain = {  ##外藩内化
+		allowed = { ROOT = { tag = CHI } }
+		visible = {
+			ROOT = {
+				tag = CHI
+				is_major = yes
+				is_faction_leader = yes
+				has_country_flag = CHI_Internalization_of_outer_domain_flag
+			}
+			FROM = {
+				has_idea = CTS_Imperial_Vassal_idea
+			}
+		}
+		selectable = {
+			power_balance_value = {
+				id = CHI_Mandate_of_Heaven_bop
+				value > 0
+			}
+		}
+		cost = 0
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+		send_description = INTERNALIZATION_OF_OUTER_DOMAIN_ACTION_SEND_DESC
+		complete_effect = {
+			FROM = {
+				country_event = {
+					id = China.071
+				}
+			}
+		}
+		ai_desire = {
+			base = 100
+		}
+	}
+}

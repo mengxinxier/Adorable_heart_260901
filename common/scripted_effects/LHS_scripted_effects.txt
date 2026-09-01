@@ -1,0 +1,472 @@
+#=== 计算基建加成 ===
+#每1点基建指数 = 0.2% 建造速度，0.2% 工厂槽位，-0.2% 补给消耗
+LHS_calculate_infrastructure_bonus = {
+    set_variable = { kapok_infrastructure_buildings_bonus = kapok_infrastructure }
+    multiply_variable = { kapok_infrastructure_buildings_bonus = 0.002 }  #1点+0.2%建造速度
+    
+    set_variable = { kapok_infrastructure_slots_bonus = kapok_infrastructure }
+    multiply_variable = { kapok_infrastructure_slots_bonus = 0.005 }
+    
+    set_variable = { kapok_infrastructure_supply_bonus = kapok_infrastructure }
+    multiply_variable = { kapok_infrastructure_supply_bonus = -0.002 }  #负数=减少消耗
+}
+
+#=== 计算福利加成===
+LHS_calculate_welfare_bonus = {
+    #Debuff部分
+    set_variable = { kapok_welfare_consumer_goods_penalty = kapok_welfare }
+    multiply_variable = { kapok_welfare_consumer_goods_penalty = 0.002 }  #每1点+0.2%消费品
+    
+    #Buff部分（超过debuff的补偿）
+    set_variable = { kapok_welfare_population_bonus = kapok_welfare }
+    multiply_variable = { kapok_welfare_population_bonus = 0.001 }  #每1点+0.001%每日顺从度增长
+    
+    set_variable = { kapok_welfare_stability_bonus = kapok_welfare }
+    multiply_variable = { kapok_welfare_stability_bonus = 0.002 }  #每1点+0.2%稳定
+    
+    set_variable = { kapok_welfare_efficiency_bonus = kapok_welfare }
+    multiply_variable = { kapok_welfare_efficiency_bonus = 0.003 }  #每1点+0.3%生产效率增长
+}
+
+#=== 计算教育加成 ===
+#每1点教育 = +8% 科研速度，+5% 效率上限
+LHS_calculate_education_bonus = {
+    set_variable = { kapok_education_research_bonus = kapok_education }
+    multiply_variable = { kapok_education_research_bonus = 0.005 }
+    
+    set_variable = { kapok_education_max_efficiency_bonus = kapok_education }
+    multiply_variable = { kapok_education_max_efficiency_bonus = 0.003 }
+}
+
+#=== 计算产业加成 ===
+#每1点产业 = +2% 工厂产出，+5% 效率保持
+LHS_calculate_industry_bonus = {
+    set_variable = { kapok_industry_output_bonus = kapok_industry }
+    multiply_variable = { kapok_industry_output_bonus = 0.002 }
+
+    set_variable = { kapok_dockyard_output_bonus = kapok_industry }
+    multiply_variable = { kapok_dockyard_output_bonus = 0.002 }
+    
+    set_variable = { kapok_industry_retention_bonus = kapok_industry }
+    multiply_variable = { kapok_industry_retention_bonus = 0.005 }
+}
+
+#=== 计算平衡奖励 ===
+#检测民工和军工的差距，差距越小奖励越大
+LHS_calculate_balance_bonus = {
+    #计算失衡惩罚值
+    set_variable = { temp_civ = num_of_civilian_factories }
+    set_variable = { temp_mil = num_of_military_factories }
+    
+    #如果民工>军工
+    if = {
+        limit = { 
+            check_variable = { temp_civ > temp_mil }
+        }
+        set_variable = { kapok_balance_penalty = temp_civ }
+        subtract_from_variable = { kapok_balance_penalty = temp_mil }
+        if = {
+            limit = { check_variable = { kapok_balance_penalty > 12 } }
+            set_variable = { Red_Ledger_balance_var = 1 }
+        }
+        else_if = {
+            limit = { check_variable = { kapok_balance_penalty > 4 } }
+            set_variable = { Red_Ledger_balance_var = 2 }
+        }
+        else = { set_variable = { Red_Ledger_balance_var = 3 } }
+    }
+    #如果军工>民工
+    else = {
+        set_variable = { kapok_balance_penalty = temp_mil }
+        subtract_from_variable = { kapok_balance_penalty = temp_civ }
+        if = {
+            limit = { check_variable = { kapok_balance_penalty > 12 } }
+            set_variable = { Red_Ledger_balance_var = 5 }
+        }
+        else_if = {
+            limit = { check_variable = { kapok_balance_penalty > 4 } }
+            set_variable = { Red_Ledger_balance_var = 4 }
+        }
+        else = { set_variable = { Red_Ledger_balance_var = 3 } }
+    }
+    
+    #计算奖励（差距越小，奖励越大）
+    #pp
+    set_variable = { kapok_balance_political_power = 20 }  #基础20
+    subtract_from_variable = { kapok_balance_political_power = kapok_balance_penalty }
+    if = {
+        limit = { check_variable = { kapok_balance_political_power < 0 } }
+        set_variable = { kapok_balance_political_power = 0 }
+    }
+    multiply_variable = { kapok_balance_political_power = 0.03 }  #0-20转为0-0.6
+    
+    set_variable = { kapok_balance_civilian_bonus = 20 }
+    subtract_from_variable = { kapok_balance_civilian_bonus = kapok_balance_penalty }
+    #军民建造速度
+    if = {
+        limit = { check_variable = { kapok_balance_civilian_bonus < 0 } }
+        set_variable = { kapok_balance_civilian_bonus = 0 }
+    }
+    multiply_variable = { kapok_balance_civilian_bonus = 0.01 }  #0-20转为0-0.2
+    
+    set_variable = { kapok_balance_military_bonus = kapok_balance_civilian_bonus }  #军工奖励=民工奖励
+
+    set_variable = { kapok_balance_consumer_goods_bonus = 20 }
+    subtract_from_variable = { kapok_balance_consumer_goods_bonus = kapok_balance_penalty }
+    #消费品
+    #if = {
+    #    limit = { check_variable = { kapok_balance_consumer_goods_bonus < 0 } }
+    #    set_variable = { kapok_balance_consumer_goods_bonus = 0 }
+    #}
+    #multiply_variable = { kapok_balance_consumer_goods_bonus = -0.02 }
+    #LHS_calculate_welfare_bonus = yes
+    #add_to_variable = { kapok_welfare_consumer_goods_penalty = kapok_balance_consumer_goods_bonus }
+    #set_variable = { kapok_welfare_consumer_goods_penalty1 = kapok_balance_civilian_bonus }
+    #multiply_variable = { kapok_welfare_consumer_goods_penalty1 = -2 }
+}
+
+
+# ==========================================
+#协同加成：两两指数联动红利
+#教育+产业 > 99 → 额外基础生产效率（上限+5%）
+#福利+基建 > 99 → 额外顺从度增长速度（上限+5%）
+#全指数均 > 49   → 触发结算事件（仅一次）
+# ==========================================
+LHS_calculate_synergy_bonus = {
+
+    set_variable = { kapok_synergy_research_bonus = 0 }
+    set_variable = { kapok_synergy_population_bonus = 0 }
+
+    #教育 × 产业 协同
+    set_variable = { kapok_temp_sum = kapok_education }
+    add_to_variable = { kapok_temp_sum = kapok_industry }
+
+    if = {
+        limit = { check_variable = { kapok_temp_sum > 99 } }
+        set_variable = { kapok_synergy_research_bonus = kapok_temp_sum }
+        subtract_from_variable = { kapok_synergy_research_bonus = 100 }
+        multiply_variable = { kapok_synergy_research_bonus = 0.001 }
+        if = {
+            limit = { check_variable = { kapok_synergy_research_bonus > 0.05 } }
+            set_variable = { kapok_synergy_research_bonus = 0.05 }
+        }
+    }
+
+    #福利 × 基建协同 
+    set_variable = { kapok_temp_sum = kapok_welfare }
+    add_to_variable = { kapok_temp_sum = kapok_infrastructure }
+
+    if = {
+        limit = { check_variable = { kapok_temp_sum > 99 } }
+        set_variable = { kapok_synergy_population_bonus = kapok_temp_sum }
+        subtract_from_variable = { kapok_synergy_population_bonus = 100 }
+        multiply_variable = { kapok_synergy_population_bonus = 0.005 }
+        if = {
+            limit = { check_variable = { kapok_synergy_population_bonus > 0.05 } }
+            set_variable = { kapok_synergy_population_bonus = 0.05 }
+        }
+    }
+
+    #全指数 > 49：事件检定（仅触发一次）
+    if = {
+        limit = {
+            check_variable = { kapok_infrastructure > 49 }
+            check_variable = { kapok_welfare > 49 }
+            check_variable = { kapok_education > 49 }
+            check_variable = { kapok_industry > 49 }
+            NOT = { has_country_flag = LHS_all_index_50_fired }
+        }
+        set_country_flag = LHS_all_index_50_fired
+        country_event = { id = LHS.209 days = 1 }
+    }
+}
+
+LHS_check_milestones = {
+
+    #基建里程碑
+    if = {
+        limit = {
+            check_variable = { kapok_infrastructure > 24 }
+            NOT = { has_country_flag = LHS_infra_25 }
+        }
+        set_country_flag = LHS_infra_25
+        country_event = { id = LHS.192 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_infrastructure > 49 }
+            NOT = { has_country_flag = LHS_infra_50 }
+        }
+        set_country_flag = LHS_infra_50
+        country_event = { id = LHS.193 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_infrastructure > 74 }
+            NOT = { has_country_flag = LHS_infra_75 }
+        }
+        set_country_flag = LHS_infra_75
+        country_event = { id = LHS.194 hours = 12 }
+    }
+
+    #福利里程碑
+    if = {
+        limit = {
+            check_variable = { kapok_welfare > 24 }
+            NOT = { has_country_flag = LHS_welfare_25 }
+        }
+        set_country_flag = LHS_welfare_25
+        country_event = { id = LHS.195 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_welfare > 49 }
+            NOT = { has_country_flag = LHS_welfare_50 }
+        }
+        set_country_flag = LHS_welfare_50
+        country_event = { id = LHS.196 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_welfare > 74 }
+            NOT = { has_country_flag = LHS_welfare_75 }
+        }
+        set_country_flag = LHS_welfare_75
+        country_event = { id = LHS.197 hours = 12 }
+    }
+
+    #教育里程碑
+    if = {
+        limit = {
+            check_variable = { kapok_education > 24 }
+            NOT = { has_country_flag = LHS_edu_25 }
+        }
+        set_country_flag = LHS_edu_25
+        country_event = { id = LHS.198 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_education > 49 }
+            NOT = { has_country_flag = LHS_edu_50 }
+        }
+        set_country_flag = LHS_edu_50
+        country_event = { id = LHS.199 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_education > 74 }
+            NOT = { has_country_flag = LHS_edu_75 }
+        }
+        set_country_flag = LHS_edu_75
+        country_event = { id = LHS.200 hours = 12 }
+    }
+
+    # === 产业里程碑 ===
+    if = {
+        limit = {
+            check_variable = { kapok_industry > 24 }
+            NOT = { has_country_flag = LHS_industry_25 }
+        }
+        set_country_flag = LHS_industry_25
+        country_event = { id = LHS.201 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_industry > 49 }
+            NOT = { has_country_flag = LHS_industry_50 }
+        }
+        set_country_flag = LHS_industry_50
+        country_event = { id = LHS.202 hours = 12 }
+    }
+    if = {
+        limit = {
+            check_variable = { kapok_industry > 74 }
+            NOT = { has_country_flag = LHS_industry_75 }
+        }
+        set_country_flag = LHS_industry_75
+        country_event = { id = LHS.203 hours = 12 }
+    }
+
+}
+
+#变量说明
+#muddy_diplomacy_bonds (外交指数):每个国策+1，最多6
+#muddy_diplomacy_trust (信任指数):累积的互助价值
+LHS_calculate_muddy_diplomacy_bonus = {
+    set_variable = { muddy_diplomacy_political_power = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_political_power = 0.05 }  #每条+0.05/日
+    
+    set_variable = { muddy_diplomacy_exp_gain = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_exp_gain = -0.02 }
+    
+    set_variable = { muddy_diplomacy_stability = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_stability = 0.025 }  #每条+2.5%
+    
+    set_variable = { muddy_diplomacy_opinion_gain = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_opinion_gain = 0.04 }
+    
+    set_variable = { muddy_diplomacy_volunteer_threshold = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_volunteer_threshold = -0.04 }
+    
+    set_variable = { muddy_diplomacy_justify_time = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_justify_time = 0.05 }  #每条+5%
+    
+    set_variable = { muddy_diplomacy_trade_opinion = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_trade_opinion = 0.1 }
+    
+    set_variable = { muddy_diplomacy_org = muddy_diplomacy_bonds }
+    multiply_variable = { muddy_diplomacy_org = 0.05 }  #每条+3%
+    
+}
+
+LHS_mumian_jinji = {
+    custom_effect_tooltip =  LHS_mumian_jinji_tt
+    hidden_effect = {
+        reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Machete_And_Rifle
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_The_Invisible_Cloak
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Ants_Move_Mountain
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Molotov_Cocktail_Party
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Portable_Thunder
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Screaming_Pipes
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Anti_Air_Scythe
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Swallow_Tactics
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Eyes_In_Clouds
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Iron_Plate_On_Trucks
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Mobile_Fortress
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Big_Foot_Tank
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Mosquito_Fleet
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Amphibious_Assault
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Ventilation_Window
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Muddy_Water_Flow
+                cost = 1
+            }
+    }
+}
+
+LHS_mumian_junshi = {
+    custom_effect_tooltip =  LHS_mumian_junshi_tt
+    hidden_effect = {
+        reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Patch_The_Economic_Leaks
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Grid_Over_The_Andes
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Standard_Of_The_Red_Clay
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Tropical_Preservation
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Cotton_And_Dignity
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Schools_Before_Foundries
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Refining_Not_Selling
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Clinic_In_Jungle
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Sugar_Is_Fuel
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_The_Shipyard_In_Bay
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Nationalize_The_Veins
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_The_Unbreakable_Logistics
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Oil_Independence
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Letters_To_Stars
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Dual_Use_Tractors
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Wealth_In_People
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Market_Of_The_South
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_When_Kapok_Burns_Red
+                cost = 1
+            }
+            reduce_focus_completion_cost = { #减少指定国策完成时间
+                focus = LHS_Carnival_Never_Ends
+                cost = 1
+            }
+    }
+}

@@ -1,0 +1,187 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_DEN_SWE_war_ai_behavior_SELECTION
+						option = DEN_SWE_war_GAME_RULE_1
+					}
+				}
+				DEN = { add_ideas = DEN_SWE_war_buff_DEN }
+			}
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = AH_DEN_SWE_war_ai_behavior_SELECTION
+						option = DEN_SWE_war_GAME_RULE_2
+					}
+				}
+				SWE = { add_ideas = DEN_SWE_war_buff_SWE }
+			}
+			SWE = {
+				country_event = {
+					id = SWE.010
+					days = 57
+				}
+			}
+			every_state = {
+				if = {
+					limit = { is_controlled_by = DEN }
+					set_state_flag = DEN_state_area
+				}
+				if = {
+					limit = { is_controlled_by = SWE }
+					set_state_flag = SWE_state_area
+				}
+				if = {
+					limit = { is_controlled_by = NOR }
+					set_state_flag = NOR_state_area
+				}
+				if = {
+					limit = { is_controlled_by = FIN }
+					set_state_flag = FIN_state_area
+				}
+				if = {
+					limit = { is_controlled_by = KMS }
+					set_state_flag = KMS_state_area
+				}
+			}
+			SWE = {
+				country_event = fin.63
+			}
+			every_state = {
+				limit = {
+					is_controlled_by = SWE
+					not = { state = 148 }
+				}
+				set_state_flag = SWE_orginal_state
+			}
+			every_state = {
+				limit = {
+					or = {
+						is_controlled_by = FIN
+						state = 148
+					}
+					not = { state = 146 }
+				}
+				set_state_flag = fin_orginal_state
+			}
+			every_state = {
+				limit = {
+					is_controlled_by = DEN
+					is_core_of = SWE
+				}
+				set_state_flag = is_KAL_area_state
+			}
+		}
+	}
+	on_daily_SWE = {
+		effect = {
+			SWE = {
+				if = {
+					limit = {
+						not = {
+							check_variable = { SWE_Five_year_plan_task_02 = 0 }
+						}
+						not = {
+							has_country_flag = has_completeed_task2
+						}
+					}
+					SWE_Calculate_the_level_of_infrastructure = yes
+				}
+			}
+			if = {
+				limit = {
+					not = {
+						has_global_flag = Nordic_integration_has_built
+					}
+					has_global_flag = SWE_Start_Nordic_integration_agenda
+				}
+				clear_array = global.Nordic_integration_members
+				every_country = {
+					limit = {
+						exists = yes
+						is_subject = no
+						has_country_flag = jion_in_the_Nordic_integration
+						NORDIC_is_nordic = yes
+					}
+					add_to_array = {
+						global.Nordic_integration_members = THIS
+					}
+				}
+				get_sorted_scored_countries = {
+					scorer = Nordic_integration_scorer
+					array = global.Nordic_integration_members
+				}
+				for_each_scope_loop = {
+					array = global.Nordic_integration_members
+					add_to_variable = {
+						global.Nordic_integration_members_index = 1
+					}
+					set_variable = {
+						Nordic_integration_ranking = global.Nordic_integration_members_index
+					}
+				}
+				clear_variable = global.Nordic_integration_members_index
+			}
+		}
+	}
+	# on_war_relation_added = { # vanilla game effect
+	# 	effect = {
+	# 		if = {
+	# 			limit = {
+	# 				OR = {
+	# 					ROOT = { original_tag = SWE }
+	# 					FROM = { original_tag = SWE }
+	# 				}
+	# 				OR = {
+	# 					ROOT = { original_tag = GER }
+	# 					FROM = { original_tag = GER }
+	# 				}
+	# 				SWE = { 
+	# 					has_completed_focus = SWE_allow_landsverk_to_operate # vanilla game focus
+	# 					NOT = { has_country_flag = SWE_landsberg_sabotage }
+	# 				}
+	# 			}
+	# 			SWE = {
+	# 				set_country_flag = SWE_landsberg_sabotage
+	# 				every_core_state = {
+	# 					limit = {
+	# 						is_fully_controlled_by = SWE
+	# 					}
+	# 					random_select_amount = 2
+	# 					damage_building = {
+	# 						type = arms_factory 
+	# 						damage = 4
+	# 					}
+	# 				}
+	# 			}
+	# 		}
+	# 	}
+	# }
+	on_declare_war = {
+		effect = {
+			#第四次杜瑞战争
+			if = {
+				limit = {
+					ROOT = {
+						tag = SWE
+					}
+					FROM = {
+						tag = DEN
+					}
+					not = {
+						has_global_flag = SWE_war_to_DEN_event
+					}
+				}
+				hidden_effect = {
+					news_event = {
+						id = SWE_news.001
+					}
+				}
+				set_global_flag = SWE_war_to_DEN_event
+			}
+		}
+	}
+}

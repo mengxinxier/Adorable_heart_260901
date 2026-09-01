@@ -1,0 +1,316 @@
+#attacker_modifier = yes #当为yes时，动态修正（大多为战斗类修正）会影响那些正在攻击该状态内单位的单位
+#例：​正常情况下（attacker_modifier = no）​​：
+
+#只有实际驻扎在“阿尔萨斯”地区内的你的部队，才能获得这15%的攻击加成。（如果enable = {always = yes}。或是其他已触发的启用条件）敌军从相邻的“洛林”地区进攻“阿尔萨斯”，那么在“洛林”的敌军不会受到任何影响。
+
+#​特殊情况下（attacker_modifier = yes）​​：
+
+#如果为“阿尔萨斯”的地区修正设置了 attacker_modifier = yes，那么效果就不同了。当敌军从“洛林”进攻“阿尔萨斯”时，你的防守部队不仅能获得15%的攻击加成，更重要的是，​这个加成还会“反向”应用到正在进攻的敌军身上，让她们也获得这15%的攻击加成，哪怕她们并不处于“阿尔萨斯”地区。（甚至可以无视限定tag！！！）
+
+#注：由于p社的奇怪代码逻辑，一些奇奇怪怪的地形类buff仍然会无视限定tag（例如补给效率）代码继续生效。。
+
+LHS_kapok_economic_miracle = {
+    enable = {
+        TAG = LHS
+    }
+    icon = GFX_kapok_burns_red
+    
+    # === 核心变量说明 ===
+    # kapok_infrastructure (基建指数)
+    # kapok_welfare (福利指数)
+    # kapok_education (教育指数)
+    # kapok_industry (产业指数)
+    # kapok_balance_penalty (失衡惩罚): |民工-军工|的值
+    
+    production_speed_buildings_factor = kapok_infrastructure_buildings_bonus  # 建造速度
+    global_building_slots_factor = kapok_infrastructure_slots_bonus  # 地区最大工厂数
+    supply_consumption_factor = kapok_infrastructure_supply_bonus  # 补给消耗
+    
+    consumer_goods_factor = kapok_welfare_consumer_goods_penalty  # 生活消费品工厂系数（debuff）
+    # consumer_goods_factor = kapok_welfare_consumer_goods_penalty1  # 生活消费品工厂系数（buff）
+    compliance_gain = kapok_welfare_population_bonus  # 每日顺从度增长（buff）
+    stability_factor = kapok_welfare_stability_bonus  # 稳定度（buff）
+    production_factory_efficiency_gain_factor = kapok_welfare_efficiency_bonus  # 生产效率增长（buff）
+    
+    research_speed_factor = kapok_education_research_bonus  # 科研速度（buff）
+    production_factory_max_efficiency_factor = kapok_education_max_efficiency_bonus  # 生产效率上限（buff）
+    
+    industrial_capacity_factory = kapok_industry_output_bonus  # 工厂产出（buff）
+    industrial_capacity_dockyard = kapok_dockyard_output_bonus  # 船坞工厂产出（buff）
+    line_change_production_efficiency_factor = kapok_industry_retention_bonus  # 生产效率保持（buff）
+    
+    political_power_gain = kapok_balance_political_power  # 平衡时每日获得政治点数（buff）
+    production_speed_industrial_complex_factor = kapok_balance_civilian_bonus  # 平衡时民工建造加速（buff）
+    production_speed_arms_factory_factor = kapok_balance_military_bonus  # 平衡时军工建造加速（buff）
+
+    party_popularity_stability_factor = kapok_bottleneck_penalty # 党派支持度对稳定度修正（debuff）
+    production_factory_start_efficiency_factor = kapok_synergy_research_bonus # 基础生产效率（buff）
+    compliance_growth = kapok_synergy_population_bonus # 顺从度增长速度（buff）
+}
+
+LHS_reallocation_chaos = {
+    enable = {
+        TAG = LHS
+    }
+    icon = GFX_idea_lkkz
+
+    consumer_goods_factor = LHS_reallocation_chaos2  #生活消费品工厂系数（debuff）
+    stability_factor = LHS_reallocation_chaos  #稳定度（debuff）
+    political_power_factor = LHS_reallocation_chaos  #政治点数（debuff）
+}
+
+LHS_muddy_diplomacy_network = {
+    enable = {
+         TAG = LHS
+    }
+    icon = GFX_idea_muddy_diplomacy
+    
+    #外交效果
+    enemy_justify_war_goal_time = muddy_diplomacy_justify_time  #敌国对我国正当化战争目标所需时间
+    opinion_gain_monthly_factor = muddy_diplomacy_opinion_gain  #改善关系获得的评价
+    send_volunteer_divisions_required = muddy_diplomacy_volunteer_threshold  #派遣志愿军需要的陆军师数量
+    
+    #国内效果
+    stability_factor = muddy_diplomacy_stability  #稳定度
+    political_power_gain = muddy_diplomacy_political_power  #每日获取政治点数
+    faction_trade_opinion_factor = muddy_diplomacy_trade_opinion  #阵营贸易影响力系数
+    
+    #军事效果
+    army_experience_from_volunteers = muddy_diplomacy_org  #来自志愿军的陆军经验
+    training_time_army_factor = muddy_diplomacy_exp_gain  #陆军师训练时间
+}
+
+LHS_zhalan = {
+    enable = {
+        always = yes
+    }
+    icon = GFX_zhalan
+    army_speed_factor_for_controller = -0.5
+    army_attack_speed_factor = -0.5
+    army_attack_factor = -0.5
+    army_defence_factor = -0.8
+}
+LHS_Drag_Them_Into_Mud = {
+    remove_trigger = {
+
+            LHS = {
+                or = {
+                    has_capitulated = yes
+                    is_subject = yes
+                    exists = no
+                }
+            }
+
+        }
+
+    icon = GFX_bydj
+    attacker_modifier = yes #当为yes时，战斗类动态修正会影响那些正在攻击该状态内单位的单位。
+    air_cas_present_factor = -0.25
+    enemy_attrition = 0.1
+    enemy_army_speed_factor = -0.2
+    enemy_truck_attrition_factor = 0.2
+}
+LHS_bydj = {
+    remove_trigger = {
+
+
+        or = {
+            PAM = {
+                or = {
+                    has_capitulated = yes
+                    is_subject = yes
+                    exists = no
+                }
+            }
+            PAU = {
+                or = {
+                    has_capitulated = yes
+                    is_subject = yes
+                    exists = no
+                }
+            }
+            LHS = {
+                or = {
+                    has_capitulated = yes
+                    is_subject = yes
+                    exists = no
+                }
+            }
+
+        }
+
+
+
+    }
+    icon = GFX_bydj
+    attacker_modifier = yes #当为yes时，战斗类动态修正会影响那些正在攻击该状态内单位的单位。
+    air_cas_present_factor = -0.75
+    army_attack_factor = -0.9
+    army_attack_speed_factor = -0.9
+    ground_attack_factor = -0.75
+    local_org_regain = -0.5
+}
+
+LHS_pbrm = {
+    icon = GFX_idea_pbrm
+    enable = {
+        tag = LHS
+    }
+    remove_trigger = {
+        check_variable = {
+            LHS_pbrm_conscription_factor > -0.001
+        }
+        check_variable = {
+            LHS_pbrm_army_org_factor  > -0.001
+        }
+        check_variable = {
+            LHS_pbrm_industrial_capacity_factory > -0.001
+        }
+        check_variable = {
+            LHS_pbrm_production_speed_buildings_factor > -0.001
+        }
+        check_variable = {
+            LHS_pbrm_stability_factor > -0.001
+        }
+        check_variable = {
+            LHS_pbrm_war_support_factor > -0.001
+        }
+    }
+    conscription_factor = LHS_pbrm_conscription_factor
+    army_org_factor = LHS_pbrm_army_org_factor
+    industrial_capacity_factory = LHS_pbrm_industrial_capacity_factory
+    production_speed_buildings_factor = LHS_pbrm_production_speed_buildings_factor
+    stability_factor = LHS_pbrm_stability_factor
+    war_support_factor = LHS_pbrm_war_support_factor
+}
+
+LHS_gyqj = {
+    icon = GFX_idea_gyqj
+    enable = {
+        always = yes
+    }
+    supply_consumption_factor = global.LHS_gyqj_supply_consumption_factor
+    army_attack_factor = global.LHS_gyqj_army_attack_factor
+    naval_damage_factor = global.LHS_gyqj_naval_damage_factor
+}
+PAN_xxbc = {
+    icon = GFX_idea_xxbc
+    enable = {
+        always = yes
+    }
+    production_factory_efficiency_gain_factor = global.PAN_xxbc_production_factory_efficiency_gain_factor
+    production_factory_max_efficiency_factor = global.PAN_xxbc_production_factory_max_efficiency_factor
+    production_speed_buildings_factor = global.PAN_xxbc_production_speed_buildings_factor
+}
+
+LHS_idea_chitudefengshou = {
+    icon = GFX_idea_fengshou
+    enable = {
+        always = yes
+    }
+    industrial_capacity_factory = global.LHS_harvest_bonus_multiplier#工厂产出
+    production_speed_buildings_factor = global.LHS_harvest_bonus_multiplier#建造速度
+    monthly_population = global.LHS_harvest_bonus_multiplier#每月人口
+    civilian_factory_use = global.LHS_harvest_bonus_multiplier2#工厂占用
+}
+LHS_idea_chitudefengshou1 = {
+    icon = GFX_idea_fengshou
+    enable = {
+        always = yes
+    }
+    industrial_capacity_factory = LHS_fs_industrial_capacity_factory#工厂产出
+    production_speed_buildings_factor = LHS_fs_production_speed_buildings_factor#建造速度
+    monthly_population = LHS_fs_monthly_population#每月人口
+}
+PAN_mrzg = {
+    icon = GFX_idea_PAN_mrzg
+    enable = {
+        always = yes
+    }
+    production_speed_infrastructure_factor = global.PAN_mrzg_production_speed_infrastructure_factor
+    production_speed_industrial_complex_factor = global.PAN_mrzg_production_speed_industrial_complex_factor
+    local_resources_factor = global.PAN_mrzg_local_resources_factor
+    political_power_factor = global.PAN_mrzg_political_power_factor
+}
+
+LHS_hhjj = {
+    icon = GFX_idea_hhjj
+    enable = {
+        has_government = communism
+    }
+    remove_trigger = {
+        any_enemy_country = {
+            tag = LHS
+        }
+    }
+    min_export = LHS.LHS_min_export
+
+    production_lack_of_resource_penalty_factor = LHS.LHS_hhjj_production_lack_of_resource_penalty_factor
+
+    local_resources_factor = LHS.LHS_hhjj_local_resources_factor
+}
+
+LHS_tjzx = {
+    icon = GFX_idea_tjzx
+    enable = {
+        has_government = communism
+        is_subject = no
+    }
+    weekly_manpower = LHS_tjzx_weekly_manpower
+    global_building_slots_factor = LHS_tjzx_global_building_slots_factor
+    production_speed_buildings_factor = LHS_tjzx_production_speed_buildings_factor
+    army_core_attack_factor = LHS_tjzx_army_core_attack_factor
+    army_core_defence_factor = LHS_tjzx_army_core_defence_factor
+    political_power_factor = LHS_tjzx_political_power_factor
+    conscription_factor = LHS_tjzx_conscription_factor
+}
+
+
+LHS_abab = {
+    enable = {
+        always = yes
+    }
+    icon = GFX_idea_abab
+    land_night_attack = LHS_abab_land_night_attack#陆战夜战攻击
+    max_planning = LHS_abab_max_planning#计划加成上限
+    army_org_factor = LHS_abab_army_org_factor#陆军师组织度
+    army_speed_factor = LHS_abab_army_speed_factor#陆军师速度
+    experience_loss_factor = LHS_abab_experience_loss_factor#有经验的士兵损失
+    supply_consumption_factor = LHS_lqjj_supply_consumption_factor#补给消耗
+    equipment_capture = LHS_abab_equipment_capture#装备缴获比例
+    equipment_capture_factor = LHS_abab_equipment_capture_factor#装备缴获比例
+    army_strength_factor = LHS_abab_army_strength_factor#HP
+    army_attack_factor = LHS_abab_army_attack_factor#陆军师攻击
+    army_defence_factor = LHS_abab_army_defence_factor#陆军师防御
+    attrition = LHS_abab_attrition#陆军师损耗
+    breakthrough_factor = LHS_abab_breakthrough_factor#陆军师突破
+    equipment_conversion_speed = LHS_abab_equipment_conversion_speed#装备改装速度
+    army_armor_attack_factor = LHS_abab_army_armor_attack_factor#坦克攻击
+    army_armor_defence_factor = LHS_abab_army_armor_defence_factor#坦克防御
+    enemy_army_bonus_air_superiority_factor = LHS_abab_enemy_army_bonus_air_superiority_factor#敌军空中支援
+    max_dig_in = LHS_abab_max_dig_in #堑壕上限
+    supply_node_range = LHS_abab_supply_node_range #补给范围
+    spotting_chance = LHS_abab_spotting_chance#索敌速度
+    navy_visibility = LHS_abab_navy_visibility#可见度
+    convoy_raiding_efficiency_factor = LHS_abab_convoy_raiding_efficiency_factor#袭击运输船任务效率
+    air_cas_present_factor = LHS_abab_air_cas_present_factor#对地支援
+    air_agility_factor = LHS_abab_air_agility_factor#空军机动
+    air_attack_factor = LHS_abab_air_attack_factor#空军攻击
+    air_defence_factor = LHS_abab_air_defence_factor#空军防御
+    amphibious_invasion = LHS_abab_amphibious_invasion#两栖登录速度
+    civilian_intel_factor = LHS_abab_civilian_intel_factor#民用情报
+    army_intel_factor = LHS_abab_army_intel_factor#陆军情报
+    navy_intel_factor = LHS_abab_navy_intel_factor#海军情报
+    airforce_intel_factor = LHS_abab_airforce_intel_factor#空军情报
+    initiative_factor = LHS_abab_initiative_factor#主动性
+    land_reinforce_rate = LHS_abab_land_reinforce_rate#增援率
+	army_attack_against_major_factor = LHS_abab_army_attack_against_major_factor#对主要国家攻击
+	army_defence_against_major_factor = LHS_abab_army_defence_against_major_factor#对主要国家防御
+    army_attack_against_minor_factor = LHS_abab_army_attack_against_minor_factor#对次要国家攻击
+	army_defence_against_minor_factor = LHS_abab_army_defence_against_minor_factor#对次要国家防御
+    stability_factor = LHS_abab_stability_factor#稳定度
+    compliance_growth = LHS_abab_compliance_growth#顺从度增长
+    naval_damage_factor = LHS_abab_naval_damage_factor#海军伤害
+    naval_defense_factor = LHS_abab_naval_defense_factor#海军防御
+}
+

@@ -1,0 +1,294 @@
+﻿add_namespace = china_warlord
+add_namespace = china_warlord_news
+
+##  事件
+
+	#未来的道路
+	country_event = {
+		id = china_warlord.001
+		title = china_warlord.001.title
+		desc = china_warlord.001.desc
+		is_triggered_only = yes
+		fire_only_once = no
+		option = {
+			name = china_warlord.001.a
+			set_country_flag = CHI_country
+			CHI = {
+				country_event = {
+					id = china_warlord.002
+				}
+			}
+			ai_chance = {
+				base = 10
+				modifier = {
+					factor = 0
+					has_idea = CHI_yuankeding_idea
+				}
+			}
+		}
+		option = {
+			name = china_warlord.001.b
+			clr_country_flag = CHI_country
+			if = {
+				limit = { tag = WUH }
+				FUJ = {
+					country_event = {
+						id = china_warlord.003
+						hours = 6
+					}
+				}
+			}
+			hidden_effect = {
+				country_event = {
+					id = china_warlord.004
+					days = 5
+				}
+			}
+			hidden_effect = {
+				news_event = {
+					id = china_warlord_news.002
+				}
+			}
+			ai_chance = {
+				base = 10
+				modifier = {
+					factor = 0
+					not = { has_idea = CHI_yuankeding_idea }
+				}
+			}
+		}
+	}
+
+	#[FROM.Getname]愿意臣服
+	country_event = {
+		id = china_warlord.002
+		title = china_warlord.002.title
+		desc = china_warlord.002.desc
+		is_triggered_only = yes
+		fire_only_once = no
+		option = {
+			name = china_warlord.002.a
+			every_state = {
+				limit = {
+					owner = {
+						or = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+				if = {
+					limit = { is_core_of = WUH }
+					transfer_state_to = WUH
+				}
+				if = {
+					limit = { is_core_of = FUJ }
+					transfer_state_to = FUJ
+				}
+			}
+			set_temp_variable = { tag_to_release = WUH }
+			CHI_puppet_released_tag_and_old_govern = yes
+			clr_country_flag = CHI_war_plan_going_on
+			set_temp_variable = { tag_to_release = FUJ }
+			CHI_puppet_released_tag_and_old_govern = yes
+			clr_country_flag = CHI_war_plan_going_on
+			add_to_variable = {
+				var = Crisis_of_CHI_Dynasty_Var
+				value = -20
+				tooltip = Crisis_of_CHI_Dynasty_Var_down_20
+			}
+			add_power_balance_value = {
+				id = CHI_Mandate_of_Heaven_bop
+				value = 0.15
+			}
+			Crisis_of_CHI_Dynasty_Var_effect = yes
+			set_global_flag = WUH_rebellion_wars_in_south_china_end
+			country_event = {
+				id = China.031
+			}
+			ai_chance = {
+				base = 10
+			}
+		}
+	}
+
+	#[FROM.Getname]邀请我们加入
+	country_event = {
+		id = china_warlord.003
+		title = china_warlord.003.title
+		desc = china_warlord.003.desc
+		is_triggered_only = yes
+		fire_only_once = no
+		option = {
+			name = china_warlord.003.a
+			every_core_state = { add_core_of = FROM }
+			every_character = {
+				limit = { is_general_advisor = no }
+				set_nationality = FROM
+			}
+			FROM = { annex_country = { target = ROOT transfer_troops = yes } }
+			ai_chance = {
+				base = 10
+			}
+		}
+	}
+
+	#组织政府
+	country_event = {
+		id = china_warlord.004
+		title = china_warlord.004.title
+		desc = china_warlord.004.desc
+		is_triggered_only = yes
+		fire_only_once = no
+		option = {
+			name = china_warlord.004.a
+			set_cosmetic_tag = Patriotic_Army
+			set_party_name = {
+				ideology = neutrality
+				long_name = WUH_Patriotic_Army_party
+				name = WUH_Patriotic_Army_party
+			}
+			ROOT_get_in_the_competition_for_China_reunification = yes
+			every_controlled_state = {
+				limit = { not = { is_core_of = ROOT } }
+				add_compliance = 5
+			}
+			ai_chance = {
+				base = 10
+			}
+		}
+	}
+
+
+###  新闻
+
+	##雪山事变
+	news_event = {
+		id = china_warlord_news.001
+		title = china_warlord_news.001.title
+		picture = GFX_news_The_Snow_Mountain_Incident
+		desc =  china_warlord_news.001.desc
+		major = no
+		is_triggered_only = yes
+		immediate = {
+			hidden_effect = {
+				TIB = {
+					remove_ideas = TIB_Tri_Trinity_Council_idea
+					add_ideas = TIB_Enciodes_Silverash_idea
+					set_party_name = { ideology = neutrality long_name = TIB_democratic_party name = TIB_democratic_party }
+				}
+			}
+		}
+		option = {
+			name = china_warlord_news.001.a
+			hidden_effect = {
+				if = {
+					limit = { ROOT = { tag = FROM } }
+					every_other_country = {
+						limit = {
+							OR = {
+								check_variable = { THIS.Chinese_Secondary_News_button_var = 2 }
+								is_chinese_country = yes
+								tag = ENG
+							}
+						}
+						news_event = { id = china_warlord_news.001 }
+					}
+				}
+			}
+			trigger = {
+				tag = TIB
+			}
+		}
+		option = {
+			name = china_warlord_news.001.b
+			trigger = {
+				is_chinese_country = yes
+				not = { tag = TIB }
+			}
+		}
+		option = {
+			name = china_warlord_news.001.c
+			trigger = {
+				is_chinese_country = no
+				not = { tag = ENG }
+				not = { tag = TIB }
+			}
+		}
+		option = {
+			name = china_warlord_news.001.d
+			trigger = {
+				tag = ENG
+			}
+		}
+	}
+
+	#[FROM.Getname]宣告“清君侧”
+	news_event = {
+		id = china_warlord_news.002
+		title = china_warlord_news.002.title
+		picture = GFX_news_event_001
+		desc =  china_warlord_news.002.desc
+		major = no
+		is_triggered_only = yes
+		option = {
+			name = china_warlord_news.002.a
+			hidden_effect = {
+				if = {
+					limit = { ROOT = { tag = FROM } }
+					every_other_country = {
+						limit = {
+							OR = {
+								check_variable = { THIS.Chinese_Secondary_News_button_var = 2 }
+								is_chinese_country = yes
+							}
+						}
+						news_event = { id = china_warlord_news.002 }
+					}
+				}
+			}
+			trigger = {
+				tag = FROM
+			}
+		}
+		option = {
+			name = china_warlord_news.002.b
+			trigger = {
+				or = {
+					tag = CHI
+					has_country_flag = CHI_country
+				}
+				not = { tag = FROM }
+			}
+		}
+		option = {
+			name = china_warlord_news.002.c
+			trigger = {
+				or = {
+					tag = PRC
+					has_country_flag = PRC_country
+					tag = ROC
+					has_country_flag = KMT_country
+				}
+				not = { tag = FROM }
+			}
+		}
+		option = {
+			name = china_warlord_news.002.d
+			trigger = {
+				not = {
+					or = {
+						tag = FROM
+						tag = CHI
+						has_country_flag = CHI_country
+						tag = PRC
+						has_country_flag = PRC_country
+						tag = ROC
+						has_country_flag = KMT_country
+					}
+				}
+			}
+		}
+	}
+
+

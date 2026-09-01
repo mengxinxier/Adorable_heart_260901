@@ -1,0 +1,778 @@
+on_actions = {
+	on_startup = {
+
+		#Setup Colonial Powers
+		effect = {
+			if = {
+				limit = {
+					any_country = {
+						any_owned_state = {
+							NOT = { is_core_of = PREV }
+						}
+					}
+				}
+				every_country = {
+					limit = {
+						any_owned_state = {
+							NOT = { is_core_of = PREV }
+						}
+					}
+					add_to_array = { global.colonial_powers = THIS }
+				}
+			}
+		}
+
+		#Setup Asian + Oceania Nations
+		effect = {
+			IF = {
+				limit = {
+					any_country = {
+						any_core_state = {
+							OR = {
+								is_on_continent = australia
+								is_on_continent = asia
+							}		
+						}
+						capital_scope = {
+							OR = {
+								is_on_continent = australia
+								is_on_continent = asia
+							}
+						}
+						OR =  {
+							exists = yes
+							exists = no
+						}
+					}
+				}
+				every_possible_country = {
+					limit = {
+						any_core_state = {
+							OR = {
+								is_on_continent = australia
+								is_on_continent = asia
+							}		
+						}
+						capital_scope = {
+							OR = {
+								is_on_continent = australia
+								is_on_continent = asia
+							}
+						}
+					}
+					add_to_array = { global.asian_and_oceanian_countries = THIS }
+				}
+			}
+		}
+
+		#Setup Asian (Pacific) Nations
+		effect = {
+			IF = {
+				limit = {
+					any_country = {
+						any_core_state = {
+							is_on_continent = asia
+						}
+						capital_scope = {
+							is_on_continent = asia
+						}
+						OR =  {
+							exists = yes
+							exists = no
+						}
+					}
+				}
+				every_possible_country = {
+					limit = {
+						any_core_state = {
+							is_on_continent = asia
+						}
+						capital_scope = {
+							is_on_continent = asia
+						}
+					}
+					add_to_array = { global.asian_countries = THIS }
+				}
+			}
+		}
+
+		#Setup South American Nations
+		effect = {
+			IF = {
+				limit = {
+					any_country = {
+						any_core_state = {
+							is_on_continent = south_america
+						}
+						capital_scope = {
+							is_on_continent = south_america
+						}
+						OR =  {
+							exists = yes
+							exists = no
+						}
+					}
+				}
+				every_possible_country = {
+					limit = {
+						any_core_state = {
+							is_on_continent = south_america
+						}
+						capital_scope = {
+							is_on_continent = south_america
+						}
+					}
+					add_to_array = { global.south_american_countries = THIS }
+				}
+			}
+		}
+
+		#Setup Middle Eastern Nations
+		effect = {
+			IF = {
+				limit = {
+					any_country = {
+						any_core_state = {
+							is_on_continent = middle_east
+						}
+						capital_scope = {
+							is_on_continent = middle_east
+						}
+						OR =  {
+							exists = yes
+							exists = no
+						}
+					}
+				}
+				every_possible_country = {
+					limit = {
+						any_core_state = {
+							is_on_continent = middle_east
+						}
+						capital_scope = {
+							is_on_continent = middle_east
+						}
+					}
+					add_to_array = { global.middle_eastern_countries = THIS }
+				}
+			}
+		}
+
+	}
+
+	# country, FROM = ace, PREV = enemy ace
+	# This event fires twice, once for each ace.
+	on_aces_killed_each_other = {
+		random_events = {
+			100 = aces_killed_each_other.1
+		}
+	}
+
+	# country, FROM = our ace,
+	# PREV = enemy ace, has killed FROM
+	on_ace_killed_by_ace = {
+		random_events = {
+			100 = ace_killed_by_ace.1
+		}
+	}
+
+	# country, FROM = our ace,
+	# PREV = enemy ace, killed by FROM
+	on_ace_killed_other_ace = {
+		random_events = {
+			100 = ace_killed_other_ace.1
+		}
+	}
+
+	# our ace is killed by no name
+	# country, FROM = ace
+	on_ace_killed = {
+		random_events = {
+			100 = ace_died.1
+		}
+	}
+
+	# our ace died in accident
+	# country, FROM = ace
+	on_ace_killed_on_accident = {
+
+	}
+
+	# enemy ace is killed by our non name
+	# country, FROM = enemy ace
+	on_non_ace_killed_other_ace = {
+
+	}
+
+	# During justifying wargoals
+	# triggered daily, so make sure there is a sink somewhere not firing events
+	# country, FROM = target nation
+	on_justifying_wargoal_pulse = {
+
+		random_events = {
+			100 = war_justification.1
+			100 = war_justification.2
+			100 = war_justification.3
+			100 = war_justification.4
+			100 = war_justification.5
+			100 = war_justification.6
+			100 = war_justification.7
+			100 = war_justification.8
+			100 = war_justification.9
+			100 = war_justification.10
+			100 = war_justification.11
+			100 = war_justification.12
+			100 = war_justification.13
+			100 = war_justification.14
+			100 = war_justification.15
+			100 = war_justification.16
+			100 = war_justification.17
+			100 = war_justification.18
+			100 = war_justification.19
+			17000 = 0
+		}
+	}
+
+	on_wargoal_expire = {
+		random_events = {
+			100 = war_justification.301
+		}
+	}
+
+	# FROM is the faction Leader, ROOT is the country leaving the faction
+	on_leave_faction = {
+		effect = {
+
+			if = {
+				limit = {
+					has_country_flag = TO_joined_brussels_treaty
+				}
+				clr_country_flag = TO_joined_brussels_treaty
+			}
+
+			IF = {
+				limit = {
+					NOT = {
+						ROOT = { #We should remove this
+							has_country_flag = leave_faction_happily_flag
+						}
+						FROM = { is_subject_of = ROOT } # This shouldn't really be possible outside of specific content so best to block
+						ROOT = { is_subject_of = FROM } # If the effect is desired, add something custom
+					}
+				}
+				FROM = {
+					add_opinion_modifier = {
+						modifier = faction_traitor
+						target = ROOT
+						days = 365
+					}
+
+					add_opinion_modifier = {
+						modifier = faction_traitor_trade
+						target = ROOT
+						days = 365
+					}
+				}
+			}
+		}
+	}
+
+	#FROM is country getting invited.
+	on_offer_join_faction = {
+		effect = {
+			#Give achievement to nation joining a faction, but not in one from game start
+			if = {
+				limit = {
+					date > 1936.01.02
+				}
+				FROM = {
+					if = {
+						limit = {
+							is_faction_leader = no
+						}
+						set_country_flag = achievement_has_joined_faction
+					}
+				}
+			}
+		}
+	}
+
+	#FROM is faction leader on join faction requests. THIS DOES NOT FIRE ON ADD_TO_FACTION EFFECT! USE ON_OFFER_JOIN_FACTION!
+	on_join_faction = {
+		effect = {
+			set_country_flag = achievement_has_joined_faction
+		}
+	}
+
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+		}
+	}
+
+	# When a new faction is formed
+	on_faction_formed = {
+		effect = {
+		}
+	}
+
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+		}
+	}
+
+	# ROOT is previously capitulated country
+	on_uncapitulation = {
+		effect = {
+		}
+	}
+	#ROOT is capitulated country, FROM is winner.
+	on_capitulation_immediate = {
+		effect = {
+		}
+	}
+
+	on_government_change = {
+		effect = {
+		}
+	}
+
+	on_coup_succeeded = {
+		effect = {
+			#Turn elections on for democracies created from coup
+			random_other_country = {
+				limit = {
+					has_government = democratic
+					original_tag = ROOT
+				}
+				set_politics = {
+					ruling_party = democratic
+					elections_allowed = yes
+				}
+			}
+		}
+	}
+
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+		}
+	}
+
+	#used when puppeting in a peace conference
+	#ROOT = nation being puppeted, FROM = overlord
+
+	on_puppet = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_elections = yes }
+					has_government = democratic
+				}
+				set_politics = {
+					ruling_party = democratic
+					elections_allowed = yes
+				}
+			}
+		}
+	}
+
+	#used when puppeting through the occupied territories menu during peace time (or when releasing from non-core but owned territory, f.e. Britain releasing Egypt)
+	#ROOT = nation being released, FROM = overlord
+
+	on_release_as_puppet = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_elections = yes }
+					has_government = democratic
+				}
+				set_politics = {
+					ruling_party = democratic
+					elections_allowed = yes
+				}
+			}
+		}
+	}
+
+	#ROOT is winner #FROM gets annexed - For civil wars on_civil_war_end is also fired
+	on_annex = {
+		effect = {
+		}
+	}
+
+	#Not run on a specific country.
+	on_startup = {
+
+		effect = {
+		}
+	}
+
+
+	#ROOT = country that joined a war
+	#Fired when a country goes to war against anyone and is not fired again when it enters war against another country unless it went to peace first
+	on_war = { 
+		effect = {
+		}
+	}
+	#ROOT - country that just went to peace
+	on_peaceconference_ended = {
+		effect = {
+			#Country becomes a colonial power
+			if = {
+				limit = {
+					ROOT = {
+						any_owned_state = {
+							NOT = { is_core_of = PREV }
+						}
+						NOT = {
+							is_in_array = {
+								array = global.colonial_powers
+								value = THIS
+							}
+						}
+					}
+				}
+				ROOT = {
+					add_to_array = { global.colonial_powers = THIS }
+				}
+			}
+			#Country loses colonial possessions
+			if = {
+				limit = {
+					ROOT = {
+						is_in_array = {
+							array = global.colonial_powers
+							value = THIS
+						}
+						NOT = {
+							any_owned_state = {
+								NOT = { is_core_of = PREV }
+							}
+						}
+					}
+				}
+				ROOT = {
+					remove_from_array = { global.colonial_powers = THIS }
+				}
+			}
+		}
+	}
+
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						is_in_faction = yes
+					}
+
+					FROM.FROM = {
+						has_state_flag = prevent_auto_flip_after_capitulation
+					}
+				}
+
+				FROM.FROM = { clr_state_flag = prevent_auto_flip_after_capitulation }
+				FROM = {
+					set_state_controller = FROM.FROM
+				}
+				
+			}
+		}
+		#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+		#Modify Colonial Powers
+		effect = {
+			#Country becomes a colonial power
+			if = {
+				limit = {
+					ROOT = {
+						any_owned_state = {
+							NOT = { is_core_of = PREV }
+						}
+						NOT = {
+							is_in_array = {
+								array = global.colonial_powers
+								value = THIS
+							}
+						}
+					}
+				}
+				ROOT = {
+					add_to_array = { global.colonial_powers = THIS }
+				}
+			}
+			#Country loses colonial possessions
+			if = {
+				limit = {
+					FROM = {
+						is_in_array = {
+							array = global.colonial_powers
+							value = THIS
+						}
+						NOT = {
+							any_owned_state = {
+								NOT = { is_core_of = PREV }
+							}
+						}
+					}
+				}
+				FROM = {
+					remove_from_array = { global.colonial_powers = THIS }
+				}
+			}
+		}
+	}
+
+
+
+	# From is owner country
+	on_army_leader_daily = {
+		effect = {
+			if = {
+				limit = {
+					check_variable = { random < 0.02 }
+					NOT = { has_trait = sick }
+					set_temp_variable = { temp = sum_unit_terrain_modifier@sickness_chance }
+					divide_temp_variable = { temp = num_units }
+					check_variable = { temp > 0.75 }
+					NOT = { has_unit_leader_flag = recently_sick }
+				}
+				add_timed_unit_leader_trait = {
+					trait = sick
+					days = 30
+				}
+				set_unit_leader_flag = {
+					flag = recently_sick
+					value = 1
+					days = 180
+				}
+			}
+		}
+	}
+
+	# From is owner country
+	on_army_leader_won_combat = {
+		effect = {
+			if = {
+				limit = {
+					set_temp_variable = { chance = 0.001 }
+					set_temp_variable = { factor = 1.0 }
+					add_to_temp_variable = { factor = leader_modifier@wounded_chance_factor }
+					multiply_temp_variable = { chance = factor }
+					check_variable = { random < chance }
+					NOT = { has_trait = wounded }
+				}
+				add_timed_unit_leader_trait = {
+					trait = wounded
+					days = 90
+				}
+			}
+		}
+	}
+
+	# From is owner country
+	on_army_leader_lost_combat = {
+		effect = {
+			if = {
+				limit = {
+					set_temp_variable = { chance = 0.005 }
+					set_temp_variable = { factor = 1.0 }
+					add_to_temp_variable = { factor = leader_modifier@wounded_chance_factor }
+					multiply_temp_variable = { chance = factor }
+					check_variable = { random < chance }
+					NOT = { has_trait = wounded }
+				}
+				add_timed_unit_leader_trait = {
+					trait = wounded
+					days = 90
+				}
+			}
+		}
+	}
+
+	on_army_leader_promoted = {
+		effect = {
+			add_timed_unit_leader_trait = {
+				trait = recently_promoted
+				days = 100
+			}
+		}
+	}
+
+	on_deployed_leader_defeated = {
+		effect = {
+			if = {
+				limit = { can_be_captured = yes }
+				# # TODO TAOG: a percentage chance to be captured? Other effects otherwise?
+
+				# # is_in_state requires the leader to still be deployed, so check before capture_by
+				# if = {
+				# 	limit = {
+				# 		is_in_state = 224
+				# 		FROM = { is_ai = no }
+				# 	}
+				# 	FROM = {
+				# 		set_country_flag = achievement_captured_general_in_bryansk
+				# 	}
+				# }
+
+				# capture_by = FROM
+				# FROM = {
+				# 	if = {
+				# 		limit = { is_ai = no }
+				# 		set_country_flag = achievement_captured_a_general
+				# 	}
+				# }
+				# if = {
+				# 	limit = {
+				# 		is_field_marshal = yes
+				# 		FROM = { is_ai = no }
+				# 	}
+				# 	FROM = {
+				# 		set_country_flag = achievement_captured_a_field_marshal
+				# 	}
+				# }
+				# if = {
+				# 	limit = {
+				# 		tag = GER
+				# 		FROM = { is_ai = no }
+				# 	}
+				# 	if = {
+				# 		limit = { is_character = GER_erwin_rommel }
+				# 		FROM = { set_country_flag = achievement_captured_rommel }
+				# 	}
+				# }
+			}
+			else = {
+				# uncapturable leaders (e.g. country leaders) get wounded instead
+				if = {
+					limit = { NOT = { has_trait = wounded } }
+					add_timed_unit_leader_trait = {
+						trait = wounded
+						days = 90
+					}
+				}
+			}
+		}
+	}
+
+	# root country that invades
+	# scope state that is invaded
+	# from scope state that the invasion started
+	on_naval_invasion = {
+	 	effect = {
+		 	if = {
+				limit = {
+					ROOT = {
+						divisions_in_state = {
+							 unit = marine_commando
+							 size > 0
+							 state = PREV
+						}
+						has_mastery_level = {
+							amount = 3
+						 	sub_doctrine = marines_1
+						 	#has_tech = marines_commandos_demolition - old equivalent
+						} 
+					}
+					NOT = { has_state_flag = marines_commando_effect }
+					OWNER = { NOT = { tag = ROOT } }
+				}
+				SF_marine_demoliton_effect = yes # Note that the state flag condition is not preventing it from doing 1 damage per division 
+			}
+	 	}
+	}
+
+
+	# root country that paradrops
+	# scope state that is paradroped into
+	# from scope state that the paradrop started
+	on_paradrop = {
+	    effect = {
+		    ROOT = { set_country_flag = has_paradropped_flag }
+		}
+	}
+	# on_ruling_party_change = {
+	# 	# temp var old_ideology_token is available for effects
+	# 	effect = {
+	# 		every_controlled_state = {
+	# 			limit = {
+	# 				has_resistance = yes
+	# 			}
+	# 			set_temp_variable = { new_compliance = compliance }
+	# 			multiply_temp_variable = { new_compliance = 0.5 }
+	# 			set_compliance = new_compliance
+	# 		}
+	# 	}
+	# }
+
+	on_unit_leader_promote_from_ranks_veteran = { #Unit leader scope, FROM is unit
+		effect = {
+			if = {
+				limit = {
+					is_navy_leader = yes
+					OWNER = { is_ai = no }
+				}
+				OWNER = { set_country_flag = achievement_navy_promoted_from_ranks }
+			}
+		}
+	}
+
+	on_unit_leader_promote_from_ranks_green = { #Unit leader scope, FROM is unit
+		effect = {
+			if = {
+				limit = {
+					is_navy_leader = yes
+					OWNER = { is_ai = no }
+				}
+				OWNER = { set_country_flag = achievement_navy_promoted_from_ranks }
+			}
+		}
+	}
+	# root is the state that was dropped into
+	# from is the dropping country
+	# this differs from on_paradrop in that it is run once per paradrop, not once per unit dropped
+	on_units_paradropped_in_state = {
+		effect = {
+			if = {
+				limit = { 
+					FROM = { 
+						has_mastery_level = {
+							amount = 1
+							sub_doctrine = paratroopers_1
+						}
+						#has_tech = paras_dispersed_drop - old equivalent
+					} 
+					NOT = { 
+						has_state_flag = {
+						    flag = para_drop_effect
+						    value = 0
+						}
+					}
+					CONTROLLER = { NOT = { tag = FROM } }
+				}
+				SF_PARA_sabotage_effect = yes
+			}
+			if = {
+				limit = { 
+					FROM = { 
+						has_mastery_level = {
+							amount = 1
+							sub_doctrine = paratroopers_2
+						}
+						#has_tech = paras_combat_drop  - old equivalent
+					} 
+					NOT = { 
+						has_state_flag = {
+						    flag = para_drop_effect
+						    value = 0
+						}
+					}
+				}
+				SF_PARA_combat_effect = yes
+			}
+		}
+	}
+}
