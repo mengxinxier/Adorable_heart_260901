@@ -665,5 +665,77 @@ scripted_gui = {
 			}
 		}
 	}
+	ROC_collection_decision_window = {
+		context_type = decision_category
+		window_name = "ROC_collection_decision_window"
+		visible = {	
+			tag = ROC
+		}
+		properties = {
+			ROC_collection_using_icon = {
+				image = "[Get_ROC_collection_using_icon]"
+			}
+			ROC_collection_unusing_icon = {
+				image = "[Get_ROC_collection_unusing_icon]"
+			}
+		}
+		triggers = {
+			light_visible = {
+				check_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 }
+			}
+			ROC_collection_unusing_activate_click_enabled = {
+				check_variable = { num_of_will_activate_collection > 0 }
+				set_temp_variable = { temp_activated_collection = num_of_activated_collection }
+				add_to_temp_variable = { temp_activated_collection = num_of_will_activate_collection }
+				not = { check_variable = { temp_activated_collection > num_of_activatable_collection } }
+			}
+		}
+		dynamic_lists = {
+			ROC_collection_using_gridboxtype = {
+				array = ROOT.KMT_collection_using_array
+				index = KMT_collection_using_i
+				value = KMT_collection_using_id
+				entry_container = ROC_collection_using_entry
+			}
+			ROC_collection_unusing_gridboxtype = {
+				array = ROOT.KMT_collection_unusing_array
+				index = KMT_collection_unusing_i
+				value = KMT_collection_unusing_id
+				entry_container = ROC_collection_unusing_entry
+			}
+		}
+		effects = {
+			ROC_collection_unusing_icon_click = {
+				if = {
+					limit = { check_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 } }
+					set_variable = { ROC_collection_light^KMT_collection_unusing_id = 0 }
+					add_to_variable = { num_of_will_activate_collection = -1 }
+				}
+				else = {
+					set_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 }
+					add_to_variable = { num_of_will_activate_collection = 1 }
+				}
+			}
+			ROC_collection_unusing_activate_click = {
+				add_to_variable = { num_of_activated_collection = num_of_will_activate_collection }
+				set_variable = { num_of_will_activate_collection = 0 }
+				for_each_loop = {
+					array = ROOT.ROC_collection_light  ##检查的数组
+					value = v
+					index = i
+					break = break
+					if = {  ##对数组中每个元素执行效果
+						limit = {
+							check_variable = { v = 1 }
+						}
+						add_to_array = { ROOT.KMT_collection_using_array = i }
+						remove_from_array = { ROOT.KMT_collection_unusing_array = i }
+						set_variable = { ROOT.ROC_collection_light^i = 0 }
+						##这里写效果触发器
+					}
+				}
+			}
+		}
+	}
 }
 
