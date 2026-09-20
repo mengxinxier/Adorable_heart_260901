@@ -1,0 +1,7144 @@
+###  政治			
+	###  search_filters = {FOCUS_FILTER_POLITICAL}
+###  科研			
+	###  search_filters = {FOCUS_FILTER_RESEARCH}
+###  工业			
+	###  search_filters = {FOCUS_FILTER_INDUSTRY}
+###  稳定			
+	###  search_filters = {FOCUS_FILTER_STABILITY}
+###  战争支持度
+	###  search_filters = {FOCUS_FILTER_WAR_SUPPORT}
+###  人力
+	###  search_filters = {FOCUS_FILTER_MANPOWER}
+###  领土扩张
+	###  search_filters = {FOCUS_FILTER_ANNEXATION}
+###  空军经验
+	###  search_filters = {FOCUS_FILTER_AIR_XP}
+###  陆军经验
+	###  search_filters = {FOCUS_FILTER_ARMY_XP}
+###  海军经验
+	###  search_filters = {FOCUS_FILTER_NAVY_XP}
+###  权力平衡
+	###  search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+###  整合
+	###  search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+###  阵营政治
+	###  search_filters = {FOCUS_FILTER_POLITICAL_FACTION_GOAL_FILTER}
+###  内政
+	###  search_filters = {FOCUS_FILTER_INTERNAL_AFFAIRS_FACTION_GOAL_FILTER}
+###  阵营科研
+	###  search_filters = {FOCUS_FILTER_RESEARCH_FACTION_GOAL_FILTER} 
+###  工业扩张
+	###  search_filters = {FOCUS_FILTER_INDUSTRY_FACTION_GOAL_FILTER} 
+###  战争准备
+	###  search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+###  征服
+	###  search_filters = {FOCUS_FILTER_ANNEXATION_FACTION_GOAL_FILTER}
+###  军队扩张
+	###  search_filters = {FOCUS_FILTER_ARMY_XP_FACTION_GOAL_FILTER}
+###  制海权
+	###  search_filters = {FOCUS_FILTER_NAVY_XP_FACTION_GOAL_FILTER}
+###  空中霸权
+	###  search_filters = {FOCUS_FILTER_AIR_XP_FACTION_GOAL_FILTER}
+###  阵营组织
+	###  search_filters = {FOCUS_FILTER_POLITICAL_CHARACTER_FACTION_GOAL_FILTER}
+
+
+
+
+focus_tree = {
+	id = TAM_start
+	country = {
+		factor = 0
+		modifier = {
+			add = 1000
+			tag = TAM
+		}
+	}
+	default = no
+
+
+	###权力平衡线，左线会加入第三国际，右线是地方主义
+
+		focus = {
+			id = TAM_focus_start_1
+			icon = GFX_goal_generic_neutrality_focus
+			x = 4
+			y = 0
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			completion_reward = {
+
+			}
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_ideas = TAM_politics_government
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 25
+			}
+		}
+		focus = {
+			id = TAM_focus_start_2
+			icon = GFX_goal_generic_positive_trade_relations
+			x = -4
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_1
+			}
+			ai_will_do = {
+				base = 100
+			}
+			relative_position_id = TAM_focus_start_1
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 50
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_SOV_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 36
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 36
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = arms_factory
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_start_3
+			icon = GFX_focus_generic_military_academy
+			x = -2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_1
+			}
+			relative_position_id = TAM_focus_start_1
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 50
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_SOV_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 36
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 36
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 1
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_start_4
+			icon = GFX_focus_SOV_the_last_purge
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_1
+			}
+			relative_position_id = TAM_focus_start_1
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 50
+			}
+		}
+		focus = {
+			id = TAM_focus_start_5
+			icon = GFX_focus_generic_socialist_science
+			x = 2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_1
+			}
+			relative_position_id = TAM_focus_start_1
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				factor = 0
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 50
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_local_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 36
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 36
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			
+		}
+		focus = {
+			id = TAM_focus_start_6
+			icon = GFX_goal_generic_trade
+			x = 4
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_1
+			}
+			relative_position_id = TAM_focus_start_1
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				factor = 0
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 50
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_local_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 36
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 36
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 1
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_start_7
+			icon = GFX_focus_eng_concessions_to_the_trade_unions
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_2
+			}
+			ai_will_do = {
+				base = 100
+			}
+			relative_position_id = TAM_focus_start_2
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 100
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_SOV_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 72
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 72
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_start_8
+			icon = GFX_focus_chi_mission_to_the_soviet_union
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_4
+			}
+			relative_position_id = TAM_focus_start_4
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 100
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_SOV_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 72
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_SOV_move
+						days = 72
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = arms_factory
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_start_9
+			icon = GFX_focus_generic_workers_and_farmers_rise
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_4
+			}
+			relative_position_id = TAM_focus_start_4
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				factor = 0
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 100
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_local_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 72
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 72
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 1
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_start_10
+			icon = GFX_focus_usa_reestablish_the_gold_standard
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_6
+			}
+			relative_position_id = TAM_focus_start_6
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				factor = 0
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 100
+				if = {
+					limit = {
+						ROOT = {
+							has_idea = TAM_bop_local_move
+						}
+					}
+					modify_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 72
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = TAM_bop_local_move
+						days = 72
+					}
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_start_11
+			icon = GFX_focus_NOR_moscows_education_centers
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_start_7
+				focus = TAM_focus_start_10
+			}
+			prerequisite = {
+				focus = TAM_focus_start_8
+				focus = TAM_focus_start_9
+			}
+			relative_position_id = TAM_focus_start_1
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
+				add_political_power = 150
+				add_stability = 0.10
+			}
+		}
+		focus = {
+			id = TAM_focus_start_12
+			icon = GFX_SOV_expand_the_agitprop_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 1
+			continue_if_invalid = yes
+			cancel_if_invalid = no
+			cancelable = no
+			prerequisite = {
+				focus = TAM_focus_start_11
+			}
+			relative_position_id = TAM_focus_start_11
+			search_filters = {FOCUS_FILTER_BALANCE_OF_POWER}
+			available = {
+				OR = {
+					power_balance_value = {
+						id = CAC_communism_bop
+						value > 0.9
+					}
+					power_balance_value = {
+						id = CAC_communism_bop
+						value < -0.9
+					}
+				}
+				has_country_flag = Reunit_Tresen_country
+				has_war = no
+			}
+			ai_will_do = {
+				base = 1000
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_KAZ_TAM_Debate_result
+				swap_ideas = {
+					remove_idea = TAM_politics_government
+					add_idea = TAM_politics_government_idea
+				}
+				
+				remove_ideas = CAC_KAZ_TAM_Debate_0
+				if = {
+					limit = {
+						power_balance_value = {
+							id = CAC_communism_bop
+							value < 0
+						}
+					}
+					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_left
+				}
+				else = {
+					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_right
+				}
+				hidden_effect = {
+					remove_ideas = TAM_bop_local_move
+					remove_ideas = TAM_bop_SOV_move
+					remove_ideas = UMA_Nice_Nature_head_of_government
+				
+					if = {
+						limit = {
+							has_country_flag = CAC_TAM_want_join_SOV
+						}
+							SOV = {
+							country_event = generic.2002
+						}
+					}
+					if = {
+						limit = {
+							power_balance_value = {
+								id = CAC_communism_bop
+								value < 0
+							}
+						}
+						custom_effect_tooltip = CAC_TAM_balance_left_end
+						add_ideas = UMA_Nice_Nature_head_of_government_0
+						add_ideas = TAM_bop_SOV_win
+						UMA_Oguri_Cap = {
+							add_country_leader_trait = UMA_Unity_is_strength
+						}
+					}
+					else = {
+						custom_effect_tooltip = CAC_TAM_balance_right_end
+						add_ideas = UMA_Symboli_Rudolf_head_of_government
+						add_ideas = TAM_bop_local_win
+						promote_character = UMA_Tokai_Teio
+					}
+				}
+				remove_power_balance = {
+					id = CAC_communism_bop
+				}
+				hidden_effect = {
+				#既然政治斗争已经结束，那么就没有必要再留着平衡的特质了
+					UMA_Curren_Chan = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Curren_Chan
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Nishino_Flower = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Nishino_Flower
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Inari_One = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Inari_One
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Rice_Shower = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Rice_Shower
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Mihono_Bourbon = {
+						remove_trait = {
+							slot = army_chief
+							trait = UMA_balance_right_Mihono_Bourbon
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Seiun_Sky = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Seiun_Sky
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Gold_Ship = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_right_Gold_Ship
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_El_Condor_Pasa = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_left_El_Condor_Pasa
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Daiwa_Scarlet = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_right_Daiwa_Scarlet
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Zenno_Rob_Roy = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Zenno_Rob_Roy
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Daitaku_Helios = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Daitaku_Helios
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Ines_Fujin = {
+						remove_trait = {
+							slot = theorist
+							trait = UMA_balance_left_Ines_Fujin
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Cheval_Grand = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Cheval_Grand
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Verxina = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Verxina
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Sweep_Tosho = {
+						remove_trait = {
+							slot = air_chief
+							trait = UMA_balance_right_Sweep_Tosho
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_North_Flight = {
+						remove_trait = {
+							slot = air_chief
+							trait = UMA_balance_left_North_Flight
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Eishin_Flash = {
+						remove_trait = {
+							slot = army_chief
+							trait = UMA_balance_left_Eishin_Flash
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Matikane_fukukitaru = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Matikane_fukukitaru
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Calstone_Light_O = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_left_Calstone_Light_O
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Neo_Universe = {
+						remove_trait = {
+							slot = navy_chief
+							trait = UMA_balance_right_Neo_Universe
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Daiichi_Ruby = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_right_Daiichi_Ruby
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Mejiro_Dober = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Mejiro_Dober
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Chrono_Genesis = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_Chrono_Genesis
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Hishi_Miracle = {
+						remove_trait = {
+							slot = navy_chief
+							trait = UMA_balance_right_Hishi_Miracle
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Tamamo_Cross = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_right_Tamamo_Cross
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Taiki_Shuttle = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_left_Taiki_Shuttle
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Agnes_Tachyon = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Agnes_Tachyon
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Ikuno_Dictus = {
+						remove_trait = {
+							slot = theorist
+							trait = UMA_balance_left_Ikuno_Dictus
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Air_Shakur = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_Air_Shakur
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Air_Groove = {
+						remove_trait = {
+							slot = theorist
+							trait = UMA_balance_left_Air_Groove
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Nice_Nature = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_hard_Nice_Nature
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Silence_Suzuka = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_hard_Silence_Suzuka
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Manhattan_Cafe = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_left_hard_Manhattan_Cafe
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Sakura_Bakushin_O = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_left_hard_Sakura_Bakushin_O
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Fuji_Kiseki = {
+						remove_trait = {
+							slot = theorist
+							trait = UMA_balance_left_hard_Fuji_Kiseki
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Symboli_Rudolf = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_hard_Symboli_Rudolf
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Tokai_Teio = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_hard_Tokai_Teio
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Smart_Falcon = {
+						remove_trait = {
+							slot = political_advisor
+							trait = UMA_balance_right_hard_Smart_Falcon
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Haru_Urara = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_right_hard_Haru_Urara
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+					UMA_Mayano_Top_Gun = {
+						remove_trait = {
+							slot = high_command
+							trait = UMA_balance_right_hard_Mayano_Top_Gun
+						}
+						if = {
+							limit = { 
+								has_character_flag = UMA_balance_no
+							}
+							clr_character_flag = UMA_balance_no
+						}
+					}
+				}
+			}
+		}
+	###重建国家
+		focus = {
+			id = TAM_focus_After_civil_war_1
+			icon = GFX_focus_SOV_breadbasket_of_the_union
+			x = 24
+			y = 7
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			available = {
+				has_completed_focus = TAM_focus_civil_war_16
+			}
+			#allow_branch = {
+			#	has_completed_focus = TAM_focus_civil_war_16
+			#}
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_stability = 0.05
+				add_war_support = 0.05
+				add_timed_idea = {
+					idea = TAM_idea_timed_build
+					days = 510
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_2
+			icon = GFX_focus_generic_socialist_science
+			x = -3
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_1
+			}
+			relative_position_id = TAM_focus_After_civil_war_1
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				add_ideas = TAM_idea_red_edu
+				custom_effect_tooltip = TAM_focus_After_civil_war_2_tooltip
+				hidden_effect = {
+					AFG = {
+						AFG_Emily_Stewart = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+						AFG_Komiya_Kaho = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+						AFG_Kousaka_Umi = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+						AFG_Ogami_Tamaki = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+						AFG_Suou_Momoko = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+						AFG_Yokoyama_Nao = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+						AFG_Tokoro_Megumi = {
+							set_nationality = TAM
+							add_trait = {
+								trait = cavalry_leader
+							}
+							random_list = {
+								1 = {
+									add_attack = 1
+								}
+								1 = {
+									add_defense = 1
+								}
+								1 = {
+									add_logistics = 1
+								}
+								1 = {
+									add_planning = 1
+								}
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_3
+			icon = GFX_SOV_the_komsomol_ccp_2d_sov_compatibility
+			x = -1
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_1
+			}
+			relative_position_id = TAM_focus_After_civil_war_1
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				every_controlled_state = {
+					limit = {
+						is_claimed_by = TAM
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+					add_compliance = 15
+				}
+				every_controlled_state = {
+					limit = {
+						is_core_of = TAM
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_4
+			icon = GFX_focus_generic_limited_social_mobilization
+			x = 1
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_1
+			}
+			relative_position_id = TAM_focus_After_civil_war_1
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = -500
+					}
+				}
+				custom_effect_tooltip = CAC_get_500_debt
+				random_owned_controlled_state = {
+					limit = {
+						state_has_any_resource = yes
+						is_core_of = TAM
+						NOT = {
+							has_dynamic_modifier = TAM_state_modifier_disabled_soldier
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_disabled_soldier
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						state_has_any_resource = yes
+						is_core_of = TAM
+						NOT = {
+							has_dynamic_modifier = TAM_state_modifier_disabled_soldier
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_disabled_soldier
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						state_has_any_resource = yes
+						is_core_of = TAM
+						NOT = {
+							has_dynamic_modifier = TAM_state_modifier_disabled_soldier
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_disabled_soldier
+					}
+				}
+			}
+
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_5
+			icon = GFX_SOV_infrastructure_effort_nsb_ccp_2d_sov_compatibility
+			x = 3
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_1
+			}
+			relative_position_id = TAM_focus_After_civil_war_1
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				random_owned_controlled_state = {
+					limit = {
+						has_state_category = wasteland
+					}
+					set_state_category = one
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_Shelterbelt
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						has_state_category = wasteland
+					}
+					set_state_category = one
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_Shelterbelt
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						has_state_category = wasteland
+					}
+					set_state_category = one
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_Shelterbelt
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_6
+			icon = GFX_SOV_the_workers_dictatorship_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_2
+			}
+			relative_position_id = TAM_focus_After_civil_war_2
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				add_stability = 0.25
+				add_manpower = -100
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 200
+					}
+				}
+				custom_effect_tooltip = CAC_get_200_income
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_7
+			icon = GFX_focus_YUG_pan_slavic_congress
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_3
+			}
+			relative_position_id = TAM_focus_After_civil_war_3
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				every_controlled_state = {
+					limit = {
+						is_claimed_by = TAM
+					}
+					add_compliance = 20
+					add_manpower = 5000
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_8
+			icon = GFX_focus_AFG_anti_malaria 
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_4
+			}
+			relative_position_id = TAM_focus_After_civil_war_4
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				add_ideas = TAM_idea_magic_population
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_9
+			icon = GFX_focus_AFG_helmand_river_authority
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_5
+			}
+			relative_position_id = TAM_focus_After_civil_war_5
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_political_power = 25
+				random_owned_controlled_state = {
+					limit = {
+						not = {
+							has_dynamic_modifier = TAM_state_modifier_Dam
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_Dam
+					}
+					add_extra_state_shared_building_slots = 2
+				}
+				random_owned_controlled_state = {
+					limit = {
+						not = {
+							has_dynamic_modifier = TAM_state_modifier_Dam
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_Dam
+					}
+					add_extra_state_shared_building_slots = 2
+				}
+				random_owned_controlled_state = {
+					limit = {
+						not = {
+							has_dynamic_modifier = TAM_state_modifier_Dam
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_Dam
+					}
+					add_extra_state_shared_building_slots = 2
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_After_civil_war_10
+			icon = GFX_focus_ITA_corpo_volontari_della_liberta 
+			x = 0
+			y = 3
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			ai_will_do = {
+				base = 100
+			}
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_6
+			}
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_7
+			}
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_8
+			}
+			prerequisite = {
+				focus = TAM_focus_After_civil_war_9
+			}
+			relative_position_id = TAM_focus_After_civil_war_1
+			completion_reward = {
+				add_political_power = 50
+				add_stability = 0.15
+				add_war_support = 0.20
+			}
+		}
+	###内战倒计时 （闭门给科研槽）
+		focus = {
+			id = TAM_focus_for_civil_war_1
+			icon = GFX_focus_generic_provoke_border_clashes 
+			x = 13
+			y = 0
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			#allow_branch = {
+			#	NOT = {
+			#		has_global_flag = Tresen_civil_war_has_end
+			#	}
+			#}
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_manpower = 3500
+				add_stability = 0.15
+				add_political_power = 25
+			}
+		}
+		#重视攻击（内战）
+		focus = {
+			id = TAM_focus_for_civil_war_2
+			icon = GFX_focus_ETH_freedom_at_gunpoint 
+			x = -2
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_1
+			}
+			#mutually_exclusive = {
+			#	focus = TAM_focus_for_civil_war_3
+			#}
+
+			relative_position_id = TAM_focus_for_civil_war_1
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_timed_idea = {
+					idea = TAM_idea_timed_attack
+					days = 183
+				}
+				add_tech_bonus = {
+					name = infantry_tech
+					category = infantry_weapons
+					bonus = 0.75
+					uses = 1
+				}
+				division_template = {
+					name = "马娘游击团"
+					regiments = {
+						umamusume = { x = 0 y = 0 }
+						umamusume = { x = 1 y = 0 }
+						umamusume = { x = 2 y = 0 }
+					}
+					 
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"马娘游击团\" division_template = \"马娘游击团\" start_experience_factor = 0 start_manpower_factor = 0.5 start_equipment_factor = 0.5"
+						owner = TAM
+						count = 4
+					}
+				}
+			}
+		}
+		#重视防御（内战）
+		focus = {
+			id = TAM_focus_for_civil_war_3
+			icon = GFX_focus_AFG_royal_guard 
+			x = 2
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_1
+			}
+			#mutually_exclusive = {
+			#	focus = TAM_focus_for_civil_war_2
+			#}
+			relative_position_id = TAM_focus_for_civil_war_1
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_timed_idea = {
+					idea = TAM_idea_timed_defence
+					days = 183
+				}
+				#设置补给中心
+				1042 = {
+					add_building_construction = {
+						type = supply_node
+						level = 1
+						province = 10417
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 10417
+						instant_build = yes
+					}
+				}
+				division_template = {
+					name = "国民民兵"
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 1 y = 0 }
+						irregular_infantry = { x = 2 y = 0 }
+					}
+					 
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"国民民兵\" division_template = \"国民民兵\" start_experience_factor = 0 start_manpower_factor = 0.5 start_equipment_factor = 0.5"
+						owner = TAM
+						count = 4
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_4
+			icon = GFX_focus_AFG_afghan_bank 
+			x = -1
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_2
+			}
+			relative_position_id = TAM_focus_for_civil_war_2
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_attack
+					days = 31
+				}
+				add_stability = -0.05
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 300
+					}
+				}
+				custom_effect_tooltip = CAC_get_300_income
+			}
+
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_5
+			icon = GFX_focus_generic_reorient_production
+			x = 1
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_2
+			}
+			relative_position_id = TAM_focus_for_civil_war_2
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_attack
+					days = 31
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_core_of = TAM
+						industrial_complex > 1
+						infrastructure < 5
+					}
+					add_extra_state_shared_building_slots = 1
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_6
+			icon = GFX_focus_AFG_scavenging 
+			x = -1
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_3
+			}
+			relative_position_id = TAM_focus_for_civil_war_3
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_defence
+					days = 62
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 2000
+					producer = SOV
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 60
+					producer = SOV
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_7
+			icon = GFX_focus_mex_privatisation
+			x = 1
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_3
+			}
+			relative_position_id = TAM_focus_for_civil_war_3
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_defence
+					days = 31
+				}
+				add_timed_idea = {
+					idea = TAM_idea_timed_war_Bond
+					days = 731
+				}
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 100
+					}
+				}
+				custom_effect_tooltip = CAC_get_100_income
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_8
+			icon = GFX_focus_generic_reinforcing_the_supply_network 
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_4
+			}
+			relative_position_id = TAM_focus_for_civil_war_4
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_attack
+					days = 31
+				}
+				add_equipment_to_stockpile = {
+					type = convoy
+					amount = 5
+				}
+				add_equipment_to_stockpile = {
+					type = motorized_equipment
+					amount = 300
+					producer = SOV
+				}
+				add_equipment_to_stockpile = {
+					type = train_equipment
+					amount = 30
+					producer = SOV
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_9
+			icon = GFX_focus_SWE_beneath_sticks_and_stone 
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_5
+			}
+			relative_position_id = TAM_focus_for_civil_war_5
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_attack
+					days = 31
+				}
+				build_railway = {
+					path = { 12465 1493 7635 7563 }
+				}
+				418 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_guerrilla
+					}
+				}
+				1233 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_guerrilla
+					}
+				}
+				1226 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_guerrilla
+					}
+				}
+				1231 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_guerrilla
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_10
+			icon = GFX_focus_focus_fra_maquis 
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_6
+			}
+			relative_position_id = TAM_focus_for_civil_war_6
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_defence
+					days = 31
+				}
+				1265 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_defence
+					}
+				}
+				1266 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_defence
+					}
+				}
+				804 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_defence
+					}
+				}
+				584 = {
+					add_dynamic_modifier = {
+						modifier = TAM_state_modifier_defence
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_11
+			icon = GFX_focus_generic_coastal_fort
+			x = 0
+			y = 1
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_7
+			}
+			relative_position_id = TAM_focus_for_civil_war_7
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_defence
+					days = 31
+				}
+				1265 = {
+					add_building_construction = {
+						type = supply_node
+						level = 1
+						province = 7560
+						instant_build = yes
+					}
+					build_railway = {
+						path = { 10742 4482 7560 }
+					}
+					add_building_construction = {
+						type = bunker
+						province = 7560
+						level = 3
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_12
+			icon = GFX_focus_generic_horse_studs 
+			x = 0
+			y = 3
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_8
+			}
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_9
+			}
+			relative_position_id = TAM_focus_for_civil_war_2
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 15
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_attack
+					days = 183
+				}
+				division_template = {
+					name = "马娘保安团"
+					regiments = {
+						umamusume = { x = 0 y = 0 }
+						umamusume = { x = 1 y = 0 }
+						umamusume = { x = 2 y = 0 }
+					}
+					 
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"马娘保安团\" division_template = \"马娘保安团\" start_experience_factor = 0 start_manpower_factor = 0.5 start_equipment_factor = 0.5"
+						owner = TAM
+						count = 4
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_for_civil_war_13
+			icon = GFX_focus_AFG_quami 
+			x = 0
+			y = 3
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_11
+			}
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_10
+			}
+			relative_position_id = TAM_focus_for_civil_war_3
+			bypass = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				modify_timed_idea = {
+					idea = TAM_idea_timed_defence
+					days = 183
+				}
+				division_template = {
+					name = "国民游击队"
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 1 y = 0 }
+						irregular_infantry = { x = 2 y = 0 }
+					}
+					 
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"国民游击队\" division_template = \"国民游击队\" start_experience_factor = 0 start_manpower_factor = 0.5 start_equipment_factor = 0.5"
+						owner = TAM
+						count = 4
+					}
+				}
+			}
+		}
+		#完成动员
+		focus = {
+			id = TAM_focus_for_civil_war_14
+			icon = GFX_focus_generic_advanced_military_studies 
+			x = 0
+			y = 5
+			cost = 2
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_for_civil_war_13
+				focus = TAM_focus_for_civil_war_12
+			}
+			relative_position_id = TAM_focus_for_civil_war_1
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 1500
+			}
+			completion_reward = {
+				if = {
+					limit = { 
+						has_idea = TAM_idea_timed_defence
+					}
+					modify_timed_idea = {
+						idea = TAM_idea_timed_defence
+						days = 365
+					}
+				}
+				if = {
+					limit = { 
+						has_idea = TAM_idea_timed_attack
+					}
+					modify_timed_idea = {
+						idea = TAM_idea_timed_attack
+						days = 365
+					}
+				}
+				add_manpower = 10000
+				add_research_slot = 1
+				division_template = {
+					name = "马娘攻击师"
+					regiments = {
+						umamusume = { x = 0 y = 0 }
+						umamusume = { x = 0 y = 1 }
+						umamusume = { x = 0 y = 2 }
+						umamusume = { x = 1 y = 0 }
+						umamusume = { x = 1 y = 1 }
+						umamusume = { x = 1 y = 2 }
+						umamusume = { x = 2 y = 0 }
+						umamusume = { x = 2 y = 1 }
+						umamusume = { x = 2 y = 2 }
+						mot_artillery_brigade = { x = 3 y = 0 }
+						light_armor = { x = 4 y = 0 }
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"马娘攻击师\" division_template = \"马娘攻击师\" start_experience_factor = 1 start_manpower_factor = 1 start_equipment_factor = 1"
+							owner = TAM
+							count = 2
+					}
+				}
+			}
+		}
+	###魔法和科研（给科研槽）  经过吐槽，发现这个科研槽给的的确太晚了，于是挪到了本分支第二段，70天获得
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_1
+			icon = GFX_focus_generic_improve_the_administration
+			x = 51
+			y = 0
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			available = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 100
+			}
+			completion_reward = {
+				add_stability = -0.50
+				swap_ideas = {
+					remove_idea = TAM_magic_banner
+					add_idea = TAM_restart_magic_research
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_2
+			icon = GFX_goal_SOV_magical_studies
+			x = -4
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_Magic_Research_Restart_3
+				focus = TAM_focus_Magic_Research_Restart_4
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_1
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_1
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			ai_will_do = {
+				base = 0
+			}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research
+					add_idea = TAM_restart_magic_research_left_1
+				}
+				add_research_slot = 1
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_3
+			icon = GFX_focus_SWE_radiotjanst
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_Magic_Research_Restart_2
+				focus = TAM_focus_Magic_Research_Restart_4
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_1
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_1
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research
+					add_idea = TAM_restart_magic_research_mid_1
+				}
+				add_research_slot = 1
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_4
+			icon = GFX_goal_tfv_generic_tech_sharing
+			x = 4
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_Magic_Research_Restart_3
+				focus = TAM_focus_Magic_Research_Restart_2
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_1
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_1
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			ai_will_do = {
+				base = 0
+			}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research
+					add_idea = TAM_restart_magic_research_right_1
+				}
+				add_research_slot = 1
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_5
+			icon = GFX_focus_generic_treaty
+			x = -2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_2
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_2
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				custom_effect_tooltip = CAC_get_500_debt
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = -500
+					}
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_left_1
+					add_idea = TAM_restart_magic_research_left_2
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_6
+			icon = GFX_goal_life_sciences
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_2
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_2
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					category = magic_tank
+					category = magic_tech
+					category = Magic_doctrine
+					category = magic_army_tech
+					category = magic_airforce_tech
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_7
+			icon = GFX_SOV_optimize_production_lines_ccp_2d_sov_compatibility
+			x = -2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_2
+				focus = TAM_focus_Magic_Research_Restart_3
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_3
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.75
+					ahead_reduction = 1
+					uses = 3
+					category = infantry_weapons
+					category = infantry_tech
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_8
+			icon = GFX_focus_generic_university_2
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_3
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_3
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				custom_effect_tooltip = CAC_get_300_debt
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = -300
+					}
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_mid_1
+					add_idea = TAM_restart_magic_research_mid_2
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_9
+			icon = GFX_focus_generic_license_production
+			x = 2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_3
+				focus = TAM_focus_Magic_Research_Restart_4
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_3
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 1.0
+					uses = 2
+					category = magic_tank
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_10
+			icon = GFX_focus_research
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_4
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_4
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_breakthrough_points = {
+					specialization = specialization_land
+					value = 1
+				}
+				add_breakthrough_points = {
+					specialization = specialization_air
+			    	value = 1
+				}
+				add_breakthrough_points = {
+					specialization = specialization_naval
+					value = 1
+				}
+				add_breakthrough_points = {
+					specialization = specialization_nuclear
+			    	value = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_11
+			icon = GFX_focus_generic_university_1
+			x = 2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_4
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_4
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				custom_effect_tooltip = CAC_get_300_debt
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = -300
+					}
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_right_1
+					add_idea = TAM_restart_magic_research_right_2
+				}
+
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_12
+			icon = GFX_focus_generic_coffee
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_5
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_6
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_6
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				capital_scope = {
+					add_resource = {
+						type = originium
+						amount = 35
+					}
+					add_resource = {
+						type = coal
+						amount = 15
+					}
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_left_2
+					add_idea = TAM_restart_magic_research_left_3
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_13
+			icon = GFX_AH_ORI
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_6
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_7
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_6
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = Alchemy_Workshop
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = fuel_silo
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = Alchemy_Workshop
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = fuel_silo
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_14
+			icon = GFX_focus_POL_warsaw_main_station
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_7
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_8
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_8
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_ideas = TAM_idea_magic_train
+				add_tech_bonus = {
+					bonus = 0.75
+					uses = 2
+					category = train_tech
+					category = motorized_equipment
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_15
+			icon = GFX_focus_generic_printing_press
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_9
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_8
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_8
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					ahead_reduction = 1
+					category = nuclear
+					category = computing_tech
+					category = industry
+					category = radar_tech
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_mid_2
+					add_idea = TAM_restart_magic_research_mid_3
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_16
+			icon = GFX_focus_generic_supply_line
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_9
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_10
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_10
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.50
+					uses = 3
+					ahead_reduction = 1
+					category = cat_light_armor
+					category = cat_heavy_armor
+					category = cat_medium_armor
+				}
+				add_ideas = TAM_idea_magic_armor_up
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_17
+			icon = GFX_focus_generic_mining_industry
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_11
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_10
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_10
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				capital_scope = {
+					add_resource = {
+						type = originium
+						amount = 15
+					}
+					add_resource = {
+						type = coal
+						amount = 35
+					}
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_right_2
+					add_idea = TAM_restart_magic_research_right_3
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_18
+			icon = GFX_SOV_increase_aircraft_production_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_12
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_12
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 1.0
+					uses = 2
+					category = magic_airforce_tech
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_left_3
+					add_idea = TAM_restart_magic_research_left_4
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_19
+			icon = GFX_focus_generic_combined_arms
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_13
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_13
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_ideas = TAM_idea_expanded_special_forces
+
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_20
+			icon = GFX_goal_SOV_potions
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_14
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_14
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				capital_scope = {
+					add_resource = {
+						type = originium
+						amount = 25
+					}
+					add_resource = {
+						type = coal
+						amount = 25
+					}
+				}
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					ahead_reduction = 1
+					category = cat_synth_oil
+					category = synth_resources
+					category = cat_synth_rubber
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_21
+			icon = GFX_goal_generic_scientific_exchange
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_15
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_15
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					category = electronics
+					category = magic_army_tech
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_mid_3
+					add_idea = TAM_restart_magic_research_mid_4
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_22
+			icon = GFX_focus_generic_multi_role_aircraft
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_16
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_16
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.75
+					uses = 2
+					category = air_equipment
+					category = plane_modules_tech
+					category = light_air
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_23
+			icon = GFX_focus_usa_reestablish_the_gold_standard
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_17
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_17
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					category = electronics
+					category = industry
+				}
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_right_3
+					add_idea = TAM_restart_magic_research_right_4
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_24
+			icon = GFX_focus_wonderweapons
+			x = 0
+			y = 4
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_18
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_19
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_2
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_ideas = mofa
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_left_4
+					add_idea = TAM_restart_magic_research_left_5
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_25
+			icon = GFX_focus_generic_university_3
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_20
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_21
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_8
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_mid_4
+					add_idea = TAM_restart_magic_research_mid_5
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_26
+			icon = GFX_goal_generic_secret_weapon
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_22
+			}
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_23
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_10
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_restart_magic_research_right_4
+					add_idea = TAM_restart_magic_research_right_5
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Magic_Research_Restart_27
+			icon = GFX_focus_research2
+			x = 0
+			y = 6
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Magic_Research_Restart_24
+				focus = TAM_focus_Magic_Research_Restart_25
+				focus = TAM_focus_Magic_Research_Restart_26
+			}
+			relative_position_id = TAM_focus_Magic_Research_Restart_1
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_ideas = TAM_edu_government
+			}
+		}
+	###陆军
+	#陆军汇总
+		focus = {
+			id = TAM_focus_Army_1
+			icon = GFX_focus_generic_advanced_military_studies
+			x = 37
+			y = 0
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			available = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			completion_reward = {
+				army_experience = 25
+				add_ideas = TAM_UMA_Army
+			}
+		}
+	#陆军步兵和炮兵
+		focus = {
+			id = TAM_focus_Army_2
+			icon = GFX_focus_GRE_a_land_of_mountains
+			#icon = GFX_goal_generic_axis_build_infantry
+			x = -4
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_1
+			}
+			relative_position_id = TAM_focus_Army_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					name = infantry_artillery_bonus
+					bonus = 1
+					uses = 2
+					category = infantry_weapons
+					category = artillery
+				}
+				add_tech_bonus = {
+					uses = 2
+					bonus = 0.25
+					category = artillery
+					category = infantry_tech
+				}
+				add_ideas = TAM_UMA_Army_Infantry_01
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+	#陆军骑兵和机械化、装甲车
+		focus = {
+			id = TAM_focus_Army_4
+			icon = GFX_focus_PER_modern_cataphract 
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_1
+			}
+			relative_position_id = TAM_focus_Army_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Cavalry_01
+				add_tech_bonus = {
+					uses = 2
+					bonus = 0.25
+					category = motorized_equipment
+				}
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+	#陆军坦克和坦克衍生车辆
+		focus = {
+			id = TAM_focus_Army_5
+			icon = GFX_focus_generic_tank_production
+			x = 4
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_1
+			}
+			relative_position_id = TAM_focus_Army_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					name = armor_bonus
+					bonus = 0.5
+					uses = 3
+					category = armor
+				}
+				add_ideas = TAM_idea_medium_tank_design
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Inf_1
+			icon = GFX_focus_prc_infiltration
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_2
+			}
+			relative_position_id = TAM_focus_Army_2
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Infantry_02
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Inf_2
+			icon = GFX_goal_generic_army_artillery2
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_2
+			}
+			relative_position_id = TAM_focus_Army_2
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Infantry_03
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Inf_3
+			icon = GFX_focus_generic_little_entente
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Inf_1
+			}
+			relative_position_id = TAM_focus_Army_Inf_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Infantry_04
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Inf_4
+			icon = GFX_focus_AFG_mountain_training 
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Inf_2
+			}
+			relative_position_id = TAM_focus_Army_Inf_2
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Infantry_05
+			}
+		}
+
+
+		focus = {
+			id = TAM_focus_Army_Inf_7
+			icon = GFX_focus_spr_the_anti_fascist_workers_revolution
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Inf_3
+			}
+			prerequisite = {
+				focus = TAM_focus_Army_Inf_4
+			}
+			relative_position_id = TAM_focus_Army_2
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_infantry_be_one
+				hidden_effect = {
+					remove_ideas = TAM_UMA_Army_Infantry_01
+					remove_ideas = TAM_UMA_Army_Infantry_02
+					remove_ideas = TAM_UMA_Army_Infantry_03
+					remove_ideas = TAM_UMA_Army_Infantry_04
+					remove_ideas = TAM_UMA_Army_Infantry_05
+					add_ideas = TAM_UMA_Army_Infantry_all
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Mot_1
+			icon = GFX_focus_generic_camel_corps 
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_4
+			}
+			relative_position_id = TAM_focus_Army_4
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Cavalry_02
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Mot_2
+			icon = GFX_focus_generic_motor_cycle
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_4
+			}
+			relative_position_id = TAM_focus_Army_4
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			#bypass = {
+			#	has_tech = motorised_infantry
+			#}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Cavalry_03
+				add_tech_bonus = {
+					name = motorized_bonus
+					bonus = 3
+					uses = 1
+					technology = motorised_infantry
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Mot_3
+			icon = GFX_focus_PER_recruit_bakhtiari  
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Mot_1
+			}
+			relative_position_id = TAM_focus_Army_Mot_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Cavalry_04
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Mot_4
+			icon = GFX_focus_generic_mechanized
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Mot_2
+			}
+			relative_position_id = TAM_focus_Army_Mot_2
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Cavalry_05
+				add_tech_bonus = {
+					name = motorized_bonus
+					ahead_reduction = 1.5
+					uses = 2
+					category = motorized_equipment
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Mot_7
+			icon = GFX_goal_generic_cavalry
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Mot_3
+			}
+			prerequisite = {
+				focus = TAM_focus_Army_Mot_4
+			}
+			relative_position_id = TAM_focus_Army_4
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_cavalry_be_one
+				hidden_effect = {
+					remove_ideas = TAM_UMA_Army_Cavalry_01
+					remove_ideas = TAM_UMA_Army_Cavalry_02
+					remove_ideas = TAM_UMA_Army_Cavalry_03
+					remove_ideas = TAM_UMA_Army_Cavalry_04
+					remove_ideas = TAM_UMA_Army_Cavalry_05
+					add_ideas = TAM_UMA_Army_Cavalry_all
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Arm_1
+			icon = GFX_focus_FIN_foreign_anti_air
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_5
+			}
+			relative_position_id = TAM_focus_Army_5
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_idea_light_tank_design
+				add_tech_bonus = {
+					name = armor_bonus
+					bonus = 0.5
+					uses = 3
+					category = cat_light_armor
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Arm_2
+			icon = GFX_focus_generic_army_tanks2
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_5
+			}
+			relative_position_id = TAM_focus_Army_5
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_idea_heavy_tank_design
+				add_tech_bonus = {
+					name = armor_bonus
+					bonus = 0.5
+					uses = 3
+					category = cat_heavy_armor
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Arm_3
+			icon = GFX_focus_SWE_let_fly_all_guns 
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Arm_1
+			}
+			relative_position_id = TAM_focus_Army_Arm_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				
+				add_ideas = TAM_idea_fast_tank
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Arm_4
+			icon = GFX_focus_generic_tank_assault
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Arm_2
+			}
+			relative_position_id = TAM_focus_Army_Arm_2
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Army_Tank_04
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_Arm_7
+			icon = GFX_goal_generic_army_tanks 
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Arm_4
+			}
+			prerequisite = {
+				focus = TAM_focus_Army_Arm_3
+			}
+			relative_position_id = TAM_focus_Army_5
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_tank_be_one
+				hidden_effect = {
+					remove_ideas = TAM_idea_medium_tank_design
+					remove_ideas = TAM_idea_heavy_tank_design
+					remove_ideas = TAM_idea_light_tank_design
+					remove_ideas = TAM_idea_fast_tank
+					remove_ideas = TAM_UMA_Army_Tank_04
+					add_ideas = TAM_UMA_Army_Tank_05
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Army_8
+			icon = GFX_SOV_the_glory_of_the_red_army_ccp_2d_sov_compatibility
+			x = 0
+			y = 5
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Army_Arm_7
+			}
+			prerequisite = {
+				focus = TAM_focus_Army_Mot_7
+			}
+			prerequisite = {
+				focus = TAM_focus_Army_Inf_7
+			}
+			relative_position_id = TAM_focus_Army_1
+			search_filters = {FOCUS_FILTER_ARMY_XP}
+			completion_reward = {
+				army_experience = 75
+				add_ideas = TAM_UMA_Army_All
+			}
+		}
+	###彩蛋：三女神神国（没做）	
+		focus = {
+			id = TAM_focus_Three_Goddesses_1
+			x = 29
+			y = 13
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			allow_branch = {
+				has_country_flag = TAM_Three_Goddesses_Responsed
+			}
+		}
+	###彩蛋：为了这凡世
+		focus = {
+			id = TAM_focus_Mortal_Hero_1
+			x = 25
+			y = 13
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			allow_branch = {
+				has_country_flag = TAM_For_the_Mortal
+			}
+			ai_will_do = {
+				base = 0
+			}
+			completion_reward = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 50
+				}
+				add_offsite_building = {
+					type = arms_factory
+					level = 150
+				}
+				add_offsite_building = {
+					type = dockyard
+					level = 50
+				}
+				every_possible_country = {
+					limit = {
+						has_character = UMA_Agnes_Digital
+					}
+					random_character = {
+						limit = {
+							is_character = UMA_Agnes_Digital
+						}
+						set_nationality = ROOT
+					}
+				}
+				every_possible_country = {
+					limit = {
+						has_character = AFG_Kanzaki_Ranko
+					}
+					random_character = {
+						limit = {
+							is_character = AFG_Kanzaki_Ranko
+						}
+						set_nationality = ROOT
+					}
+				}
+			#神崎兰子成为元帅
+				add_field_marshal_role= {
+					character = AFG_Kanzaki_Ranko
+					traits = {
+						brilliant_strategist
+						irregulars_officer
+						inflexible_strategist
+						panzer_leader
+						commando
+						desert_fox
+						swamp_fox
+						trait_mountaineer
+						hill_fighter
+						ranger
+						urban_assault_specialist
+						trait_engineer
+						winter_specialist
+						skilled_staffer
+						cavalry_leader
+						organizer
+						infantry_leader
+						jaeger
+						harsh_leader
+						brave
+						jungle_rat
+						trickster
+					}
+					skill=1
+					attack_skill=2
+					defense_skill=2
+					planning_skill=2
+					logistics_skill=2
+					legacy_id=-1
+				}
+				#神崎兰子成为政治顾问
+				add_advisor_role = {
+					character = AFG_Kanzaki_Ranko
+					advisor = {
+						idea_token = AFG_Kanzaki_Ranko
+						#available = {
+						#	has_idea = AFG_Kanzaki_Ranko_head_of_government
+						#}
+						slot = theorist
+						traits = {CAC_Hero_of_Tresen_theorist}
+						cost = 300
+						ai_will_do = {
+							base = 10
+						}
+					}
+
+				}
+
+				hidden_effect = {
+					set_technology = {TAM_umamusume_technology = 1}
+					remove_ideas = UMA_Nice_Nature_head_of_government #去掉副领袖
+					remove_ideas = UMA_Nice_Nature_head_of_government_0
+					remove_ideas = UMA_Symboli_Rudolf_head_of_government 
+					
+					add_ideas = AFG_Kanzaki_Ranko_head_of_government #加上兰子副领袖
+					set_party_name = {
+						ideology = neutrality
+						long_name = CAC_Messiah_neutrality
+						name = CAC_Messiah_neutrality
+					}
+					set_party_name = {
+						ideology = communism
+						long_name = CAC_Messiah_communism
+						name = CAC_Messiah_communism
+					}
+					set_party_name = {
+						ideology = fascism
+						long_name = CAC_Messiah_fascism
+						name = CAC_Messiah_fascism
+					}
+					set_party_name = {
+						ideology = democratic
+						long_name = CAC_Messiah_democratic
+						name = CAC_Messiah_fascism
+					}
+
+					#给数码碳改肖像
+					UMA_Agnes_Digital = {
+						set_portraits = {
+							army = {
+								small = "gfx/leaders/UMA/advisors/UMA_Agnes_Digital_2_small.png"
+								large = "gfx/leaders/UMA/UMA_Agnes_Digital_2.png"
+							}
+						}
+
+					}
+					add_country_leader_role = {
+            	    	###恭喜爱丽数码可以撑地了
+		    			character = UMA_Agnes_Digital
+		    			promote_leader = yes
+		    			country_leader = {
+		    				ideology = leninism
+		    				expire = "1989.1.1.1"
+							traits = {
+            	                CAC_Messiah_of_Tresen
+            	            }
+							desc = UMA_Agnes_Digital_desc
+							#set_leader_description = UMA_Agnes_Digital_desc
+		    			}
+		    		}
+					add_country_leader_role = {
+            	    	###恭喜爱丽数码可以撑地了
+		    			character = UMA_Agnes_Digital
+		    			promote_leader = yes
+		    			country_leader = {
+		    				ideology = socialism
+		    				expire = "1989.1.1.1"
+							traits = {
+            	                CAC_Messiah_of_Tresen
+            	            }
+							desc = UMA_Agnes_Digital_desc
+							#set_leader_description = UMA_Agnes_Digital_desc
+		    			}
+		    		}
+					add_country_leader_role = {
+            	    	###恭喜爱丽数码可以撑地了
+		    			character = UMA_Agnes_Digital
+		    			promote_leader = yes
+		    			country_leader = {
+		    				ideology = military_politicism
+		    				expire = "1989.1.1.1"
+							traits = {
+            	                CAC_Messiah_of_Tresen
+            	            }
+							desc = UMA_Agnes_Digital_desc
+							#set_leader_description = UMA_Agnes_Digital_desc
+		    			}
+		    		}
+					add_country_leader_role = {
+            	    	###恭喜爱丽数码可以撑地了
+		    			character = UMA_Agnes_Digital
+		    			promote_leader = yes
+		    			country_leader = {
+		    				ideology = Crimson_Idealism
+		    				expire = "1989.1.1.1"
+							traits = {
+            	                CAC_Messiah_of_Tresen
+            	            }
+							desc = UMA_Agnes_Digital_desc
+							#set_leader_description = UMA_Agnes_Digital_desc
+		    			}
+		    		}
+				}
+			}
+			
+		}
+	###马娘部队
+		focus = {
+			id = TAM_focus_UmaMusume_1
+			icon = GFX_goal_SOV_youjun_girl
+			x = 54
+			y = 8
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			available = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			ai_will_do = {
+				base = 0
+			}
+			completion_reward = {
+				army_experience = 50
+				add_ideas = TAM_UMA_Army_umamusume
+			}
+		}
+
+		focus = {
+			id = TAM_focus_UmaMusume_2
+			x = -3
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_3
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_1
+			}
+			relative_position_id = TAM_focus_UmaMusume_1
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_hills = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_3
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_2
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_1
+			}
+			relative_position_id = TAM_focus_UmaMusume_1
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_plains = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_4
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_5
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_1
+			}
+			relative_position_id = TAM_focus_UmaMusume_1
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_place = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_5
+			x = 3
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_4
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_1
+			}
+			relative_position_id = TAM_focus_UmaMusume_1
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_person = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_6
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_7
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_2
+				focus = TAM_focus_UmaMusume_3
+			}
+			relative_position_id = TAM_focus_UmaMusume_2
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_amphibious = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_7
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_6
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_3
+				focus = TAM_focus_UmaMusume_2
+			}
+			relative_position_id = TAM_focus_UmaMusume_3
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_forest = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_8
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_9
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_4
+				focus = TAM_focus_UmaMusume_5
+			}
+			relative_position_id = TAM_focus_UmaMusume_4
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_attack = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_9
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_UmaMusume_8
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_5
+				focus = TAM_focus_UmaMusume_4
+			}
+			relative_position_id = TAM_focus_UmaMusume_5
+			completion_reward = {
+				set_technology = {
+					TAM_umamusume_tech_defence = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_UmaMusume_10
+			icon = GFX_focus_TAM_icon
+			x = 0
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_7
+				focus = TAM_focus_UmaMusume_6
+			}
+			prerequisite = {
+				focus = TAM_focus_UmaMusume_8
+				focus = TAM_focus_UmaMusume_9
+			}
+			relative_position_id = TAM_focus_UmaMusume_1
+			completion_reward = {
+				every_army_leader = {
+					limit = {
+						has_trait = TAM_Umamusume_land_trait
+					}
+					add_planning = 1
+					add_attack = 1
+					add_defense = 1
+					add_logistics = 1
+				}
+				every_navy_leader = {
+					limit = {
+						has_trait = TAM_Umamusume_navy_trait
+					}
+					add_coordination = 1
+					add_maneuver = 1
+					add_attack = 1
+					add_defense = 1
+				}
+			}
+		}
+	###中亚争霸线
+		focus = {
+			id = TAM_focus_civil_war_1
+			icon = GFX_SOV_swap_to_political_advisors_ccp_2d_sov_compatibility
+			x = 24
+			y = 0
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			available = {
+				has_global_flag = Tresen_civil_war_has_start
+			}
+			completion_reward = {
+				add_stability = 0.10
+				add_war_support = 0.15
+				add_ideas = TAM_to_win_war
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_2
+			icon = GFX_focus_generic_befriend_iran
+			x = -4
+			y = 1
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_1
+			}
+			relative_position_id = TAM_focus_civil_war_1
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 499
+			}
+			completion_reward = {
+				584 = {
+					set_building_level = {
+						type = bunker
+						level = 2
+						province = {
+							id = 10359
+							id = 8099
+							id = 7560
+							level < 2
+						}
+					}
+				}
+				add_ideas = TAM_prepare_Civil_war_to_PER
+				custom_effect_tooltip = remove_on_eng_civil_war
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 500
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 50
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_3
+			icon = GFX_focus_generic_befriend_afghanistan
+			x = 4
+			y = 1
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_1
+			}
+			relative_position_id = TAM_focus_civil_war_1
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 500
+			}
+			completion_reward = {
+				1042 = {
+					set_building_level = {
+						type = bunker
+						level = 2
+						province = {
+							id = 10417
+							level < 2
+						}
+					}
+				}
+				732 = {
+					set_building_level = {
+						type = bunker
+						level = 2
+						province = {
+							id = 12239
+							level < 2
+						}
+					}
+				}
+				804 = {
+					set_building_level = {
+						type = bunker
+						level = 2
+						province = {
+							id = 7224
+							level < 2
+						}
+					}
+				}
+				add_ideas = TAM_prepare_Civil_war_to_AFG
+				custom_effect_tooltip = remove_on_eng_civil_war
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 500
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 50
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_4
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			available = {
+				always = no
+			}
+			mutually_exclusive = {
+				focus = TAM_focus_civil_war_5
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_2
+			}
+			relative_position_id = TAM_focus_civil_war_2
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_5
+			icon = GFX_focus_generic_workers_and_farmers_rise
+			x = 1
+			y = 1
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_civil_war_4
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_2
+			}
+			relative_position_id = TAM_focus_civil_war_2
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 499
+			}
+			bypass = {
+				OR = {
+					TAM = {
+						has_war_with = PER
+					}
+					PER = {
+						exists = no
+					}
+					PER = {
+						is_ally_with = TAM
+					}
+				}
+			}
+			completion_reward = {
+				PER = {
+					add_ideas = TAM_leninism_uprising
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_6
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			available = {
+				always = no
+			}
+			mutually_exclusive = {
+				focus = TAM_focus_civil_war_7
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_3
+			}
+			relative_position_id = TAM_focus_civil_war_3
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_7
+			icon = GFX_focus_generic_workers_and_farmers_rise
+			x = 1
+			y = 1
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_civil_war_6
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_3
+			}
+			relative_position_id = TAM_focus_civil_war_3
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 500
+			}
+			bypass = {
+				OR = {
+					TAM = {
+						has_war_with = AFG
+					}
+					AFG = {
+						exists = no
+					}
+					AFG = {
+						is_ally_with = TAM
+					}
+				}
+			}
+			completion_reward = {
+				AFG = {
+					add_ideas = TAM_leninism_uprising
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_8
+			x = -1
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_4
+			}
+			relative_position_id = TAM_focus_civil_war_2
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_9
+			icon = GFX_focus_JAP_organize_the_student_movements
+			x = 1
+			y = 2
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_5
+			}
+			relative_position_id = TAM_focus_civil_war_2
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 499
+			}
+			bypass = {
+				OR = {
+					TAM = {
+						has_war_with = PER
+					}
+					PER = {
+						exists = no
+					}
+					PER = {
+						is_ally_with = TAM
+					}
+				}
+			}
+			completion_reward = {
+				set_technology = { TAM_fight_on_desert_tech = 1 }
+				#add_ideas = TAM_fight_on_wastland
+				PER = {
+					add_ideas = TAM_leninism_uprising_1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_10
+			x = -1
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_6
+			}
+			relative_position_id = TAM_focus_civil_war_3
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_11
+			icon = GFX_focus_JAP_organize_the_student_movements
+			x = 1
+			y = 2
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_7
+			}
+			relative_position_id = TAM_focus_civil_war_3
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 500
+			}
+			bypass = {
+				OR = {
+					TAM = {
+						has_war_with = AFG
+					}
+					AFG = {
+						exists = no
+					}
+					AFG = {
+						is_ally_with = TAM
+					}
+				}
+			}
+			completion_reward = {
+				set_technology = { TAM_fight_on_mountain_tech = 1 }
+				#add_ideas = TAM_fight_on_wastland
+				AFG = {
+					add_ideas = TAM_leninism_uprising_1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_12
+			x = -1
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_8
+			}
+			relative_position_id = TAM_focus_civil_war_2
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_13
+			icon = GFX_focus_generic_attack_iran
+			x = 1
+			y = 3
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_9
+			}
+			relative_position_id = TAM_focus_civil_war_2
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 499
+			}
+			completion_reward = {
+				every_state = {
+					limit = { 
+						is_core_of = PER
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+            		enable_state_integration_50_compliance = yes
+				}
+				TAM = {
+					declare_war_on = {
+						target = PER
+						type = annex_everything
+					}
+				}
+				add_stability = 0.10
+				add_war_support = 0.10
+			}
+			bypass = {
+				OR = {
+					TAM = {
+						has_war_with = PER
+					}
+					PER = {
+						exists = no
+					}
+					PER = {
+						is_ally_with = TAM
+					}
+				}
+			}
+			bypass_effect = {
+				if = {
+					limit = { 
+						PER = {
+							NOT = {
+								is_ally_with = TAM
+							}
+						}
+					}
+				
+					every_state = {
+						limit = { 
+							is_core_of = PER
+						}
+						add_claim_by_ROOT_if_has_no_core = yes
+            			enable_state_integration_50_compliance = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_14
+			x = -1
+			y = 3
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_10
+			}
+			relative_position_id = TAM_focus_civil_war_3
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_15
+			icon = GFX_focus_generic_attack_afghanistan
+			x = 1
+			y = 3
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_11
+			}
+			relative_position_id = TAM_focus_civil_war_3
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			ai_will_do = {
+				base = 500
+			}
+			completion_reward = {
+				every_state = {
+					limit = { 
+						is_core_of = AFG
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+            		enable_state_integration_50_compliance = yes
+				}
+				TAM = {
+					declare_war_on = {
+						target = AFG
+						type = annex_everything
+					}
+				}
+				add_stability = 0.10
+				add_war_support = 0.10
+			}
+			bypass = {
+				OR = {
+					TAM = {
+						has_war_with = AFG
+					}
+					AFG = {
+						exists = no
+					}
+					AFG = {
+						is_ally_with = TAM
+					}
+				}
+			}
+			bypass_effect = {
+				if = {
+					limit = { 
+						AFG = {
+							NOT = {
+								is_ally_with = TAM
+							}
+						}
+					}
+				
+					every_state = {
+						limit = { 
+							is_core_of = AFG
+						}
+						add_claim_by_ROOT_if_has_no_core = yes
+            			enable_state_integration_50_compliance = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_16
+			icon = GFX_focus_AFG_defender_of_central_asia
+			x = 0
+			y = 5
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_12
+				focus = TAM_focus_civil_war_13
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_14
+				focus = TAM_focus_civil_war_15
+			}
+			#prerequisite = {
+			#	focus = TAM_focus_civil_war_20
+			#	focus = TAM_focus_civil_war_23
+			#}
+			relative_position_id = TAM_focus_civil_war_1
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			available = {
+				OR = { 
+					PER = { is_subject_of = ROOT }
+					PER = { exists = no }
+				}
+				OR = { 
+					AFG = { is_subject_of = ROOT }
+					AFG = { exists = no }
+				}
+				266 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+				267 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+				407 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+			}
+			ai_will_do = {
+				base = 1000
+			}
+			completion_reward = {
+				add_political_power = 300
+				set_cosmetic_tag = Tresen_Federation
+				custom_effect_tooltip = Tresen_civil_war_has_end
+				
+				hidden_effect = {
+					every_controlled_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_modifier_guerrilla
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_modifier_guerrilla
+						}
+					}
+					every_controlled_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_modifier_defence
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_modifier_defence
+						}
+					}
+					every_controlled_state = {
+						limit = {
+							is_claimed_by = AFG
+						}
+						remove_claim_by = AFG
+					}
+					every_controlled_state = {
+						limit = {
+							is_claimed_by = PER
+						}
+						remove_claim_by = PER
+					}
+					remove_ideas = CAC_idea_Too_big_to_handle_army
+					remove_ideas = TAM_to_win_war
+					remove_ideas = TAM_veteran_troops_weary1
+					remove_ideas = TAM_veteran_troops_weary2
+					remove_ideas = TAM_veteran_troops_weary3
+					remove_ideas = TAM_prepare_Civil_war_to_AFG
+					remove_ideas = TAM_prepare_Civil_war_to_PER
+					remove_ideas = TAM_leninism_uprising
+					remove_ideas = TAM_leninism_uprising_1
+					PER = {
+						remove_ideas = TAM_to_win_war
+						remove_ideas = TAM_veteran_troops_weary1
+						remove_ideas = TAM_veteran_troops_weary2
+						remove_ideas = TAM_veteran_troops_weary3
+						remove_ideas = TAM_prepare_Civil_war_to_AFG
+						remove_ideas = TAM_prepare_Civil_war_to_TAM
+						remove_ideas = TAM_prepare_Civil_war_to_PER
+						remove_ideas = TAM_leninism_uprising
+						remove_ideas = TAM_leninism_uprising_1
+					}
+					AFG = {
+						remove_ideas = TAM_to_win_war
+						remove_ideas = TAM_veteran_troops_weary1
+						remove_ideas = TAM_veteran_troops_weary2
+						remove_ideas = TAM_veteran_troops_weary3
+						remove_ideas = TAM_prepare_Civil_war_to_AFG
+						remove_ideas = TAM_prepare_Civil_war_to_TAM
+						remove_ideas = TAM_prepare_Civil_war_to_PER
+						remove_ideas = TAM_leninism_uprising
+						remove_ideas = TAM_leninism_uprising_1
+					}
+					set_country_flag = Reunit_Tresen_country
+					set_country_flag = SOV_is_Watching_YOU
+					set_global_flag = Tresen_civil_war_has_end
+					activate_mission = CAC_SOV_intervention_declare_war_mission
+					set_variable = { adorable_heart_super_event_var = 1350 }
+					adorable_heart_fire_super_event = yes
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_civil_war_17
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			available = {
+				always = no
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_1
+			}
+			allow_branch = {
+				has_country_flag = CAC_will_finish_later
+			}
+			relative_position_id = TAM_focus_civil_war_1
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_18
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_civil_war_19
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_17
+			}
+			relative_position_id = TAM_focus_civil_war_17
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_19
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_civil_war_18
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_17
+			}
+			relative_position_id = TAM_focus_civil_war_17
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_20
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_21
+			}
+			relative_position_id = TAM_focus_civil_war_21
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_21
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_19
+			}
+			relative_position_id = TAM_focus_civil_war_19
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_22
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_18
+			}
+			relative_position_id = TAM_focus_civil_war_18
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+		focus = {
+			id = TAM_focus_civil_war_23
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_civil_war_22
+			}
+			relative_position_id = TAM_focus_civil_war_22
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+		}
+	
+
+	###工业线（闭门给科研槽）
+
+		focus = {
+			id = TAM_focus_build_1
+			icon = GFX_goal_generic_production
+			x = 13
+			y = 12
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				custom_effect_tooltip = CAC_TAM_UMA_IC_cate_start
+				set_country_flag = CAC_start_prospect_for_resources
+				add_ideas = TAM_UMA_IC
+			}
+		}
+
+		focus = {
+			id = TAM_focus_build_2
+			icon = GFX_goal_generic_construct_civ_factory
+			x = -2
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_1
+			}
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_1
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_3
+			#icon = GFX_focus_generic_resource_extraction
+			icon = GFX_focus_renounce_the_treaty_of_trianon 
+			x = 2
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_1
+			}
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_stability = -0.10
+				add_equipment_to_stockpile = {
+					type = train_equipment
+					amount = 25
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_4
+			icon = GFX_focus_AFG_sugar_factory
+			x = -1
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_2
+			}
+			relative_position_id = TAM_focus_build_2
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_6
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_5
+			icon = GFX_focus_generic_truck
+			x = 1
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_2
+			}
+			relative_position_id = TAM_focus_build_2
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_6
+			icon = GFX_focus_generic_hydroelectric_energy
+			x = -1
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_3
+			}
+			relative_position_id = TAM_focus_build_3
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_2
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_7
+			icon = GFX_goal_generic_production2
+			x = 1
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_3
+			}
+			relative_position_id = TAM_focus_build_3
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_3
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_8
+			icon = GFX_SOV_transformation_of_nature_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_4
+			}
+			relative_position_id = TAM_focus_build_4
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_change_nature
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_9
+			icon = GFX_goal_generic_fortify_city
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_5
+			}
+			relative_position_id = TAM_focus_build_5
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 2
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_10
+			icon = GFX_goal_generic_major_alliance
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_6
+			}
+			relative_position_id = TAM_focus_build_6
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_7
+				add_offsite_building = {
+					type = arms_factory
+					level = 1
+				}
+				add_offsite_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_11
+			icon = GFX_focus_PER_feat_of_engineering
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_7
+			}
+			relative_position_id = TAM_focus_build_7
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				build_railway = {
+					path = { 1459 10660 10530 10408 1825 4224 1591 }
+					level = 2
+				}
+				add_equipment_to_stockpile = {
+					type = motorized_equipment
+					amount = 300
+				}
+				add_equipment_to_stockpile = {
+					type = train_equipment
+					amount = 25
+				}
+				add_equipment_to_stockpile = {
+					type = convoy
+					amount = 15
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_12
+			icon = GFX_focus_ITA_peasants_rise
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_8
+			}
+			relative_position_id = TAM_focus_build_8
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+
+		}
+		focus = {
+			id = TAM_focus_build_13
+			icon = GFX_focus_usa_guarantee_the_american_dream
+			#icon = GFX_SOV_expand_the_agitprop_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_9
+			}
+			relative_position_id = TAM_focus_build_9
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_expand_city
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 3
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_14
+			icon = GFX_goal_generic_consumer_goods
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_10
+			}
+			relative_position_id = TAM_focus_build_10
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_offsite_building = {
+					type = arms_factory
+					level = 1
+				}
+				add_offsite_building = {
+					type = industrial_complex
+					level = 3
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_15
+			icon = GFX_focus_generic_land_reclamation
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_11
+			}
+			relative_position_id = TAM_focus_build_11
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_5
+				custom_effect_tooltip = CAC_foc_find_resources
+				custom_effect_tooltip = CAC_foc_find_resources_1
+			}
+		}
+		focus = {
+			id = TAM_focus_build_16
+			icon = GFX_focus_generic_horse_studs 
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_12
+			}
+			relative_position_id = TAM_focus_build_12
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_nomadic_tradition
+					add_idea = TAM_nomadic_tradition_1
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_17
+			icon = GFX_focus_generic_population_growth
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_13
+			}
+			relative_position_id = TAM_focus_build_13
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_take_immigrants
+				add_stability = -0.15
+			}
+		}
+		focus = {
+			id = TAM_focus_build_18
+			icon = GFX_goal_generic_positive_trade_relations
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_14
+			}
+			relative_position_id = TAM_focus_build_14
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				capital_scope = {
+					add_resource = {
+						type = steel
+						amount = 12
+					}
+					add_resource = {
+						type = tungsten
+						amount = 9
+					}
+					add_resource = {
+						type = aluminium
+						amount = 6
+					}
+					add_resource = {
+						type = chromium
+						amount = 4
+					}
+					add_resource = {
+						type = coal
+						amount = 6
+					}
+					add_resource = {
+						type = rubber
+						amount = 3
+					}
+					add_resource = {
+						type = oil
+						amount = 5
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_19
+			icon = GFX_focus_generic_railroad
+			x = 0
+			y = 1
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_15
+			}
+			relative_position_id = TAM_focus_build_15
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				add_ideas = TAM_UMA_IC_4
+			}
+		}
+		focus = {
+			id = TAM_focus_build_20
+			icon = GFX_focus_generic_modernize_industry 
+			x = 0
+			y = 5
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_16
+			}
+			prerequisite = {
+				focus = TAM_focus_build_17
+			}
+			relative_position_id = TAM_focus_build_2
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				custom_effect_tooltip = TAM_focus_build_20_custom_effect_tooltip
+				every_core_state = {
+					limit = {
+						is_controlled_by_ROOT_or_subject = yes
+						or = {
+							has_state_category = wasteland
+							has_state_category = zero
+							has_state_category = one
+							has_state_category = two
+							has_state_category = three
+							has_state_category = four
+						}
+					}
+					increase_state_category_by_one_level = yes
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_21
+			icon = GFX_focus_SOV_merge_plants
+			x = 0
+			y = 5
+			cost = 4
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_18
+			}
+			prerequisite = {
+				focus = TAM_focus_build_19
+			}
+			relative_position_id = TAM_focus_build_3
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			completion_reward = {
+				capital_scope = {
+					add_manpower = 85000
+					add_dynamic_modifier = {
+						modifier = INS_happy_state
+					}
+					set_state_category = twelve
+					add_extra_state_shared_building_slots = 5
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_23
+			icon = GFX_goal_generic_construct_naval_dockyard
+			cost = 3
+			x = 7
+			y = 2
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_1
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_24
+			icon = GFX_focus_POL_develop_polish_shipbuilding
+			cost = 3
+			x = 7
+			y = 3
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_23
+			}
+			completion_reward = { 
+				add_equipment_to_stockpile = {
+					type = convoy
+					amount = 20
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_25
+			icon = GFX_focus_generic_refit_civilian_ships
+			cost = 3
+			x = 7
+			y = 4
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_24
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = dockyard
+						level = 3
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_26
+			#icon = GFX_goal_generic_build_navy
+			icon = GFX_focus_BEL_antwerp_maritime_academy
+			cost = 3
+			x = 7
+			y = 5
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_25
+			}
+			completion_reward = { 
+				add_ideas = CAC_idea_TAM_customs
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_build_35
+			icon = GFX_goal_generic_construct_infrastructure
+			cost = 3
+			x = 5
+			y = 2
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_1
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 2
+						instant_build = yes
+					}
+					add_extra_state_shared_building_slots = 1
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 2
+						instant_build = yes
+					}
+					add_extra_state_shared_building_slots = 1
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_36
+			icon = GFX_goal_generic_construct_civ_factory
+			cost = 3
+			x = 5
+			y = 3
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_35
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_37
+			icon = GFX_focus_ARG_develop_the_electricity_sector
+			cost = 3
+			x = 5
+			y = 4
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_36
+			}
+			completion_reward = { 
+				add_ideas = CAC_idea_energy_plan
+			}
+		}
+		focus = {
+			id = TAM_focus_build_38
+			icon = GFX_focus_generic_low_cost_housing
+			cost = 3
+			x = 5
+			y = 5
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_37
+			}
+			completion_reward = { 
+				add_stability = 0.15
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_27
+			icon = GFX_focus_generic_reorient_production
+			cost = 3
+			x = -7
+			y = 2
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_1
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_28
+			icon = GFX_focus_SOV_organize_wreckers
+			cost = 3
+			x = -7
+			y = 3
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_27
+			}
+			completion_reward = { 
+				add_ideas = CAC_idea_improve_assembly_line
+			}
+		}
+		focus = {
+			id = TAM_focus_build_29
+			icon = GFX_goal_generic_construct_mil_factory
+			cost = 3
+			x = -7
+			y = 4
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_28
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_30
+			icon = GFX_focus_generic_military_industry
+			cost = 3
+			x = -7
+			y = 5
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_29
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_31
+			icon = GFX_focus_mex_privatisation
+			cost = 3
+			x = -5
+			y = 2
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_1
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = infrastructure
+											size > 0
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 200
+					}
+				}
+				custom_effect_tooltip = CAC_get_200_income
+			}
+		}
+		focus = {
+			id = TAM_focus_build_32
+			icon = GFX_focus_generic_industry_3
+			cost = 3
+			x = -5
+			y = 3
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_31
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_33
+			icon = GFX_goal_generic_construction
+			cost = 3
+			x = -5
+			y = 4
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_32
+			}
+			completion_reward = { 
+				add_ideas = CAC_idea_city_and_countryside_construction
+			}
+		}
+		focus = {
+			id = TAM_focus_build_34
+			icon = GFX_focus_IRQ_construct_the_kut_barrage
+			cost = 3
+			x = -5
+			y = 5
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			prerequisite = {
+				focus = TAM_focus_build_33
+			}
+			completion_reward = { 
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_build_22
+			icon = GFX_focus_renounce_the_treaty_of_trianon
+			x = 0
+			y = 7
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_build_21
+			}
+			prerequisite = {
+				focus = TAM_focus_build_20
+			}
+			relative_position_id = TAM_focus_build_1
+			search_filters = {FOCUS_FILTER_INDUSTRY}
+			search_filters = {FOCUS_FILTER_RESEARCH}
+			completion_reward = {
+				add_research_slot = 1
+				custom_effect_tooltip = CAC_foc_IC_be_one
+				hidden_effect = {
+					remove_ideas = TAM_UMA_IC
+					remove_ideas = TAM_UMA_IC_1
+					remove_ideas = TAM_UMA_IC_2
+					remove_ideas = TAM_UMA_IC_3
+					remove_ideas = TAM_UMA_IC_4
+					remove_ideas = TAM_UMA_IC_5
+					remove_ideas = TAM_UMA_IC_6
+					remove_ideas = TAM_UMA_IC_7
+					add_ideas = TAM_UMA_IC_all
+				}
+			}
+		}
+
+	###国防部
+		focus = {
+			id = TAM_focus_national_defense_1
+			icon = GFX_goal_generic_more_territorial_claims
+			x = 47
+			y = 8
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			available = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			completion_reward = {
+				army_experience = 25
+				navy_experience = 25
+				air_experience = 25
+				add_ideas = TAM_UMA_ND
+			}
+		}
+		focus = {
+			id = TAM_focus_national_defense_2
+			icon = GFX_focus_generic_military_mission
+			x = -2
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_national_defense_3
+			}
+			relative_position_id = TAM_focus_national_defense_1
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_ideas = TAM_UMA_ND_3
+			}
+		}
+		focus = {
+			id = TAM_focus_national_defense_3
+			icon = GFX_goal_generic_propaganda
+			x = -1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_national_defense_1
+			}
+			relative_position_id = TAM_focus_national_defense_1
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_manpower = 50000
+				add_ideas = TAM_UMA_ND_4
+			}
+		}
+		focus = {
+			id = TAM_focus_national_defense_4
+			icon = GFX_focus_AFG_a_modern_economy
+			x = 0
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_national_defense_1
+			}
+			relative_position_id = TAM_focus_national_defense_1
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_ideas = TAM_UMA_ND_2
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_national_defense_5
+			icon = GFX_focus_GER_integrated_economies
+			x = 1
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_national_defense_1
+			}
+			relative_position_id = TAM_focus_national_defense_1
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				add_ideas = TAM_UMA_ND_1
+			}
+		}
+		focus = {
+			id = TAM_focus_national_defense_6
+			icon = GFX_focus_generic_secret_service_agency
+			x = 2
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_national_defense_5
+			}
+			relative_position_id = TAM_focus_national_defense_1
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				gain_random_agency_upgrade = yes
+				add_ideas = TAM_UMA_ND_5
+			}
+		}
+		focus = {
+			id = TAM_focus_national_defense_7
+			icon = GFX_goal_generic_position_armies
+			x = 0
+			y = 3
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_national_defense_4
+			}
+			prerequisite = {
+				focus = TAM_focus_national_defense_2
+			}
+			prerequisite = {
+				focus = TAM_focus_national_defense_6
+			}
+			relative_position_id = TAM_focus_national_defense_1
+			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_ND_be_one
+				hidden_effect = {
+					remove_ideas = TAM_UMA_ND
+					remove_ideas = TAM_UMA_ND_1
+					remove_ideas = TAM_UMA_ND_2
+					remove_ideas = TAM_UMA_ND_3
+					remove_ideas = TAM_UMA_ND_4
+					remove_ideas = TAM_UMA_ND_5
+					add_ideas = TAM_UMA_ND_all
+				}
+				
+			}
+		}
+
+	###海军
+		focus = {
+			id = TAM_focus_Navy_1
+			#icon = GFX_goal_generic_construct_naval_dockyard
+			icon = GFX_focus_PER_the_peoples_navy
+			x = 37
+			y = 7
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			available = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			completion_reward = {
+				custom_effect_tooltip = CAC_SWI_is_fool_navy
+				navy_experience = 25
+				add_ideas = TAM_UMA_Navy
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_2
+			icon = GFX_goal_generic_navy_cruiser
+			x = -2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_Navy_3
+			}
+			prerequisite = {
+				focus = TAM_focus_Navy_1
+			}
+			relative_position_id = TAM_focus_Navy_1
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_mastery_bonus = {
+					name = flexible_navy
+					bonus = 0.1
+					days = 240
+					grand_doctrine = new_convoy_raiding
+				}
+				add_mastery_bonus = {
+					name = flexible_navy
+					bonus = 0.1
+					days = 240
+					grand_doctrine = new_base_strike
+				}
+				add_doctrine_cost_reduction = {
+					name = flexible_navy
+					cost_reduction = 0.5
+					uses = 2
+					category = naval_doctrine
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_3
+			icon = GFX_goal_generic_occupy_states_coastal
+			x = 2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			mutually_exclusive = {
+				focus = TAM_focus_Navy_2
+			}
+			prerequisite = {
+				focus = TAM_focus_Navy_1
+			}
+			relative_position_id = TAM_focus_Navy_1
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_doctrine_cost_reduction = {
+					name = fleet_in_being_bonus
+					cost_reduction = 0.75
+					uses = 3
+					category = fleet_in_being_tree
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_4
+			icon = GFX_goal_generic_wolf_pack
+			x = -2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_2
+			}
+			relative_position_id = TAM_focus_Navy_2
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					name = ss_bonus
+					bonus = 1
+					ahead_reduction = 2
+					uses = 3
+					category = ss_tech
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_5
+			icon = GFX_focus_generic_destroyer
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_2
+			}
+			relative_position_id = TAM_focus_Navy_2
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					name = dd_bonus
+					bonus = 1
+					ahead_reduction = 2
+					uses = 3
+					category = dd_tech
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_6
+			icon = GFX_goal_generic_navy_battleship
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_3
+			}
+			relative_position_id = TAM_focus_Navy_3
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					name = capital_ships_bonus
+					bonus = 1
+					ahead_reduction = 2
+					uses = 3
+					category = bc_tech
+					category = bb_tech
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_7
+			icon = GFX_goal_generic_navy_carrier
+			x = 2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_3
+			}
+			relative_position_id = TAM_focus_Navy_3
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					name = capital_ships_bonus
+					bonus = 1
+					ahead_reduction = 2
+					uses = 3
+					category = cv_tech
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_8
+			icon = GFX_focus_SWE_Vasa_II 
+			x = 0
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_2
+				focus = TAM_focus_Navy_3
+			}
+			relative_position_id = TAM_focus_Navy_1
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_UMA_Navy
+					add_idea = TAM_UMA_Navy_03
+				}
+				navy_experience = 25
+				add_tech_bonus = {
+					name = cr_bonus
+					bonus = 1
+					ahead_reduction = 2
+					uses = 3
+					#category = cl_tech
+					category = ca_tech
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_9
+			icon = GFX_focus_generic_naval_discipline
+			x = 0
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_8
+			}
+			prerequisite = {
+				focus = TAM_focus_Navy_5
+			}
+			prerequisite = {
+				focus = TAM_focus_Navy_4
+			}
+			relative_position_id = TAM_focus_Navy_2
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Navy_02
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_10
+			icon = GFX_focus_generic_navy_battleship2
+			x = 0
+			y = 2
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_7
+			}
+			prerequisite = {
+				focus = TAM_focus_Navy_6
+			}
+			prerequisite = {
+				focus = TAM_focus_Navy_8
+			}
+			relative_position_id = TAM_focus_Navy_3
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Navy_01
+			}
+		}
+		focus = {
+			id = TAM_focus_Navy_11
+			icon = GFX_focus_LAT_the_old_ways
+			x = 0
+			y = 4
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Navy_9
+				focus = TAM_focus_Navy_10
+			}
+			relative_position_id = TAM_focus_Navy_1
+			search_filters = {FOCUS_FILTER_NAVY_XP}
+			completion_reward = {
+				swap_ideas = {
+					remove_idea = TAM_UMA_Navy_03
+					add_idea = TAM_UMA_Navy_05
+				}
+			}
+		}
+	###空军
+		focus = {
+			id = TAM_focus_Air_1
+			icon = GFX_focus_PER_the_peoples_airforce
+			#icon = GFX_goal_generic_build_airforce
+			x = 37
+			y = 13
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			available = {
+				has_global_flag = Tresen_civil_war_has_end
+			}
+			completion_reward = {
+				air_experience = 25
+				add_ideas = TAM_UMA_Airplane
+				if = {
+					limit = {
+						capital_scope = {
+							NOT = {
+								free_building_slots = {
+									building = air_base
+									size > 1
+								}
+							}
+						}
+					}
+					random_owned_controlled_state = {
+						limit = {
+							free_building_slots = {
+								building = air_base
+								size > 1
+							}
+						}
+						add_building_construction = {
+							type = air_base
+							level = 2
+							instant_build = yes
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 1
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_2
+			icon = GFX_focus_PER_raf_planes
+			x = -2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_1
+			}
+			relative_position_id = TAM_focus_Air_1
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Airplane_01
+				add_doctrine_cost_reduction = {
+					cost_reduction = 0.75
+					uses = 1
+					category = air_doctrine
+				}
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_3
+			icon = GFX_focus_PER_luftwaffe_planes
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_1
+			}
+			relative_position_id = TAM_focus_Air_1
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Airplane_02
+				add_doctrine_cost_reduction = {
+					cost_reduction = 0.75
+					uses = 1
+					category = air_doctrine
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_4
+			icon = GFX_focus_generic_long_range_aircraft
+			x = 2
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_1
+			}
+			relative_position_id = TAM_focus_Air_1
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Airplane_03
+				add_doctrine_cost_reduction = {
+					cost_reduction = 0.75
+					uses = 1
+					category = air_doctrine
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_5
+			icon = GFX_focus_usa_escort_fighters
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_2
+			}
+			relative_position_id = TAM_focus_Air_2
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					category = light_air
+				}
+				mio:Tresen_cas_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				mio:Tresen_light_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				mio:generic_general_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				
+				
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_6
+			icon = GFX_focus_generic_cas_aircraft
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_5
+			}
+			relative_position_id = TAM_focus_Air_5
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Airplane_04
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_7
+			icon = GFX_SOV_ground_support_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_3
+			}
+			relative_position_id = TAM_focus_Air_3
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					category = heavy_air
+				}
+				mio:Tresen_medium_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				mio:Tresen_heavy_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				mio:Tresen_multi_role_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_8
+			icon = GFX_focus_SWE_marauder_bombers
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_7
+			}
+			relative_position_id = TAM_focus_Air_7
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Airplane_05
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_9
+			icon = GFX_SOV_expand_the_morskaya_aviatsiya_ccp_2d_sov_compatibility
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_4
+			}
+			relative_position_id = TAM_focus_Air_4
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 3
+					category = medium_air
+					category = naval_air
+				}
+				mio:Tresen_naval_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				mio:Tresen_light_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+				mio:Tresen_range_focused_aircraft_organization = {
+					add_mio_size = 1
+					add_mio_funds = 1500
+				}
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_10
+			icon = GFX_goal_generic_air_naval_bomber
+			x = 0
+			y = 1
+			cost = 5
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_9
+			}
+			relative_position_id = TAM_focus_Air_9
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				add_ideas = TAM_UMA_Airplane_06
+			}
+		}
+		focus = {
+			id = TAM_focus_Air_11
+			icon = GFX_goal_generic_build_airforce
+			x = 0
+			y = 4
+			cost = 1
+			continue_if_invalid = no
+			cancel_if_invalid = yes
+			prerequisite = {
+				focus = TAM_focus_Air_6
+			}
+			prerequisite = {
+				focus = TAM_focus_Air_8
+			}
+			prerequisite = {
+				focus = TAM_focus_Air_10
+			}
+			relative_position_id = TAM_focus_Air_1
+			search_filters = {FOCUS_FILTER_AIR_XP}
+			completion_reward = {
+				custom_effect_tooltip = CAC_foc_air_be_one
+				hidden_effect = {
+					remove_ideas = TAM_UMA_Airplane_01
+					remove_ideas = TAM_UMA_Airplane_02
+					remove_ideas = TAM_UMA_Airplane_03
+					remove_ideas = TAM_UMA_Airplane_04
+					remove_ideas = TAM_UMA_Airplane_05
+					remove_ideas = TAM_UMA_Airplane_06
+					add_ideas = TAM_UMA_Airplane_all
+				}
+				
+			}
+		}
+}

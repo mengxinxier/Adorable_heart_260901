@@ -1,0 +1,259 @@
+﻿add_namespace = TAM
+add_namespace = TAM_news
+
+#特雷森统一（小栗帽）
+news_event = {
+	id = TAM_news.1
+	title = TAM_news.1.title
+	desc = TAM_news.1.desc
+	picture = GFX_MON_news_event_014
+	major = yes
+	is_triggered_only = yes
+    #immediate = {
+    #    country_lock_all_division_template = NO
+    #}
+	option = {
+		name = TAM_news.1.a
+		set_variable = { adorable_heart_super_event_var = 1350 }
+		adorable_heart_fire_super_event = yes
+		trigger = {
+			original_tag = TAM
+		}
+	}
+}
+#特雷森统一（美浦）
+news_event = {
+	id = TAM_news.2
+	title = TAM_news.2.title
+	desc = TAM_news.2.desc
+	picture = GFX_MON_news_event_014
+	major = yes
+	is_triggered_only = yes
+    #immediate = {
+    #    country_lock_all_division_template = NO
+    #}
+	option = {
+		name = TAM_news.2.a
+		set_variable = { adorable_heart_super_event_var = 1351 }
+		adorable_heart_fire_super_event = yes
+		trigger = {
+			original_tag = AFG
+		}
+	}
+}
+
+###苏联要求我们臣服！
+country_event = {
+    id = TAM.2
+    title = TAM.2.title
+    desc = TAM.2.desc
+    is_triggered_only = yes
+    option = {      #我们别无选择，只能接受。
+        name = TAM.2.a
+        ai_chance = {
+            base = 10
+        }
+        ROOT = {
+            if = {
+                limit = {
+                    is_in_faction = yes
+                    not = {
+                        is_ally_with = SOV
+                    }
+                }
+                leave_faction = yes
+            }
+            if = {
+                limit = {
+                    not = {
+                        has_government = communism
+                    }
+                }
+                set_politics = {
+                    ruling_party = communism
+                }
+                set_popularities = {
+						democratic = 10
+						neutrality = 10
+						fascism = 0
+						communism = 80
+				}
+                
+            }
+            SOV = {
+                add_to_faction = ROOT
+            }
+            
+        }
+       
+    }
+    option = {      #他们大可以试试看。
+        name = TAM.2.b
+        ai_chance = {
+            base = 0
+        }
+        SOV = {
+            create_wargoal={
+                target = ROOT
+                type = puppet_wargoal_focus
+            }
+        }
+        
+    }
+}
+###苏联的态度
+country_event = {
+    id = TAM.13
+    title = TAM.13.title
+    desc = TAM.13.desc
+    is_triggered_only = yes
+    option = {  #宣战
+        name = TAM.13.a
+        every_state = {
+                limit = {
+                    is_controlled_by = TAM
+                    is_not_controlled_by_ROOT_or_ally = yes
+                    OR = {
+                        #高加索
+                        region = 134
+                        #库尔德斯坦
+                        region = 252
+                        #波斯
+                        region = 116
+                        #美索不达米亚
+                        region = 239
+                    }
+                }
+                add_claim_by = SOV
+                enable_state_integration_80_compliance = yes
+            }
+        hidden_effect = {
+            
+        }
+        
+        SOV = {
+            create_wargoal = {
+	    		target = 417.OWNER
+	    		type = take_claimed_state
+	    		generator = owned_states
+	    	}
+        }
+        ai_chance = {
+            base = 50
+            #base = 0
+            modifier = {
+                factor = 10
+                SOV = {
+                    has_country_flag = CAC_SOV_wants_more       #苏联想要更多
+                }
+            }
+            modifier = {
+                factor = 0
+                SOV = {
+                    has_country_flag = CAC_SOV_not_wants_more       #苏联不想要更多
+                }
+            }
+        }
+        every_country = {
+            limit = {
+                has_country_flag = SOV_is_Watching_YOU
+            }
+            clr_country_flag = SOV_is_Watching_YOU
+        }
+        
+    }
+    option = {   #要求
+        name = TAM.13.b
+        every_country = {
+            limit = {
+                has_cosmetic_tag = Tresen_Federation
+            }
+            country_event = {
+                id = TAM.2
+            }
+        }
+        ai_chance = {
+            #base = 0
+            base = 40
+            modifier = {
+                factor = 10
+                SOV = {
+                    has_country_flag = CAC_SOV_wants_more       #苏联想要更多
+                }
+            }
+            modifier = {
+                factor = 0.1
+                SOV = {
+                    has_country_flag = CAC_SOV_not_wants_more       #苏联不想要更多
+                }
+            }
+        }
+        every_country = {
+            limit = {
+                has_country_flag = SOV_is_Watching_YOU
+            }
+            clr_country_flag = SOV_is_Watching_YOU
+        }
+       
+    }
+    option = {   #放弃
+        name = TAM.13.c
+        SOV = {
+            add_stability = 0.25
+            add_war_support = 0.10
+        }
+        ai_chance = {
+            base = 10
+            #base = 0
+            modifier = {
+                factor = 0
+                SOV = {
+                    has_country_flag = CAC_SOV_wants_more       #苏联想要更多
+                }
+            }
+            modifier = {
+                factor = 100
+                SOV = {
+                    has_country_flag = CAC_SOV_not_wants_more       #苏联不想要更多
+                }
+            }
+        }
+        every_country = {
+            limit = {
+                has_country_flag = SOV_is_Watching_YOU
+            }
+            clr_country_flag = SOV_is_Watching_YOU
+        }
+       
+    }
+}
+###中亚危机告一段落（SOV放弃对中亚施压）
+country_event = {
+    id = TAM.110
+    title = TAM.110.title
+    desc = TAM.110.desc
+    is_triggered_only = yes
+    option = {
+        name = TAM.110.a
+        every_country = {
+            limit = {
+                has_country_flag = SOV_is_Watching_YOU
+            }
+            clr_country_flag = SOV_is_Watching_YOU
+        }
+    }
+}
+###中亚危机！（仅时间触发）
+country_event = {
+    id = TAM.5
+    title = TAM.5.title
+    desc = TAM.5.desc
+    is_triggered_only = yes
+    option = { 
+        name = TAM.5.a
+        hidden_effect = {
+            set_global_flag = Tresen_civil_war_has_start
+        }
+    }
+}
+

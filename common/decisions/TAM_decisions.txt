@@ -1,33 +1,2755 @@
-SOV_territorial_affairs = {
-
-	TAM_restoration_of_historical_territory = {
-		name = "恢复中亚历史领土"
-		icon = GFX_decision_infiltrate_state
-		visible = {
-			tag = TAM
-		}
-		available = {
-			has_full_control_of_state = 404
-			has_full_control_of_state = 810
-			has_full_control_of_state = 590
-			has_full_control_of_state = 402
-			has_full_control_of_state = 406
-		}
-		ai_will_do = {
-			factor = 100000
-		}
-		cost = 50
-		days_remove = 90
-		fire_only_once = yes
-		remove_effect = {
-			every_state = {
-				limit = {
-					has_state_flag = TAMZDQ
-					NOT = { is_core_of = ROOT }
+#SOV_territorial_affairs = {
+#
+#	TAM_restoration_of_historical_territory = {
+#		name = "恢复中亚历史领土"
+#		icon = GFX_decision_infiltrate_state
+#		visible = {
+#			tag = TAM
+#		}
+#		available = {
+#			has_full_control_of_state = 404
+#			has_full_control_of_state = 810
+#			has_full_control_of_state = 590
+#			has_full_control_of_state = 402
+#			has_full_control_of_state = 406
+#		}
+#		ai_will_do = {
+#			factor = 100000
+#		}
+#		cost = 50
+#		days_remove = 90
+#		fire_only_once = yes
+#		remove_effect = {
+#			every_state = {
+#				limit = {
+#					has_state_flag = TAMZDQ
+#					NOT = { is_core_of = ROOT }
+#				}
+#				add_core_of = ROOT
+#				remove_core_of = SOV
+#			}
+#		}
+#	}
+#}
+#这是新的
+TAM_foreign_ministry = {
+	
+	#外交政策
+	#整合北特雷森领土
+		CAC_decision_integration_to_KAZ = {
+			name = CAC_decision_integration_to_KAZ
+			icon = GFX_decision_generic_prepare_civil_war
+			allowed = {
+				always = yes
+			}
+			available = {
+				any_controlled_state = {
+					is_core_of = KAZ
 				}
-				add_core_of = ROOT
-				remove_core_of = SOV
+			}
+			visible = {
+				any_controlled_state = {
+					is_core_of = KAZ	
+				}
+			}
+			ai_will_do = {
+				base = 1001
+			}
+			fire_only_once = yes
+			cost = 0
+			complete_effect = {
+				every_state = {
+					limit = {
+						is_core_of = KAZ
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+            		enable_state_integration_50_compliance = yes
+				}
+			}
+		}
+	#整合巴基斯坦领土
+		CAC_decision_integration_to_PAK = {
+			name = CAC_decision_integration_to_PAK
+			icon = GFX_decision_generic_prepare_civil_war
+			allowed = {
+				always = yes
+			}
+			available = {
+				any_controlled_state = {
+					is_core_of = PAK
+				}
+			}
+			visible = {
+				any_controlled_state = {
+					is_core_of = PAK	
+				}
+			}
+			ai_will_do = {
+				base = 1001
+			}
+			fire_only_once = yes
+			cost = 0
+			complete_effect = {
+				every_state = {
+					limit = {
+						is_core_of = PAK
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+            		enable_state_integration_50_compliance = yes
+				}
+			}
+		}
+	##进攻
+		CAC_attck_FROM = {
+			name = "进攻[FROM.Getname]"
+			icon = GFX_decision_generic_ignite_civil_war
+			allowed = {
+				always = no
+			}
+			target_trigger = {
+				ROOT = { is_subject = no }
+				FROM = {
+					not = {
+						or = {
+							has_war_with = ROOT
+							is_in_faction_with = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+			available = {
+				FROM = {
+					not = {
+						or = {
+							has_war_with = ROOT
+							is_in_faction_with = ROOT
+							is_subject_of = ROOT
+							is_ally_with = ROOT
+						}
+					}
+					is_neighbor_of = ROOT
+				}
+			}
+			ai_will_do = {
+				base = 100
+				modifier = {
+					has_country_flag = CAC_Preparing_For_War
+					add = -200
+				}
+				modifier = {
+					has_war = yes
+					add = -100
+				}
+				modifier = {
+					date < 1937.12.1
+					add = -400
+				}
+				modifier = {
+					date < 1937.11.11
+					add = -100
+				}
+				modifier = {
+					FROM = { 
+						tag = TAM 
+					}
+					add = 400
+				}
+				modifier = {
+					date > 1938.7.1
+					add = 1000
+				}
+			}
+			cost = 10
+			days_remove = 15
+			war_with_target_on_remove = yes
+			complete_effect = {
+				FROM_country_is_defender_and_ROOT_is_accacker = yes
+				set_country_flag = CAC_Preparing_For_War
+			}
+			remove_effect = {
+				declare_war_on = {
+					target = FROM
+					type = annex_everything
+				}
+				clr_country_flag = CAC_Preparing_For_War
+			}
+		}
+	#一鼓作气，再而衰，三而竭。
+		TAM_The_Long_War1 = {
+			activation = {
+				has_idea = TAM_to_win_war
+				has_war = yes
+				NOT = {
+					has_idea = TAM_veteran_troops_weary1
+				}
+				NOT = {
+					has_global_flag = Tresen_civil_war_has_end
+				}
+			}
+			available = {
+				or = {
+					has_country_flag = Reunit_Tresen_country
+					has_global_flag = Tresen_civil_war_has_end
+				}
+			}
+			cancel_trigger = {
+				OR = {
+					NOT = { has_idea = TAM_to_win_war }
+					has_war = no
+				}
+			}
+			icon = GFX_decision_hol_war_on_pacifism
+			is_good = no
+			selectable_mission = no
+			days_mission_timeout = 182
+			timeout_effect = {
+				add_ideas = TAM_veteran_troops_weary1
+				add_stability = -0.05
+				add_war_support = -0.05
+				add_political_power = -50
+			}
+		}
+		TAM_The_Long_War2 = {
+			activation = {
+				has_idea = TAM_to_win_war
+				has_war = yes
+				has_idea = TAM_veteran_troops_weary1
+				NOT = {
+					has_idea = TAM_veteran_troops_weary2
+				}
+			}
+			available = {
+				has_country_flag = Reunit_Tresen_country
+			}
+			cancel_trigger = {
+				OR = {
+					NOT = { has_idea = TAM_to_win_war }
+					has_war = no
+				}
+			}
+			icon = GFX_decision_hol_war_on_pacifism
+			is_good = no
+			selectable_mission = no
+			days_mission_timeout = 182
+			timeout_effect = {
+				add_ideas = TAM_veteran_troops_weary2
+				add_stability = -0.10
+				add_war_support = -0.10
+				add_political_power = -100
+			}
+		}
+		TAM_The_Long_War3 = {
+			activation = {
+				has_idea = TAM_to_win_war
+				has_war = yes
+				has_idea = TAM_veteran_troops_weary1
+				has_idea = TAM_veteran_troops_weary2
+				NOT = {
+					has_idea = TAM_veteran_troops_weary3
+				}
+			}
+			available = {
+				has_country_flag = Reunit_Tresen_country
+			}
+			cancel_trigger = {
+				OR = {
+					NOT = { has_idea = TAM_to_win_war }
+					has_war = no
+				}
+			}
+			icon = GFX_decision_hol_war_on_pacifism
+			is_good = no
+			selectable_mission = no
+			days_mission_timeout = 181
+			timeout_effect = {
+				add_ideas = TAM_veteran_troops_weary3
+				add_stability = -0.15
+				add_war_support = -0.15
+				add_political_power = -150
+			}
+		}
+
+
+
+	#局势不安	
+		CAC_before_Apocalypse = {
+			activation = {
+				has_idea = CAC_before_Apocalypse
+			}
+			available = {
+				not = {
+					has_idea = CAC_before_Apocalypse
+				}
+			}
+			fire_only_once = yes
+			icon = GFX_decision_hol_war_on_pacifism
+			is_good = no
+			selectable_mission = no
+			days_mission_timeout = 620
+			timeout_effect = {
+				custom_effect_tooltip = CAC_before_Apocalypse_tooltip
+				set_global_flag = Tresen_civil_war_has_start
+					ROOT = {
+						remove_ideas = CAC_before_Apocalypse
+					}
+					country_event = TAM.5
+					if = {
+						limit = {
+							tag = TAM
+						}
+						complete_national_focus = TAM_focus_civil_war_1
+					}
+					#这里是隐藏战斗属性修正，因为目前没有做AFG和PER的，只有先用这个来算随机数。
+					if = {
+						limit = {
+							tag = PER
+						}
+						random_list = {
+							10 = { add_ideas = CAC_PER_strengthen_5 }
+							8 = { add_ideas = CAC_PER_strengthen_4 }
+							6 = { add_ideas = CAC_PER_strengthen_3 }
+							4 = { add_ideas = CAC_PER_strengthen_2 }
+						}
+						add_ideas = TAM_to_win_war
+						every_state = {
+							limit = {
+								or = {
+									is_core_of = TAM
+									is_core_of = AFG
+								}
+							}
+							add_claim_by_ROOT_if_has_no_core = yes
+            				enable_state_integration_50_compliance = yes
+						}
+						activate_targeted_decision = {
+							target = TAM
+							decision = CAC_attck_FROM
+						}
+						activate_targeted_decision = {
+							target = AFG
+							decision = CAC_attck_FROM
+						}
+					}
+					if = {
+						limit = {
+							tag = AFG
+						}
+						random_list = {
+							10 = { add_ideas = CAC_AFG_strengthen_5 }
+							8 = { add_ideas = CAC_AFG_strengthen_4 }
+							6 = { add_ideas = CAC_AFG_strengthen_3 }
+							4 = { add_ideas = CAC_AFG_strengthen_2 }
+						}
+						add_ideas = TAM_to_win_war
+						every_state = {
+							limit = {
+								or = {
+									is_core_of = TAM
+									is_core_of = PER
+								}
+							}
+							add_claim_by_ROOT_if_has_no_core = yes
+            				enable_state_integration_50_compliance = yes
+						}
+						activate_targeted_decision = {
+							target = TAM
+							decision = CAC_attck_FROM
+						}
+						activate_targeted_decision = {
+							target = PER
+							decision = CAC_attck_FROM
+						}
+					}
+				
+			}
+		}	
+
+
+
+	#统一中亚
+		CAC_end_civil_war = {
+			name = "统一中亚"
+			icon = GFX_decision_infiltrate_state
+			allowed = {
+			OR = {
+				original_tag = AFG
+				#original_tag = TAM
+				original_tag = PER
+			}
+			}
+			available = {
+				is_subject = no
+				266 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+				267 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+				407 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+				has_war = no
+			}
+			visible = {
+				OR = {
+					tag = AFG
+					#tag = TAM
+					tag = PER
+				}
+			}
+			ai_will_do = {
+				base = 1000 
+				factor = 1000
+			}
+			fire_only_once = yes
+			complete_effect = {
+				set_cosmetic_tag = Tresen_Federation
+				
+				set_global_flag = Tresen_civil_war_has_end
+				#every_state = {
+				#	limit = {
+				#		has_state_flag = is_Tresen_state_area
+				#		not = {
+				#			is_core_of = SOV
+				#		}
+				#	}
+				#	add_core_of = ROOT
+				#}
+				custom_effect_tooltip = CAC_SOV_intervention_tt
+				activate_mission = CAC_SOV_intervention_declare_war_mission
+				set_research_slot = 4
+				hidden_effect = {
+					if = {
+						limit = { 
+							tag = AFG
+						}
+						set_variable = { adorable_heart_super_event_var = 1351 }
+						adorable_heart_fire_super_event = yes
+					}
+					#country_lock_all_division_template = NO
+					remove_ideas = CAC_idea_Too_big_to_handle_army
+					remove_ideas = TAM_to_win_war
+					remove_ideas = TAM_veteran_troops_weary1
+					remove_ideas = TAM_veteran_troops_weary2
+					remove_ideas = TAM_veteran_troops_weary3
+					#remove_ideas = TAM_For_Umamusume
+					add_ideas = TAM_UMA_Army_All
+					add_ideas = TAM_UMA_Navy_05
+					add_ideas = TAM_UMA_Airplane_all
+					set_country_flag = Reunit_Tresen_country
+					#set_country_flag = SOV_is_Watching_YOU
+					every_controlled_state = {
+						limit = {
+							has_state_flag = is_Tresen_state_area
+						}
+						remove_claim_by = TAM
+						remove_claim_by = PER
+						remove_claim_by = AFG
+					}
+					
+				}
+			}
+		}
+
+
+	#超事件测试
+		#CAC_super_event_TAM = {
+		#	icon = GFX_decision_category_generic_foreign_policy
+		#	name = "超事件测试"
+		#	allowed = { is_ai = no }
+		#	visible = { 
+		#		is_ai = no 
+		#		is_debug = yes
+		#	}
+		#	available = { 
+		#		is_ai = no 
+		#		is_debug = yes
+		#	}
+		#	cost = 0
+		#	complete_effect = {
+		#		set_variable = { adorable_heart_super_event_var = 1351 }
+		#		adorable_heart_fire_super_event = yes
+		#	}
+		#	ai_will_do = { base = 0 }
+		#}
+}
+
+#苏联的耐心
+	CAC_Attention_of_SOV = {
+	#这里应该是表示SOV注意力的UI显示，让我去找菲律宾那个“美国的耐心”抄一抄。2026.8.13
+	#不在这里，UI在categories那里。2026.8.13
+		CAC_SOV_intervention_declare_war_mission = {
+			icon = GFX_decision_generic_prepare_civil_war
+			fire_only_once = yes 
+			is_good = yes
+			days_mission_timeout = CAC_SOV_intervention_original_timer	#一年。两年太长了。两年基本上魔导和苏联已经打起来了
+			allowed = {	#通过打完中亚统一战争启用
+				always = no
+			}
+			available = { 		#这里感觉不太对？我测试一下。2026.8.15
+				#has_war_with_major = yes
+				SOV = { has_war_with_major = yes }
+			}
+			cancel_trigger = { ## 记得加上取消这个决议组的限制条件
+				OR = {
+					has_country_flag = CAC_SOV_intervention_is_over		#苏联已经下了决定
+					SOV = {
+						is_ally_with = ROOT		#如果你是SOV的盟友，那苏联自然不会搞事情。##下次再忘记我就在群里发红包……2026.8.15
+					}
+					SOV = {
+						has_war_with = ROOT		#已经开打了自然不会有这个了。
+					}
+					SOV = { exists = no }		#SOV挂了自然也不会有这个。
+					SOV = { is_subject = yes }	#SOV没了也不会有这个。
+				}
+			}
+			cancel_effect = {
+				hidden_effect = {
+					every_country = {
+    	    		    limit = {
+    	    		        has_country_flag = SOV_is_Watching_YOU
+    	    		    }
+    	    		    clr_country_flag = SOV_is_Watching_YOU
+    	    		}
+				}
+			}
+			timeout_effect = {
+				SOV = {
+					country_event = {
+						id = TAM.13
+					}
+				}
+				custom_effect_tooltip = CAC_SOV_declare_war
+				set_country_flag = CAC_SOV_intervention_is_over ## Removes the decision category
+			}
+		}
+	#测试：关注度等级 -05%
+		CAC_SOV_intervention_test_D_05 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = -5 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_D_05_decrease_tt  
+			}
+		}
+	#测试：关注度等级 -10%
+		CAC_SOV_intervention_test_D_10 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = -10 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_D_10_decrease_tt  
+			}
+		}
+	#测试：关注度等级 -15%
+		CAC_SOV_intervention_test_D_15 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = -15 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_D_15_decrease_tt  
+			}
+		}
+	#测试：关注度等级 -20%
+		CAC_SOV_intervention_test_D_20 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = -20 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_D_20_decrease_tt  
+			}
+		}
+	#测试：关注度等级 -25%
+		CAC_SOV_intervention_test_D_25 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = -25 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_D_25_decrease_tt  
+			}
+		}
+	#测试：关注度等级 +05%
+		CAC_SOV_intervention_test_I_05 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = +5 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_05_increase_tt  
+			}
+		}
+	#测试：关注度等级 +10%
+		CAC_SOV_intervention_test_I_10 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = +10 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_10_increase_tt  
+			}
+		}
+	#测试：关注度等级 +15%
+		CAC_SOV_intervention_test_I_15 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = +15 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_15_increase_tt  
+			}
+		}
+	#测试：关注度等级 +20%
+		CAC_SOV_intervention_test_I_20 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = +20 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_20_increase_tt  
+			}
+		}
+	#测试：关注度等级 +25%
+		CAC_SOV_intervention_test_I_25 = {
+			icon = GFX_decision_generic_police_action
+			visible = {
+				is_debug = yes
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = +25 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_25_increase_tt  
+			}
+		}
+	###减关注度的
+	##经济
+	#对苏联开放贸易
+
+	#
+
+	##军事
+	#限制军队
+
+	##外交
+	#谴责圣杯
+
+	#谴责樱花
+
+	#谴责魔导
+
+	#加入共产国际
+		TAM_join_SOV1 = {
+			icon = GFX_decision_category_generic_foreign_policy
+			name = "加入共产国际"
+			allowed = {
+				#is_Tresen_tag = yes
+				OR = {
+					tag = AFG
+					tag = TAM
+					tag = PER
+				}
+
+			}
+			visible = {
+				is_in_faction = no
+				SOV = { is_faction_leader = yes }
+			}
+			fire_only_once = yes
+			cost = 0
+			days_remove = 10
+			available = {
+				NOT = { has_country_flag = FACTION_ASKING }
+				is_in_faction = no
+				is_subject = no
+				SOV = {
+					exists = yes
+					is_faction_leader = yes
+					has_government = ROOT
+				}
+				has_country_flag = Reunit_Tresen_country
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = -200 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_D_all_decrease_tt  
+				set_country_flag = FACTION_ASKING
+				clr_country_flag = SOV_is_Watching_YOU
+			}
+			remove_effect = {
+				clr_country_flag = FACTION_ASKING
+				SOV = {
+					country_event = generic.2002
+				}
+			}
+			ai_will_do = {
+				base = 50
+			}
+		}
+	###加关注度的
+	##经济
+	#撤销苏联经济特权
+	
+
+	##军事
+	#扩大军队
+
+	##外交
+	#开启中东战争
+		CAC_aim_to_middle_east = {
+			name = "开启中东战争"
+			icon = GFX_decision_generic_ignite_civil_war
+			allowed = { always = yes }
+			visible = { has_country_flag = Reunit_Tresen_country }
+			available = {
+				has_country_flag = Reunit_Tresen_country
+				has_war = no
+			}
+			cost = 0
+			fire_only_once = yes
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				
+				set_variable = { CAC_SOV_intervention_value_to_add = +40 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_40_increase_tt  
+				every_state = {
+					limit = {
+						OR = {
+							is_core_of = IRQ
+							is_core_of = TUR
+							is_core_of = RIS
+							is_core_of = PAL
+							is_core_of = SYR
+							is_core_of = YEM
+							is_core_of = LAN
+							is_core_of = KUR
+						}
+						is_controlled_by_ROOT_or_ally = no
+					}
+					add_claim_by = ROOT
+				}
+				activate_targeted_decision = {
+					target = IRQ
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = TUR
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = RIS
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = PAL
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = SYR
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = YEM
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = LAN
+					decision = CAC_attck_FROM
+				}
+				activate_targeted_decision = {
+					target = KUR
+					decision = CAC_attck_FROM
+				}
+				set_country_flag = CAC_aimed_to_middle_east
+			}
+		}
+	
+	}
+#对中东战略
+	CAC_aim_to_middle_east_cate = {
+	#针对阿斯特莱雅联盟
+	#针对罗德岛
+	#针对土耳其
+	#为中东石油公司“提供保护”
+	
+	#突袭西奈半岛
+		CAC_aim_to_sinai ={
+			name = "突袭西奈半岛"
+			icon = GFX_decision_generic_ignite_civil_war
+			allowed = { always = yes }
+			visible = { 
+				has_country_flag = Reunit_Tresen_country
+				has_country_flag = CAC_aimed_to_middle_east
+			}
+			available = {
+				has_country_flag = Reunit_Tresen_country
+				has_country_flag = CAC_aimed_to_middle_east
+				453 = {
+					controller = {
+						is_neighbor_of = ROOT
+						OR = {
+							has_war_with = DVL
+							has_war_with = ENG
+							has_war_with = SOV
+						}
+						not = { is_ally_with = ROOT }
+						not = { has_war_with = ROOT }
+					}
+				}
+				has_global_flag = second_weltkrieg_has_started
+			}
+			cost = 0
+			fire_only_once = yes
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				set_variable = { CAC_SOV_intervention_value_to_add = +5 }
+				CAC_SOV_intervention_change_value = yes
+				custom_effect_tooltip = CAC_SOV_intervention_change_value_I_05_increase_tt  
+				453 = {
+					add_claim_by = ROOT
+					transfer_state_to = ROOT
+					enable_state_integration_80_compliance = yes
+				}
+			}
+		}
+	#整合中东
+		CAC_integration_to_middle_east = {
+			name = "整合中东"
+			icon = GFX_decision_generic_ignite_civil_war
+			allowed = { always = yes }
+			visible = { 
+				has_country_flag = Reunit_Tresen_country
+				has_country_flag = CAC_aimed_to_middle_east
+			}
+			available = {
+				has_country_flag = Reunit_Tresen_country
+				has_country_flag = CAC_aimed_to_middle_east
+			}
+			cost = 0
+			fire_only_once = yes
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				#set_variable = { CAC_SOV_intervention_value_to_add = +10 }
+				#CAC_SOV_intervention_change_value = yes
+				#custom_effect_tooltip = CAC_SOV_intervention_change_value_I_10_increase_tt
+				custom_effect_tooltip = CAC_aimed_to_middle_east_text
+				hidden_effect = {
+					every_state = {
+						limit = {
+							OR = {
+								is_core_of = IRQ
+								is_core_of = TUR
+								is_core_of = RIS
+								is_core_of = PAL
+								is_core_of = SYR
+								is_core_of = YEM
+								is_core_of = LAN
+								is_core_of = KUR
+							}
+							#is_claimed_by = ROOT
+						}
+						enable_state_integration_80_compliance = yes
+					}
+				}
+			}
+		}
+	
+	}
+
+
+
+#特雷森思想统一平衡
+#左侧为地方革命，右侧为世界革命		明天做。2026.8.16
+#看CAC_bop_decisions
+
+#特雷森建设部
+	CAC_TAM_UMA_IC_cate = {
+	#土地规划
+		CAC_Land_planning_open = {
+			name = "打开土地规划详情"
+			icon = GFX_modifiers_generic_construction
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				has_country_flag = CAC_Land_planning_close_0
+				has_completed_focus = TAM_focus_build_8
+			}
+			available = {
+			}
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				clr_country_flag = CAC_Land_planning_close_0
+				set_country_flag = CAC_Land_planning_open_0
+			}
+		}
+		CAC_Land_planning_close = {
+			name = "收起土地规划详情"
+			icon = GFX_modifiers_generic_construction
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				OR = {
+					NOT = {
+						has_country_flag = CAC_Land_planning_open_0
+						has_country_flag = CAC_Land_planning_close_0
+					}
+					has_country_flag = CAC_Land_planning_open_0
+				}
+				has_completed_focus = TAM_focus_build_8
+			}
+			available = {
+			}
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				set_country_flag = CAC_Land_planning_close_0
+				clr_country_flag = CAC_Land_planning_open_0
+			}
+		}
+		CAC_Land_planning = {
+			name = "在[FROM.GetName]进行土地规划"
+			icon = GFX_modifiers_generic_supply
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				NOT = {
+					has_country_flag = CAC_Land_planning_close_0
+				}
+				OR = {
+					has_completed_focus = TAM_focus_build_8
+					has_country_flag = TAM_focus_instead
+				}
+				
+				from = {
+					NOT = {
+						has_dynamic_modifier = { modifier = INS_agrarian_funding_state}
+					}
+				}
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 4	#5个可用民工
+				FROM = {
+					not = {
+						has_dynamic_modifier = { modifier = INS_agrarian_funding_state}
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 5
+	   		}
+			cost = 50
+			days_remove = 60
+			ai_will_do = {
+				base = 10
+			}
+			complete_effect = {}
+			state_target = yes
+			#on_map_mode = map_only
+			on_map_mode = decision_view_only
+			target_trigger = {
+				FROM = {
+					is_core_of = ROOT
+					is_fully_controlled_by = ROOT
+				}
+			}
+			remove_effect = {
+				FROM = {
+					if = {
+						limit = {
+							not = {
+								has_dynamic_modifier = { modifier = INS_agrarian_funding_state}
+							}
+							is_core_of = ROOT
+						}
+						add_dynamic_modifier = { modifier = INS_agrarian_funding_state}
+					}
+				}
+			}
+		}
+		
+	#收留难民
+		CAC_Taking_in_immigrants_open = {
+			name = "打开收留难民详情"
+			icon = GFX_modifiers_generic_construction
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				has_country_flag = CAC_Taking_in_immigrants_close_0
+				has_completed_focus = TAM_focus_build_17
+			}
+			available = {
+			}
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				clr_country_flag = CAC_Taking_in_immigrants_close_0
+				set_country_flag = CAC_Taking_in_immigrants_open_0
+			}
+		}
+		CAC_Taking_in_immigrants_close = {
+			name = "收起收留难民详情"
+			icon = GFX_modifiers_generic_construction
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				OR = {
+					NOT = {
+						has_country_flag = CAC_Taking_in_immigrants_open_0
+						has_country_flag = CAC_Taking_in_immigrants_close_0
+					}
+					has_country_flag = CAC_Taking_in_immigrants_open_0
+				}
+				has_completed_focus = TAM_focus_build_17
+			}
+			available = {
+			}
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				set_country_flag = CAC_Taking_in_immigrants_close_0
+				clr_country_flag = CAC_Taking_in_immigrants_open_0
+			}
+		}
+		CAC_Taking_in_immigrants = {
+			name = "在[FROM.GetName]收留安置难民"
+			icon = GFX_decision_generic_brainwash
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				NOT = {
+					has_country_flag = CAC_Taking_in_immigrants_close_0
+				}
+				OR = {
+					has_completed_focus = TAM_focus_build_17
+					has_country_flag = TAM_focus_instead
+				}
+				from = {
+					NOT = {
+						has_state_flag = CAC_full_of_pop_3
+					}
+				}
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 4	#5个可用民工
+				FROM = {
+					not = {
+						has_state_flag = CAC_full_of_pop_3
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 5
+	   		}
+			cost = 50
+			days_remove = 60
+			ai_will_do = {
+				base = 10
+			}
+			complete_effect = {}
+			state_target = yes
+			#on_map_mode = map_only
+			on_map_mode = decision_view_only
+			target_trigger = {
+				FROM = {
+					is_core_of = ROOT
+					is_fully_controlled_by = ROOT
+				}
+			}
+			remove_effect = {
+				FROM = {
+					if = {
+						limit = {
+							has_state_flag = CAC_full_of_pop_1
+							has_state_flag = CAC_full_of_pop_2
+							not = {
+								has_state_flag = CAC_full_of_pop_3
+							}
+						}
+						add_manpower = 25000
+						add_extra_state_shared_building_slots = 1
+						set_state_flag = CAC_full_of_pop_3
+					}
+					else_if = {
+						limit = {
+							has_state_flag = CAC_full_of_pop_1
+							not = {
+								has_state_flag = CAC_full_of_pop_2
+							}
+							not = {
+								has_state_flag = CAC_full_of_pop_3
+							}
+						}
+						add_manpower = 25000
+						add_extra_state_shared_building_slots = 1
+						set_state_flag = CAC_full_of_pop_2
+					}
+					else_if = {
+						limit = {
+							not = {
+								has_state_flag = CAC_full_of_pop_1
+							}
+							not = {
+								has_state_flag = CAC_full_of_pop_2
+							}
+							not = {
+								has_state_flag = CAC_full_of_pop_3
+							}	
+						}
+						add_manpower = 25000
+						add_extra_state_shared_building_slots = 1
+						set_state_flag = CAC_full_of_pop_1
+					}
+				}
+			}
+		}
+	#兴建城市
+		CAC_build_cities_open = {
+			name = "打开兴建城市详情"
+			icon = GFX_modifiers_generic_construction
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				has_country_flag = CAC_build_cities_close_0
+				has_completed_focus = TAM_focus_build_13
+			}
+			available = {
+			}
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				clr_country_flag = CAC_build_cities_close_0
+				set_country_flag = CAC_build_cities_open_0
+			}
+		}
+		CAC_build_cities_close = {
+			name = "收起兴建城市详情"
+			icon = GFX_modifiers_generic_construction
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				OR = {
+					NOT = {
+						has_country_flag = CAC_build_cities_open_0
+						has_country_flag = CAC_build_cities_close_0
+					}
+					has_country_flag = CAC_build_cities_open_0
+				}
+				has_completed_focus = TAM_focus_build_13
+			}
+			available = {
+			}
+			ai_will_do = {
+				base = 0
+			}
+			complete_effect = {
+				set_country_flag = CAC_build_cities_close_0
+				clr_country_flag = CAC_build_cities_open_0
+			}
+		}
+		CAC_build_cities = {
+			name = "在[FROM.GetName]兴建新城市"
+			icon = GFX_decision_generic_industry
+			allowed = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+			}
+			visible = {
+				OR = {
+					original_tag = TAM
+					original_tag = PER
+					original_tag = AFG
+				}
+				NOT = {
+					has_country_flag = CAC_build_cities_close_0
+				}
+				OR = {
+					has_completed_focus = TAM_focus_build_13
+					has_country_flag = TAM_focus_instead
+				}
+				
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 4	#5个可用民工
+			}
+			state_target = yes
+			#on_map_mode = map_only
+			on_map_mode = decision_view_only
+			target_trigger = {
+				FROM = {
+					is_core_of = ROOT
+					is_fully_controlled_by = ROOT
+					or = {
+						has_state_category = wasteland
+						has_state_category = zero
+						has_state_category = one
+						has_state_category = two
+						has_state_category = three
+						has_state_category = four
+					}
+				}
+			}
+			remove_effect = {
+				if = {
+					limit = {
+						FROM = {
+							has_state_category = wasteland
+						}
+					}
+					FROM = {
+						set_state_category = one
+					}
+				}
+				else = {
+					FROM = {
+						increase_state_category_by_one_level = yes
+					}
+				}
+				
+			}
+			modifier = {
+				civilian_factory_use = 5
+	   		}
+			cost = 50
+			days_remove = 60
+			ai_will_do = {
+				base = 10
+			}
+			complete_effect = {}
+		}
+	
+	#勘探资源
+		CAC_find_resources_originium = {
+			name = "勘探源萃石"
+			icon = originium
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = originium	#源翠石
+						amount = 4			#4个
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_steel = {
+			name = "勘探钢铁"
+			icon = GFX_decision_steel
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = steel
+						amount = 8
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_tungsten = {
+			name = "勘探钨矿"
+			icon = GFX_decision_tungsten
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = tungsten
+						amount = 5
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_chromium = {
+			name = "勘探铬矿"
+			icon = GFX_decision_chromium
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = chromium
+						amount = 4
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_aluminium = {
+			name = "勘探铝矿"
+			icon = GFX_decision_aluminium
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = aluminium
+						amount = 5
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_coal = {
+			name = "勘探煤矿"
+			icon = GFX_decision_coal
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = coal
+						amount = 6
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_rubber = {
+			name = "种植橡胶"
+			icon = GFX_decision_rubber
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = rubber
+						amount = 4
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+		CAC_find_resources_oil = {
+			name = "采集原油"
+			icon = GFX_decision_oil
+			allowed = {}
+			visible = {
+				has_completed_focus = TAM_focus_build_15
+			}
+			available = {
+				num_of_civilian_factories_available_for_projects > 2	#3个可用民工
+				any_core_state = {
+					not = {
+						has_state_flag = CAC_has_find_resources
+					}
+				}
+			}
+			modifier = {
+				civilian_factory_use = 3	#占用3个民工
+	   		}
+			cost = 50	#50PP
+			days_remove = 30	#完成要30天
+			ai_will_do = {
+				base = 5
+			}
+			complete_effect = {}
+			remove_effect = {
+				random_owned_state = {
+					limit = {
+						not = {
+							has_state_flag = CAC_has_find_resources
+						}
+						is_core_of = ROOT
+					}
+					add_resource = {
+						type = oil
+						amount = 3
+					}
+					set_state_flag = CAC_has_find_resources
+				}
+			}
+		}
+	
+	}
+#饥荒应对
+	CAC_Famine_category = {
+		#饥荒问题倒计时（大）最多只会持续3年
+		CAC_Famine_Crisis_mission_l = {
+			priority = 1500
+			icon = raj_risk_of_famine
+			days_mission_timeout = 1087
+			fire_only_once = yes
+			allowed = {
+				OR = {
+					has_idea = CAC_Famine_0
+					has_idea = CAC_Famine_1
+					has_idea = CAC_Famine_2
+					has_idea = CAC_Famine_3
+					has_idea = CAC_Famine_4
+				}
+			}
+			available = {
+				NOT = {
+					has_idea = CAC_Famine_0
+					has_idea = CAC_Famine_1
+					has_idea = CAC_Famine_2
+					has_idea = CAC_Famine_3
+					has_idea = CAC_Famine_4
+				}
+			}
+			activation = {
+				OR = {
+					has_idea = CAC_Famine_0
+					has_idea = CAC_Famine_1
+					has_idea = CAC_Famine_2
+					has_idea = CAC_Famine_3
+					has_idea = CAC_Famine_4
+				}
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			timeout_effect = {
+				if = {
+					limit = { 
+						has_idea = CAC_Famine_0
+					}
+					custom_effect_tooltip = CAC_Famine_Crisis_good
+					remove_ideas = CAC_Famine_0
+					add_timed_idea = {
+						idea = CAC_Famine_end_good
+						days = 1087
+					}
+					
+				}
+				else_if = {
+					limit = { 
+						has_idea = CAC_Famine_1
+					}
+					custom_effect_tooltip = CAC_Famine_Crisis_not_good
+					remove_ideas = CAC_Famine_1
+					add_timed_idea = {
+						idea = CAC_Famine_end_bad_1
+						days = 1087
+					}
+				}
+				else_if = {
+					limit = { 
+						has_idea = CAC_Famine_2
+					}
+					custom_effect_tooltip = CAC_Famine_Crisis_not_good
+					remove_ideas = CAC_Famine_2
+					add_timed_idea = {
+						idea = CAC_Famine_end_bad_2
+						days = 1087
+					}
+				}
+				else_if = {
+					limit = { 
+						has_idea = CAC_Famine_3
+					}
+					custom_effect_tooltip = CAC_Famine_Crisis_not_good
+					remove_ideas = CAC_Famine_3
+					add_timed_idea = {
+						idea = CAC_Famine_end_bad_3
+						days = 1087
+					}
+				}
+				else_if = {
+					limit = { 
+						has_idea = CAC_Famine_4
+					}
+					custom_effect_tooltip = CAC_Famine_Crisis_not_good
+					remove_ideas = CAC_Famine_4
+					add_timed_idea = {
+						idea = CAC_Famine_end_bad
+						days = 1087
+					}
+					
+				}
+				set_country_flag = CAC_Famine_has_end
+			}
+		}
+		#饥荒问题倒计时（小）程度变严重
+		CAC_Famine_Crisis_mission_s = {
+			priority = 1000
+			icon = raj_risk_of_famine
+			days_mission_timeout = 120
+			allowed = {
+				not = {
+					OR = {
+						has_idea = CAC_Famine_0
+						has_idea = CAC_Famine_1
+						has_idea = CAC_Famine_2
+						has_idea = CAC_Famine_3
+						has_idea = CAC_Famine_4
+					}
+				}
+			}
+			available = {
+				NOT = {
+					has_idea = CAC_Famine_0
+					has_idea = CAC_Famine_1
+					has_idea = CAC_Famine_2
+					has_idea = CAC_Famine_3
+					has_idea = CAC_Famine_4
+				}
+			}
+			activation = {
+				OR = {
+					has_idea = CAC_Famine_0
+					has_idea = CAC_Famine_1
+					has_idea = CAC_Famine_2
+					has_idea = CAC_Famine_3
+					has_idea = CAC_Famine_4
+				}
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+
+			timeout_effect = {
+				activate_mission = CAC_Famine_Crisis_mission_s
+				if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					custom_effect_tooltip = CAC_Famine_Crisis_wrost
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_end_bad
+					}
+				}
+				else = {
+					custom_effect_tooltip = CAC_Famine_Crisis_bad
+					if = {
+						limit = {
+							has_idea = CAC_Famine_3
+						}
+						swap_ideas = {
+							remove_idea = CAC_Famine_3
+							add_idea = CAC_Famine_4
+						}
+					}
+					else_if = {
+						limit = {
+							has_idea = CAC_Famine_2
+						}
+						swap_ideas = {
+							remove_idea = CAC_Famine_2
+							add_idea = CAC_Famine_3
+						}
+					}
+					else_if = {
+						limit = {
+							has_idea = CAC_Famine_1
+						}
+						swap_ideas = {
+							remove_idea = CAC_Famine_1
+							add_idea = CAC_Famine_2
+						}
+					}
+					else = {
+						swap_ideas = {
+							remove_idea = CAC_Famine_0
+							add_idea = CAC_Famine_1
+						}
+					}
+
+				}
+			}
+		}
+		#向国际市场购买粮食
+		CAC_Famine_Crisis_respond_1 = {
+			icon = raj_risk_of_famine
+			cost = 15
+			days_remove = 45
+			available = {
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			ai_will_do = {
+				base = 50
+			}
+			modifier = {
+				industrial_factory_donations = 7
+				weekly_manpower = 300
+				monthly_population = 0.75
+
+			}
+			
+			complete_effect = {
+				hidden_effect = {
+					add_to_variable = {
+						ubs_load = 100
+					}
+				}
+				custom_effect_tooltip = CAC_get_100_debt
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_s
+					days = 31
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -31
+				}
+			}
+			remove_effect = {
+				if = {
+					limit = {
+						has_idea = CAC_Famine_3
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_3
+						add_idea = CAC_Famine_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_2
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_2
+						add_idea = CAC_Famine_1
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_1
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_1
+						add_idea = CAC_Famine_0
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_3
+					}
+				}
+				else = {
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_s
+						days = 31
+					}
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_l
+						days = -31
+					}
+				}
+			}
+		}
+		#“征收”沿途运载货物
+		CAC_Famine_Crisis_respond_2 = {
+			icon = raj_risk_of_famine
+			fire_only_once = yes
+			cost = 35
+			days_remove = 90
+			available = {
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			ai_will_do = {
+				base = 50
+			}
+			modifier = {
+				production_speed_buildings_factor = 0.25
+				stability_weekly = 0.01
+			}
+			complete_effect = {
+				custom_effect_tooltip = CAC_Famine_only_use_once
+				add_stability = -0.10
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_s
+					days = 61
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -61
+				}
+			}
+			remove_effect = {
+				add_equipment_to_stockpile = {
+					type = train_equipment
+					amount = 25
+				}
+				add_equipment_to_stockpile = {
+					type = motorized_equipment
+					amount = 200
+				}
+				if = {
+					limit = {
+						has_idea = CAC_Famine_3
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_3
+						add_idea = CAC_Famine_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_2
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_2
+						add_idea = CAC_Famine_1
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_1
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_1
+						add_idea = CAC_Famine_0
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_3
+					}
+				}
+				else = {
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_s
+						days = 31
+					}
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_l
+						days = -31
+					}
+				}
+			}
+		}
+		#确保最低保障
+		CAC_Famine_Crisis_respond_3 = {
+			icon = raj_risk_of_famine
+			fire_only_once = yes
+			cost = 35
+			days_remove = 90
+			available = {
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			ai_will_do = {
+				base = 50
+			}
+			modifier = {
+				production_speed_buildings_factor = 0.20
+				industrial_capacity_factory = 0.15
+				factory_energy_consumption = -0.15
+			}
+			complete_effect = {
+				custom_effect_tooltip = CAC_Famine_only_use_once
+				add_stability = 0.05
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_s
+					days = 61
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -61
+				}
+			}
+			remove_effect = {
+				if = {
+					limit = {
+						has_idea = CAC_Famine_3
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_3
+						add_idea = CAC_Famine_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_2
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_2
+						add_idea = CAC_Famine_1
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_1
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_1
+						add_idea = CAC_Famine_0
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_3
+					}
+				}
+				else = {
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_s
+						days = 31
+					}
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_l
+						days = -31
+					}
+				}
+			}
+		}
+		#收拢受灾流民
+		CAC_Famine_Crisis_respond_4 = {
+			icon = raj_risk_of_famine
+			fire_only_once = yes
+			cost = 35
+			days_remove = 90
+			available = {
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			ai_will_do = {
+				base = 50
+			}
+			complete_effect = {
+				custom_effect_tooltip = CAC_Famine_only_use_once
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_s
+					days = 61
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -61
+				}
+			}
+			remove_effect = {
+				random_core_state = {
+					add_manpower = 15000
+					add_extra_state_shared_building_slots = 1
+				}
+				random_core_state = {
+					add_manpower = 15000
+					add_extra_state_shared_building_slots = 1
+				}
+				random_core_state = {
+					add_manpower = 15000
+					add_extra_state_shared_building_slots = 1
+				}
+				random_core_state = {
+					add_manpower = 15000
+					add_extra_state_shared_building_slots = 1
+				}
+				
+				if = {
+					limit = {
+						has_idea = CAC_Famine_3
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_3
+						add_idea = CAC_Famine_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_2
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_2
+						add_idea = CAC_Famine_1
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_1
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_1
+						add_idea = CAC_Famine_0
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_3
+					}
+				}
+				else = {
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_s
+						days = 31
+					}
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_l
+						days = -31
+					}
+				}
+			}
+		}
+		#请求人道主义援助
+		CAC_Famine_Crisis_respond_5 = {
+			icon = raj_risk_of_famine
+			fire_only_once = yes
+			cost = 35
+			days_remove = 90
+			available = {
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			ai_will_do = {
+				base = 100
+			}
+			complete_effect = {
+				custom_effect_tooltip = CAC_Famine_only_use_once
+				random_list = {
+					10 = {
+						hidden_effect = {
+							add_to_variable = {
+								ubs_save = 500
+							}
+						}
+						custom_effect_tooltip = CAC_get_500_income
+					}
+					10 = {
+						hidden_effect = {
+							add_to_variable = {
+								ubs_save = 400
+							}
+						}
+						custom_effect_tooltip = CAC_get_400_income
+					}
+					10 = {
+						hidden_effect = {
+							add_to_variable = {
+								ubs_save = 300
+							}
+						}
+						custom_effect_tooltip = CAC_get_300_income
+					}
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_s
+					days = 61
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -61
+				}
+			}
+			modifier = {
+				stability_weekly = 0.02
+			}
+			remove_effect = {
+				capital_scope = {
+					add_dynamic_modifier = {
+						modifier = BRA_new_capital_modifier
+					}
+				}
+				if = {
+					limit = {
+						has_idea = CAC_Famine_3
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_3
+						add_idea = CAC_Famine_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_2
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_2
+						add_idea = CAC_Famine_1
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_1
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_1
+						add_idea = CAC_Famine_0
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_3
+					}
+				}
+				else = {
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_s
+						days = 31
+					}
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_l
+						days = -31
+					}
+				}
+			}
+		}
+		#让军队垦殖
+		CAC_Famine_Crisis_respond_6 = {
+			icon = raj_risk_of_famine
+			cost = 15
+			days_remove = 45
+			available = {
+				has_manpower > 999
+				not = {
+					has_country_flag = CAC_Famine_has_end
+				}
+			}
+			ai_will_do = {
+				base = 10
+			}
+			complete_effect = {
+				add_manpower = -1000
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_s
+					days = 31
+				}
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -31
+				}
+			}
+			modifier = {
+				consumer_goods_factor = -0.15
+			}
+			remove_effect = {
+				add_manpower = 2000
+				if = {
+					limit = {
+						has_idea = CAC_Famine_3
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_3
+						add_idea = CAC_Famine_2
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_2
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_2
+						add_idea = CAC_Famine_1
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_1
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_1
+						add_idea = CAC_Famine_0
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CAC_Famine_4
+					}
+					swap_ideas = {
+						remove_idea = CAC_Famine_4
+						add_idea = CAC_Famine_3
+					}
+				}
+				else = {
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_s
+						days = 31
+					}
+					add_days_mission_timeout = {
+						mission = CAC_Famine_Crisis_mission_l
+						days = -31
+					}
+				}
+			}
+		}
+		#帮助特雷森临时政府（没做）
+		CAC_Famine_Crisis_respond_7 = {
+			icon = raj_risk_of_famine
+			visible = {
+				always = no
+			}
+			available = {
+				always = no
+			}
+		}
+		#帮助美浦州（没做）
+		CAC_Famine_Crisis_respond_8 = {
+			icon = raj_risk_of_famine
+			visible = {
+				always = no
+			}
+			available = {
+				always = no
+			}
+		}
+		#帮助栗东州（没做）
+		CAC_Famine_Crisis_respond_9 = {
+			icon = raj_risk_of_famine
+			visible = {
+				always = no
+			}
+			available = {
+				always = no
+			}
+		}
+		#中亚风雨同舟（没做）
+		CAC_Famine_Crisis_respond_10 = {
+			icon = raj_risk_of_famine
+			visible = {
+				always = NO
+				is_ai = NO
+				has_country_flag = TAM_helped_CAC_Famine_Crisis
+				has_country_flag = PER_helped_CAC_Famine_Crisis
+				has_country_flag = AFG_helped_CAC_Famine_Crisis
+			}
+			available = {
+				always = NO
+				is_ai = NO
+				has_country_flag = TAM_helped_CAC_Famine_Crisis
+				has_country_flag = PER_helped_CAC_Famine_Crisis
+				has_country_flag = AFG_helped_CAC_Famine_Crisis
+				TAM = {
+					has_idea = CAC_Famine_0
+				}
+				PER = {
+					has_idea = CAC_Famine_0
+				}
+				AFG = {
+					has_idea = CAC_Famine_0
+				}
+			}
+			fire_only_once = YES
+			complete_effect = {
+				add_days_mission_timeout = {
+					mission = CAC_Famine_Crisis_mission_l
+					days = -1087
+				}
+				every_other_country = {
+					limit = {
+						OR = {
+							tag = AFG
+							tag = TAM
+							tag = PER
+						}
+						NOT = { tag = ROOT }
+					}
+					every_character = {
+						set_nationality = ROOT
+					}
+					every_core_state = {
+						add_core_of = FROM
+					}				
+				}
+				if = {
+					limit = { tag = AFG }
+					annex_country = {
+						target = TAM
+						transfer_troops = yes
+					}
+					annex_country = {
+						target = PER
+						transfer_troops = yes
+					}
+				}
+				if = {
+					limit = { tag = TAM }
+					annex_country = {
+						target = AFG
+						transfer_troops = yes
+					}
+					annex_country = {
+						target = PER
+						transfer_troops = yes
+					}
+				}
+				if = {
+					limit = { tag = PER }
+					annex_country = {
+						target = AFG
+						transfer_troops = yes
+					}
+					annex_country = {
+						target = TAM
+						transfer_troops = yes
+					}
+				}
 			}
 		}
 	}
-}
+
+#美浦政治倾轧
+	AFG_decision_civil_war_before_civil_war = {
+		AFG_decision_debug_army1 = {
+			name = AFG_decision_debug_army1
+			allowed = {
+				always = yes
+			}
+			visible = {
+				always = yes
+			}
+			available = {
+				date >1937.6.1
+			}
+			fire_only_once = yes
+			ai_will_do = {
+				base = 1000
+			}
+			complete_effect = {
+				capital_scope = {
+					create_unit = {
+						division = "name = \"闪耀力量\" division_template = \"闪耀力量\" start_experience_factor = 1 start_manpower_factor = 1 start_equipment_factor = 1"
+							owner = AFG
+							count = 2
+					}
+
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 200
+					}
+				}
+				custom_effect_tooltip = CAC_get_200_income
+
+			}
+		}
+		AFG_decision_debug_army2 = {
+			name = AFG_decision_debug_army2
+			allowed = {
+				always = yes
+			}
+			visible = {
+				always = yes
+			}
+			available = {
+				date >1937.6.1
+			}
+			fire_only_once = yes
+			ai_will_do = {
+				base = 1000
+			}
+			complete_effect = {
+				capital_scope = {
+					create_unit = {
+						division = "name = \"街道自卫队\" division_template = \"街道自卫队\" start_experience_factor = 0.5 start_manpower_factor = 1 start_equipment_factor = 1"
+							owner = AFG
+							count = 4
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 200
+					}
+				}
+				custom_effect_tooltip = CAC_get_200_income
+			}
+		}
+		AFG_decision_debug_army3 = {
+			name = AFG_decision_debug_army3
+			allowed = {
+				always = yes
+			}
+			visible = {
+				always = yes
+			}
+			available = {
+				date >1937.9.1
+			}
+			fire_only_once = yes
+			ai_will_do = {
+				base = 1000
+			}
+			complete_effect = {
+				capital_scope = {
+					create_unit = {
+						division = "name = \"街道自卫队\" division_template = \"街道自卫队\" start_experience_factor = 0.5 start_manpower_factor = 1 start_equipment_factor = 1"
+							owner = AFG
+							count = 4
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 200
+					}
+				}
+				custom_effect_tooltip = CAC_get_200_income
+			}
+		}
+		AFG_decision_debug_army4 = {
+			name = AFG_decision_debug_army4
+			allowed = {
+				always = yes
+			}
+			visible = {
+				always = yes
+			}
+			available = {
+				date >1938.1.1
+			}
+			fire_only_once = yes
+			ai_will_do = {
+				base = 1000
+			}
+			complete_effect = {
+				capital_scope = {
+					create_unit = {
+						division = "name = \"街道自卫队\" division_template = \"街道自卫队\" start_experience_factor = 0.5 start_manpower_factor = 1 start_equipment_factor = 1"
+							owner = AFG
+							count = 4
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+				hidden_effect = {
+					add_to_variable = {
+						ubs_save = 200
+					}
+				}
+				custom_effect_tooltip = CAC_get_200_income
+			}
+		}
+	}
