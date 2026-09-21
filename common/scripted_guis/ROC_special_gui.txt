@@ -446,14 +446,190 @@ scripted_gui = {
 	}
 }
 
-#商店
+#藏品
 scripted_gui = {
+	ROC_collection_window = {
+		#context_type = decision_category
+		window_name = "ROC_collection_window"
+		visible = {	
+			tag = ROC
+			has_country_flag = ROC_collection_window_visible
+		}
+		properties = {
+			ROC_sisuitai_tab = {
+				frame = ROC_sisuitai_tab_var
+			}
+			ROC_collection_tab = {
+				frame = ROC_collection_tab_var
+			}
+			ROC_coin_tab = {
+				frame = ROC_coin_tab_var
+			}
+			ROC_shop_tab = {
+				frame = ROC_shop_tab_var
+			}
+		}
+		triggers = {
+		}
+		dynamic_lists = {
+		}
+		effects = {
+			ROC_sisuitai_tab_click = {
+				set_variable = { ROC_sisuitai_tab_var = 1 }
+				set_variable = { ROC_collection_tab_var = 2 }
+				set_variable = { ROC_coin_tab_var = 2 }
+				set_variable = { ROC_shop_tab_var = 2 }
+			}
+			ROC_collection_tab_click = {
+				set_variable = { ROC_sisuitai_tab_var = 2 }
+				set_variable = { ROC_collection_tab_var = 1 }
+				set_variable = { ROC_coin_tab_var = 2 }
+				set_variable = { ROC_shop_tab_var = 2 }
+			}
+			ROC_coin_tab_click = {
+				set_variable = { ROC_sisuitai_tab_var = 2 }
+				set_variable = { ROC_collection_tab_var = 2 }
+				set_variable = { ROC_coin_tab_var = 1 }
+				set_variable = { ROC_shop_tab_var = 2 }
+			}
+			ROC_shop_tab_click = {
+				set_variable = { ROC_sisuitai_tab_var = 2 }
+				set_variable = { ROC_collection_tab_var = 2 }
+				set_variable = { ROC_coin_tab_var = 2 }
+				set_variable = { ROC_shop_tab_var = 1 }
+			}
+			close_button_click = {
+				clr_country_flag = ROC_collection_window_visible
+			}
+		}
+	}
+	ROC_collection_decision_window = {
+		#context_type = decision_category
+		context_type = player_context
+		parent_window_name = ROC_collection_container
+		window_name = "ROC_collection_decision_window"
+		visible = {	
+			tag = ROC
+			check_variable = { ROC_collection_tab_var = 1 }
+		}
+		properties = {
+			ROC_collection_using_icon = {
+				image = "[Get_ROC_collection_using_icon]"
+			}
+			ROC_collection_unusing_icon = {
+				image = "[Get_ROC_collection_unusing_icon]"
+			}
+		}
+		triggers = {
+			light_visible = {
+				check_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 }
+			}
+			ROC_collection_unusing_activate_click_enabled = {
+				check_variable = { num_of_will_activate_collection > 0 }
+				set_temp_variable = { temp_activated_collection = num_of_activated_collection }
+				add_to_temp_variable = { temp_activated_collection = num_of_will_activate_collection }
+				not = { check_variable = { temp_activated_collection > num_of_activatable_collection } }
+			}
+			ROC_collection_using_arrow_visible = {
+				or = {
+					check_variable = { KMT_collection_using_id = 1 }
+					check_variable = { KMT_collection_using_id = 2 }
+					check_variable = { KMT_collection_using_id = 8 }
+					check_variable = { KMT_collection_using_id = 12 }
+				}
+				not = { check_variable = { ROC_collection_using_num^KMT_collection_using_id = 0 } }
+			}
+			ROC_collection_using_num_visible = {
+				or = {
+					check_variable = { KMT_collection_using_id = 1 }
+					check_variable = { KMT_collection_using_id = 2 }
+					check_variable = { KMT_collection_using_id = 8 }
+					check_variable = { KMT_collection_using_id = 12 }
+				}
+				not = { check_variable = { ROC_collection_using_num^KMT_collection_using_id = 0 } }
+			}
+			ROC_collection_unusing_arrow_visible = {
+				or = {
+					check_variable = { KMT_collection_unusing_id = 1 }
+					check_variable = { KMT_collection_unusing_id = 2 }
+					check_variable = { KMT_collection_unusing_id = 8 }
+					check_variable = { KMT_collection_unusing_id = 12 }
+				}
+				not = { check_variable = { ROC_collection_using_num^KMT_collection_unusing_id = 0 } }
+			}
+			ROC_collection_unusing_num_visible = {
+				or = {
+					check_variable = { KMT_collection_unusing_id = 1 }
+					check_variable = { KMT_collection_unusing_id = 2 }
+					check_variable = { KMT_collection_unusing_id = 8 }
+					check_variable = { KMT_collection_unusing_id = 12 }
+				}
+				not = { check_variable = { ROC_collection_using_num^KMT_collection_unusing_id = 0 } }
+			}
+		}
+		dynamic_lists = {
+			ROC_collection_using_gridboxtype = {
+				array = ROOT.KMT_collection_using_array
+				index = KMT_collection_using_i
+				value = KMT_collection_using_id
+				entry_container = ROC_collection_using_entry
+			}
+			ROC_collection_unusing_gridboxtype = {
+				array = ROOT.KMT_collection_unusing_array
+				index = KMT_collection_unusing_i
+				value = KMT_collection_unusing_id
+				entry_container = ROC_collection_unusing_entry
+			}
+		}
+		effects = {
+			ROC_collection_unusing_icon_click = {
+				if = {
+					limit = {
+						check_variable = { KMT_collection_unusing_id > 0 }
+						check_variable = { KMT_collection_unusing_id < 16 }
+						check_variable = { ROC_collection_remaining_cooling_days^KMT_collection_unusing_id = 0 }
+					}
+					if = {
+						limit = { check_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 } }
+						set_variable = { ROC_collection_light^KMT_collection_unusing_id = 0 }
+						add_to_variable = { num_of_will_activate_collection = -1 }
+					}
+					else = {
+						set_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 }
+						add_to_variable = { num_of_will_activate_collection = 1 }
+					}
+				}
+			}
+			ROC_collection_unusing_activate_click = {
+				add_to_variable = { num_of_activated_collection = num_of_will_activate_collection }
+				set_variable = { num_of_will_activate_collection = 0 }
+				for_each_loop = {
+					array = ROOT.ROC_collection_light  ##检查的数组
+					value = v
+					index = i
+					break = break
+					if = {  ##对数组中每个元素执行效果
+						limit = {
+							check_variable = { v = 1 }
+						}
+						add_to_array = { ROOT.KMT_collection_using_array = i }
+						remove_from_array = { ROOT.KMT_collection_unusing_array = i }
+						set_variable = { ROOT.ROC_collection_light^i = 0 }
+						set_variable = { ROOT.ROC_collection_remaining_effect_days^i = ROC_collection_effect_days^i }
+						##这里写效果触发器
+					}
+				}
+			}
+		}
+	}
 	ROC_spnode_shop_window = {
 		#context_type = decision_category
+		context_type = player_context
+		parent_window_name = ROC_collection_container
 		window_name = "ROC_spnode_shop_window"
 		visible = {	
 			tag = ROC
-			has_country_flag = ROC_spnode_shop_window_visible
+			check_variable = { ROC_shop_tab_var = 1 }
 		}
 		properties = {
 			cloud_cutscene_close_part0 = {
@@ -619,14 +795,14 @@ scripted_gui = {
 				set_variable = { ROC_spnode_shop_good_selling_id = KMT_sp_shop_goods_id }
 			}
 			close_button_click = {
-				clr_country_flag = ROC_spnode_shop_window_visible
+				clr_country_flag = ROC_collection_window_visible
 			}
 		}
 	}
-	ROC_spnode_shop_window_button = {
+	ROC_collection_window_button = {
 		context_type = player_context
 		parent_window_token = politics_tab
-		window_name = "ROC_spnode_shop_window_button"
+		window_name = "ROC_collection_window_button"
 		visible = {
 			tag = ROC
 		}
@@ -636,12 +812,12 @@ scripted_gui = {
 			ROC_spnode_shop_button_click = {
 				if = {
 					limit = {
-						not = { has_country_flag = ROC_spnode_shop_window_visible }
+						not = { has_country_flag = ROC_collection_window_visible }
 					}
-					set_country_flag = ROC_spnode_shop_window_visible
-					ROC_spnode_shop_window_button_open_effect = yes
+					set_country_flag = ROC_collection_window_visible
+					ROC_collection_window_button_open_effect = yes
 				}
-				else = { clr_country_flag = ROC_spnode_shop_window_visible }
+				else = { clr_country_flag = ROC_collection_window_visible }
 				if = {
 					limit = {
 						not = { has_country_flag = ROC_spnode_shop_button_arrows_alert_unvisible }
@@ -665,78 +841,6 @@ scripted_gui = {
 		effects = {
 			ROC_collection_selling_good_close_button_click = {
 				clear_variable = ROC_spnode_shop_good_selling_id
-			}
-		}
-	}
-	ROC_collection_decision_window = {
-		context_type = decision_category
-		window_name = "ROC_collection_decision_window"
-		visible = {	
-			tag = ROC
-		}
-		properties = {
-			ROC_collection_using_icon = {
-				image = "[Get_ROC_collection_using_icon]"
-			}
-			ROC_collection_unusing_icon = {
-				image = "[Get_ROC_collection_unusing_icon]"
-			}
-		}
-		triggers = {
-			light_visible = {
-				check_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 }
-			}
-			ROC_collection_unusing_activate_click_enabled = {
-				check_variable = { num_of_will_activate_collection > 0 }
-				set_temp_variable = { temp_activated_collection = num_of_activated_collection }
-				add_to_temp_variable = { temp_activated_collection = num_of_will_activate_collection }
-				not = { check_variable = { temp_activated_collection > num_of_activatable_collection } }
-			}
-		}
-		dynamic_lists = {
-			ROC_collection_using_gridboxtype = {
-				array = ROOT.KMT_collection_using_array
-				index = KMT_collection_using_i
-				value = KMT_collection_using_id
-				entry_container = ROC_collection_using_entry
-			}
-			ROC_collection_unusing_gridboxtype = {
-				array = ROOT.KMT_collection_unusing_array
-				index = KMT_collection_unusing_i
-				value = KMT_collection_unusing_id
-				entry_container = ROC_collection_unusing_entry
-			}
-		}
-		effects = {
-			ROC_collection_unusing_icon_click = {
-				if = {
-					limit = { check_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 } }
-					set_variable = { ROC_collection_light^KMT_collection_unusing_id = 0 }
-					add_to_variable = { num_of_will_activate_collection = -1 }
-				}
-				else = {
-					set_variable = { ROC_collection_light^KMT_collection_unusing_id = 1 }
-					add_to_variable = { num_of_will_activate_collection = 1 }
-				}
-			}
-			ROC_collection_unusing_activate_click = {
-				add_to_variable = { num_of_activated_collection = num_of_will_activate_collection }
-				set_variable = { num_of_will_activate_collection = 0 }
-				for_each_loop = {
-					array = ROOT.ROC_collection_light  ##检查的数组
-					value = v
-					index = i
-					break = break
-					if = {  ##对数组中每个元素执行效果
-						limit = {
-							check_variable = { v = 1 }
-						}
-						add_to_array = { ROOT.KMT_collection_using_array = i }
-						remove_from_array = { ROOT.KMT_collection_unusing_array = i }
-						set_variable = { ROOT.ROC_collection_light^i = 0 }
-						##这里写效果触发器
-					}
-				}
 			}
 		}
 	}
