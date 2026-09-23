@@ -2,10 +2,10 @@ focus_tree = {
 	id = persian_AH_focus
 	country = {
 		factor = 0
-		# modifier = {
-		# 	add = 10
-		# 	tag = PER
-		# }
+		modifier = {
+			add = 10
+			tag = PER
+		}
 	}
 	default = no
 	continuous_focus_position = {
@@ -2846,8 +2846,13 @@ focus_tree = {
 	focus = {
 		id = PER_a_holiday
 		icon = GFX_goal_generic_automobile
-		relative_position_id = PER_memo
-		x = 17
+		allow_branch = {
+			always = no
+			NOT = {
+				has_completed_focus = PER_natsuki_government
+			}
+		}
+		x = 31
 		y = 0
 		cost = 15
 		ai_will_do = {
@@ -3119,58 +3124,8 @@ focus_tree = {
 		}
 	}
 	focus = {
-		id = PER_back_to_work_fake
-		icon = GFX_goal_changing_times
-		prerequisite = {
-			focus = PER_a_holiday
-		}
-		prerequisite = {
-			focus = PER_across_parliament
-			focus = PER_follow_parliament
-		}
-		prerequisite = {
-			focus = PER_visit_research_area
-			focus = PER_visit_industry_area
-		}
-		prerequisite = {
-			focus = PER_bread_order
-			focus = PER_oil_order
-		}
-		prerequisite = {
-			focus = PER_northern_race
-			focus = PER_southern_race
-		}
-		relative_position_id = PER_a_holiday
-		x = 0
-		y = 5
-		cost = 2
-		ai_will_do = {
-			base = 10
-		}
-		allow_branch = {
-			is_debug = no
-			NOT = {
-				has_country_flag = PER_just_fool_want_work_flag
-			}
-		}
-		available = {
-			has_country_leader = {
-				character = PER_Akatsuki_Kojo
-			}
-			has_completed_focus = PER_a_holiday
-			custom_trigger_tooltip = {
-				tooltip = PER_back_to_work_fake_ttt
-				NOT = {
-					has_completed_focus = PER_a_holiday
-				}
-			}
-		}
-		completion_reward = {
-			custom_effect_tooltip = PER_back_to_work_fake_tt
-		}
-	}
-	focus = {
 		id = PER_just_fool_want_work
+		dynamic = yes
 		icon = GFX_goal_changing_times
 		prerequisite = {
 			focus = PER_a_holiday
@@ -3182,32 +3137,51 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 		}
-		allow_branch = {
-			OR = {
-				has_country_flag = PER_just_fool_want_work_flag
-				is_debug = yes
-			}
-		}
 		available = {
 			has_completed_focus = PER_a_holiday
-			NOT = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = PER_just_fool_want_work_flag
+					}
+				}
 				has_country_leader = {
 					character = PER_Akatsuki_Kojo
 				}
+				custom_trigger_tooltip = {
+					tooltip = PER_back_to_work_fake_ttt
+					NOT = {
+						has_completed_focus = PER_a_holiday
+					}
+				}
+			}
+			else = {
+				NOT = {
+					has_country_leader = {
+						character = PER_Akatsuki_Kojo
+					}
+				}
 			}
 		}
 		completion_reward = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = PER_just_fool_want_work_flag
+					}
+				}
+				custom_effect_tooltip = PER_back_to_work_fake_tt
+			}
 		}
 	}
 	focus = {
-		id = PER_Natsuki_government
+		id = PER_natsuki_government
 		icon = GFX_focus_PER_Minamiya_Natsuki
-		prerequisite = {
-			focus = PER_just_fool_want_work
+		allow_branch = {
+			#has_country_flag = PER_natsuki_government_flag
 		}
-		relative_position_id = PER_just_fool_want_work
-		x = -7
-		y = 1
+		x = 31
+		y = 0
 		cost = 2
 		ai_will_do = {
 			base = 10
@@ -3242,609 +3216,12 @@ focus_tree = {
 		}
 	}
 	focus = {
-		id = PER_action_of_prison
-		icon = GFX_focus_generic_conspiracy
-		prerequisite = {
-			focus = PER_Natsuki_government
-		}
-		relative_position_id = PER_Natsuki_government
-		mutually_exclusive = {
-			focus = PER_result_of_prison
-		}
-		x = -2
-		y = 1
-		cost = 3
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-			hidden_trigger = {
-				always = no
-			}
-			has_government = fascism
-		}
-		completion_reward = {
-			add_war_support = 0.1
-		}
-	}
-	focus = {
-		id = PER_plan_pink
-		icon = GFX_focus_attack_soviet
-		prerequisite = {
-			focus = PER_action_of_prison
-		}
-		relative_position_id = PER_action_of_prison
-		x = -2
-		y = 1
-		cost = 8
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-			any_neighbor_country = {
-				has_government = communism
-				strength_ratio = {
-					tag = PER
-					ratio > 1.5
-				}
-				#looks like ROOT is useful but not show on screen.
-			}
-		}
-		completion_reward = {
-			unlock_decision_tooltip = PER_plan_pink
-		}
-	}
-	focus = {
-		id = PER_liquidation
-		icon = GFX_goal_generic_break_army
-		prerequisite = {
-			focus = PER_action_of_prison
-		}
-		relative_position_id = PER_action_of_prison
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_popularity = {
-				ideology = fascism
-				popularity = 0.25
-			}
-			add_stability = 0.1
-			#country_event
-		}
-	}
-	focus = {
-		id = PER_axis_markets
-		icon = GFX_focus_chi_mission_to_germany
-		prerequisite = {
-			focus = PER_liquidation
-		}
-		relative_position_id = PER_liquidation
-		x = -1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-			OR = {
-				GER = {
-					exists = yes
-					has_government = ROOT
-					NOT = {
-						has_war_with = ROOT
-					}
-				}
-				ITA = {
-					exists = yes
-					has_government = ROOT
-					NOT = {
-						has_war_with = ROOT
-					}
-				}
-			}
-		}
-		completion_reward = {
-			add_ideas = techan
-			if = {
-				limit = {
-					GER = {
-						exists = yes
-						has_government = ROOT
-						NOT = {
-							has_war_with = ROOT
-						}
-					}
-				}
-				GER = {
-					add_stability = 0.05
-				}
-			}
-			if = {
-				limit = {
-					ITA = {
-						exists = yes
-						has_government = ROOT
-						NOT = {
-							has_war_with = ROOT
-						}
-					}
-				}
-				ITA = {
-					add_stability = 0.05
-				}
-			}
-		}
-	}
-	focus = {
-		id = PER_rubber_sale
-		icon = GFX_focus_generic_rubber
-		prerequisite = {
-			focus = PER_axis_markets
-		}
-		relative_position_id = PER_axis_markets
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_tech_bonus = {
-				name = PER_rubber_sale
-				bonus = 1
-				uses = 1
-				category = cat_synth_rubber
-			}
-			modify_building_resources = {
-				building = synthetic_refinery
-				resource = rubber
-				amount = 2
-			}
-		}
-	}
-	focus = {
-		id = PER_our_road
-		icon = GFX_focus_CZE_military_aeronautical_institute
-		prerequisite = {
-			focus = PER_liquidation
-		}
-		relative_position_id = PER_liquidation
-		x = -2
-		y = 3
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			PER_reduce_pressure = yes
-			add_war_support = 0.05
-			add_political_power = 75
-		}
-	}
-	focus = {
-		id = PER_expand_spy
-		icon = GFX_focus_generic_vatican_agents
-		prerequisite = {
-			focus = PER_our_road
-		}
-		relative_position_id = PER_our_road
-		x = -1
-		y = 1
-		cost = 4
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			PER_reduce_pressure = yes
-			add_ideas = PER_expand_spy
-		}
-	}
-	focus = {
-		id = PER_islamization_plan
-		icon = GFX_goal_generic_islamic_education
-		prerequisite = {
-			focus = PER_expand_spy
-		}
-		relative_position_id = PER_expand_spy
-		x = -1
-		y = 1
-		cost = 4
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			PER_reduce_pressure = yes
-		}
-	}
-	focus = {
-		id = PER_for_war
-		icon = GFX_goal_generic_fascist_bills
-		prerequisite = {
-			focus = PER_our_road
-		}
-		relative_position_id = PER_our_road
-		x = 1
-		y = 1
-		cost = 4
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_political_power = -50
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					free_building_slots = {
-						building = arms_factory
-						size > 2
-						include_locked = yes
-					}
-				}
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
-					instant_build = yes
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					free_building_slots = {
-						building = arms_factory
-						size > 2
-						include_locked = yes
-					}
-				}
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
-					instant_build = yes
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					free_building_slots = {
-						building = arms_factory
-						size > 2
-						include_locked = yes
-					}
-				}
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
-					instant_build = yes
-				}
-			}
-		}
-	}
-	focus = {
-		id = PER_holy_war
-		icon = GFX_goal_generic_multinational_army
-		prerequisite = {
-			focus = PER_expand_spy
-		}
-		prerequisite = {
-			focus = PER_for_war
-		}
-		relative_position_id = PER_expand_spy
-		x = 1
-		y = 1
-		cost = 4
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_ideas = PER_holy_war
-		}
-	}
-	focus = {
-		id = PER_national_amalgamation
-		icon = GFX_goal_generic_railroad
-		prerequisite = {
-			focus = PER_liquidation
-			focus = PER_federation
-		}
-		relative_position_id = PER_liquidation
-		x = 1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			random_owned_state = {
-				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 1
-					}
-				}
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
-			}
-			random_owned_state = {
-				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 1
-					}
-				}
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
-			}
-			random_owned_state = {
-				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 1
-					}
-				}
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
-			}
-			add_ideas = PER_national_amalgamation
-			unlock_decision_category_tooltip = PER_power_struggle_decision_category
-		}
-	}
-	focus = {
-		id = PER_clearing_refugees
-		icon = GFX_goal_decryption
-		prerequisite = {
-			focus = PER_national_amalgamation
-		}
-		relative_position_id = PER_national_amalgamation
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			random_owned_state = {
-				add_manpower = 114514
-			}
-			random_owned_state = {
-				add_manpower = 1919
-			}
-			random_owned_state = {
-				add_manpower = 810
-			}
-			PER_reduce_pressure = yes
-			if = {
-				limit = {
-					has_intelligence_agency = no
-				}
-				create_intelligence_agency = {
-					name = "M.I.B."
-					icon = "GFX_intelligence_agency_logo_ita"
-				}
-			}
-			upgrade_intelligence_agency = upgrade_training_centers
-		}
-	}
-	focus = {
-		id = PER_public_funds
-		icon = GFX_goal_generic_bills
-		prerequisite = {
-			focus = PER_clearing_refugees
-		}
-		relative_position_id = PER_clearing_refugees
-		x = -1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			PER_reduce_pressure = yes
-			add_ideas = PER_public_funds
-		}
-	}
-	focus = {
-		id = PER_nationalize_oil
-		icon = GFX_focus_generic_concessions
-		prerequisite = {
-			focus = PER_clearing_refugees
-		}
-		relative_position_id = PER_clearing_refugees
-		x = 0
-		y = 2
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			hidden_effect = {
-				remove_ideas = PER_tehran_treaty
-			}
-			YEM = {
-				remove_resource_rights = 412
-				remove_resource_rights = 413
-				remove_resource_rights = 907
-			}
-			custom_effect_tooltip = available_industrial_concern
-			show_ideas_tooltip = PER_ahvaz_oil
-		}
-	}
-	focus = {
-		id = PER_scientific_enthusiasm
-		icon = GFX_goal_spa_loi_jishu
-		prerequisite = {
-			focus = PER_clearing_refugees
-		}
-		relative_position_id = PER_clearing_refugees
-		x = 1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_research_slot = 1
-		}
-	}
-	focus = {
-		id = PER_expand_oil
-		icon = GFX_focus_generic_fascist_propaganda
-		prerequisite = {
-			focus = PER_nationalize_oil
-		}
-		prerequisite = {
-			focus = PER_for_war
-		}
-		relative_position_id = PER_nationalize_oil
-		mutually_exclusive = {
-			focus = PER_oil_for_steel
-		}
-		x = -1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					has_resources_amount = {
-						resource = oil
-						amount > 10
-						delivered = yes
-					}
-				}
-				add_resource = {
-					type = oil
-					amount = 12
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					has_resources_amount = {
-						resource = oil
-						amount > 15
-						delivered = yes
-					}
-				}
-				add_resource = {
-					type = oil
-					amount = 10
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					has_resources_amount = {
-						resource = oil
-						amount > 20
-						delivered = yes
-					}
-				}
-				add_resource = {
-					type = oil
-					amount = 8
-				}
-			}
-		}
-	}
-	focus = {
-		id = PER_oil_for_steel
-		icon = GFX_focus_generic_steel
-		prerequisite = {
-			focus = PER_nationalize_oil
-		}
-		relative_position_id = PER_nationalize_oil
-		mutually_exclusive = {
-			focus = PER_expand_oil
-		}
-		x = 1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_ideas = PER_oil_for_steel
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					is_coastal = yes
-				}
-				add_resource = {
-					type = steel
-					amount = 12
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					is_coastal = yes
-				}
-				add_resource = {
-					type = steel
-					amount = 8
-				}
-			}
-		}
-	}
-	focus = {
 		id = PER_result_of_prison
 		icon = GFX_focus_generic_court
 		prerequisite = {
-			focus = PER_Natsuki_government
+			focus = PER_natsuki_government
 		}
-		relative_position_id = PER_Natsuki_government
-		mutually_exclusive = {
-			focus = PER_action_of_prison
-		}
+		relative_position_id = PER_natsuki_government
 		x = 2
 		y = 1
 		cost = 3
@@ -3862,6 +3239,242 @@ focus_tree = {
 		}
 	}
 	focus = {
+		id = PER_new_face
+		icon = GFX_goal_generic_foreign_diplomacy
+		prerequisite = {
+			focus = PER_natsuki_government
+		}
+		relative_position_id = PER_natsuki_government
+		x = -2
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_political_power = 25
+			custom_effect_tooltip = available_political_advisor
+		}
+	}
+	focus = {
+		id = PER_new_country
+		icon = GFX_focus_por_estado_novo
+		prerequisite = {
+			focus = PER_new_face
+		}
+		relative_position_id = PER_new_face
+		mutually_exclusive = { focus = PER_federation focus = PER_constitutional_government }
+		x = 0
+		y = 1
+		cost = 3
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+			has_government = neutrality
+		}
+		completion_reward = {
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.08
+			}
+			add_ideas = PER_new_country
+		}
+	}
+	focus = {
+		id = PER_ban_political_donations
+		icon = GFX_goal_generic_ban_aristocrats
+		prerequisite = {
+			focus = PER_new_country
+		}
+		relative_position_id = PER_new_country
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			PER_reduce_pressure = yes
+			add_ideas = PER_ban_political_donations
+		}
+	}
+	focus = {
+		id = PER_technology_special_zone
+		icon = GFX_goal_research_silver_cooperation
+		prerequisite = {
+			focus = PER_ban_political_donations
+		}
+		relative_position_id = PER_ban_political_donations
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_research_slot = 1
+		}
+	}
+	focus = {
+		id = PER_1984
+		icon = GFX_goal_pp
+		prerequisite = {
+			focus = PER_new_country
+		}
+		relative_position_id = PER_new_country
+		x = -2
+		y = 3
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			PER_reduce_pressure = yes
+			unlock_decision_category_tooltip = PER_power_struggle_decision_category
+		}
+	}
+	focus = {
+		id = PER_reorganize_military_management
+		icon = GFX_focus_generic_military_mission
+		prerequisite = {
+			focus = PER_1984
+		}
+		relative_position_id = PER_1984
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_command_power = -50
+			army_experience = -50
+			add_ideas = PER_reorganize_military_management_idea
+		}
+	}
+	focus = {
+		id = PER_purchasing_new_equipment
+		icon = GFX_goal_generic_military_research_2
+		prerequisite = {
+			focus = PER_1984
+		}
+		relative_position_id = PER_1984
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			custom_effect_tooltip = available_tank_manufacturer
+			show_ideas_tooltip = PER_GER_MAN
+		}
+	}
+	focus = {
+		id = PER_queen_guard
+		icon = GFX_focus_generic_home_defense
+		prerequisite = {
+			focus = PER_reorganize_military_management
+		}
+		relative_position_id = PER_reorganize_military_management
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_ideas = PER_queen_guard
+		}
+	}
+	focus = {
+		id = PER_all_way_up
+		icon = GFX_focus_ITA_battaglioni_m
+		prerequisite = {
+			focus = PER_purchasing_new_equipment
+		}
+		prerequisite = {
+			focus = PER_reorganize_military_management
+		}
+		relative_position_id = PER_purchasing_new_equipment
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+		}
+	}
+	focus = {
 		id = PER_federation
 		icon = GFX_goal_generic_bastion_of_democracy
 		prerequisite = {
@@ -3869,6 +3482,7 @@ focus_tree = {
 		}
 		relative_position_id = PER_result_of_prison
 		mutually_exclusive = {
+			focus = PER_new_country
 			focus = PER_constitutional_government
 		}
 		x = -2
@@ -3922,6 +3536,7 @@ focus_tree = {
 		}
 		relative_position_id = PER_result_of_prison
 		mutually_exclusive = {
+			focus = PER_new_country
 			focus = PER_federation
 		}
 		x = 1
@@ -4319,14 +3934,595 @@ focus_tree = {
 		}
 	}
 	focus = {
+		id = PER_national_amalgamation
+		icon = GFX_goal_generic_railroad
+		prerequisite = {
+			focus = PER_new_country
+			focus = PER_federation
+		}
+		relative_position_id = PER_federation
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 1
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 1
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 1
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_ideas = PER_national_amalgamation
+			unlock_decision_category_tooltip = PER_power_struggle_decision_category
+		}
+	}
+	focus = {
+		id = PER_clearing_refugees
+		icon = GFX_goal_decryption
+		prerequisite = {
+			focus = PER_national_amalgamation
+		}
+		relative_position_id = PER_national_amalgamation
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			random_owned_state = {
+				add_manpower = 114514
+			}
+			random_owned_state = {
+				add_manpower = 1919
+			}
+			random_owned_state = {
+				add_manpower = 810
+			}
+			PER_reduce_pressure = yes
+			if = {
+				limit = {
+					has_intelligence_agency = no
+				}
+				create_intelligence_agency = {
+					name = "M.I.B."
+					icon = "GFX_intelligence_agency_logo_ita"
+				}
+			}
+			upgrade_intelligence_agency = upgrade_training_centers
+		}
+	}
+	focus = {
+		id = PER_public_funds
+		icon = GFX_goal_generic_bills
+		prerequisite = {
+			focus = PER_clearing_refugees
+		}
+		relative_position_id = PER_clearing_refugees
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			PER_reduce_pressure = yes
+			add_ideas = PER_public_funds
+		}
+	}
+	focus = {
+		id = PER_nationalize_oil
+		icon = GFX_focus_generic_concessions
+		prerequisite = {
+			focus = PER_clearing_refugees
+		}
+		relative_position_id = PER_clearing_refugees
+		x = 0
+		y = 2
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			hidden_effect = {
+				remove_ideas = PER_tehran_treaty
+			}
+			YEM = {
+				remove_resource_rights = 412
+				remove_resource_rights = 413
+				remove_resource_rights = 907
+			}
+			custom_effect_tooltip = available_industrial_concern
+			show_ideas_tooltip = PER_ahvaz_oil
+		}
+	}
+	focus = {
+		id = PER_scientific_enthusiasm
+		icon = GFX_goal_spa_loi_jishu
+		prerequisite = {
+			focus = PER_clearing_refugees
+		}
+		relative_position_id = PER_clearing_refugees
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_research_slot = 1
+		}
+	}
+	focus = {
+		id = PER_expand_oil
+		icon = GFX_focus_generic_fascist_propaganda
+		prerequisite = {
+			focus = PER_nationalize_oil
+			focus = PER_purchasing_new_equipment
+		}
+		relative_position_id = PER_nationalize_oil
+		mutually_exclusive = {
+			focus = PER_oil_for_steel
+		}
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					has_resources_amount = {
+						resource = oil
+						amount > 10
+						delivered = yes
+					}
+				}
+				add_resource = {
+					type = oil
+					amount = 12
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					has_resources_amount = {
+						resource = oil
+						amount > 15
+						delivered = yes
+					}
+				}
+				add_resource = {
+					type = oil
+					amount = 10
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					has_resources_amount = {
+						resource = oil
+						amount > 20
+						delivered = yes
+					}
+				}
+				add_resource = {
+					type = oil
+					amount = 8
+				}
+			}
+		}
+	}
+	focus = {
+		id = PER_oil_for_steel
+		icon = GFX_focus_generic_steel
+		prerequisite = {
+			focus = PER_nationalize_oil
+		}
+		relative_position_id = PER_nationalize_oil
+		mutually_exclusive = {
+			focus = PER_expand_oil
+		}
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_ideas = PER_oil_for_steel
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					is_coastal = yes
+				}
+				add_resource = {
+					type = steel
+					amount = 12
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					is_coastal = yes
+				}
+				add_resource = {
+					type = steel
+					amount = 8
+				}
+			}
+		}
+	}
+	focus = {
+		id = PER_action_of_prison
+		icon = GFX_focus_generic_conspiracy
+		x = 40
+		y = 0
+		cost = 3
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+			has_government = fascism
+		}
+		completion_reward = {
+			add_war_support = 0.1
+		}
+	}
+	focus = {
+		id = PER_plan_pink
+		icon = GFX_focus_attack_soviet
+		prerequisite = {
+			focus = PER_action_of_prison
+		}
+		relative_position_id = PER_action_of_prison
+		x = -2
+		y = 1
+		cost = 8
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			any_neighbor_country = {
+				has_government = communism
+				strength_ratio = {
+					tag = PER
+					ratio > 1.5
+				}
+				#looks like ROOT is useful but not show on screen.
+			}
+		}
+		completion_reward = {
+			unlock_decision_tooltip = PER_plan_pink
+		}
+	}
+	focus = {
+		id = PER_liquidation
+		icon = GFX_goal_generic_break_army
+		prerequisite = {
+			focus = PER_action_of_prison
+		}
+		relative_position_id = PER_action_of_prison
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.25
+			}
+			add_stability = 0.1
+			#country_event
+		}
+	}
+	focus = {
+		id = PER_axis_markets
+		icon = GFX_focus_chi_mission_to_germany
+		prerequisite = {
+			focus = PER_liquidation
+		}
+		relative_position_id = PER_liquidation
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			OR = {
+				GER = {
+					exists = yes
+					has_government = ROOT
+					NOT = {
+						has_war_with = ROOT
+					}
+				}
+				ITA = {
+					exists = yes
+					has_government = ROOT
+					NOT = {
+						has_war_with = ROOT
+					}
+				}
+			}
+		}
+		completion_reward = {
+			add_ideas = techan
+			if = {
+				limit = {
+					GER = {
+						exists = yes
+						has_government = ROOT
+						NOT = {
+							has_war_with = ROOT
+						}
+					}
+				}
+				GER = {
+					add_stability = 0.05
+				}
+			}
+			if = {
+				limit = {
+					ITA = {
+						exists = yes
+						has_government = ROOT
+						NOT = {
+							has_war_with = ROOT
+						}
+					}
+				}
+				ITA = {
+					add_stability = 0.05
+				}
+			}
+		}
+	}
+	focus = {
+		id = PER_rubber_sale
+		icon = GFX_focus_generic_rubber
+		prerequisite = {
+			focus = PER_axis_markets
+		}
+		relative_position_id = PER_axis_markets
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = PER_rubber_sale
+				bonus = 1
+				uses = 1
+				category = cat_synth_rubber
+			}
+			modify_building_resources = {
+				building = synthetic_refinery
+				resource = rubber
+				amount = 2
+			}
+		}
+	}
+	focus = {
+		id = PER_our_road
+		icon = GFX_focus_CZE_military_aeronautical_institute
+		prerequisite = {
+			focus = PER_liquidation
+		}
+		relative_position_id = PER_liquidation
+		x = 0
+		y = 3
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			PER_reduce_pressure = yes
+			add_war_support = 0.05
+			add_political_power = 75
+		}
+	}
+	focus = {
+		id = PER_expand_spy
+		icon = GFX_focus_generic_vatican_agents
+		prerequisite = {
+			focus = PER_our_road
+		}
+		relative_position_id = PER_our_road
+		x = -1
+		y = 1
+		cost = 4
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			PER_reduce_pressure = yes
+			add_ideas = PER_expand_spy
+		}
+	}
+	focus = {
+		id = PER_islamization_plan
+		icon = GFX_goal_generic_islamic_education
+		prerequisite = {
+			focus = PER_expand_spy
+		}
+		relative_position_id = PER_expand_spy
+		x = -1
+		y = 1
+		cost = 4
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			PER_reduce_pressure = yes
+		}
+	}
+	focus = {
+		id = PER_for_war
+		icon = GFX_goal_generic_fascist_bills
+		prerequisite = {
+			focus = PER_our_road
+		}
+		relative_position_id = PER_our_road
+		x = 1
+		y = 1
+		cost = 4
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_political_power = -50
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	focus = {
+		id = PER_holy_war
+		icon = GFX_goal_generic_multinational_army
+		prerequisite = {
+			focus = PER_expand_spy
+		}
+		prerequisite = {
+			focus = PER_for_war
+		}
+		relative_position_id = PER_expand_spy
+		x = 1
+		y = 1
+		cost = 4
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+		}
+		completion_reward = {
+			add_ideas = PER_holy_war
+		}
+	}
+	focus = {
 		id = PER_trusted_partner
 		icon = GFX_focus_PER_Himeragi_Yukina
-		prerequisite = {
-			focus = PER_just_fool_want_work
-		}
-		relative_position_id = PER_just_fool_want_work
-		x = 7
-		y = 1
+		x = 55
+		y = 0
 		cost = 2
 		ai_will_do = {
 			base = 10
@@ -4356,7 +4552,7 @@ focus_tree = {
 			}
 		}
 		cancel = {
-			has_completed_focus = PER_Natsuki_government
+			has_completed_focus = PER_natsuki_government
 		}
 	}
 	focus = {
@@ -4366,9 +4562,6 @@ focus_tree = {
 			focus = PER_trusted_partner
 		}
 		relative_position_id = PER_trusted_partner
-		mutually_exclusive = {
-			focus = PER_new_country
-		}
 		x = -2
 		y = 1
 		cost = 3
@@ -4593,249 +4786,10 @@ focus_tree = {
 		}
 	}
 	focus = {
-		id = PER_new_country
-		icon = GFX_focus_por_estado_novo
-		prerequisite = {
-			focus = PER_trusted_partner
-		}
-		relative_position_id = PER_trusted_partner
-		mutually_exclusive = {
-			focus = PER_special_meeting
-		}
-		x = 2
-		y = 1
-		cost = 3
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-			hidden_trigger = {
-				always = no
-			}
-			has_government = neutrality
-		}
-		completion_reward = {
-			add_popularity = {
-				ideology = neutrality
-				popularity = 0.08
-			}
-			add_ideas = PER_new_country
-		}
-	}
-	focus = {
-		id = PER_new_face
-		icon = GFX_goal_generic_foreign_diplomacy
-		prerequisite = {
-			focus = PER_new_country
-		}
-		relative_position_id = PER_new_country
-		x = 2
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_political_power = 25
-			custom_effect_tooltip = available_political_advisor
-		}
-	}
-	focus = {
-		id = PER_reorganize_military_management
-		icon = GFX_focus_generic_military_mission
-		prerequisite = {
-			focus = PER_new_face
-		}
-		relative_position_id = PER_new_face
-		x = -1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_command_power = -50
-			army_experience = -50
-			add_ideas = PER_reorganize_military_management_idea
-		}
-	}
-	focus = {
-		id = PER_queen_guard
-		icon = GFX_focus_generic_home_defense
-		prerequisite = {
-			focus = PER_reorganize_military_management
-		}
-		relative_position_id = PER_reorganize_military_management
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_ideas = PER_queen_guard
-		}
-	}
-	focus = {
-		id = PER_technology_special_zone
-		icon = GFX_goal_research_silver_cooperation
-		prerequisite = {
-			focus = PER_queen_guard
-		}
-		relative_position_id = PER_queen_guard
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			add_research_slot = 1
-		}
-	}
-	focus = {
-		id = PER_ban_political_donations
-		icon = GFX_goal_generic_ban_aristocrats
-		prerequisite = {
-			focus = PER_new_face
-		}
-		relative_position_id = PER_new_face
-		x = 1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			PER_reduce_pressure = yes
-			add_ideas = PER_ban_political_donations
-		}
-	}
-	focus = {
-		id = PER_purchasing_new_equipment
-		icon = GFX_goal_generic_military_research_2
-		prerequisite = {
-			focus = PER_ban_political_donations
-		}
-		relative_position_id = PER_ban_political_donations
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					free_building_slots = {
-						building = industrial_complex
-						size > 2
-						include_locked = yes
-					}
-				}
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = industrial_complex
-					level = 2
-					instant_build = yes
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					free_building_slots = {
-						building = arms_factory
-						size > 2
-						include_locked = yes
-					}
-				}
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
-					instant_build = yes
-				}
-			}
-			random_owned_state = {
-				limit = {
-					is_core_of = ROOT
-					free_building_slots = {
-						building = arms_factory
-						size > 2
-						include_locked = yes
-					}
-				}
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
-					instant_build = yes
-				}
-			}
-			custom_effect_tooltip = available_tank_manufacturer
-			show_ideas_tooltip = PER_GER_MAN
-		}
-	}
-	focus = {
-		id = PER_1984
-		icon = GFX_goal_pp
-		prerequisite = {
-			focus = PER_purchasing_new_equipment
-		}
-		relative_position_id = PER_purchasing_new_equipment
-		x = 0
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-			PER_reduce_pressure = yes
-			unlock_decision_category_tooltip = PER_power_struggle_decision_category
-		}
-	}
-	focus = {
-		id = PER_all_way_up
-		icon = GFX_focus_ITA_battaglioni_m
-		prerequisite = {
-			focus = PER_technology_special_zone
-		}
-		prerequisite = {
-			focus = PER_1984
-		}
-		relative_position_id = PER_technology_special_zone
-		x = 1
-		y = 1
-		cost = 5
-		ai_will_do = {
-			base = 10
-		}
-		available = {
-		}
-		completion_reward = {
-		}
-	}
-	focus = {
 		id = PER_strengthen_authority
 		icon = GFX_focus_ITA_corpo_volontari_della_liberta
 		prerequisite = {
 			focus = PER_special_meeting
-			focus = PER_new_country
 		}
 		relative_position_id = PER_special_meeting
 		x = 2
@@ -7105,9 +7059,8 @@ focus_tree = {
 	focus = {
 		id = PER_MEW_ready_war
 		icon = GFX_focus_ETH_adopt_the_lira
-		relative_position_id = PER_a_holiday
-		x = -7
-		y = 0
+		x = 28
+		y = 20
 		cost = 1
 		ai_will_do = {
 			base = 10

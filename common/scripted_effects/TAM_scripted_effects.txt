@@ -1,0 +1,153 @@
+CAC_TAM_win_civwar = {
+    set_variable = { adorable_heart_super_event_var = 1350 }
+	adorable_heart_fire_super_event = yes
+
+}
+CAC_AFG_win_civwar = {
+    set_variable = { adorable_heart_super_event_var = 1351 }
+	adorable_heart_fire_super_event = yes
+
+}
+
+## 苏联对中亚关注度
+
+CAC_SOV_intervention_change_value = {
+	
+	set_variable = { CAC_SOV_intervention_temp_sum_value = CAC_SOV_intervention_icon_value } ## Because can't do expressions, have to add new sum
+	add_to_variable = { 
+		CAC_SOV_intervention_temp_sum_value = CAC_SOV_intervention_value_to_add
+	}
+
+	## if existing value + new value => 100, then effect is completed. 
+	## Else if existing value + new value <= 0, then effect is failed
+	## Else add value 
+
+	if = { ## If the new value reaches 100
+		limit = {
+			check_variable = {
+				var = CAC_SOV_intervention_temp_sum_value
+				value = 100
+				compare = greater_than_or_equals
+			}
+		}
+		### It is over 100
+		## Remove decision category + mission, Send event to US about communists in Philippines have ignored them too much - declare war or not option. Then if do, send event to PHI about US doing it
+		CAC_SOV_intervention_max_value_reached = yes
+	}
+	else_if = {
+		limit = {
+			check_variable = {
+				var = CAC_SOV_intervention_temp_sum_value
+				value = 0
+				compare = less_than_or_equals
+			}
+		}
+		### Is is less than 0
+		## Remove decision category + send event to player US leaves PHI interior politics alone
+		CAC_SOV_intervention_min_value_reached = yes
+	}
+	#else removed because the decision cat stays visible for a brief moment
+	add_to_variable = {
+		CAC_SOV_intervention_icon_value = CAC_SOV_intervention_value_to_add
+	}
+	clamp_variable = {
+		var = CAC_SOV_intervention_icon_value
+		min = 0
+		max = 100
+	}
+}
+
+CAC_SOV_intervention_max_value_reached = {
+	#custom_effect_tooltip = SOV_wants_more
+	hidden_effect = {
+		every_country = {
+			limit = {
+				exists = yes
+				has_cosmetic_tag = Tresen_Federation
+			}
+			set_country_flag = CAC_SOV_intervention_is_over ## Removes decision category
+		}
+		SOV = {
+			country_event = {
+				id = TAM.13
+			}
+			set_country_flag = CAC_SOV_wants_more
+		}
+	}
+	## We check if the US exists in decision category, so probably not needed here
+	#hidden_effect = {
+	#	USA = {
+	#		country_event = {
+	#			id = SEA_PHI_political_events.13
+	#		}
+	#	}
+	#}
+
+}
+
+
+## When value reaches 0 - Remove decision category + send event to player US leaves PHI interior politics alone
+
+CAC_SOV_intervention_min_value_reached = {
+	#custom_effect_tooltip = SOV_not_wants_more
+	hidden_effect = {
+		every_country = {
+			limit = {
+				exists = yes
+				has_cosmetic_tag = Tresen_Federation
+			}
+			set_country_flag = CAC_SOV_intervention_is_over ## Removes decision category
+			country_event = {
+				id = TAM.110
+			}
+		}
+		SOV = {
+			set_country_flag = CAC_SOV_not_wants_more
+		}
+
+	}
+	
+	
+}
+			
+			
+CAC_TAM_bop_left = {
+	if = {
+		limit = {
+			has_power_balance = {
+				id = CAC_communism_bop
+			}
+		}
+		add_power_balance_value = {
+			id = CAC_communism_bop
+			value = -0.05
+		}
+	}
+}
+CAC_TAM_bop_right = {
+	if = {
+		limit = {
+			has_power_balance = {
+				id = CAC_communism_bop
+			}
+		}
+		add_power_balance_value = {
+			id = CAC_communism_bop
+			value = 0.05
+		}
+	}
+}
+#彩蛋触发
+CAC_TAM_For_the_Mortal = {
+	if = {
+		limit = {
+			tag = TAM
+			has_war_with_major = yes
+			surrender_progress > 0.80
+			date > 1941.7.1
+		}
+		set_country_flag = TAM_For_the_Mortal
+	}
+}
+
+
