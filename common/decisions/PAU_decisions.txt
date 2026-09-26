@@ -451,3 +451,246 @@ PAU_LHS_weiji = {
         }
     }
 }
+
+PAU_hetong = {
+    PAU_guyong = { #发出
+        icon = GFX_PAM_denghuo
+        on_map_mode = decision_view_only
+        allowed = { tag = PAU }
+        visible = {
+            #has_completed_focus = PAU_gxzp
+        }
+        available = {
+            has_war = no
+            is_subject = no
+            not = { has_war_with = ROOT }
+            not = { has_country_flag = PAU_guyonged_flag } #没有同时给其他人雇佣
+        }
+
+        fire_only_once = no
+
+        ai_will_do = { base = 0 }
+
+        target_trigger = {
+            FROM = {
+                exists = yes
+                has_war = yes
+                is_subject = no
+                not = { has_war_with = ROOT }
+                any_state = {
+                    is_controlled_by = FROM
+                    is_owned_by = FROM
+                    is_coastal = yes
+                }
+            }
+        }
+
+        complete_effect = { #发送事件
+            set_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
+
+            FROM = {
+                country_event = { id = PAU.172 hours = 6 }
+                set_country_flag = yaobuyaoguyong  #要不要
+            }
+
+            custom_effect_tooltip = PAU_repay_mission_tt
+        }
+
+    }
+
+    PAU_guyong_zhunbei = { #准备
+        icon = GFX_PAM_pdtl
+        allowed = { tag = PAU }
+
+        available = {
+            FROM = {
+                has_war = yes
+            }
+        }
+        activation = {
+            always = no
+        }
+        visible = {
+        }
+        selectable_mission = yes
+        # 如果设置，会将任务转换为玩家必须选择按钮的任务。
+        target_trigger = {
+            FROM = {
+                has_country_flag = PAU_bop_loan_active  #同意的flag
+                has_country_flag = yaobuyaoguyong  #要不要
+            }
+        }
+
+        days_mission_timeout = 3
+        cancel_trigger = {
+            or = {
+                FROM = {
+                    or = {
+                        has_war_with  = ROOT
+                        has_war = no
+                        exists = no
+                    }
+                }
+
+            }
+        }
+        visible = {
+        }
+        cancel_effect = {
+        }
+
+        complete_effect = {
+            clr_country_flag = yaobuyaoguyong  #要不要
+            activate_mission = PAU_guyong_attack
+            FROM = {
+                random_owned_controlled_state = {
+                    limit = {
+                        is_coastal = yes
+                    }
+                    transfer_state_to = PAU
+                    set_state_flag = PAU_guyong_state_flag #标记地区
+                }
+            }
+
+            PAU = {
+                diplomatic_relation = {
+                    country = FROM
+                    relation = military_access
+                    active = yes
+                }
+            }
+
+            every_country = {
+                limit = {
+                    has_country_flag = PAU_bop_loan_active #同意的flag
+                }
+                every_country = {
+                    limit = {
+                        has_war_with = PREV
+                    }
+                    PAU = {
+                        add_to_war = {
+                            targeted_alliance = PREV.PREV
+                            enemy = PREV
+                            hostility_reason = asked_to_join
+                        }
+                    }
+                }
+            }
+        }
+
+        timeout_effect = {
+            clr_country_flag = yaobuyaoguyong  #要不要
+            activate_mission = PAU_guyong_attack
+            FROM = {
+                random_owned_controlled_state = {
+                    limit = {
+                        is_coastal = yes
+                    }
+                    transfer_state_to = PAU
+                    set_state_flag = PAU_guyong_state_flag #标记地区
+                }
+            }
+            PAU = { #获得军通
+                diplomatic_relation = {
+                    country = FROM
+                    relation = military_access
+                    active = yes
+                }
+            }
+            every_country = {
+                limit = {
+                    has_country_flag = PAU_bop_loan_active #同意的flag
+                }
+                every_country = {
+                    limit = {
+                        has_war_with = PREV
+                    }
+                    PAU = {
+                        add_to_war = {
+                            targeted_alliance = PREV.PREV
+                            enemy = PREV
+                            hostility_reason = asked_to_join
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    PAU_guyong_attack = { #宣战
+        icon = GFX_PAM_pdtl
+        allowed = { tag = PAU }
+
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+
+        days_mission_timeout = 3650
+        cancel_trigger = {
+            or = {
+                FROM = {
+                    or = {
+                        has_war_with  = ROOT
+                        has_war = no
+                        exists = no
+                    }
+                }
+
+            }
+        }
+        visible = {
+        }
+        cancel_effect = {
+            if = {
+                limit = {
+                    FROM = {
+                        or = {
+                            has_war_with  = ROOT
+                            exists = no
+                        }
+                    }
+                }
+                #因战争或对方打输中断
+                country_event = { id = PAU.176 hours = 6 }
+            }
+            else_if = {
+                #顺利完成
+                limit = {
+                    FROM = {
+                        has_war = no
+                        exists = yes
+                        has_country_flag = PAU_bop_loan_active
+                    }
+                }
+                    FROM = {
+                        country_event = { id = PAU.1755 hours = 6 }
+                    }
+            }
+            else = {
+            }
+            FROM = {
+                clr_country_flag = PAU_bop_loan_active
+                clr_country_flag = PAU_bop_loan_active_re
+            }
+        }
+
+        complete_effect = {
+            FROM = {
+                set_country_flag = PAU_bangzhu
+                set_country_flag = PAU_bop_loan_active_re
+            }
+        }
+
+        timeout_effect = {
+            FROM = {
+                clr_country_flag = PAU_bop_loan_active
+                clr_country_flag = PAU_bop_loan_active_re
+            }
+        }
+    }
+}
+
