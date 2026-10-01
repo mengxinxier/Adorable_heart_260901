@@ -485,6 +485,7 @@ scripted_gui = {
 				set_variable = { ROC_collection_tab_var = 1 }
 				set_variable = { ROC_coin_tab_var = 2 }
 				set_variable = { ROC_shop_tab_var = 2 }
+				ROC_Collection_sort_effect = yes
 			}
 			ROC_coin_tab_click = {
 				set_variable = { ROC_sisuitai_tab_var = 2 }
@@ -549,21 +550,9 @@ scripted_gui = {
 				not = { check_variable = { ROC_collection_using_num^KMT_collection_using_id = 0 } }
 			}
 			ROC_collection_unusing_arrow_visible = {
-				or = {
-					check_variable = { KMT_collection_unusing_id = 1 }
-					check_variable = { KMT_collection_unusing_id = 2 }
-					check_variable = { KMT_collection_unusing_id = 8 }
-					check_variable = { KMT_collection_unusing_id = 12 }
-				}
 				not = { check_variable = { ROC_collection_using_num^KMT_collection_unusing_id = 0 } }
 			}
 			ROC_collection_unusing_num_visible = {
-				or = {
-					check_variable = { KMT_collection_unusing_id = 1 }
-					check_variable = { KMT_collection_unusing_id = 2 }
-					check_variable = { KMT_collection_unusing_id = 8 }
-					check_variable = { KMT_collection_unusing_id = 12 }
-				}
 				not = { check_variable = { ROC_collection_using_num^KMT_collection_unusing_id = 0 } }
 			}
 		}
@@ -724,6 +713,13 @@ scripted_gui = {
 			}
 		}
 		triggers = {
+			ROC_spnode_shop_refresh_button_click_enabled = {
+				if = {
+					limit = { check_variable = { spshop_page_var = 0 } }
+					not = { check_variable = { ubs_save < 100 } }
+				}
+				else = { not = { has_political_power < 50 } }
+			}
 			ROC_spnode_shop_enter_button_visible = {
 				check_variable = { cloud_cutscene_var = 0 }
 			}
@@ -790,9 +786,20 @@ scripted_gui = {
 			}
 			ROC_spnode_shop_good_button1_click = {
 				set_variable = { ROC_spnode_shop_good_selling_id = KMT_spnode_shop_goods_id }
+				set_variable = { ROC_spnode_shop_good_selling_index = KMT_spnode_shop_goods_i }
+				set_variable = { ROC_spnode_shop_good_selling_index_page = spshop_page_var }
 			}
 			ROC_spnode_shop_good_button2_click = {
 				set_variable = { ROC_spnode_shop_good_selling_id = KMT_sp_shop_goods_id }
+				set_variable = { ROC_spnode_shop_good_selling_index = KMT_sp_shop_goods_i }
+				set_variable = { ROC_spnode_shop_good_selling_index_page = spshop_page_var }
+			}
+			ROC_spnode_shop_refresh_button_click = {
+				if = {
+					limit = { check_variable = { spshop_page_var = 0 } }
+					ROC_Collection_shop_refresh = yes
+				}
+				else = { ROC_Collection_sp_shop_refresh = yes }
 			}
 			close_button_click = {
 				clr_country_flag = ROC_collection_window_visible
@@ -838,8 +845,61 @@ scripted_gui = {
 				image = "[Get_ROC_collection_selling_good_icon]"
 			}
 		}
+		triggers = {
+			ROC_collection_selling_good_bug_button_click_enabled = {
+				if = {
+					limit = { check_variable = { spshop_page_var = 0 } }
+					not = { check_variable = { ubs_save < ROC_collection_price_array_hcp^ROC_spnode_shop_good_selling_id } }
+				}
+				else = { not = { has_political_power < ROC_collection_price_array_pp^ROC_spnode_shop_good_selling_id } }
+			}
+		}
 		effects = {
 			ROC_collection_selling_good_close_button_click = {
+				clear_variable = ROC_spnode_shop_good_selling_id
+			}
+			ROC_collection_selling_good_bug_button_click = {
+				if = {
+					limit = {
+						not = { is_in_array = { KMT_collection_using_array = ROC_spnode_shop_good_selling_id } }
+						not = { is_in_array = { KMT_collection_unusing_array = ROC_spnode_shop_good_selling_id } }
+						check_variable = { ROC_spnode_shop_good_selling_id < 31 }
+					}
+					add_to_array = { KMT_collection_unusing_array = ROC_spnode_shop_good_selling_id }
+				}
+				else_if = {
+					limit = { check_variable = { ROC_spnode_shop_good_selling_id < 31 } }
+					add_to_variable = { ROC_collection_using_num^ROC_spnode_shop_good_selling_id = 1 }
+				}
+				###加效果触发器
+				if = {
+					limit = { check_variable = { ROC_spnode_shop_good_selling_index_page = 0 } }
+					set_variable = { KMT_spnode_shop_goods_array^ROC_spnode_shop_good_selling_index = 0 }
+					ROC_Collection_shop_refresh_effect = yes
+					if = {
+						limit = {
+							not = {
+								check_variable = { ubs_save < ROC_collection_price_array_hcp^ROC_spnode_shop_good_selling_id }
+							}
+						}
+						subtract_from_variable = { ubs_save = ROC_collection_price_array_hcp^ROC_spnode_shop_good_selling_id }
+					}
+					else = {
+						subtract_from_variable = { ubs_save = ROC_collection_price_array_hcp^ROC_spnode_shop_good_selling_id }
+						subtract_from_variable = { ubs_load = ubs_save }
+						clamp_variable = {
+							var = ubs_save
+							min = 0
+						}
+					}
+				}
+				else = {
+					set_variable = { KMT_sp_shop_goods_array^ROC_spnode_shop_good_selling_index = 0 }
+					ROC_Collection_sp_shop_refresh_effect = yes
+					set_temp_variable = { temp_price_pp = ROC_collection_price_array_pp^ROC_spnode_shop_good_selling_id }
+					multiply_temp_variable = { temp_price_pp = -1 }
+					add_political_power = var:temp_price_pp
+				}
 				clear_variable = ROC_spnode_shop_good_selling_id
 			}
 		}
