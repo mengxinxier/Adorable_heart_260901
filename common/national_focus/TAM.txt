@@ -216,6 +216,14 @@ focus_tree = {
 			completion_reward = {
 				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
 				add_political_power = 50
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}
 			}
 		}
 		focus = {
@@ -618,31 +626,50 @@ focus_tree = {
 						value < -0.9
 					}
 				}
-				has_country_flag = Reunit_Tresen_country
+				OR = {
+					has_country_flag = Reunit_Tresen_country
+					date > 1940.1.1
+				}
 				has_war = no
 			}
 			ai_will_do = {
 				base = 1000
 			}
 			completion_reward = {
-				custom_effect_tooltip = CAC_KAZ_TAM_Debate_result
+				remove_ideas = CAC_KAZ_TAM_Debate_0
 				swap_ideas = {
 					remove_idea = TAM_politics_government
 					add_idea = TAM_politics_government_idea
 				}
-				
-				remove_ideas = CAC_KAZ_TAM_Debate_0
 				if = {
-					limit = {
-						power_balance_value = {
-							id = CAC_communism_bop
-							value < 0
+					limit = { 
+						NOT = {
+							has_country_flag = TAM_flag_lost_in_civil_war
 						}
 					}
-					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_left
+					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result
+					if = {
+						limit = {
+							power_balance_value = {
+								id = CAC_communism_bop
+								value < 0
+							}
+						}
+						custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_left
+					}
+					else = {
+						custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_right
+					}
 				}
 				else = {
-					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_right
+					hidden_effect = {
+						remove_ideas = TAM_military_adviser_from_sovit
+						remove_ideas = TAM_economic_cooperation_from_sovit
+						remove_ideas = TAM_deepen_cooperation_from_SOV
+						remove_ideas = TAM_leave_cooperation_from_SOV
+						remove_ideas = TAM_Third_international
+						remove_ideas = TAM_idea_revolution_enthusiasm
+					}
 				}
 				hidden_effect = {
 					remove_ideas = TAM_bop_local_move
@@ -652,12 +679,21 @@ focus_tree = {
 					if = {
 						limit = {
 							has_country_flag = CAC_TAM_want_join_SOV
+							NOT = {
+								has_country_flag = TAM_flag_lost_in_civil_war
+							}
 						}
 							SOV = {
 							country_event = generic.2002
 						}
 					}
 					if = {
+						limit = {
+							has_country_flag = TAM_flag_lost_in_civil_war
+						}
+						custom_effect_tooltip = CAC_TAM_balance_lost_in_civil_war_end
+					}
+					else_if = {
 						limit = {
 							power_balance_value = {
 								id = CAC_communism_bop
@@ -1177,6 +1213,9 @@ focus_tree = {
 			cancel_if_invalid = yes
 			available = {
 				has_completed_focus = TAM_focus_civil_war_16
+				NOT = {
+					has_country_flag = TAM_flag_lost_in_civil_war
+				}
 			}
 			#allow_branch = {
 			#	has_completed_focus = TAM_focus_civil_war_16
@@ -1632,7 +1671,7 @@ focus_tree = {
 				add_political_power = 25
 				random_owned_controlled_state = {
 					limit = {
-						has_state_category = wasteland
+						has_state_category = zero
 					}
 					set_state_category = one
 					add_dynamic_modifier = {
@@ -1641,7 +1680,7 @@ focus_tree = {
 				}
 				random_owned_controlled_state = {
 					limit = {
-						has_state_category = wasteland
+						has_state_category = zero
 					}
 					set_state_category = one
 					add_dynamic_modifier = {
@@ -1650,7 +1689,7 @@ focus_tree = {
 				}
 				random_owned_controlled_state = {
 					limit = {
-						has_state_category = wasteland
+						has_state_category = zero
 					}
 					set_state_category = one
 					add_dynamic_modifier = {
@@ -2436,7 +2475,11 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_RESEARCH}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			ai_will_do = {
 				base = 100
@@ -3317,8 +3360,15 @@ focus_tree = {
 			continue_if_invalid = no
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				army_experience = 25
@@ -3340,6 +3390,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_1
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				army_experience = 25
 				add_tech_bonus = {
@@ -3438,6 +3491,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				add_ideas = TAM_UMA_Army_Infantry_02
 				add_equipment_to_stockpile = {
@@ -3459,6 +3515,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				add_ideas = TAM_UMA_Army_Infantry_03
 				add_equipment_to_stockpile = {
@@ -3480,6 +3539,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_Inf_1
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				add_ideas = TAM_UMA_Army_Infantry_04
 				add_equipment_to_stockpile = {
@@ -3501,6 +3563,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_Inf_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				add_ideas = TAM_UMA_Army_Infantry_05
 				add_equipment_to_stockpile = {
@@ -3527,6 +3592,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				add_mastery_bonus = {
 					track = infantry
@@ -3869,6 +3937,8 @@ focus_tree = {
 			cancel_if_invalid = yes
 			allow_branch = {
 				has_country_flag = TAM_For_the_Mortal
+				is_subject = no
+				is_ai = no
 			}
 			ai_will_do = {
 				base = 0
@@ -4068,7 +4138,11 @@ focus_tree = {
 			continue_if_invalid = no
 			cancel_if_invalid = yes
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			ai_will_do = {
 				base = 0
@@ -4831,6 +4905,65 @@ focus_tree = {
 				267 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
 				407 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
 			}
+			bypass = {
+				has_country_flag = TAM_flag_lost_in_civil_war
+			}
+			bypass_effect = {
+				add_political_power = -1000
+				#custom_effect_tooltip = Tresen_civil_war_has_end
+				add_stability = -1
+				add_war_support = -1
+				hidden_effect = {
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_modifier_guerrilla
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_modifier_guerrilla
+						}
+					}
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_modifier_defence
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_modifier_defence
+						}
+					}
+					remove_ideas = CAC_idea_Too_big_to_handle_army
+					remove_ideas = TAM_to_win_war
+					remove_ideas = TAM_veteran_troops_weary1
+					remove_ideas = TAM_veteran_troops_weary2
+					remove_ideas = TAM_veteran_troops_weary3
+					remove_ideas = TAM_prepare_Civil_war_to_AFG
+					remove_ideas = TAM_prepare_Civil_war_to_PER
+					remove_ideas = TAM_leninism_uprising
+					remove_ideas = TAM_leninism_uprising_1
+					PER = {
+						remove_ideas = TAM_to_win_war
+						remove_ideas = TAM_veteran_troops_weary1
+						remove_ideas = TAM_veteran_troops_weary2
+						remove_ideas = TAM_veteran_troops_weary3
+						remove_ideas = TAM_prepare_Civil_war_to_AFG
+						remove_ideas = TAM_prepare_Civil_war_to_TAM
+						remove_ideas = TAM_prepare_Civil_war_to_PER
+						remove_ideas = TAM_leninism_uprising
+						remove_ideas = TAM_leninism_uprising_1
+					}
+					AFG = {
+						remove_ideas = TAM_to_win_war
+						remove_ideas = TAM_veteran_troops_weary1
+						remove_ideas = TAM_veteran_troops_weary2
+						remove_ideas = TAM_veteran_troops_weary3
+						remove_ideas = TAM_prepare_Civil_war_to_AFG
+						remove_ideas = TAM_prepare_Civil_war_to_TAM
+						remove_ideas = TAM_prepare_Civil_war_to_PER
+						remove_ideas = TAM_leninism_uprising
+						remove_ideas = TAM_leninism_uprising_1
+					}
+					set_global_flag = Tresen_civil_war_has_end
+				}
+			}
 			ai_will_do = {
 				base = 1000
 			}
@@ -4902,7 +5035,7 @@ focus_tree = {
 					set_country_flag = Reunit_Tresen_country
 					set_country_flag = SOV_is_Watching_YOU
 					set_global_flag = Tresen_civil_war_has_end
-					activate_mission = CAC_SOV_intervention_declare_war_mission
+					#activate_mission = CAC_SOV_intervention_declare_war_mission
 					set_variable = { adorable_heart_super_event_var = 1350 }
 					adorable_heart_fire_super_event = yes
 				}
@@ -5876,7 +6009,7 @@ focus_tree = {
 					limit = {
 						is_controlled_by_ROOT_or_subject = yes
 						or = {
-							has_state_category = wasteland
+							has_state_category = zero
 							has_state_category = zero
 							has_state_category = one
 							has_state_category = two
@@ -6729,7 +6862,11 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				army_experience = 25
@@ -6874,7 +7011,11 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_NAVY_XP}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				custom_effect_tooltip = CAC_SWI_is_fool_navy
@@ -7216,7 +7357,11 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				air_experience = 25
@@ -7526,7 +7671,12 @@ focus_tree = {
 			x = 23
 			y = 14
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					#has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1942.1.1
+				}
+				is_subject = no
 			}
 			ai_will_do = {
 				base = 5000
@@ -7970,6 +8120,12 @@ focus_tree = {
 				}
 				has_army_manpower = {
 					size > 400000
+				}
+				PAL = {
+					is_ai = yes
+				}
+				RIS = {
+					is_ai = yes
 				}
 			}
 			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
