@@ -93,7 +93,7 @@ country_event = {
             base = 0
         }
         SOV = {
-            create_wargoal={
+            create_wargoal = {
                 target = ROOT
                 type = puppet_wargoal_focus
             }
@@ -112,7 +112,6 @@ country_event = {
         every_state = {
                 limit = {
                     is_controlled_by = TAM
-                    is_not_controlled_by_ROOT_or_ally = yes
                     OR = {
                         #高加索
                         region = 134
@@ -257,3 +256,311 @@ country_event = {
     }
 }
 
+###投降 特雷森 （内战）
+country_event = {
+    id = TAM.6
+    title = TAM.6.title
+    desc = TAM.6.desc
+    is_triggered_only = yes
+    option = {  #我们输得彻底
+        name = TAM.6.a
+        ai_chance = {
+            base = 90
+        }
+        if = {
+            limit = { 
+                AFG = {
+                    exists = yes
+                    has_war_with = TAM
+                }
+            }
+            every_owned_state = {
+                limit = {
+                    is_controlled_by = AFG
+                }
+                transfer_state_to = AFG
+            }
+            transfer_units_fraction = {
+                target = AFG
+                size = 0.50
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+            AFG = {
+                country_event = TAM.7
+            }
+        }
+        if = {
+            limit = { 
+                PER = {
+                    exists = yes
+                    has_war_with = TAM
+                }
+            }
+            every_owned_state = {
+                limit = {
+                    is_controlled_by = PER
+                }
+                transfer_state_to = PER
+            }
+            transfer_units_fraction = {
+                target = PER
+                size = 0.25
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+            PER = {
+                annex_country = {
+                    target = TAM
+                }
+                every_state = {
+                    limit = {
+                        OR = {
+                            is_core_of = TAM
+                            is_core_of = AFG
+                        }
+                    }
+                    add_claim_by = PER
+                	enable_state_integration_50_compliance = yes
+                }
+                if = {
+                    limit = { 
+                        AFG = {
+                            exists = yes
+                        }
+                    }
+                    create_wargoal = {
+                        target = AFG
+                        type = annex_everything
+                    }
+                }
+                country_event = TAM.7
+            }
+        }
+        every_state = {
+            limit = {
+                has_dynamic_modifier = TAM_state_modifier_guerrilla
+            }
+            remove_dynamic_modifier = {
+                modifier = TAM_state_modifier_guerrilla
+            }
+        }
+        
+    }
+    option = {  #或许还有回转余地
+        name = TAM.6.b
+        ai_chance = {
+            base = 10
+        }
+        mark_focus_tree_layout_dirty = yes
+        every_owned_state = {
+            limit = {
+                is_controlled_by = AFG
+                NOT = {
+                    state = 407
+                }
+            }
+            transfer_state_to = AFG
+        }
+        every_owned_state = {
+            limit = {
+                is_controlled_by = PER
+                NOT = {
+                    state = 407
+                }
+            }
+            transfer_state_to = PER
+        }
+        if = {
+            limit = {
+                AFG = {
+                    has_war_with = TAM
+                    controls_state = 407
+                }
+            }
+            AFG = {
+                set_country_flag = CAC_flag_win_TAM_more
+            }
+        }
+        else_if = {
+            limit = {
+                PER = {
+                    has_war_with = TAM
+                    controls_state = 407
+                }
+            }
+            PER = {
+                set_country_flag = CAC_flag_win_TAM_more
+            }
+        }
+        AFG = {
+            white_peace = TAM
+        }
+        PER = {
+            white_peace = TAM
+        }
+        random_country = {
+            limit = {
+                has_country_flag = CAC_flag_win_TAM_more
+            }
+            puppet = TAM
+        }
+        TAM = {
+            set_country_flag = TAM_flag_lost_in_civil_war
+            hidden_effect = {
+                remove_ideas = TAM_Nice_Nature_head_of_government
+                complete_national_focus = TAM_focus_start_12
+                remove_ideas = TAM_Nice_Nature_head_of_government_0
+                remove_ideas = TAM_Symboli_Rudolf_head_of_government
+                if = {
+                    limit = { 
+                        is_subject = yes
+                    }
+                    set_country_flag = TAM_flag_in_the_darkest_age
+                }
+                else = {
+                    random_list = {
+                        1 = {
+                            set_politics = {
+                                ruling_party = fascism
+                                elections_allowed = no
+                            }
+                            add_popularity = {
+                                ideology = fascism
+                                popularity = 0.60
+                            }
+                            add_country_leader_role = {
+                                character = TAM_Manhattan_Cafe
+                                promote_leader = yes
+                                country_leader = { 
+                                    ideology = militarism_subtype
+                                    expire = "9999.1.1"
+                                    traits = {
+                                        GER_oberster_kriegsherr_trait
+                                        PRC_head_of_the_personality_cult
+                                    }
+                                }
+                            }
+                            remove_ideas = TAM_Nishino_Flower_head_of_government
+                            remove_ideas = TAM_Silence_Suzuka_head_of_government
+                            remove_ideas = TAM_Air_Groove_head_of_government
+                            add_ideas = TAM_Neo_Universe_head_of_government
+                        }
+                        1 = {
+                            set_politics = {
+                                ruling_party = democratic
+                                elections_allowed = no
+                            }
+                            add_popularity = {
+                                ideology = democratic
+                                popularity = 0.60
+                            }
+                            add_country_leader_role = {
+                                character = TAM_Almond_Eye
+                                promote_leader = yes
+                                country_leader = { 
+                                    ideology = conservatism
+                                    expire = "9999.1.1"
+                                    traits = {
+                                        GER_staunch_social_democrat
+                                        JUNO_president_of_the_senate_2
+                                    }
+                                }
+                            }
+                            remove_ideas = TAM_Neo_Universe_head_of_government
+                            remove_ideas = TAM_Silence_Suzuka_head_of_government
+                            remove_ideas = TAM_Air_Groove_head_of_government
+                            add_ideas = TAM_Nishino_Flower_head_of_government
+                        }
+                        1 = {
+                            set_politics = {
+                                ruling_party = neutrality
+                                elections_allowed = no
+                            }
+                            add_popularity = {
+                                ideology = neutrality
+                                popularity = 0.60
+                            }
+                            add_country_leader_role = {
+                                character = TAM_Special_Week
+                                promote_leader = yes
+                                country_leader = { 
+                                    ideology = moderatism
+                                    expire = "9999.1.1"
+                                    traits = {
+                                        TAM_trait_1st_General
+                                        INS_leader_of_the_people
+                                    }
+                                }
+                            }
+                            remove_ideas = TAM_Neo_Universe_head_of_government
+                            remove_ideas = TAM_Nishino_Flower_head_of_government
+                            remove_ideas = TAM_Air_Groove_head_of_government
+                            add_ideas = TAM_Silence_Suzuka_head_of_government
+
+                        }
+                        1 = {
+                            set_politics = {
+                                ruling_party = communism
+                                elections_allowed = no
+                            }
+                            add_popularity = {
+                                ideology = communism
+                                popularity = 0.60
+                            }
+                            add_country_leader_role = {
+                                character = TAM_Symboli_Rudolf
+                                promote_leader = yes
+                                country_leader = { 
+                                    ideology = syndicalism
+                                    expire = "9999.1.1"
+                                    traits = {
+                                        hardened_officer
+                                        reluctant_veteran
+                                    }
+                                }
+                            }
+                            remove_ideas = TAM_Neo_Universe_head_of_government
+                            remove_ideas = TAM_Nishino_Flower_head_of_government
+                            remove_ideas = TAM_Silence_Suzuka_head_of_government
+                            add_ideas = TAM_Air_Groove_head_of_government
+                        }
+                    }
+                }
+            }
+        }   
+    }
+}
+###投降  特雷森  （内战）  （反馈1）
+country_event = {
+    id = TAM.7
+    title = TAM.7.title
+    desc = TAM.7.desc
+    is_triggered_only = yes
+    option = {  
+        name = TAM.7.a
+        trigger = {
+            tag = AFG
+        }
+    }
+    option = {  
+        name = TAM.7.b
+        trigger = {
+            tag = PER
+            AFG = {
+                exists = yes
+            }
+        }
+    }
+    option = {  
+        name = TAM.7.c
+        trigger = {
+            tag = PER
+            AFG = {
+                exists = no
+            }
+        }
+    }
+}

@@ -186,12 +186,12 @@ focus_tree = {
 					limit = {
 						free_building_slots = {
 							building = air_base
-							size > 1
+							size > 2
 						}
 					}
 					add_building_construction = {
 						type = air_base
-						level = 1
+						level = 2
 						instant_build = yes
 					}
 				}
@@ -216,6 +216,14 @@ focus_tree = {
 			completion_reward = {
 				custom_effect_tooltip = CAC_KAZ_TAM_Debate_Focus_tt
 				add_political_power = 50
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}
 			}
 		}
 		focus = {
@@ -277,7 +285,7 @@ focus_tree = {
 					}
 					add_building_construction = {
 						type = infrastructure
-						level = 1
+						level = 2
 						instant_build = yes
 					}
 				}
@@ -618,45 +626,28 @@ focus_tree = {
 						value < -0.9
 					}
 				}
-				has_country_flag = Reunit_Tresen_country
+				OR = {
+					has_country_flag = Reunit_Tresen_country
+					date > 1940.1.1
+				}
 				has_war = no
 			}
 			ai_will_do = {
 				base = 1000
 			}
 			completion_reward = {
-				custom_effect_tooltip = CAC_KAZ_TAM_Debate_result
+				remove_ideas = CAC_KAZ_TAM_Debate_0
 				swap_ideas = {
 					remove_idea = TAM_politics_government
 					add_idea = TAM_politics_government_idea
 				}
-				
-				remove_ideas = CAC_KAZ_TAM_Debate_0
 				if = {
-					limit = {
-						power_balance_value = {
-							id = CAC_communism_bop
-							value < 0
+					limit = { 
+						NOT = {
+							has_country_flag = TAM_flag_lost_in_civil_war
 						}
 					}
-					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_left
-				}
-				else = {
-					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_right
-				}
-				hidden_effect = {
-					remove_ideas = TAM_bop_local_move
-					remove_ideas = TAM_bop_SOV_move
-					remove_ideas = UMA_Nice_Nature_head_of_government
-				
-					if = {
-						limit = {
-							has_country_flag = CAC_TAM_want_join_SOV
-						}
-							SOV = {
-							country_event = generic.2002
-						}
-					}
+					custom_effect_tooltip = CAC_KAZ_TAM_Debate_result
 					if = {
 						limit = {
 							power_balance_value = {
@@ -664,18 +655,63 @@ focus_tree = {
 								value < 0
 							}
 						}
+						custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_left
+					}
+					else = {
+						custom_effect_tooltip = CAC_KAZ_TAM_Debate_result_right
+					}
+				}
+				else = {
+					hidden_effect = {
+						remove_ideas = TAM_military_adviser_from_sovit
+						remove_ideas = TAM_economic_cooperation_from_sovit
+						remove_ideas = TAM_deepen_cooperation_from_SOV
+						remove_ideas = TAM_leave_cooperation_from_SOV
+						remove_ideas = TAM_Third_international
+						remove_ideas = TAM_idea_revolution_enthusiasm
+					}
+				}
+				hidden_effect = {
+					remove_ideas = TAM_bop_local_move
+					remove_ideas = TAM_bop_SOV_move
+					remove_ideas = TAM_Nice_Nature_head_of_government
+				
+					if = {
+						limit = {
+							has_country_flag = CAC_TAM_want_join_SOV
+							NOT = {
+								has_country_flag = TAM_flag_lost_in_civil_war
+							}
+						}
+							SOV = {
+							country_event = generic.2002
+						}
+					}
+					if = {
+						limit = {
+							has_country_flag = TAM_flag_lost_in_civil_war
+						}
+						custom_effect_tooltip = CAC_TAM_balance_lost_in_civil_war_end
+					}
+					else_if = {
+						limit = {
+							power_balance_value = {
+								id = CAC_communism_bop
+								value < 0
+							}
+						}
 						custom_effect_tooltip = CAC_TAM_balance_left_end
-						add_ideas = UMA_Nice_Nature_head_of_government_0
+						add_ideas = TAM_Nice_Nature_head_of_government_0
 						add_ideas = TAM_bop_SOV_win
-						UMA_Oguri_Cap = {
-							add_country_leader_trait = UMA_Unity_is_strength
+						TAM_Oguri_Cap = {
+							add_country_leader_trait = TAM_Unity_is_strength
 						}
 					}
 					else = {
 						custom_effect_tooltip = CAC_TAM_balance_right_end
-						add_ideas = UMA_Symboli_Rudolf_head_of_government
+						add_ideas = TAM_Symboli_Rudolf_head_of_government
 						add_ideas = TAM_bop_local_win
-						promote_character = UMA_Tokai_Teio
+						promote_character = TAM_Tokai_Teio
 					}
 				}
 				remove_power_balance = {
@@ -683,484 +719,484 @@ focus_tree = {
 				}
 				hidden_effect = {
 				#既然政治斗争已经结束，那么就没有必要再留着平衡的特质了
-					UMA_Curren_Chan = {
+					TAM_Curren_Chan = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Curren_Chan
+							trait = TAM_balance_right_Curren_Chan
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Nishino_Flower = {
+					TAM_Nishino_Flower = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Nishino_Flower
+							trait = TAM_balance_left_Nishino_Flower
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Inari_One = {
+					TAM_Inari_One = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Inari_One
+							trait = TAM_balance_left_Inari_One
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Rice_Shower = {
+					TAM_Rice_Shower = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Rice_Shower
+							trait = TAM_balance_left_Rice_Shower
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Mihono_Bourbon = {
+					TAM_Mihono_Bourbon = {
 						remove_trait = {
 							slot = army_chief
-							trait = UMA_balance_right_Mihono_Bourbon
+							trait = TAM_balance_right_Mihono_Bourbon
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Seiun_Sky = {
+					TAM_Seiun_Sky = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Seiun_Sky
+							trait = TAM_balance_right_Seiun_Sky
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Gold_Ship = {
+					TAM_Gold_Ship = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_right_Gold_Ship
+							trait = TAM_balance_right_Gold_Ship
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_El_Condor_Pasa = {
+					TAM_El_Condor_Pasa = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_left_El_Condor_Pasa
+							trait = TAM_balance_left_El_Condor_Pasa
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Daiwa_Scarlet = {
+					TAM_Daiwa_Scarlet = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_right_Daiwa_Scarlet
+							trait = TAM_balance_right_Daiwa_Scarlet
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Zenno_Rob_Roy = {
+					TAM_Zenno_Rob_Roy = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Zenno_Rob_Roy
+							trait = TAM_balance_left_Zenno_Rob_Roy
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Daitaku_Helios = {
+					TAM_Daitaku_Helios = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Daitaku_Helios
+							trait = TAM_balance_right_Daitaku_Helios
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Ines_Fujin = {
+					TAM_Ines_Fujin = {
 						remove_trait = {
 							slot = theorist
-							trait = UMA_balance_left_Ines_Fujin
+							trait = TAM_balance_left_Ines_Fujin
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Cheval_Grand = {
+					TAM_Cheval_Grand = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Cheval_Grand
+							trait = TAM_balance_left_Cheval_Grand
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Verxina = {
+					TAM_Verxina = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Verxina
+							trait = TAM_balance_right_Verxina
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Sweep_Tosho = {
+					TAM_Sweep_Tosho = {
 						remove_trait = {
 							slot = air_chief
-							trait = UMA_balance_right_Sweep_Tosho
+							trait = TAM_balance_right_Sweep_Tosho
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_North_Flight = {
+					TAM_North_Flight = {
 						remove_trait = {
 							slot = air_chief
-							trait = UMA_balance_left_North_Flight
+							trait = TAM_balance_left_North_Flight
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Eishin_Flash = {
+					TAM_Eishin_Flash = {
 						remove_trait = {
 							slot = army_chief
-							trait = UMA_balance_left_Eishin_Flash
+							trait = TAM_balance_left_Eishin_Flash
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Matikane_fukukitaru = {
+					TAM_Matikane_fukukitaru = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Matikane_fukukitaru
+							trait = TAM_balance_right_Matikane_fukukitaru
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Calstone_Light_O = {
+					TAM_Calstone_Light_O = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_left_Calstone_Light_O
+							trait = TAM_balance_left_Calstone_Light_O
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Neo_Universe = {
+					TAM_Neo_Universe = {
 						remove_trait = {
 							slot = navy_chief
-							trait = UMA_balance_right_Neo_Universe
+							trait = TAM_balance_right_Neo_Universe
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Daiichi_Ruby = {
+					TAM_Daiichi_Ruby = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_right_Daiichi_Ruby
+							trait = TAM_balance_right_Daiichi_Ruby
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Mejiro_Dober = {
+					TAM_Mejiro_Dober = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Mejiro_Dober
+							trait = TAM_balance_right_Mejiro_Dober
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Chrono_Genesis = {
+					TAM_Chrono_Genesis = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_Chrono_Genesis
+							trait = TAM_balance_right_Chrono_Genesis
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Hishi_Miracle = {
+					TAM_Hishi_Miracle = {
 						remove_trait = {
 							slot = navy_chief
-							trait = UMA_balance_right_Hishi_Miracle
+							trait = TAM_balance_right_Hishi_Miracle
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Tamamo_Cross = {
+					TAM_Tamamo_Cross = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_right_Tamamo_Cross
+							trait = TAM_balance_right_Tamamo_Cross
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Taiki_Shuttle = {
+					TAM_Taiki_Shuttle = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_left_Taiki_Shuttle
+							trait = TAM_balance_left_Taiki_Shuttle
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Agnes_Tachyon = {
+					TAM_Agnes_Tachyon = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Agnes_Tachyon
+							trait = TAM_balance_left_Agnes_Tachyon
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Ikuno_Dictus = {
+					TAM_Ikuno_Dictus = {
 						remove_trait = {
 							slot = theorist
-							trait = UMA_balance_left_Ikuno_Dictus
+							trait = TAM_balance_left_Ikuno_Dictus
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Air_Shakur = {
+					TAM_Air_Shakur = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_Air_Shakur
+							trait = TAM_balance_left_Air_Shakur
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Air_Groove = {
+					TAM_Air_Groove = {
 						remove_trait = {
 							slot = theorist
-							trait = UMA_balance_left_Air_Groove
+							trait = TAM_balance_left_Air_Groove
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Nice_Nature = {
+					TAM_Nice_Nature = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_hard_Nice_Nature
+							trait = TAM_balance_left_hard_Nice_Nature
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Silence_Suzuka = {
+					TAM_Silence_Suzuka = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_hard_Silence_Suzuka
+							trait = TAM_balance_left_hard_Silence_Suzuka
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Manhattan_Cafe = {
+					TAM_Manhattan_Cafe = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_left_hard_Manhattan_Cafe
+							trait = TAM_balance_left_hard_Manhattan_Cafe
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Sakura_Bakushin_O = {
+					TAM_Sakura_Bakushin_O = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_left_hard_Sakura_Bakushin_O
+							trait = TAM_balance_left_hard_Sakura_Bakushin_O
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Fuji_Kiseki = {
+					TAM_Fuji_Kiseki = {
 						remove_trait = {
 							slot = theorist
-							trait = UMA_balance_left_hard_Fuji_Kiseki
+							trait = TAM_balance_left_hard_Fuji_Kiseki
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Symboli_Rudolf = {
+					TAM_Symboli_Rudolf = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_hard_Symboli_Rudolf
+							trait = TAM_balance_right_hard_Symboli_Rudolf
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Tokai_Teio = {
+					TAM_Tokai_Teio = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_hard_Tokai_Teio
+							trait = TAM_balance_right_hard_Tokai_Teio
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Smart_Falcon = {
+					TAM_Smart_Falcon = {
 						remove_trait = {
 							slot = political_advisor
-							trait = UMA_balance_right_hard_Smart_Falcon
+							trait = TAM_balance_right_hard_Smart_Falcon
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Haru_Urara = {
+					TAM_Haru_Urara = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_right_hard_Haru_Urara
+							trait = TAM_balance_right_hard_Haru_Urara
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
-					UMA_Mayano_Top_Gun = {
+					TAM_Mayano_Top_Gun = {
 						remove_trait = {
 							slot = high_command
-							trait = UMA_balance_right_hard_Mayano_Top_Gun
+							trait = TAM_balance_right_hard_Mayano_Top_Gun
 						}
 						if = {
 							limit = { 
-								has_character_flag = UMA_balance_no
+								has_character_flag = TAM_balance_no
 							}
-							clr_character_flag = UMA_balance_no
+							clr_character_flag = TAM_balance_no
 						}
 					}
 				}
@@ -1177,6 +1213,9 @@ focus_tree = {
 			cancel_if_invalid = yes
 			available = {
 				has_completed_focus = TAM_focus_civil_war_16
+				NOT = {
+					has_country_flag = TAM_flag_lost_in_civil_war
+				}
 			}
 			#allow_branch = {
 			#	has_completed_focus = TAM_focus_civil_war_16
@@ -1214,7 +1253,7 @@ focus_tree = {
 				custom_effect_tooltip = TAM_focus_After_civil_war_2_tooltip
 				hidden_effect = {
 					PER = {
-						UMA_Maruzensky = {
+						TAM_Maruzensky = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -1236,7 +1275,7 @@ focus_tree = {
 						}
 					}
 					AFG = {
-						UMA_Durandal = {
+						TAM_Durandal = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -1258,7 +1297,7 @@ focus_tree = {
 						}
 					}
 					AFG = {
-						UMA_Matikane_Tannhauser = {
+						TAM_Matikane_Tannhauser = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -1280,7 +1319,7 @@ focus_tree = {
 						}
 					}
 					AFG = {
-						UMA_Air_Messiah = {
+						TAM_Air_Messiah = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -1302,7 +1341,7 @@ focus_tree = {
 						}
 					}
 					AFG = {
-						UMA_Grass_Wonder = {
+						TAM_Grass_Wonder = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -1324,7 +1363,7 @@ focus_tree = {
 						}
 					}
 					AFG = {
-						UMA_Satono_Diamond = {
+						TAM_Satono_Diamond = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -1346,7 +1385,7 @@ focus_tree = {
 						}
 					}
 					AFG = {
-						UMA_Kitasan_Black = {
+						TAM_Kitasan_Black = {
 							set_nationality = TAM
 							add_trait = {
 								trait = cavalry_leader
@@ -2436,7 +2475,11 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_RESEARCH}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			ai_will_do = {
 				base = 100
@@ -2494,6 +2537,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Magic_Research_Restart_1
 			search_filters = {FOCUS_FILTER_RESEARCH}
+			ai_will_do = {
+				base = 100
+			}
 			completion_reward = {
 				swap_ideas = {
 					remove_idea = TAM_restart_magic_research
@@ -3317,12 +3363,19 @@ focus_tree = {
 			continue_if_invalid = no
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				army_experience = 25
-				add_ideas = TAM_UMA_Army
+				add_ideas = TAM_TAM_Army
 			}
 		}
 	#陆军步兵和炮兵
@@ -3340,6 +3393,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_1
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				army_experience = 25
 				add_tech_bonus = {
@@ -3349,7 +3405,7 @@ focus_tree = {
 					category = infantry_weapons
 					category = artillery
 				}
-				add_ideas = TAM_UMA_Army_Infantry_01
+				add_ideas = TAM_TAM_Army_Infantry_01
 				random_owned_controlled_state = {
 					add_extra_state_shared_building_slots = 2
 					add_building_construction = {
@@ -3376,7 +3432,7 @@ focus_tree = {
 			search_filters = {FOCUS_FILTER_ARMY_XP}
 			completion_reward = {
 				army_experience = 25
-				add_ideas = TAM_UMA_Army_Cavalry_01
+				add_ideas = TAM_TAM_Army_Cavalry_01
 				add_tech_bonus = {
 					uses = 2
 					bonus = 0.25
@@ -3438,8 +3494,11 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Infantry_02
+				add_ideas = TAM_TAM_Army_Infantry_02
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					amount = 2500
@@ -3459,8 +3518,11 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Infantry_03
+				add_ideas = TAM_TAM_Army_Infantry_03
 				add_equipment_to_stockpile = {
 					type = artillery_equipment
 					amount = 150
@@ -3480,8 +3542,11 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_Inf_1
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Infantry_04
+				add_ideas = TAM_TAM_Army_Infantry_04
 				add_equipment_to_stockpile = {
 					type = anti_air_equipment
 					amount = 200
@@ -3501,8 +3566,11 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_Inf_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Infantry_05
+				add_ideas = TAM_TAM_Army_Infantry_05
 				add_equipment_to_stockpile = {
 					type = support_equipment
 					amount = 240
@@ -3527,6 +3595,9 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_Army_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
+			ai_will_do = {
+				base = 15
+			}
 			completion_reward = {
 				add_mastery_bonus = {
 					track = infantry
@@ -3541,12 +3612,12 @@ focus_tree = {
 				}
 				custom_effect_tooltip = CAC_foc_infantry_be_one
 				hidden_effect = {
-					remove_ideas = TAM_UMA_Army_Infantry_01
-					remove_ideas = TAM_UMA_Army_Infantry_02
-					remove_ideas = TAM_UMA_Army_Infantry_03
-					remove_ideas = TAM_UMA_Army_Infantry_04
-					remove_ideas = TAM_UMA_Army_Infantry_05
-					add_ideas = TAM_UMA_Army_Infantry_all
+					remove_ideas = TAM_TAM_Army_Infantry_01
+					remove_ideas = TAM_TAM_Army_Infantry_02
+					remove_ideas = TAM_TAM_Army_Infantry_03
+					remove_ideas = TAM_TAM_Army_Infantry_04
+					remove_ideas = TAM_TAM_Army_Infantry_05
+					add_ideas = TAM_TAM_Army_Infantry_all
 				}
 			}
 		}
@@ -3564,7 +3635,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Army_4
 			search_filters = {FOCUS_FILTER_ARMY_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Cavalry_02
+				add_ideas = TAM_TAM_Army_Cavalry_02
 			}
 		}
 		focus = {
@@ -3584,7 +3655,7 @@ focus_tree = {
 			#	has_tech = motorised_infantry
 			#}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Cavalry_03
+				add_ideas = TAM_TAM_Army_Cavalry_03
 				add_tech_bonus = {
 					name = motorized_bonus
 					bonus = 1
@@ -3607,7 +3678,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Army_Mot_1
 			search_filters = {FOCUS_FILTER_ARMY_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Cavalry_04
+				add_ideas = TAM_TAM_Army_Cavalry_04
 			}
 		}
 		focus = {
@@ -3624,7 +3695,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Army_Mot_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Cavalry_05
+				add_ideas = TAM_TAM_Army_Cavalry_05
 				add_tech_bonus = {
 					name = motorized_bonus
 					ahead_reduction = 0.5
@@ -3663,12 +3734,12 @@ focus_tree = {
 				}
 				custom_effect_tooltip = CAC_foc_cavalry_be_one
 				hidden_effect = {
-					remove_ideas = TAM_UMA_Army_Cavalry_01
-					remove_ideas = TAM_UMA_Army_Cavalry_02
-					remove_ideas = TAM_UMA_Army_Cavalry_03
-					remove_ideas = TAM_UMA_Army_Cavalry_04
-					remove_ideas = TAM_UMA_Army_Cavalry_05
-					add_ideas = TAM_UMA_Army_Cavalry_all
+					remove_ideas = TAM_TAM_Army_Cavalry_01
+					remove_ideas = TAM_TAM_Army_Cavalry_02
+					remove_ideas = TAM_TAM_Army_Cavalry_03
+					remove_ideas = TAM_TAM_Army_Cavalry_04
+					remove_ideas = TAM_TAM_Army_Cavalry_05
+					add_ideas = TAM_TAM_Army_Cavalry_all
 				}
 				
 			}
@@ -3759,7 +3830,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Army_Arm_2
 			search_filters = {FOCUS_FILTER_ARMY_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Army_Tank_04
+				add_ideas = TAM_TAM_Army_Tank_04
 				random_owned_controlled_state = {
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = {
@@ -3804,8 +3875,8 @@ focus_tree = {
 					remove_ideas = TAM_idea_heavy_tank_design
 					remove_ideas = TAM_idea_light_tank_design
 					remove_ideas = TAM_idea_fast_tank
-					remove_ideas = TAM_UMA_Army_Tank_04
-					add_ideas = TAM_UMA_Army_Tank_05
+					remove_ideas = TAM_TAM_Army_Tank_04
+					add_ideas = TAM_TAM_Army_Tank_05
 				}
 			}
 		}
@@ -3854,7 +3925,7 @@ focus_tree = {
 					days = 365
 				}
 				army_experience = 75
-				add_ideas = TAM_UMA_Army_All
+				add_ideas = TAM_TAM_Army_All
 			}
 		}
 	
@@ -3869,6 +3940,11 @@ focus_tree = {
 			cancel_if_invalid = yes
 			allow_branch = {
 				has_country_flag = TAM_For_the_Mortal
+				is_subject = no
+				is_ai = no
+				not = {
+					has_country_flag = TAM_flag_lost_in_civil_war
+				}
 			}
 			ai_will_do = {
 				base = 0
@@ -3888,11 +3964,11 @@ focus_tree = {
 				}
 				every_possible_country = {
 					limit = {
-						has_character = UMA_Agnes_Digital
+						has_character = TAM_Agnes_Digital
 					}
 					random_character = {
 						limit = {
-							is_character = UMA_Agnes_Digital
+							is_character = TAM_Agnes_Digital
 						}
 						set_nationality = ROOT
 					}
@@ -3962,9 +4038,9 @@ focus_tree = {
 
 				hidden_effect = {
 					set_technology = {TAM_umamusume_technology = 1}
-					remove_ideas = UMA_Nice_Nature_head_of_government #去掉副领袖
-					remove_ideas = UMA_Nice_Nature_head_of_government_0
-					remove_ideas = UMA_Symboli_Rudolf_head_of_government 
+					remove_ideas = TAM_Nice_Nature_head_of_government #去掉副领袖
+					remove_ideas = TAM_Nice_Nature_head_of_government_0
+					remove_ideas = TAM_Symboli_Rudolf_head_of_government 
 					
 					add_ideas = AFG_Kanzaki_Ranko_head_of_government #加上兰子副领袖
 					set_party_name = {
@@ -3989,18 +4065,18 @@ focus_tree = {
 					}
 
 					#给数码碳改肖像
-					UMA_Agnes_Digital = {
+					TAM_Agnes_Digital = {
 						set_portraits = {
 							army = {
-								small = "gfx/leaders/UMA/advisors/UMA_Agnes_Digital_2_small.png"
-								large = "gfx/leaders/UMA/UMA_Agnes_Digital_2.png"
+								small = "gfx/leaders/TAM/advisors/idea_TAM_Agnes_Digital_2_small.png"
+								large = "gfx/leaders/TAM/TAM_Agnes_Digital_2.png"
 							}
 						}
 
 					}
 					add_country_leader_role = {
             	    	###恭喜爱丽数码可以撑地了
-		    			character = UMA_Agnes_Digital
+		    			character = TAM_Agnes_Digital
 		    			promote_leader = yes
 		    			country_leader = {
 		    				ideology = leninism
@@ -4008,13 +4084,13 @@ focus_tree = {
 							traits = {
             	                CAC_Messiah_of_Tresen
             	            }
-							desc = UMA_Agnes_Digital_desc
-							#set_leader_description = UMA_Agnes_Digital_desc
+							desc = TAM_Agnes_Digital_desc
+							#set_leader_description = TAM_Agnes_Digital_desc
 		    			}
 		    		}
 					add_country_leader_role = {
             	    	###恭喜爱丽数码可以撑地了
-		    			character = UMA_Agnes_Digital
+		    			character = TAM_Agnes_Digital
 		    			promote_leader = yes
 		    			country_leader = {
 		    				ideology = socialism
@@ -4022,13 +4098,13 @@ focus_tree = {
 							traits = {
             	                CAC_Messiah_of_Tresen
             	            }
-							desc = UMA_Agnes_Digital_desc
-							#set_leader_description = UMA_Agnes_Digital_desc
+							desc = TAM_Agnes_Digital_desc
+							#set_leader_description = TAM_Agnes_Digital_desc
 		    			}
 		    		}
 					add_country_leader_role = {
             	    	###恭喜爱丽数码可以撑地了
-		    			character = UMA_Agnes_Digital
+		    			character = TAM_Agnes_Digital
 		    			promote_leader = yes
 		    			country_leader = {
 		    				ideology = military_politicism
@@ -4036,13 +4112,13 @@ focus_tree = {
 							traits = {
             	                CAC_Messiah_of_Tresen
             	            }
-							desc = UMA_Agnes_Digital_desc
-							#set_leader_description = UMA_Agnes_Digital_desc
+							desc = TAM_Agnes_Digital_desc
+							#set_leader_description = TAM_Agnes_Digital_desc
 		    			}
 		    		}
 					add_country_leader_role = {
             	    	###恭喜爱丽数码可以撑地了
-		    			character = UMA_Agnes_Digital
+		    			character = TAM_Agnes_Digital
 		    			promote_leader = yes
 		    			country_leader = {
 		    				ideology = Crimson_Idealism
@@ -4050,8 +4126,8 @@ focus_tree = {
 							traits = {
             	                CAC_Messiah_of_Tresen
             	            }
-							desc = UMA_Agnes_Digital_desc
-							#set_leader_description = UMA_Agnes_Digital_desc
+							desc = TAM_Agnes_Digital_desc
+							#set_leader_description = TAM_Agnes_Digital_desc
 		    			}
 		    		}
 				}
@@ -4068,14 +4144,18 @@ focus_tree = {
 			continue_if_invalid = no
 			cancel_if_invalid = yes
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			ai_will_do = {
 				base = 0
 			}
 			completion_reward = {
 				army_experience = 50
-				add_ideas = TAM_UMA_Army_umamusume
+				add_ideas = TAM_TAM_Army_umamusume
 			}
 		}
 
@@ -4668,7 +4748,8 @@ focus_tree = {
 			completion_reward = {
 				every_state = {
 					limit = { 
-						is_core_of = PER
+						is_Tresen_state_area = yes
+						is_controlled_by = PER
 					}
 					add_claim_by_ROOT_if_has_no_core = yes
             		enable_state_integration_50_compliance = yes
@@ -4707,13 +4788,15 @@ focus_tree = {
 				
 					every_state = {
 						limit = { 
-							is_core_of = PER
+							is_Tresen_state_area = yes
+							is_controlled_by = PER
 						}
 						add_claim_by_ROOT_if_has_no_core = yes
             			enable_state_integration_50_compliance = yes
 					}
 				}
 			}
+			will_lead_to_war_with = PER
 		}
 		focus = {
 			id = TAM_focus_civil_war_14
@@ -4793,6 +4876,7 @@ focus_tree = {
 					}
 				}
 			}
+			will_lead_to_war_with = AFG
 		}
 		focus = {
 			id = TAM_focus_civil_war_16
@@ -4828,6 +4912,65 @@ focus_tree = {
 				266 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
 				267 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
 				407 = { is_controlled_and_owned_by_ROOT_or_subject = yes }
+			}
+			bypass = {
+				has_country_flag = TAM_flag_lost_in_civil_war
+			}
+			bypass_effect = {
+				add_political_power = -1000
+				#custom_effect_tooltip = Tresen_civil_war_has_end
+				add_stability = -1
+				add_war_support = -1
+				hidden_effect = {
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_modifier_guerrilla
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_modifier_guerrilla
+						}
+					}
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_modifier_defence
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_modifier_defence
+						}
+					}
+					remove_ideas = CAC_idea_Too_big_to_handle_army
+					remove_ideas = TAM_to_win_war
+					remove_ideas = TAM_veteran_troops_weary1
+					remove_ideas = TAM_veteran_troops_weary2
+					remove_ideas = TAM_veteran_troops_weary3
+					remove_ideas = TAM_prepare_Civil_war_to_AFG
+					remove_ideas = TAM_prepare_Civil_war_to_PER
+					remove_ideas = TAM_leninism_uprising
+					remove_ideas = TAM_leninism_uprising_1
+					PER = {
+						remove_ideas = TAM_to_win_war
+						remove_ideas = TAM_veteran_troops_weary1
+						remove_ideas = TAM_veteran_troops_weary2
+						remove_ideas = TAM_veteran_troops_weary3
+						remove_ideas = TAM_prepare_Civil_war_to_AFG
+						remove_ideas = TAM_prepare_Civil_war_to_TAM
+						remove_ideas = TAM_prepare_Civil_war_to_PER
+						remove_ideas = TAM_leninism_uprising
+						remove_ideas = TAM_leninism_uprising_1
+					}
+					AFG = {
+						remove_ideas = TAM_to_win_war
+						remove_ideas = TAM_veteran_troops_weary1
+						remove_ideas = TAM_veteran_troops_weary2
+						remove_ideas = TAM_veteran_troops_weary3
+						remove_ideas = TAM_prepare_Civil_war_to_AFG
+						remove_ideas = TAM_prepare_Civil_war_to_TAM
+						remove_ideas = TAM_prepare_Civil_war_to_PER
+						remove_ideas = TAM_leninism_uprising
+						remove_ideas = TAM_leninism_uprising_1
+					}
+					set_global_flag = Tresen_civil_war_has_end
+				}
 			}
 			ai_will_do = {
 				base = 1000
@@ -4900,7 +5043,7 @@ focus_tree = {
 					set_country_flag = Reunit_Tresen_country
 					set_country_flag = SOV_is_Watching_YOU
 					set_global_flag = Tresen_civil_war_has_end
-					activate_mission = CAC_SOV_intervention_declare_war_mission
+					#activate_mission = CAC_SOV_intervention_declare_war_mission
 					set_variable = { adorable_heart_super_event_var = 1350 }
 					adorable_heart_fire_super_event = yes
 				}
@@ -4942,6 +5085,134 @@ focus_tree = {
 				}
 			}
 		}
+		focus = {
+			id = TAM_focus_civil_war_25
+			icon = GFX_focus_renounce_the_treaty_of_trianon
+			cost = 2
+			x = 2
+			y = 0
+			relative_position_id = TAM_focus_civil_war_16
+			ai_will_do = {
+				base = 0
+			}
+			available = {
+				has_country_flag = TAM_flag_lost_in_civil_war
+				is_ai = no
+				has_army_manpower = {
+					size > 500000
+				}
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_13
+				focus = TAM_focus_civil_war_15
+			}
+			allow_branch = {
+				has_country_flag = TAM_flag_lost_in_civil_war
+			}
+			completion_reward = { 
+				TAM_champion_slot_unlock = yes
+				add_stability = 0.10
+				add_war_support = 0.10
+				if = {
+					limit = { 
+						OR = {
+							is_subject_of = AFG
+							is_subject_of = PER
+						}
+					}
+					end_puppet_this = yes
+				}
+				if = {
+					limit = { 
+						PER = {
+							exists = yes
+						}
+					}
+					create_wargoal = {
+						target = PER
+						type = annex_everything
+					}
+					PER = {
+						add_ideas = TAM_local_war
+					}
+				}
+				if = {
+					limit = { 
+						AFG = {
+							exists = yes
+						}
+					}
+					create_wargoal = {
+						target = AFG
+						type = annex_everything
+					}
+					AFG = {
+						add_ideas = TAM_local_war
+					}
+				}
+				if = {
+					limit = { 
+						TAM = {
+							is_in_faction = yes
+						}
+					}
+					leave_faction = yes
+				}
+				add_ideas = TAM_local_war
+			}
+			will_lead_to_war_with = AFG
+			will_lead_to_war_with = PER
+		}
+		focus = {
+			id = TAM_focus_civil_war_26
+			icon = GFX_focus_ITA_corpo_volontari_della_liberta
+			cost = 2
+			x = 0
+			y = 1
+			relative_position_id = TAM_focus_civil_war_16
+			ai_will_do = {
+				base = 0
+			}
+			available = {
+				AFG = {
+					exists = no
+				}
+				PER = {
+					exists = no
+				}
+				407 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				266 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				267 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+			}
+			prerequisite = {
+				focus = TAM_focus_civil_war_25
+			}
+			completion_reward = { 
+				set_country_flag = Reunit_Tresen_country
+				set_cosmetic_tag = Tresen_Federation
+				every_state = {
+					limit = {
+						is_tresen_tag = yes
+					}
+					add_core_of = ROOT
+				}
+				TAM = {
+					remove_ideas = TAM_local_war
+				}
+				AFG = {
+					remove_ideas = TAM_local_war
+				}
+				PER = {
+					remove_ideas = TAM_local_war
+				}
+			}
+		}
 	###工业线（闭门给科研槽）
 
 		focus = {
@@ -4954,9 +5225,9 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				custom_effect_tooltip = CAC_TAM_UMA_IC_cate_start
+				custom_effect_tooltip = CAC_TAM_TAM_IC_cate_start
 				set_country_flag = CAC_start_prospect_for_resources
-				add_ideas = TAM_UMA_IC
+				add_ideas = TAM_TAM_IC
 			}
 		}
 
@@ -4974,7 +5245,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_1
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_1
+				add_ideas = TAM_TAM_IC_1
 				random_owned_controlled_state = {
 					limit = {
 						free_building_slots = {
@@ -5103,7 +5374,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_2
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_6
+				add_ideas = TAM_TAM_IC_6
 				random_owned_controlled_state = {
 					limit = {
 						free_building_slots = {
@@ -5223,7 +5494,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_3
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_2
+				add_ideas = TAM_TAM_IC_2
 				random_owned_controlled_state = {
 					limit = {
 						free_building_slots = {
@@ -5270,7 +5541,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_3
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_3
+				add_ideas = TAM_TAM_IC_3
 				random_owned_controlled_state = {
 					limit = {
 						free_building_slots = {
@@ -5485,7 +5756,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_6
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_7
+				add_ideas = TAM_TAM_IC_7
 				add_offsite_building = {
 					type = arms_factory
 					level = 1
@@ -5686,7 +5957,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_11
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_5
+				add_ideas = TAM_TAM_IC_5
 				custom_effect_tooltip = CAC_foc_find_resources
 				custom_effect_tooltip = CAC_foc_find_resources_1
 			}
@@ -5849,7 +6120,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_build_15
 			search_filters = {FOCUS_FILTER_INDUSTRY}
 			completion_reward = {
-				add_ideas = TAM_UMA_IC_4
+				add_ideas = TAM_TAM_IC_4
 			}
 		}
 		focus = {
@@ -6678,15 +6949,15 @@ focus_tree = {
 				}
 				custom_effect_tooltip = CAC_foc_IC_be_one
 				hidden_effect = {
-					remove_ideas = TAM_UMA_IC
-					remove_ideas = TAM_UMA_IC_1
-					remove_ideas = TAM_UMA_IC_2
-					remove_ideas = TAM_UMA_IC_3
-					remove_ideas = TAM_UMA_IC_4
-					remove_ideas = TAM_UMA_IC_5
-					remove_ideas = TAM_UMA_IC_6
-					remove_ideas = TAM_UMA_IC_7
-					add_ideas = TAM_UMA_IC_all
+					remove_ideas = TAM_TAM_IC
+					remove_ideas = TAM_TAM_IC_1
+					remove_ideas = TAM_TAM_IC_2
+					remove_ideas = TAM_TAM_IC_3
+					remove_ideas = TAM_TAM_IC_4
+					remove_ideas = TAM_TAM_IC_5
+					remove_ideas = TAM_TAM_IC_6
+					remove_ideas = TAM_TAM_IC_7
+					add_ideas = TAM_TAM_IC_all
 				}
 			}
 		}
@@ -6727,13 +6998,17 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				army_experience = 25
 				navy_experience = 25
 				air_experience = 25
-				add_ideas = TAM_UMA_ND
+				add_ideas = TAM_TAM_ND
 			}
 		}
 		focus = {
@@ -6750,7 +7025,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_national_defense_1
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			completion_reward = {
-				add_ideas = TAM_UMA_ND_3
+				add_ideas = TAM_TAM_ND_3
 				add_political_power = 100
 			}
 		}
@@ -6769,7 +7044,7 @@ focus_tree = {
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			completion_reward = {
 				add_manpower = 50000
-				add_ideas = TAM_UMA_ND_4
+				add_ideas = TAM_TAM_ND_4
 			}
 		}
 		focus = {
@@ -6786,7 +7061,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_national_defense_1
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			completion_reward = {
-				add_ideas = TAM_UMA_ND_2
+				add_ideas = TAM_TAM_ND_2
 				
 			}
 		}
@@ -6804,7 +7079,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_national_defense_1
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			completion_reward = {
-				add_ideas = TAM_UMA_ND_1
+				add_ideas = TAM_TAM_ND_1
 			}
 		}
 		focus = {
@@ -6822,7 +7097,7 @@ focus_tree = {
 			search_filters = {FOCUS_FILTER_WAR_SUPPORT_FACTION_GOAL_FILTER}
 			completion_reward = {
 				gain_random_agency_upgrade = yes
-				add_ideas = TAM_UMA_ND_5
+				add_ideas = TAM_TAM_ND_5
 			}
 		}
 		focus = {
@@ -6848,13 +7123,13 @@ focus_tree = {
 				add_political_power = 10
 				custom_effect_tooltip = CAC_foc_ND_be_one
 				hidden_effect = {
-					remove_ideas = TAM_UMA_ND
-					remove_ideas = TAM_UMA_ND_1
-					remove_ideas = TAM_UMA_ND_2
-					remove_ideas = TAM_UMA_ND_3
-					remove_ideas = TAM_UMA_ND_4
-					remove_ideas = TAM_UMA_ND_5
-					add_ideas = TAM_UMA_ND_all
+					remove_ideas = TAM_TAM_ND
+					remove_ideas = TAM_TAM_ND_1
+					remove_ideas = TAM_TAM_ND_2
+					remove_ideas = TAM_TAM_ND_3
+					remove_ideas = TAM_TAM_ND_4
+					remove_ideas = TAM_TAM_ND_5
+					add_ideas = TAM_TAM_ND_all
 				}
 				
 			}
@@ -6872,12 +7147,16 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_NAVY_XP}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				custom_effect_tooltip = CAC_SWI_is_fool_navy
 				navy_experience = 25
-				add_ideas = TAM_UMA_Navy
+				add_ideas = TAM_TAM_Navy
 			}
 		}
 		focus = {
@@ -7115,8 +7394,8 @@ focus_tree = {
 			search_filters = {FOCUS_FILTER_NAVY_XP}
 			completion_reward = {
 				swap_ideas = {
-					remove_idea = TAM_UMA_Navy
-					add_idea = TAM_UMA_Navy_03
+					remove_idea = TAM_TAM_Navy
+					add_idea = TAM_TAM_Navy_03
 				}
 				navy_experience = 25
 				add_tech_bonus = {
@@ -7150,7 +7429,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Navy_2
 			search_filters = {FOCUS_FILTER_NAVY_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Navy_02
+				add_ideas = TAM_TAM_Navy_02
 				
 			}
 		}
@@ -7174,7 +7453,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Navy_3
 			search_filters = {FOCUS_FILTER_NAVY_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Navy_01
+				add_ideas = TAM_TAM_Navy_01
 			}
 		}
 		focus = {
@@ -7197,8 +7476,8 @@ focus_tree = {
 					value = 1
 				}
 				swap_ideas = {
-					remove_idea = TAM_UMA_Navy_03
-					add_idea = TAM_UMA_Navy_05
+					remove_idea = TAM_TAM_Navy_03
+					add_idea = TAM_TAM_Navy_05
 				}
 			}
 		}
@@ -7214,11 +7493,15 @@ focus_tree = {
 			cancel_if_invalid = yes
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1940.1.1
+				}
 			}
 			completion_reward = {
 				air_experience = 25
-				add_ideas = TAM_UMA_Airplane
+				add_ideas = TAM_TAM_Airplane
 				if = {
 					limit = {
 						capital_scope = {
@@ -7273,7 +7556,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Air_1
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Airplane_01
+				add_ideas = TAM_TAM_Airplane_01
 				add_doctrine_cost_reduction = {
 					cost_reduction = 0.75
 					uses = 1
@@ -7296,7 +7579,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Air_1
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Airplane_02
+				add_ideas = TAM_TAM_Airplane_02
 				add_doctrine_cost_reduction = {
 					cost_reduction = 0.75
 					uses = 1
@@ -7318,7 +7601,7 @@ focus_tree = {
 			relative_position_id = TAM_focus_Air_1
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Airplane_03
+				add_ideas = TAM_TAM_Airplane_03
 				add_doctrine_cost_reduction = {
 					cost_reduction = 0.75
 					uses = 1
@@ -7345,6 +7628,7 @@ focus_tree = {
 					uses = 2
 					category = light_air
 				}
+				air_experience = 25
 				mio:Tresen_cas_aircraft_organization = {
 					add_mio_size = 1
 					add_mio_funds = 1500
@@ -7375,7 +7659,20 @@ focus_tree = {
 			relative_position_id = TAM_focus_Air_5
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Airplane_04
+				add_ideas = TAM_TAM_Airplane_04
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 2
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
 			}
 		}
 		focus = {
@@ -7397,6 +7694,7 @@ focus_tree = {
 					uses = 2
 					category = heavy_air
 				}
+				air_experience = 25
 				mio:Tresen_medium_aircraft_organization = {
 					add_mio_size = 1
 					add_mio_funds = 1500
@@ -7425,7 +7723,20 @@ focus_tree = {
 			relative_position_id = TAM_focus_Air_7
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Airplane_05
+				add_ideas = TAM_TAM_Airplane_05
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 2
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
 			}
 		}
 		focus = {
@@ -7448,6 +7759,7 @@ focus_tree = {
 					category = medium_air
 					category = naval_air
 				}
+				air_experience = 25
 				mio:Tresen_naval_aircraft_organization = {
 					add_mio_size = 1
 					add_mio_funds = 1500
@@ -7476,7 +7788,20 @@ focus_tree = {
 			relative_position_id = TAM_focus_Air_9
 			search_filters = {FOCUS_FILTER_AIR_XP}
 			completion_reward = {
-				add_ideas = TAM_UMA_Airplane_06
+				add_ideas = TAM_TAM_Airplane_06
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 2
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
 			}
 		}
 		focus = {
@@ -7505,13 +7830,13 @@ focus_tree = {
 				}
 				custom_effect_tooltip = CAC_foc_air_be_one
 				hidden_effect = {
-					remove_ideas = TAM_UMA_Airplane_01
-					remove_ideas = TAM_UMA_Airplane_02
-					remove_ideas = TAM_UMA_Airplane_03
-					remove_ideas = TAM_UMA_Airplane_04
-					remove_ideas = TAM_UMA_Airplane_05
-					remove_ideas = TAM_UMA_Airplane_06
-					add_ideas = TAM_UMA_Airplane_all
+					remove_ideas = TAM_TAM_Airplane_01
+					remove_ideas = TAM_TAM_Airplane_02
+					remove_ideas = TAM_TAM_Airplane_03
+					remove_ideas = TAM_TAM_Airplane_04
+					remove_ideas = TAM_TAM_Airplane_05
+					remove_ideas = TAM_TAM_Airplane_06
+					add_ideas = TAM_TAM_Airplane_all
 				}
 				
 			}
@@ -7524,7 +7849,12 @@ focus_tree = {
 			x = 23
 			y = 14
 			available = {
-				has_global_flag = Tresen_civil_war_has_end
+				OR = {
+					#has_global_flag = second_weltkrieg_has_started
+					has_global_flag = Tresen_civil_war_has_end
+					date > 1942.1.1
+				}
+				is_subject = no
 			}
 			ai_will_do = {
 				base = 5000
@@ -7550,12 +7880,23 @@ focus_tree = {
 				}
 				has_country_flag = Reunit_Tresen_country
 			}
+			continue_if_invalid = yes
+			cancel_if_invalid = no
+			cancelable = no
 			prerequisite = {
 				focus = TAM_focus_dip_1
 			}
 			relative_position_id = TAM_focus_dip_1
 			ai_will_do = {
-				base = 5000
+				base = 0
+				modifier = {
+					has_global_flag = second_weltkrieg_has_started
+					add = 5000
+				}
+				modifier = {
+					date > 1940.1.1
+					add = 5000
+				}
 			}
 			bypass = {
 				OR = {
@@ -7580,6 +7921,10 @@ focus_tree = {
 						add_ideas = TAM_idea_umamusume_help_SOV
 					}
 				}
+			}
+			select_effect = {
+				set_country_flag = FACTION_ASKING
+				clr_country_flag = SOV_is_Watching_YOU
 			}
 			completion_reward = { 
 				SOV = {
@@ -7859,7 +8204,7 @@ focus_tree = {
 			id = TAM_focus_dip_8
 			icon = GFX_focus_ETH_an_arabic_base
 			cost = 3
-			x = -6
+			x = -4
 			y = 2
 			available = {
 				OR = {
@@ -7875,7 +8220,11 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_dip_1
 			ai_will_do = {
-				base = 0
+				base = 100
+				modifier = {
+					has_completed_focus = TAM_focus_dip_10
+					factor = 0
+				}
 			}
 			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
 			completion_reward = {
@@ -7891,7 +8240,7 @@ focus_tree = {
 							is_core_of = IRQ
 						}
 					}
-					add_claim_by = TAM
+					add_claim_by_ROOT_if_has_no_core = yes
 					enable_state_integration_80_compliance = yes
 				}
 				if = {
@@ -7948,7 +8297,7 @@ focus_tree = {
 			id = TAM_focus_dip_9
 			icon = GFX_focus_IRQ_demand_palestine
 			cost = 3
-			x = -6
+			x = -4
 			y = 3
 			available = {
 				OR = {
@@ -7962,6 +8311,12 @@ focus_tree = {
 				has_army_manpower = {
 					size > 400000
 				}
+				PAL = {
+					is_ai = yes
+				}
+				RIS = {
+					is_ai = yes
+				}
 			}
 			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
 			prerequisite = {
@@ -7971,22 +8326,100 @@ focus_tree = {
 			ai_will_do = {
 				base = 0
 			}
+			bypass = {
+				OR = {
+					has_war_with = PAL
+					has_war_with = RIS
+				}
+			}
+			bypass_effect = {
+				every_state = {
+					limit = {
+						OR = {
+							is_core_of = PAL
+							is_core_of = RIS
+						}
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+            		enable_state_integration_80_compliance = yes
+				}
+			}
 			completion_reward = {
 				if = {
 					limit = { 
 						PAL = {
 							exists = yes
+							is_major = no
+							OR = {
+								AND = {
+									is_ally_with = TAM
+									NOT = {
+										is_subject_of = TAM
+									}
+								}
+								is_in_faction = no
+							}
 						}
 					}
 					puppet = PAL
+				}
+				else = {
+					every_state = {
+						limit = {
+							is_core_of = PAL
+						}
+						add_claim_by_ROOT_if_has_no_core = yes
+            			enable_state_integration_80_compliance = yes
+					}
+					if = {
+						limit = { 
+							PAL = {
+								exists = yes
+							}
+						}
+						create_wargoal = {
+							target = PAL
+							type = take_claimed_state
+						}
+					}
 				}
 				if = {
 					limit = { 
 						RIS = {
 							exists = yes
+							is_major = no
+							OR = {
+								AND = {
+									is_ally_with = TAM
+									NOT = {
+										is_subject_of = TAM
+									}
+								}
+								is_in_faction = no
+							}
 						}
 					}
 					puppet = RIS
+				}
+				else = {
+					every_state = {
+						limit = {
+							is_core_of = RIS
+						}
+						add_claim_by_ROOT_if_has_no_core = yes
+            			enable_state_integration_80_compliance = yes
+					}
+					if = {
+						limit = { 
+							RIS = {
+								exists = yes
+							}
+						}
+						create_wargoal = {
+							target = RIS
+							type = take_claimed_state
+						}
+					}
 				}
 			}
 		}
@@ -7995,7 +8428,7 @@ focus_tree = {
 			id = TAM_focus_dip_10
 			icon = GFX_focus_TUR_misak_i_milli
 			cost = 3
-			x = -4
+			x = -6
 			y = 2
 			available = {
 				OR = {
@@ -8027,7 +8460,17 @@ focus_tree = {
 			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
 			relative_position_id = TAM_focus_dip_1
 			ai_will_do = {
-				base = 0
+				base = 100
+				modifier = {
+					has_completed_focus = TAM_focus_dip_8
+					factor = 0
+				}
+				modifier = {
+					TUR = {
+						is_subject = yes
+					}
+					factor = 0
+				}
 			}
 			completion_reward = {
 				998 = {
@@ -8070,7 +8513,7 @@ focus_tree = {
 			id = TAM_focus_dip_11
 			icon = GFX_focus_generic_attack_turkey
 			cost = 3
-			x = -4
+			x = -6
 			y = 3
 			available = {
 				OR = {
@@ -8086,9 +8529,29 @@ focus_tree = {
 			}
 			relative_position_id = TAM_focus_dip_1
 			ai_will_do = {
-				base = 0
+				base = 100
 			}
 			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			bypass = {
+				TUR = {
+					is_subject = yes
+				}
+				KUR = {
+					is_subject = yes
+				}
+			}
+			bypass_effect = {
+				every_state = {
+					limit = {
+						OR = {
+							is_core_of = TUR
+							is_core_of = KUR
+						}
+					}
+					add_claim_by = TAM
+					enable_state_integration_80_compliance = yes
+				}
+			}
 			completion_reward = {
 				add_timed_idea = {
 					idea = TAM_idea_attack_to_TUR_KUR
@@ -8268,8 +8731,7 @@ focus_tree = {
 				is_in_faction = no
 				RAJ = {
 					OR = {
-						has_war_with = DVL
-						has_war_with = JAP
+						has_war_with_major = yes
 					}
 					surrender_progress > 0.60
 					NOT = {
@@ -8320,5 +8782,151 @@ focus_tree = {
 					}
 				}
 			}
+		}
+		focus = {
+			id = TAM_focus_dip_16
+			icon = GFX_goal_POL_Maynar
+			cost = 3
+			x = -4
+			y = 4
+			available = {
+				POL = {
+					has_completed_focus = POL_exile_of_Manna
+				}
+				OR = {
+					RIS = {
+						is_subject_of = TAM
+						exists = no
+					}
+				}
+			}
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			prerequisite = {
+				focus = TAM_focus_dip_9
+			}
+			relative_position_id = TAM_focus_dip_1
+			ai_will_do = {
+				base = 0
+			}
+			completion_reward = {
+				every_character = {
+					limit = { 
+						has_character_flag = POL_Nearl_family_character
+					}
+					set_nationality = TAM
+				}
+				set_technology = {
+					tech_silverspear_pegasus = 1
+					tech_magic_silverspear_pegasus = 1
+				}
+			}
+			
+		}
+		focus = {
+			id = TAM_focus_dip_17
+			icon = GFX_goal_SAU_duoqu_oil
+			cost = 3
+			x = -2
+			y = 4
+			available = {
+				has_global_flag = second_weltkrieg_has_started
+				has_army_manpower = {
+					size > 600000
+				}
+				NOT = {
+					is_ally_with = YEM
+					has_war_with = YEM
+				}
+				YEM = {
+					has_war_with_major = yes
+				}
+			}
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			prerequisite = {
+				focus = TAM_focus_dip_9
+			}
+			relative_position_id = TAM_focus_dip_1
+			ai_will_do = {
+				base = 0
+			}
+			bypass = {
+				has_war_with = YEM
+			}
+			bypass_effect = {
+				every_state = {
+					limit = {
+						region = 187
+						is_owned_by = YEM
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+					enable_state_integration_80_compliance = yes
+				}
+			}
+			completion_reward = {
+				every_state = {
+					limit = {
+						region = 187
+						is_owned_by = YEM
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+					enable_state_integration_80_compliance = yes
+					transfer_state_to = ROOT
+				}
+			}
+			
+		}
+		focus = {
+			id = TAM_focus_dip_18
+			icon = GFX_focus_generic_provoke_border_clashes
+			cost = 3
+			x = -6
+			y = 4
+			available = {
+				has_global_flag = second_weltkrieg_has_started
+				has_army_manpower = {
+					size > 600000
+				}
+				NOT = {
+					is_ally_with = EGY
+					has_war_with = EGY
+				}
+				EGY = {
+					has_war_with_major = yes
+					
+				}
+			}
+			search_filters = {FOCUS_FILTER_CONSOLIDATION_FACTION_GOAL_FILTER}
+			prerequisite = {
+				focus = TAM_focus_dip_9
+			}
+			relative_position_id = TAM_focus_dip_1
+			ai_will_do = {
+				base = 0
+			}
+			bypass = {
+				has_war_with = EGY
+			}
+			bypass_effect = {
+				every_state = {
+					limit = {
+						region = 28
+						is_owned_by = EGY
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+					enable_state_integration_80_compliance = yes
+				}
+			}
+			completion_reward = {
+				every_state = {
+					limit = {
+						region = 28
+						is_owned_by = EGY
+					}
+					add_claim_by_ROOT_if_has_no_core = yes
+					enable_state_integration_80_compliance = yes
+					transfer_state_to = ROOT
+				}
+			}
+			
 		}
 }
