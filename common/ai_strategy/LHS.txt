@@ -33,10 +33,6 @@ LHS_start1 = {
     }
 
     ai_strategy = {
-        type = super_heavy_artillery_equipment
-        value = -999
-    }
-    ai_strategy = {
         type = equipment_production_min_factories_archetype
         id = self_propelled_super_heavy_artillery_equipment
         value = -99
@@ -47,9 +43,16 @@ LHS_start1 = {
         value = -99
     }
 
+
     ai_strategy = {
-        type = self_propelled_super_heavy_artillery_equipment
-        value = -999
+        type = equipment_production_min_factories_archetype
+        id = armored_support_vehicle
+        value = -99
+    }
+    ai_strategy = {
+        type = equipment_variant_production_factor
+        id = armored_support_vehicle
+        value = -99
     }
     ai_strategy = { #注重船坞
         type = front_control
@@ -115,10 +118,10 @@ LHS_start1 = {
     }
 }
 LHS_xiabing = {
-	allowed = { 
-                original_tag = LHS
-	}
-	abort_when_not_enabled = yes
+    allowed = {
+        original_tag = LHS
+    }
+    abort_when_not_enabled = yes
     enable = {
         always = yes
     }
@@ -196,7 +199,6 @@ LHSMore_Infantry_focus_2 = {
         id = infantry
         value = 75
     }
-    abort_when_not_enabled = yes
 }
 
 
@@ -289,8 +291,8 @@ LHSIfyouhavethemusethem2 = {
         original_tag = LHS
     }
     enable = {
-        date > 1939.1.1
-        
+        date > 1940.1.1
+
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -351,7 +353,7 @@ LHS_zao_liechepao = {
 
     ai_strategy = {
         type = railway_gun_divisions_ratio
-        value = 1
+        value = 5
     }
     ai_strategy = {
         type = equipment_production_min_factories_archetype
@@ -378,31 +380,10 @@ LHS_spy_missions = {
         num_of_operatives > 1
     }
     abort_when_not_enabled = yes
-    #渗透敌军
-    ai_strategy = {
-        type = operative_operation
-        operation = operation_make_resistance_contacts
-        value = 1200
-        operation_target = PAQ
-    }
-    ai_strategy = {
-        type = operative_mission
-        mission = build_intel_network
-        value = 1000
-        mission_target = PAQ
-    }
     #装备优先
     ai_strategy = {
         type = operation_equipment_priority
-        value = 100                   # 将该行动的装备供应优先级设为最高
-    }
-
-
-    ai_strategy = {
-        type = operative_operation
-        operation = heavy_water_raid
-        value = 2000
-        operation_target = PAQ
+        value = 100
     }
 }
 #1938年研究机动
@@ -477,7 +458,7 @@ LHS_ai_research_tank = { #研究坦克
     ai_strategy = { #中坦
         type = research_tech
         id = basic_medium_tank_chassis
-        value = 0
+        value = 200
     }
     ai_strategy = { #QF 25磅野战炮
         type = research_tech
@@ -737,7 +718,7 @@ LHS_balance_keeper_civilian_hungry = {
         #民工数量<军工数量
         has_country_flag = LHS_mumian2
         NOT = {
-            num_of_civilian_factories > num_of_military_factories
+            num_of_civilian_factories < num_of_military_factories
         }
         num_of_civilian_factories < 200
         num_of_military_factories > 30
@@ -761,7 +742,7 @@ LHS_balance_keeper_military_hungry = {
         #军工数量<民工数量
         has_country_flag = LHS_mumian2
         NOT = {
-            num_of_military_factories > num_of_civilian_factories
+            num_of_military_factories < num_of_civilian_factories
         }
         num_of_military_factories < 200
         num_of_civilian_factories > 30
@@ -960,20 +941,28 @@ LHS_victory_acceleration = {#冲刺！！！
     allowed = { original_tag = LHS }
     enable = {
         has_war = yes
+        num_divisions > 150
+        NOT = { surrender_progress > 0.15 }
         any_enemy_country = {
-            surrender_progress > 0.2
+            surrender_progress > 0.20
+        }
+        NOT = {
+            any_enemy_country = {
+                surrender_progress > 0.45
+            }
         }
     }
     abort_when_not_enabled = yes
+
     ai_strategy = {
         type = front_control
         state_trigger = {
             controller = {
                 has_war_with = LHS
-                surrender_progress > 0.2
+                surrender_progress > 0.20
             }
         }
-        priority = 15000
+        priority = 30000
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -981,11 +970,11 @@ LHS_victory_acceleration = {#冲刺！！！
     }
     ai_strategy = {
         type = spare_unit_factor
-        value = -30
+        value = -15
     }
     ai_strategy = {
         type = garrison
-        value = -200
+        value = -100
     }
 }
 
@@ -997,24 +986,26 @@ LHS_target_enemy_supply_hubs = {#断补给
     }
     abort_when_not_enabled = yes
 
-    #优先进攻有补给站的州
+    #直接相邻的敌方补给点当作主要突破目标
     ai_strategy = {
         type = front_control
         state_trigger = {
             controller = { has_war_with = LHS }
+            any_neighbor_state = { is_controlled_by = LHS }
             any_province_building_level = {
                 province = { all_provinces = yes }
                 building = supply_node
                 level > 0
             }
         }
-        priority = 6000
+        priority = 32000
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
-    #专门集合大部队去打这些点
+
+    #相邻补给点增加集结需求
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1026,7 +1017,7 @@ LHS_target_enemy_supply_hubs = {#断补给
             }
             any_neighbor_state = { is_controlled_by = LHS }
         }
-        value = 60
+        value = 45
     }
 }
 LHS_market_convoy_purchases = {#买运输船
@@ -1179,11 +1170,7 @@ LHS_unit= { #单位倾向
     enable = {
         num_divisions < 800
     }
-
-    abort = {
-        always = no
-    }
-
+    abort_when_not_enabled = yes
     ai_strategy = {
         type = air_factory_balance
         value = 10
@@ -1254,7 +1241,7 @@ LHS_unit= { #单位倾向
     }
     ai_strategy = {
         type = railway_gun_divisions_ratio
-        value = 5
+        value = 1
     }
 }
 
@@ -1280,9 +1267,11 @@ LHS_push_enemy_capital = {#冲首都
     allowed = { original_tag = LHS }
     enable = {
         has_war = yes
-        any_enemy_country = { surrender_progress > 0.1 }
+        surrender_progress < 0.15
+        any_enemy_country = { surrender_progress > 0.10 }
     }
     abort_when_not_enabled = yes
+
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -1290,20 +1279,23 @@ LHS_push_enemy_capital = {#冲首都
             is_capital = yes
             any_neighbor_state = { is_controlled_by = LHS }
         }
-        priority = 50000
+        priority = 55000
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
+
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             owner = { has_war_with = LHS }
             is_capital = yes
+            any_neighbor_state = { is_controlled_by = LHS }
         }
-        value = 300
+        value = 180
     }
+
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
@@ -1315,7 +1307,7 @@ LHS_push_enemy_capital = {#冲首都
                 level > 0
             }
         }
-        value = 50
+        value = 35
     }
 }
 LHS_unit_buffer_for_asian_threat = {#退守战场
@@ -1348,7 +1340,7 @@ LHS_unit_buffer_for_asian_threat = {#退守战场
             1073
             848
         }
-        ratio = 0.2
+        ratio = 0.08
         area = europe
         area = asia
         area = africa
@@ -1481,11 +1473,6 @@ LHS_prewar_stockpile_rush = {#战前生产线
     }
     ai_strategy = {
         type = equipment_market_for_sale_threshold
-        id = armor
-        value = 9999999
-    }
-    ai_strategy = {
-        type = equipment_market_for_sale_threshold
         id = artillery
         value = 9999999
     }
@@ -1554,13 +1541,21 @@ LHS_postwar_consolidation = {#战后恢复
         value = 50
     }
 }
+#====================战场AI优先级层级====================
+#90000+：生存/危机防御
+#80000：确认包围圈后的歼灭
+#60000~70000：决定性战役（终局/首都）
+#40000~55000：局部战役目标（包围/战略收缩/敌首都）
+#26000~32000：补给点与胜利推进
+#11000~18000：常态战线微调
+#10000 以下：旧有国家/战争场景规则与兜底
 LHS_state_is_zhanlue = {#老爷爷，我给你踩地来咯
-    allowed={
-        original_tag = LHS
-    }
+    allowed = { original_tag = LHS }
     enable = {
+        has_war = yes
         has_completed_focus = LHS_jiemeng
-        or = {
+        surrender_progress < 0.05
+        OR = {
             any_enemy_country = {
                 strength_ratio = {
                     tag = LHS
@@ -1571,69 +1566,57 @@ LHS_state_is_zhanlue = {#老爷爷，我给你踩地来咯
             has_war_with = PAM
         }
     }
-    abort = {
-        and = {
-            or = {
-                any_enemy_country = {
-                    strength_ratio = {
-                        tag = LHS
-                        ratio > 1.4
-                    }
-                }
-            }
-            not = {
-                has_war_with = PAU
-                has_war_with = PAM
-            }
-        }
+    abort_when_not_enabled = yes
 
-    }
+    #普通优势/均势阶段：优先打开可推进的海岸线
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_coastal = yes
             controller = { has_war_with = LHS }
         }
-        ratio = 0.2
-        priority = 20000
+        ratio = 0.15
+        priority = 14000
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
+
+    #空州/薄弱节点：保留高优先级
     ai_strategy = {
         type = front_control
-
         state_trigger = {
             FROM = { has_war_with = FROM.FROM }
             FROM = {
-                divisions_in_state = { state = FROM size = 0 }
+                divisions_in_state = { state = PREV size = 0 }
             }
         }
-        priority = 90000
+        priority = 18000
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
         manual_attack = yes
     }
+
+    #敌军少于3师时发动局部突破，但降低兵力集中度
     ai_strategy = {
         type = front_control
-
         state_trigger = {
             FROM = { has_war_with = FROM.FROM }
             FROM = {
-                divisions_in_state = { state = FROM size < 3 }
+                divisions_in_state = { state = PREV size < 3 }
             }
         }
-
-        ratio = 0.8
-
-        priority = 5000
+        ratio = 0.5
+        priority = 11000
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
+
+    #补给点/海岸作为次级突破方向
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -1647,13 +1630,12 @@ LHS_state_is_zhanlue = {#老爷爷，我给你踩地来咯
                 is_coastal = yes
             }
         }
-        priority = 8000
+        priority = 13000
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
-
 }
 
 LHS_wartime_air_superiority = {#全力争夺制空权
@@ -1704,12 +1686,8 @@ LHS_crisis_iron_wall = {#身后就是白城
     enable = {
         surrender_progress > 0.20
         has_war = yes
-        not = {
-            has_war_with = PAU
-        }
-        not = {
-            has_war_with = PAM
-        }
+        NOT = { has_war_with = PAU }
+        NOT = { has_war_with = PAM }
     }
     abort = {
         OR = {
@@ -1718,18 +1696,17 @@ LHS_crisis_iron_wall = {#身后就是白城
         }
     }
 
-    #全面转为防守
+    #危机阶段前线转入谨慎，核心州优先
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = LHS
         }
-        priority = 20000
+        priority = 90000
         ordertype = front
         execution_type = careful
         manual_attack = yes
     }
-    #大量补充部队到核心州防线
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1739,9 +1716,8 @@ LHS_crisis_iron_wall = {#身后就是白城
                 controller = { has_war_with = LHS }
             }
         }
-        value = 200
+        value = 160
     }
-    #抽回非核心区的兵力
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1754,52 +1730,48 @@ LHS_crisis_iron_wall = {#身后就是白城
                 }
             }
         }
-        value = -100
+        value = -75
     }
-    #大幅提升步枪和炮兵补充
+
     ai_strategy = {
         type = equipment_production_factor
         id = infantry
-        value = 300
+        value = 250
     }
     ai_strategy = {
         type = equipment_production_factor
         id = artillery
-        value = 200
+        value = 150
     }
-    #停止装甲生产先活下去
     ai_strategy = {
         type = equipment_production_factor
         id = armor
-        value = -200
+        value = -150
     }
-    #增加驻军保住占领地
     ai_strategy = {
         type = garrison
-        value = 100
+        value = 75
     }
-    #爆兵
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 2000
+        value = 1500
     }
 }
 
 LHS_capital_shield = {#身后就是莉兰迪亚
     allowed = { original_tag = LHS }
     enable = {
+        has_war = yes
+        surrender_progress < 0.20
         NOT = {
             any_enemy_country = { surrender_progress > 0.3 }
         }
-        not = {
-            has_war_with = PAU
-        }
-        not = {
-            has_war_with = PAM
-        }
+        NOT = { has_war_with = PAU }
+        NOT = { has_war_with = PAM }
     }
     abort_when_not_enabled = yes
-    #首都及其周边州请求额外部队
+
+    #首都防线是防御预备队，不在和平期持续占兵
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1811,9 +1783,8 @@ LHS_capital_shield = {#身后就是莉兰迪亚
                 }
             }
         }
-        value = 80
+        value = 60
     }
-    #首都周边执行谨慎模式
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -1823,19 +1794,19 @@ LHS_capital_shield = {#身后就是莉兰迪亚
                 controller = { has_war_with = LHS }
             }
         }
-        priority = 25000
+        priority = 70000
         ordertype = front
         execution_type = careful
         manual_attack = yes
     }
 }
-#识别可被包围的敌军并优先切断
 LHS_encirclement_hunter = {
     allowed = { original_tag = LHS }
     enable = {
         has_war = yes
         num_of_military_factories > 60
         num_divisions > 200
+        surrender_progress < 0.20
     }
     abort_when_not_enabled = yes
 
@@ -1844,10 +1815,11 @@ LHS_encirclement_hunter = {
         state_trigger = {
             controller = { has_war_with = LHS }
             NOT = { is_coastal = yes }
+            NOT = { is_capital = yes }
             any_neighbor_state = { is_controlled_by = LHS }
             check_variable = { num_enemy_neighbor_states < 2 }
         }
-        priority = 25000
+        priority = 40000
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1858,17 +1830,18 @@ LHS_encirclement_hunter = {
         state_trigger = {
             controller = { has_war_with = LHS }
             NOT = { is_coastal = yes }
+            NOT = { is_capital = yes }
+            any_neighbor_state = { is_controlled_by = LHS }
             check_variable = { num_enemy_neighbor_states < 2 }
         }
-        value = 60
+        value = 45
     }
 }
 LHS_end_pocket = {#包围快速歼灭
-    allowed={
-        original_tag = LHS
-    }
+    allowed = { original_tag = LHS }
     enable = {
-        always = yes
+        has_war = yes
+        num_divisions > 100
     }
     abort_when_not_enabled = yes
 
@@ -1887,26 +1860,18 @@ LHS_end_pocket = {#包围快速歼灭
                 }
             }
             all_neighbor_state = {
-                controller = {
-                    NOT = {
-                        has_war_with = FROM.FROM
-                    }
-                }
+                is_controlled_by = FROM.FROM
             }
         }
-        ratio = 0.0
-        priority = 9999999
+        priority = 80000
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
         manual_attack = yes
-
     }
 
     ai_strategy = {
-
         type = front_unit_request
-
         state_trigger = {
             OR = {
                 AND = {
@@ -1920,14 +1885,10 @@ LHS_end_pocket = {#包围快速歼灭
                 }
             }
             all_neighbor_state = {
-                controller = {
-                    NOT = {
-                        has_war_with = FROM.FROM
-                    }
-                }
+                is_controlled_by = FROM.FROM
             }
         }
-        value = 40
+        value = 25
     }
 }
 LHS_concentrate_troops = {#集中突破
@@ -1935,14 +1896,15 @@ LHS_concentrate_troops = {#集中突破
         original_tag = LHS
     }
     enable = {
-        always = yes
+        has_war = yes
+        surrender_progress < 0.20
     }
 
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = force_concentration_factor
-        value = 15  # base + 15 = 30 %
+        value = 12
     }
 
 }
@@ -1950,11 +1912,16 @@ LHS_victory_phase1_crack = {
     allowed = { original_tag = LHS }
     enable = {
         has_war = yes
+        NOT = { surrender_progress > 0.15 }
         any_enemy_country = {
             surrender_progress > 0.05
             surrender_progress < 0.20
         }
-        NOT = { surrender_progress > 0.15 }
+        NOT = {
+            any_enemy_country = {
+                surrender_progress > 0.20
+            }
+        }
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -1968,7 +1935,7 @@ LHS_victory_phase1_crack = {
             }
             any_neighbor_state = { is_controlled_by = LHS }
         }
-        priority = 12000
+        priority = 26000
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1976,11 +1943,11 @@ LHS_victory_phase1_crack = {
     }
     ai_strategy = {
         type = garrison
-        value = -150
+        value = -100
     }
     ai_strategy = {
         type = spare_unit_factor
-        value = -20
+        value = -10
     }
 }
 
@@ -1988,11 +1955,16 @@ LHS_victory_phase2_exploit = {
     allowed = { original_tag = LHS }
     enable = {
         has_war = yes
+        NOT = { surrender_progress > 0.15 }
         any_enemy_country = {
             surrender_progress > 0.20
             surrender_progress < 0.45
         }
-        NOT = { surrender_progress > 0.15 }
+        NOT = {
+            any_enemy_country = {
+                surrender_progress > 0.45
+            }
+        }
     }
     abort_when_not_enabled = yes
 
@@ -2006,7 +1978,7 @@ LHS_victory_phase2_exploit = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = LHS }
         }
-        priority = 40000
+        priority = 45000
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -2020,7 +1992,7 @@ LHS_victory_phase2_exploit = {
                 surrender_progress > 0.20
             }
         }
-        priority = 15000
+        priority = 30000
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -2028,11 +2000,11 @@ LHS_victory_phase2_exploit = {
     }
     ai_strategy = {
         type = spare_unit_factor
-        value = -40
+        value = -25
     }
     ai_strategy = {
         type = garrison
-        value = -200
+        value = -120
     }
 }
 
@@ -2040,8 +2012,8 @@ LHS_victory_phase3_annihilate = {
     allowed = { original_tag = LHS }
     enable = {
         has_war = yes
-        any_enemy_country = { surrender_progress > 0.45 }
         NOT = { surrender_progress > 0.15 }
+        any_enemy_country = { surrender_progress > 0.45 }
     }
     abort_when_not_enabled = yes
 
@@ -2054,26 +2026,25 @@ LHS_victory_phase3_annihilate = {
             }
         }
         priority = 60000
-        ratio = 0.95
+        ratio = 0.85
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
         manual_attack = yes
     }
 
-    # 全军压上
+    #全军压上，但保留少量后方机动空间
     ai_strategy = {
         type = spare_unit_factor
-        value = -100
+        value = -80
     }
     ai_strategy = {
         type = garrison
-        value = -300
+        value = -200
     }
-    # 爆更多师团填线
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 300
+        value = 200
     }
 }
 LHS_strategic_withdrawal = {#主动收缩
@@ -2084,7 +2055,15 @@ LHS_strategic_withdrawal = {#主动收缩
         surrender_progress < 0.20
         NOT = {
             has_war_with = PAU
+        }
+        NOT = {
             has_war_with = PAM
+        }
+        #敌军正在崩溃时不要撤，避免与胜利阶段抢同一批兵
+        NOT = {
+            any_enemy_country = {
+                surrender_progress > 0.05
+            }
         }
     }
     abort_when_not_enabled = yes
@@ -2104,7 +2083,7 @@ LHS_strategic_withdrawal = {#主动收缩
             NOT = { is_capital = yes }
             any_neighbor_state = { controller = { has_war_with = LHS } }
         }
-        value = -150
+        value = -100
     }
 
     ai_strategy = {
@@ -2114,7 +2093,7 @@ LHS_strategic_withdrawal = {#主动收缩
             is_controlled_by = LHS
             any_neighbor_state = { controller = { has_war_with = LHS } }
         }
-        value = 150
+        value = 100
     }
 
     ai_strategy = {
@@ -2124,7 +2103,7 @@ LHS_strategic_withdrawal = {#主动收缩
             is_controlled_by = LHS
             any_neighbor_state = { controller = { has_war_with = LHS } }
         }
-        priority = 10000
+        priority = 40000
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -2312,14 +2291,11 @@ LHS_war_with_PAU0 = { #与军团开战
 
 
 LHS_protect_supply_lines = { #死守补给点
-    allowed = {
-        original_tag = LHS
-    }
+    allowed = { original_tag = LHS }
     enable = {
         has_war = yes
     }
     abort_when_not_enabled = yes
-
 
     ai_strategy = {
         type = front_control
@@ -2330,17 +2306,15 @@ LHS_protect_supply_lines = { #死守补给点
                 building = supply_node
                 level > 0
             }
-
             any_neighbor_state = {
                 controller = { has_war_with = LHS }
             }
         }
-        priority = 5000
+        priority = 16000
         ordertype = front
         execution_type = careful
         manual_attack = yes
     }
-
 
     ai_strategy = {
         type = front_unit_request
@@ -2355,7 +2329,7 @@ LHS_protect_supply_lines = { #死守补给点
                 controller = { has_war_with = LHS }
             }
         }
-        value = 50
+        value = 35
     }
 }
 
@@ -2364,7 +2338,7 @@ LHS_check_omega_lul = { #部队逻辑
         original_tag = LHS
     }
     enable = {
-        always = yes
+        has_war = yes
     }
     abort = {
         always = no
@@ -2906,7 +2880,7 @@ hgLHS_war_with_PAU = { #禾果线与莉兰迪亚和军团开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                   # 驻军需求（默认70-100）
+        value = -100                   #驻军需求（默认70-100）
     }
 
     ai_strategy = { #注重船坞
@@ -2980,7 +2954,7 @@ heguo_CHL_LHS_war_with_PAU = { #禾果线CHL与莉兰迪亚和军团开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                   # 驻军需求（默认70-100）
+        value = -100                   #驻军需求（默认70-100）
     }
 
     ai_strategy = { #注重船坞
@@ -3477,8 +3451,8 @@ LHS_war_with_MGU = { #与魔法少女联盟开战
     enable = {
         AND = {
             has_war_with = MGU
-            not ={ has_war_with = PAO}
-            not ={ has_war_with = ELF}
+            NOT = { has_war_with = MGU }
+            NOT = { has_war_with = PAO }
         }
 
     }
@@ -3791,7 +3765,12 @@ LHS_war_with_PAQ = { #与阿德莱希开战
         AND = {
             has_war_with = PAQ
         }
-
+            OR = {
+                has_war_with = ELF
+                has_war_with = MGU
+                has_war_with = PAO
+                has_war_with = PA1
+            }
     }
     abort_when_not_enabled = yes
 
@@ -5387,7 +5366,7 @@ CHL_support_communism = {#派志愿军给相同意识形态的国家
     enable = {
         TAG = LHS
         LHS = {
-            
+
             has_completed_focus = LHS_yuanjun
         }
     }
