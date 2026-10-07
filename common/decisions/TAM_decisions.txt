@@ -348,7 +348,7 @@ TAM_foreign_ministry = {
 			icon = GFX_decision_hol_war_on_pacifism
 			is_good = no
 			selectable_mission = no
-			days_mission_timeout = 620
+			days_mission_timeout = 1000
 			timeout_effect = {
 				custom_effect_tooltip = CAC_before_Apocalypse_tooltip
 				set_global_flag = Tresen_civil_war_has_start
@@ -362,46 +362,9 @@ TAM_foreign_ministry = {
 						}
 						complete_national_focus = TAM_focus_civil_war_1
 					}
-					#这里是隐藏战斗属性修正，因为目前没有做AFG和PER的，只有先用这个来算随机数。
-					#if = {
-					#	limit = {
-					#		tag = PER
-					#	}
-					#	random_list = {
-					#		10 = { add_ideas = CAC_PER_strengthen_5 }
-					#		8 = { add_ideas = CAC_PER_strengthen_4 }
-					#		6 = { add_ideas = CAC_PER_strengthen_3 }
-					#		4 = { add_ideas = CAC_PER_strengthen_2 }
-					#	}
-					#	add_ideas = TAM_to_win_war
-					#	every_state = {
-					#		limit = {
-					#			or = {
-					#				is_core_of = TAM
-					#				is_core_of = AFG
-					#			}
-					#		}
-					#		add_claim_by_ROOT_if_has_no_core = yes
-            		#		enable_state_integration_50_compliance = yes
-					#	}
-					#	activate_targeted_decision = {
-					#		target = TAM
-					#		decision = CAC_attck_FROM
-					#	}
-					#	activate_targeted_decision = {
-					#		target = AFG
-					#		decision = CAC_attck_FROM
-					#	}
-					#}
 					if = {
 						limit = {
 							tag = AFG
-						}
-						random_list = {
-							10 = { add_ideas = CAC_AFG_strengthen_5 }
-							8 = { add_ideas = CAC_AFG_strengthen_4 }
-							6 = { add_ideas = CAC_AFG_strengthen_3 }
-							#4 = { add_ideas = CAC_AFG_strengthen_2 }
 						}
 						add_ideas = TAM_to_win_war
 						every_state = {
@@ -414,18 +377,148 @@ TAM_foreign_ministry = {
 							add_claim_by_ROOT_if_has_no_core = yes
             				enable_state_integration_50_compliance = yes
 						}
-						activate_targeted_decision = {
-							target = TAM
-							decision = CAC_attck_FROM
-						}
-						activate_targeted_decision = {
-							target = PER
-							decision = CAC_attck_FROM
-						}
+						#activate_targeted_decision = {
+						#	target = TAM
+						#	decision = CAC_attck_FROM
+						#}
+						#activate_targeted_decision = {
+						#	target = PER
+						#	decision = CAC_attck_FROM
+						#}
 					}
 				
 			}
-		}	
+		}
+	#瓦罕之战
+		TAM_decision_1231_war = {
+			name = TAM_decision_1231_war
+			icon = GFX_decision_infiltrate_state
+			allowed = {
+				always = no
+			}
+			fire_only_once = yes
+			days_mission_timeout = 90
+			is_good = no
+			available = {
+				TAM = {
+					has_full_control_of_state = 1231
+				}
+			}
+			cancel_trigger = {
+				AFG = {
+					OR = {
+						controls_state = 1042
+						controls_state = 804
+					}
+				}
+			}
+			complete_effect = {
+				effect_tooltip = { white_peace = AFG }
+				1231 = {
+					transfer_state_to = TAM
+					add_core_of = TAM
+				}
+				add_political_power = 100
+				add_stability = 0.10
+				add_war_support = 0.10
+				AFG = {
+					add_political_power = -100
+					add_stability = -0.10
+					add_war_support = -0.10
+				}
+				hidden_effect = {
+					white_peace = {
+						tag = AFG
+						message = TAM_WIN_AFG
+					}
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_non_war_zone
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_non_war_zone
+						}
+					}
+					add_power_balance_value = {
+						id = CAC_communism_bop
+						value = -0.25
+					}
+				}
+			}
+			cancel_effect = {
+				every_state = {
+					limit = {
+						state = 1042
+						state = 804
+					}
+					transfer_state_to = AFG
+					add_core_of = AFG
+				}
+				AFG = {
+					effect_tooltip = { white_peace = TAM }
+					add_political_power = 150
+					add_stability = 0.15
+					add_war_support = 0.15
+				}
+				remove_ideas = TAM_idea_revolution_enthusiasm
+				add_political_power = -150
+				add_stability = -0.15
+				add_war_support = -0.15
+				hidden_effect = {
+					AFG = {
+						white_peace = {
+							tag = TAM
+							message = AFG_WIN_TAM
+						}
+					}
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_non_war_zone
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_non_war_zone
+						}
+					}
+					add_power_balance_value = {
+						id = CAC_communism_bop
+						value = 0.50
+					}
+				}
+				
+			}
+			timeout_effect = {
+				AFG = {
+					effect_tooltip = { white_peace = TAM }
+					add_political_power = 50
+					add_stability = 0.05
+					add_war_support = 0.05
+				}
+				remove_ideas = TAM_idea_revolution_enthusiasm
+				add_political_power = -50
+				add_stability = -0.05
+				add_war_support = -0.05
+				hidden_effect = {
+					AFG = {
+						white_peace = {
+							tag = TAM
+							message = AFG_WIN_TAM
+						}
+					}
+					every_state = {
+						limit = {
+							has_dynamic_modifier = TAM_state_non_war_zone
+						}
+						remove_dynamic_modifier = {
+							modifier = TAM_state_non_war_zone
+						}
+					}
+					add_power_balance_value = {
+						id = CAC_communism_bop
+						value = 0.25
+					}
+				}
+			}
+		}
 
 
 
@@ -2426,6 +2519,7 @@ TAM_foreign_ministry = {
 				always = yes
 			}
 			available = {
+				always = no
 				date >1937.6.1
 			}
 			fire_only_once = yes
@@ -2494,6 +2588,7 @@ TAM_foreign_ministry = {
 				always = yes
 			}
 			available = {
+				always = no
 				date >1937.6.1
 			}
 			fire_only_once = yes
@@ -2560,6 +2655,7 @@ TAM_foreign_ministry = {
 				always = yes
 			}
 			available = {
+				always = no
 				date >1937.9.1
 			}
 			fire_only_once = yes
@@ -2626,6 +2722,7 @@ TAM_foreign_ministry = {
 				always = yes
 			}
 			available = {
+				always = no
 				date >1938.1.1
 			}
 			fire_only_once = yes
@@ -2692,6 +2789,7 @@ TAM_foreign_ministry = {
 				always = yes
 			}
 			available = {
+				always = no
 				date >1938.3.1
 			}
 			fire_only_once = yes
@@ -2758,6 +2856,7 @@ TAM_foreign_ministry = {
 				always = yes
 			}
 			available = {
+				always = no
 				date >1938.3.1
 			}
 			fire_only_once = yes
@@ -2817,7 +2916,7 @@ TAM_foreign_ministry = {
 		}
 	}
 
-###特雷森锦标赛
+#特雷森锦标赛
 	TAM_decision_championship = {
 		
 		#秋川理事长 1
@@ -3336,12 +3435,7 @@ TAM_foreign_ministry = {
 		#三女神 12
 		TAM_decision_championship_leader_12 = {
 			icon = GFX_decision_category_generic_foreign_policy
-			#allowed = {
-			#	always = no
-			#	#original_tag = TAM
-			#}
 			visible = {
-				#original_tag = TAM
 				always = no
 			}
 			available = {
@@ -3349,7 +3443,6 @@ TAM_foreign_ministry = {
 					tooltip = EMPTY_SPARE
 					TAM_champion_slot_available = yes
 				}
-				#original_tag = TAM
 			}
 			ai_will_do = {
 				base = 0
@@ -3375,12 +3468,7 @@ TAM_foreign_ministry = {
 		#三传奇 13
 		TAM_decision_championship_leader_13 = {
 			icon = GFX_decision_category_generic_foreign_policy
-			#allowed = {
-			#	#original_tag = TAM
-			#	always = no
-			#}
 			visible = {
-				#original_tag = TAM
 				always = no
 			}
 			available = {
@@ -3388,7 +3476,6 @@ TAM_foreign_ministry = {
 					tooltip = EMPTY_SPARE
 					TAM_champion_slot_available = yes
 				}
-				#original_tag = TAM
 			}
 			ai_will_do = {
 				base = 0
@@ -3411,3 +3498,1217 @@ TAM_foreign_ministry = {
 			}
 		}
 	}
+#马娘冠军计划
+	TAM_decision_champion_plan = {
+		#速度训练
+			TAM_decision_champion_plan_speed_1 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_speed_1_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_1
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_speed_1_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							maximum_speed = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_speed_2 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_speed_2_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_2
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_speed_2_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							maximum_speed = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_speed_3 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_speed_3_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_3
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_speed_3_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							maximum_speed = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_speed_4 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_speed_4_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_4
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_speed_4_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							maximum_speed = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_speed_5 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_speed_5_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_5
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_speed_5_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							maximum_speed = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+		#耐力训练
+			TAM_decision_champion_plan_endurance_1 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_endurance_1_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_1
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_endurance_1_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							max_strength = 0.20
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_endurance_2 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_endurance_2_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_2
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_endurance_2_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							max_strength = 0.20
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_endurance_3 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_endurance_3_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_3
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_endurance_3_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							max_strength = 0.20
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_endurance_4 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_endurance_4_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_4
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_endurance_4_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							max_strength = 0.20
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_endurance_5 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_endurance_5_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_5
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_endurance_5_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							max_strength = 0.20
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+		#力量训练
+			TAM_decision_champion_plan_strength_1 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_strength_1_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_1
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_strength_1_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							soft_attack = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_strength_2 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_strength_2_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_2
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_strength_2_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							soft_attack = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_strength_3 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_strength_3_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_3
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_strength_3_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							soft_attack = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_strength_4 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_strength_4_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_4
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_strength_4_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							soft_attack = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_strength_5 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_strength_5_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_5
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_strength_5_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							soft_attack = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+		#毅力训练
+			TAM_decision_champion_plan_perseverance_1 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_perseverance_1_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_1
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_perseverance_1_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							defense = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_perseverance_2 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_perseverance_2_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_2
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_perseverance_2_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							defense = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_perseverance_3 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_perseverance_3_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_3
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_perseverance_3_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							defense = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_perseverance_4 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_perseverance_4_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_4
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_perseverance_4_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							defense = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_perseverance_5 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_5
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_perseverance_5_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							defense = 0.02
+							max_organisation = 0.20
+						}
+					}
+				}
+			}
+		#知识训练
+			TAM_decision_champion_plan_knowledge_1 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_knowledge_1_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_1
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_knowledge_1_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							combat_width = -0.10
+							supply_consumption = -0.01
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_knowledge_2 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_knowledge_2_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_2
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_knowledge_2_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							combat_width = -0.10
+							supply_consumption = -0.01
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_knowledge_3 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_knowledge_3_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_3
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_knowledge_3_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							combat_width = -0.10
+							supply_consumption = -0.01
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_knowledge_4 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_knowledge_4_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_4
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_knowledge_4_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							combat_width = -0.10
+							supply_consumption = -0.01
+						}
+					}
+				}
+			}
+			TAM_decision_champion_plan_knowledge_5 = {
+				icon = generic_prepare_civil_war
+				visible = {
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+					}
+				}
+				available = {
+					has_completed_focus = TAM_focus_UmaMusume_5
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				days_remove = 30
+				cost = 15
+				modifier = {
+					civilian_factory_use = 5
+				}
+				complete_effect = {
+					set_country_flag = TAM_flag_champion_plan_doing
+				}
+				remove_effect = {
+					set_country_flag = TAM_flag_champion_plan_knowledge_5_end
+					clr_country_flag = TAM_flag_champion_plan_doing
+					add_unit_bonus = {
+						umamusume = {
+							combat_width = -0.10
+							supply_consumption = -0.01
+						}
+					}
+				}
+			}
+		#只学习，不玩耍，聪明孩子也变曼波
+			#TAM_decision_champion_plan_rest = {
+			#	icon = generic_prepare_civil_war
+			#	visible = {
+			#	}
+			#	available = {
+			#		has_completed_focus = TAM_focus_UmaMusume_1
+			#		NOT = {
+			#			has_country_flag = TAM_flag_champion_plan_doing
+			#		}
+			#	}
+			#	days_remove = 30
+			#	cost = 15
+			#	modifier = {
+			#		civilian_factory_use = -5
+			#	}
+			#	complete_effect = {
+			#		set_country_flag = TAM_flag_champion_plan_doing
+			#	}
+			#	remove_effect = {
+			#		clr_country_flag = TAM_flag_champion_plan_doing
+			#	}
+			#}
+
+		#平整地形专精
+			TAM_decision_champion_plan_plains = {
+				icon = generic_prepare_civil_war
+				available = {
+					OR = {
+						AND = {
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+							count_triggers = {
+								amount = 4
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+						AND = {
+							has_country_flag = TAM_flag_champion_plan_select_1
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_2
+							}
+							count_triggers = {
+								amount = 5
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+					}
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				custom_cost_trigger = {
+					has_army_experience > 99.99
+				}
+				custom_cost_text = TAM_cost_xp_army_100
+				days_remove = 30
+				complete_effect = {
+					hidden_effect = { army_experience = -100 }
+				}
+				remove_effect = {
+					clr_country_flag = TAM_flag_champion_plan_doing
+					if = {
+						limit = { 
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+						}
+						add_unit_bonus = {
+							umamusume = {
+								plains = {#平原
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+								desert = {#沙漠
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_1
+					}
+					else = {
+						add_unit_bonus = {
+							umamusume = {
+								plains = {#平原
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+								desert = {#沙漠
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_2
+					}
+				}
+			}
+		#泥沼地形专精
+			TAM_decision_champion_plan_marsh = {
+				icon = generic_prepare_civil_war
+				available = {
+					OR = {
+						AND = {
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+							count_triggers = {
+								amount = 4
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+						AND = {
+							has_country_flag = TAM_flag_champion_plan_select_1
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_2
+							}
+							count_triggers = {
+								amount = 5
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+					}
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				custom_cost_trigger = {
+					has_army_experience > 99.99
+				}
+				custom_cost_text = TAM_cost_xp_army_100
+				days_remove = 30
+				complete_effect = {
+					hidden_effect = { army_experience = -100 }
+				}
+				remove_effect = {
+					clr_country_flag = TAM_flag_champion_plan_doing
+					if = {
+						limit = { 
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+						}
+						add_unit_bonus = {
+							umamusume = {
+								marsh = {	#沼泽
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+								river = { #河流
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_1
+					}
+					else = {
+						add_unit_bonus = {
+							umamusume = {
+								marsh = {	#沼泽
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+								river = { #河流
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_2
+					}
+				}
+			}
+		#崎岖地形专精
+			TAM_decision_champion_plan_hills = {
+				icon = generic_prepare_civil_war
+				available = {
+					OR = {
+						AND = {
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+							count_triggers = {
+								amount = 4
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+						AND = {
+							has_country_flag = TAM_flag_champion_plan_select_1
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_2
+							}
+							count_triggers = {
+								amount = 5
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+					}
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				custom_cost_trigger = {
+					has_army_experience > 99.99
+				}
+				custom_cost_text = TAM_cost_xp_army_100
+				days_remove = 30
+				complete_effect = {
+					hidden_effect = { army_experience = -100 }
+				}
+				remove_effect = {
+					clr_country_flag = TAM_flag_champion_plan_doing
+					if = {
+						limit = { 
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+						}
+						add_unit_bonus = {
+							umamusume = {
+								hills = {#丘陵
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+								mountain = {#山地
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_1
+					}
+					else = {
+						add_unit_bonus = {
+							umamusume = {
+								hills = {#丘陵
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+								mountain = {#山地
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_2
+					}
+				}
+			}
+		#森林地形专精
+			TAM_decision_champion_plan_forest = {
+				icon = generic_prepare_civil_war
+				available = {
+					OR = {
+						AND = {
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+							count_triggers = {
+								amount = 4
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+						AND = {
+							has_country_flag = TAM_flag_champion_plan_select_1
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_2
+							}
+							count_triggers = {
+								amount = 5
+								has_country_flag = TAM_flag_champion_plan_speed_5_end
+								has_country_flag = TAM_flag_champion_plan_endurance_5_end
+								has_country_flag = TAM_flag_champion_plan_strength_5_end
+								has_country_flag = TAM_flag_champion_plan_perseverance_5_end
+								has_country_flag = TAM_flag_champion_plan_knowledge_5_end
+							}
+						}
+					}
+					NOT = {
+						has_country_flag = TAM_flag_champion_plan_doing
+					}
+				}
+				fire_only_once = yes
+				custom_cost_trigger = {
+					has_army_experience > 99.99
+				}
+				custom_cost_text = TAM_cost_xp_army_100
+				days_remove = 30
+				complete_effect = {
+					hidden_effect = { army_experience = -100 }
+				}
+				remove_effect = {
+					clr_country_flag = TAM_flag_champion_plan_doing
+					if = {
+						limit = { 
+							NOT = {
+								has_country_flag = TAM_flag_champion_plan_select_1
+							}
+						}
+						add_unit_bonus = {
+							umamusume = {
+								jungle = {#丛林
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+								forest = {#森林
+									attack = 0.10
+									defence = 0.10
+									movement = 0.10
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_1
+					}
+					else = {
+						add_unit_bonus = {
+							umamusume = {
+								jungle = {#丛林
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+								forest = {#森林
+									attack = 0.05
+									defence = 0.05
+									movement = 0.05
+								}
+							}
+						}
+						set_country_flag = TAM_flag_champion_plan_select_2
+					}
+				}
+			}
+	}	
+	
