@@ -306,7 +306,7 @@ scripted_gui = {
 	}
 }
 
-#中统与军统
+#宋蒋之争
 scripted_gui = {
 	ROC_battle_in_song_jiang_window = {
 		context_type = decision_category
@@ -508,11 +508,11 @@ scripted_gui = {
 			}
 		}
 	}
-	ROC_collection_decision_window = {
+	ROC_collection_box_window = {
 		#context_type = decision_category
 		context_type = player_context
 		parent_window_name = ROC_collection_container
-		window_name = "ROC_collection_decision_window"
+		window_name = "ROC_collection_box_window"
 		visible = {	
 			tag = ROC
 			check_variable = { ROC_collection_tab_var = 1 }
@@ -609,6 +609,8 @@ scripted_gui = {
 						remove_from_array = { ROOT.KMT_collection_unusing_array = i }
 						set_variable = { ROOT.ROC_collection_light^i = 0 }
 						set_variable = { ROOT.ROC_collection_remaining_effect_days^i = ROC_collection_effect_days^i }
+						set_variable = { ROOT.ROC_collection_active_id_var = i }
+						ROC_collection_proactive_effect = yes
 						##这里写效果触发器
 					}
 				}
@@ -814,6 +816,7 @@ scripted_gui = {
 		window_name = "ROC_collection_window_button"
 		visible = {
 			tag = ROC
+			has_completed_focus = ROC_focus_unearth_collectibles
 		}
 		properties = {
 		}
@@ -869,12 +872,25 @@ scripted_gui = {
 						check_variable = { ROC_spnode_shop_good_selling_id < 31 }
 					}
 					add_to_array = { KMT_collection_unusing_array = ROC_spnode_shop_good_selling_id }
+					ROC_collection_passive_idea_check = yes
+					set_variable = { ROC_collection_new_id_var = ROC_spnode_shop_good_selling_id }
+					ROC_collection_gain_effect = yes
+					ROC_collection_active_bonus_calc = yes
 				}
 				else_if = {
 					limit = { check_variable = { ROC_spnode_shop_good_selling_id < 31 } }
 					add_to_variable = { ROC_collection_using_num^ROC_spnode_shop_good_selling_id = 1 }
+					## 重复购买也算一次「获得」，触发获得时效果（如热水壶再给 50pp / 50hcp）
+					set_variable = { ROC_collection_new_id_var = ROC_spnode_shop_good_selling_id }
+					ROC_collection_gain_effect = yes
+					## 重复购买后刷新 1 / 2 号的加成数值
+					ROC_collection_active_bonus_calc = yes
 				}
-				else = { set_variable = { ROC_coin_new_var = ROC_spnode_shop_good_selling_id } }
+				else = {
+					set_variable = { ROC_coin_new_var = ROC_spnode_shop_good_selling_id }
+					set_variable = { ROC_collection_new_id_var = ROC_spnode_shop_good_selling_id }
+					ROC_collection_gain_effect = yes
+				}
 				###加效果触发器
 				if = {
 					limit = { check_variable = { ROC_spnode_shop_good_selling_index_page = 0 } }
@@ -1507,7 +1523,32 @@ scripted_gui = {
 					set_variable = { ROC_coin_will_be_changed_selected_var = 6 }
 				}
 			}
-			close_button_click = {
+			change_button_click = {
+				## 7「福祸相依」被动：钱盒中加入厉钱时获得200pp（需先拥有该藏品）
+				if = {
+					limit = {
+						or = {
+							is_in_array = { KMT_collection_unusing_array = 7 }
+							is_in_array = { KMT_collection_using_array = 7 }
+						}
+						check_variable = { ROC_coin_new_var > 43 }
+						not = { check_variable = { ROC_coin_new_var > 49 } }
+					}
+					add_political_power = 200
+				}
+				## 39 花-烽火台：被换下时给奖励
+				if = {
+					limit = {
+						if = {
+							limit = { check_variable = { ROC_coin_will_be_changed_selected_var = 7 } }
+							check_variable = { ROC_collection_coin_box^0 = 39 }
+						}
+						else = {
+							check_variable = { ROC_collection_coin_box^ROC_coin_will_be_changed_selected_var = 39 }
+						}
+					}
+					ROC_collection_39_leave_effect = yes
+				}
 				if = {
 					limit = { check_variable = { ROC_coin_will_be_changed_selected_var = 7 } }
 					set_variable = { ROC_collection_coin_box^0 = ROC_coin_new_var }
@@ -1515,6 +1556,8 @@ scripted_gui = {
 				else = {
 					set_variable = { ROC_collection_coin_box^ROC_coin_will_be_changed_selected_var = ROC_coin_new_var }
 				}
+				## 钱盒内容有变化：刷新花钱数量与 5 号酿山河的加成
+				ROC_coin_box_hua_coin_calc = yes
 				clear_variable = ROC_coin_new_var
 				clear_variable = ROC_coin_selected_id_var
 				clear_variable = ROC_coin_selected_var
@@ -1532,6 +1575,12 @@ scripted_gui = {
 					clear_variable = ROC_coin_flipped_3_var
 				}
 				scoped_sound_effect = "coin_change"
+			}
+			close_button_click = {
+				clear_variable = ROC_coin_new_var
+				clear_variable = ROC_coin_selected_id_var
+				clear_variable = ROC_coin_selected_var
+				clear_variable = ROC_coin_selected_type_var
 			}
 		}
 	}
@@ -1697,6 +1746,51 @@ scripted_gui = {
 		visible = {	
 			tag = ROC
 			check_variable = { ROC_sisuitai_tab_var = 1 }
+		}
+		triggers = {
+			unlock_bg_visible = {
+				not = { has_completed_focus = ROC_focus_rebuild_sisuitai }
+			}
+			unlock_title_visible = {
+				not = { has_completed_focus = ROC_focus_rebuild_sisuitai }
+			}
+		}
+	}
+}
+
+#将领升级
+scripted_gui = {
+	ROC_unit_leader_level_up_window = {
+		#context_type = decision_category
+		window_name = "ROC_unit_leader_level_up_window"
+		visible = {	
+			tag = ROC
+			has_variable = num_unit_leader_level_up
+			check_variable = { num_unit_leader_level_up > 0 }
+		}
+		properties = {
+			ROC_coin_flipped_1 = {
+				image = "[Get_ROC_coin_flipped_1]"
+			}
+		}
+		dynamic_lists = {
+			army_leaders_gridboxtype = {
+				array = ROOT.army_leaders
+				entry_container = ROC_unit_leader_level_up_container
+				change_scope = yes
+			}
+		}
+		effects = {
+			close_button_click = {
+				clear_variable = num_unit_leader_level_up
+			}
+			upgrad_unit_leader_click = {
+				if = {
+					limit = { check_variable = { ROOT.num_unit_leader_level_up > 0 } }
+					THIS = { add_skill_level = 1 }
+					add_to_variable = { ROOT.num_unit_leader_level_up = -1 }
+				}
+			}
 		}
 	}
 }
