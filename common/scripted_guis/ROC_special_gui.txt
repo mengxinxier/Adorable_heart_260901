@@ -508,11 +508,11 @@ scripted_gui = {
 			}
 		}
 	}
-	ROC_collection_decision_window = {
+	ROC_collection_box_window = {
 		#context_type = decision_category
 		context_type = player_context
 		parent_window_name = ROC_collection_container
-		window_name = "ROC_collection_decision_window"
+		window_name = "ROC_collection_box_window"
 		visible = {	
 			tag = ROC
 			check_variable = { ROC_collection_tab_var = 1 }
@@ -816,6 +816,7 @@ scripted_gui = {
 		window_name = "ROC_collection_window_button"
 		visible = {
 			tag = ROC
+			has_completed_focus = ROC_focus_unearth_collectibles
 		}
 		properties = {
 		}
@@ -1575,6 +1576,12 @@ scripted_gui = {
 				}
 				scoped_sound_effect = "coin_change"
 			}
+			close_button_click = {
+				clear_variable = ROC_coin_new_var
+				clear_variable = ROC_coin_selected_id_var
+				clear_variable = ROC_coin_selected_var
+				clear_variable = ROC_coin_selected_type_var
+			}
 		}
 	}
 	ROC_coin_flipped_window = {
@@ -1739,6 +1746,51 @@ scripted_gui = {
 		visible = {	
 			tag = ROC
 			check_variable = { ROC_sisuitai_tab_var = 1 }
+		}
+		triggers = {
+			unlock_bg_visible = {
+				not = { has_completed_focus = ROC_focus_rebuild_sisuitai }
+			}
+			unlock_title_visible = {
+				not = { has_completed_focus = ROC_focus_rebuild_sisuitai }
+			}
+		}
+	}
+}
+
+#将领升级
+scripted_gui = {
+	ROC_unit_leader_level_up_window = {
+		#context_type = decision_category
+		window_name = "ROC_unit_leader_level_up_window"
+		visible = {	
+			tag = ROC
+			has_variable = num_unit_leader_level_up
+			check_variable = { num_unit_leader_level_up > 0 }
+		}
+		properties = {
+			ROC_coin_flipped_1 = {
+				image = "[Get_ROC_coin_flipped_1]"
+			}
+		}
+		dynamic_lists = {
+			army_leaders_gridboxtype = {
+				array = ROOT.army_leaders
+				entry_container = ROC_unit_leader_level_up_container
+				change_scope = yes
+			}
+		}
+		effects = {
+			close_button_click = {
+				clear_variable = num_unit_leader_level_up
+			}
+			upgrad_unit_leader_click = {
+				if = {
+					limit = { check_variable = { ROOT.num_unit_leader_level_up > 0 } }
+					THIS = { add_skill_level = 1 }
+					add_to_variable = { ROOT.num_unit_leader_level_up = -1 }
+				}
+			}
 		}
 	}
 }
