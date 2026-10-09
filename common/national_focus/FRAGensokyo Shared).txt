@@ -2890,6 +2890,10 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_war_support = 0.1
+			add_stability = -0.05
+			army_experience = 15
+			set_country_flag = FRA_warlord_unification_started
 		}
 	}
 	#动员民兵
@@ -2913,6 +2917,8 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_manpower = 30000
+			add_ideas = FRA_warlord_mobilize_militia_idea
 		}
 	}
 	#收集武器
@@ -2936,6 +2942,19 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 5000
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = 1000
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 500
+			}
+			army_experience = 10
 		}
 	}
 	#机器轰鸣
@@ -2959,6 +2978,15 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_ideas = FRA_warlord_machine_roaring_idea
 		}
 	}
 	#终结乱局
@@ -2988,6 +3016,29 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_stability = 0.1
+			add_political_power = 50
+			#set_global_flag = reunit_gensokyo
+			if = {
+				limit = { is_subject = no }
+				every_country = {
+					limit = {
+						exists = yes
+						is_Gensokyo_tag = yes
+						NOT = { tag = ROOT }
+						NOT = { is_subject_of = ROOT }
+						NOT = { is_in_faction_with = ROOT }
+						NOT = { has_war_with = ROOT }
+						NOT = { is_subject = yes }
+					}
+					ROOT = {
+						create_wargoal = {
+							type = annex_everything
+							target = PREV
+						}
+					}
+				}
+			}
 		}
 	}
 	#防御外敌
@@ -3014,6 +3065,20 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_stability = 0.05
+			add_ideas = FRA_warlord_defend_foreign_enemies_idea
+			capital_scope = {
+				add_building_construction = {
+					type = bunker
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = coastal_bunker
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#引爆大战
@@ -3034,12 +3099,34 @@
 			base = 10
 		}
 		available = {
+			is_subject = no
 		}
 		bypass = {
 		}
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_war_support = 0.15
+			army_experience = 25
+			add_ideas = FRA_warlord_ignite_war_idea
+			if = {
+				limit = {
+					DVL = { exists = yes }
+					NOT = { is_subject_of = ROOT }
+					is_subject = no
+				}
+				if = {
+					limit = { NOT = { has_war_with = DVL } }
+					declare_war_on = {
+						target = DVL
+						type = annex_everything
+					}
+				}
+				if = {
+					limit = { NOT = { has_global_flag = second_weltkrieg_has_started } }
+					set_global_flag = second_weltkrieg_has_started
+				}
+			}
 		}
 	}
 	#收拾残局
@@ -3063,6 +3150,10 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_stability = 0.1
+			add_political_power = 25
+			add_manpower = 20000
+			add_ideas = FRA_warlord_clean_up_the_mess_idea
 		}
 	}
 	#再临非洲
@@ -3080,12 +3171,39 @@
 			base = 10
 		}
 		available = {
+			is_subject = no
 		}
 		bypass = {
 		}
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_political_power = 25
+			add_ideas = FRA_warlord_return_to_africa_idea
+			if = {
+				limit = {
+					LIB = {
+						exists = yes
+						NOT = { is_subject_of = ROOT }
+						NOT = { is_in_faction_with = ROOT }
+						NOT = { has_war_with = ROOT }
+						NOT = { is_subject = yes }
+					}
+				}
+				ROOT = { create_wargoal = { type = annex_everything target = LIB } }
+			}
+			if = {
+				limit = {
+					COG = {
+						exists = yes
+						NOT = { is_subject_of = ROOT }
+						NOT = { is_in_faction_with = ROOT }
+						NOT = { has_war_with = ROOT }
+						NOT = { is_subject = yes }
+					}
+				}
+				ROOT = { create_wargoal = { type = annex_everything target = COG } }
+			}
 		}
 	}
 	#问鼎欧陆
@@ -3110,6 +3228,9 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_war_support = 0.1
+			add_political_power = 50
+			add_ideas = FRA_warlord_aspire_to_europe_idea
 		}
 	}
 #军阀-经济
@@ -3417,6 +3538,10 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_revitalize_gensokyo_industry_idea
+			capital_scope = {
+				add_extra_state_shared_building_slots = 2
+			}
 		}
 	}
 	#开办学校
@@ -3440,6 +3565,7 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_open_schools_idea
 		}
 	}
 	#培训技工
@@ -3463,6 +3589,10 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			swap_ideas = {
+				remove_idea = FRA_warlord_open_schools_idea
+				add_idea = FRA_warlord_open_schools_idea_2
+			}
 		}
 	}
 	#吸引科学家移民
@@ -3486,6 +3616,11 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_attract_scientist_migration_idea
+			if = {
+				limit = { amount_research_slots < 5 }
+				add_research_slot = 1
+			}
 		}
 	}
 	#开掘矿产
@@ -3509,6 +3644,13 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_develop_mining_idea
+			random_owned_controlled_state = {
+				add_resource = { type = steel amount = 4 }
+			}
+			random_owned_controlled_state = {
+				add_resource = { type = aluminium amount = 4 }
+			}
 		}
 	}
 	#全国大建
@@ -3532,6 +3674,10 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_national_large_scale_construction_idea
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+			}
 		}
 	}
 	#推进电气化
@@ -3555,6 +3701,15 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_promote_electrification_idea
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#重启河童工业区
@@ -3578,6 +3733,15 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_restart_kappa_industrial_zone_idea
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#整合红魔馆工业
@@ -3601,6 +3765,14 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_integrate_scarlet_devil_mansion_industry_idea
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#建设后方工业
@@ -3624,6 +3796,15 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_build_hinterland_industry_idea
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#新幻想乡
@@ -3653,5 +3834,9 @@
 		available_if_capitulated = no
 		continue_if_invalid = yes
 		completion_reward = {
+			add_ideas = FRA_warlord_new_gensokyo_idea
+			add_stability = 0.05
+			add_political_power = 50
+			set_country_flag = FRA_warlord_new_gensokyo_flag
 		}
 	}
