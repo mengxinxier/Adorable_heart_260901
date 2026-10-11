@@ -260,4 +260,129 @@ scripted_diplomatic_actions = {
 			base = 100
 		}
 	}
+	ROC_Ask_for_tribute = {  ##要求朝贡
+		allowed = { ROOT = { tag = ROC } }
+		visible = {
+			ROOT = {
+				tag = ROC
+				is_major = yes
+				is_faction_leader = yes
+				has_country_flag = CHI_feudal_foreign_domain_flag
+			}
+			FROM = {
+				is_subject = no
+				not = {
+					has_idea = Shanghai_Cooperation_Organization_idea
+				}
+			}
+		}
+		selectable = {
+			FROM = { is_major = no }
+			FROM = { is_subject = no }
+			FROM = { not_in_any_economy_faction = yes }
+		}
+		cost = 30
+		requires_acceptance = yes
+		show_acceptance_on_action_button = yes
+		send_description = ASK_FOR_TRIBUTE_ACTION_SEND_DESC
+		complete_effect = {
+			FROM = { add_ideas = Shanghai_Cooperation_Organization_idea }
+			give_guarantee = FROM
+		}
+		ai_desire = {
+			base = 0
+		}
+
+		ai_acceptance = {
+			ai_reason_base_reluctance = {
+				base = -20
+			}
+			ai_reason_ally = {
+				base = 0
+				modifier = {
+					add = 20
+					FROM = { is_in_faction_with = ROOT }
+				}
+			}
+			ai_reason_opinion = {
+				base = 0
+				modifier = {
+					add = FROM.opinion@ROOT
+				}
+				modifier = {
+					factor = 0.5
+				}
+			}
+			ai_reason_same_government_type = {
+				base = 0
+				modifier = {
+					add = 15
+					FROM = { has_government = ROOT }
+				}
+			}
+			ai_reason_communism = {
+				base = 0
+				modifier = {
+					add = -1000
+					FROM = { has_government = communism }
+				}
+			}
+			ai_reason_GDP_high = {
+				base = 10
+				modifier = {
+					factor = temp_gdp_rate
+					set_temp_variable = { temp_gdp_rate = ROOT.AHES_Total_income }
+					divide_temp_variable = { temp_gdp_rate = FROM.AHES_Total_income }
+					check_variable = {
+						var = temp_gdp_rate
+						value = 1
+						compare = greater_than_or_equals
+					}
+				}
+				modifier = {
+					factor = 0
+					set_temp_variable = { temp_gdp_rate = ROOT.AHES_Total_income }
+					divide_temp_variable = { temp_gdp_rate = FROM.AHES_Total_income }
+					check_variable = {
+						temp_gdp_rate < 1
+					}
+				}
+			}
+			ai_reason_too_far = {
+				base = -10
+				modifier = {
+					add = -35
+					FROM = { capital_scope = { is_on_continent = europe } }
+				}
+				modifier = {
+					add = -35
+					FROM = { capital_scope = { is_on_continent = north_america } }
+				}
+				modifier = {
+					add = -45
+					FROM = { capital_scope = { is_on_continent = south_america } }
+				}
+				modifier = {
+					add = -20
+					FROM = { capital_scope = { is_on_continent = australia } }
+				}
+				modifier = {
+					add = -30
+					FROM = { capital_scope = { is_on_continent = africa } }
+				}
+				modifier = {
+					add = -40
+					FROM = { capital_scope = { is_on_continent = central_america } }
+				}
+				modifier = {
+					add = -20
+					FROM = { capital_scope = { is_on_continent = middle_east } }
+				}
+				modifier = {
+					add = -10
+					FROM = { capital_scope = { is_on_continent = india } }
+				}
+			}
+		}
+	}
 }
