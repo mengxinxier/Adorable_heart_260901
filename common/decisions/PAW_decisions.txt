@@ -947,6 +947,9 @@ PAW_shijiezhiwai_jyz = {
 			}
 		}
 	}
+	#保卫领土（控制者非 PAW + 处于战争）
+	#发展工业（完全控制）
+
 }
 
 PAW_yongjielunhui_jyz = {
@@ -1981,6 +1984,15 @@ PAW_zhuhuozhilv_jyz = {
 			is_subject = yes
 		}
 	}
+	paw_debug_qshs = {
+		visible = {
+			is_ai = no
+			is_debug = yes
+		}
+		complete_effect = {
+			clr_country_flag = fengjinsile_yes
+		}
+	}
 	paw_debug_wflsjy = {
 		visible = {
 			is_ai = no
@@ -2263,6 +2275,7 @@ PAW_zhuhuozhilv_jyz = {
 			is_ai = no
 		}
 		complete_effect = {
+			add_ideas = PAW_dztx_idea
 			set_politics = { ruling_party = communism } 
 			set_character_name ={
 				character = PAW_cyy
@@ -4595,6 +4608,7 @@ PAW_shijieshouhuzhe_jyz = {
 		icon = hol_draw_up_staff_plans
 		visible = {
 			is_subject = no
+			has_government = democratic
 		}
 		target_trigger = {
 			ROOT = {
@@ -4616,6 +4630,53 @@ PAW_shijieshouhuzhe_jyz = {
 					has_government = fascism
 					has_added_tension_amount > 20
 				}
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		fire_only_once = yes
+		days_remove = 30
+		war_with_target_on_remove = yes
+		complete_effect = {
+			FROM_country_is_defender_and_ROOT_is_accacker = yes
+		}
+		remove_effect = {
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+	}
+
+	PAW_xuanzhan_renyi_jy = {
+		cost = 20
+		icon = hol_war_on_pacifism
+		visible = {
+			is_subject = no
+			has_government = communism
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+			}
+			FROM = {
+				exists = yes
+				is_subject = no
+				not = { has_government = communism }
+			}
+		}
+		available = {
+			has_global_flag = second_weltkrieg_has_started
+			FROM = {
+				not = { has_government = communism }
 				not = {
 					or = {
 						has_war_with = ROOT
@@ -5063,7 +5124,7 @@ PAW_yjzz_jyz = {
 			}
 		}
 		ai_will_do = {
-			factor = 100
+			factor = 1000
 		}
 		modifier = {
 			political_power_factor = 0.05
@@ -5081,7 +5142,7 @@ PAW_yjzz_jyz = {
 	PAW_rw_kdhyfw = {
 		icon = eng_blackshirt_march
 		is_good = no
-		days_mission_timeout = 60
+		days_mission_timeout = 90
 		activation = {
         	always = no
     	}
@@ -5121,7 +5182,7 @@ PAW_yjzz_jyz = {
 	PAW_rw_kdyzhdfw = {
 		icon = eng_propaganda_campaigns
 		is_good = no
-		days_mission_timeout = 45
+		days_mission_timeout = 60
 		activation = {
         	always = no
     	}
@@ -5138,7 +5199,7 @@ PAW_yjzz_jyz = {
        		add_stability = 0.1
     	}
     	timeout_effect = {
-			activate_mission = PAW_rw_kdhyfw
+			activate_mission = PAW_rw_kdyzhdfw
         	random_owned_controlled_state = {
 				limit = {
 					OR = {
@@ -5342,6 +5403,7 @@ PAW_gongyeguihua_jyz = {
 			FROM = {
 				add_dynamic_modifier = {
 					modifier = PAW_diqu_shengji_state
+					scope = PAW
 				}
 				set_state_flag = PAW_diqu_shengji_used_flag
 			}
@@ -6238,5 +6300,1809 @@ PAW_fengjin_xiaoyika_jyz = {
 				}
 			}
 		}
+	}
+}
+
+PAW_dangqianjushi_jyz = {
+
+	PAW_wfrs_d_72 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_72
+		visible = {
+			check_variable = { paw_wfrs_sel = 72 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_72 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_72
+		visible = {
+			check_variable = { paw_wfrs_sel = 72 }
+			72 = { is_core_of = PAW }
+		}
+		available = {
+			72 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			72 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			72 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			72 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_72 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_72
+		visible = {
+			check_variable = { paw_wfrs_sel = 72 }
+			72 = { is_core_of = PAW }
+		}
+		available = {
+			72 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			72 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			72 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			72 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_286 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_286
+		visible = {
+			check_variable = { paw_wfrs_sel = 286 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_286 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_286
+		visible = {
+			check_variable = { paw_wfrs_sel = 286 }
+			286 = { is_core_of = PAW }
+		}
+		available = {
+			286 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			286 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			286 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			286 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_286 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_286
+		visible = {
+			check_variable = { paw_wfrs_sel = 286 }
+			286 = { is_core_of = PAW }
+		}
+		available = {
+			286 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			286 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			286 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			286 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_288 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_288
+		visible = {
+			check_variable = { paw_wfrs_sel = 288 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_288 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_288
+		visible = {
+			check_variable = { paw_wfrs_sel = 288 }
+			288 = { is_core_of = PAW }
+		}
+		available = {
+			288 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			288 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			288 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			288 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_288 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_288
+		visible = {
+			check_variable = { paw_wfrs_sel = 288 }
+			288 = { is_core_of = PAW }
+		}
+		available = {
+			288 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			288 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			288 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			288 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_289 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_289
+		visible = {
+			check_variable = { paw_wfrs_sel = 289 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_289 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_289
+		visible = {
+			check_variable = { paw_wfrs_sel = 289 }
+			289 = { is_core_of = PAW }
+		}
+		available = {
+			289 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			289 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			289 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			289 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_289 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_289
+		visible = {
+			check_variable = { paw_wfrs_sel = 289 }
+			289 = { is_core_of = PAW }
+		}
+		available = {
+			289 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			289 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			289 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			289 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_640 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_640
+		visible = {
+			check_variable = { paw_wfrs_sel = 640 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_640 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_640
+		visible = {
+			check_variable = { paw_wfrs_sel = 640 }
+			640 = { is_core_of = PAW }
+		}
+		available = {
+			640 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			640 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			640 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			640 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_640 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_640
+		visible = {
+			check_variable = { paw_wfrs_sel = 640 }
+			640 = { is_core_of = PAW }
+		}
+		available = {
+			640 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			640 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			640 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			640 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_670 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_670
+		visible = {
+			check_variable = { paw_wfrs_sel = 670 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_670 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_670
+		visible = {
+			check_variable = { paw_wfrs_sel = 670 }
+			670 = { is_core_of = PAW }
+		}
+		available = {
+			670 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			670 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			670 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			670 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_670 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_670
+		visible = {
+			check_variable = { paw_wfrs_sel = 670 }
+			670 = { is_core_of = PAW }
+		}
+		available = {
+			670 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			670 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			670 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			670 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_671 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_671
+		visible = {
+			check_variable = { paw_wfrs_sel = 671 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_671 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_671
+		visible = {
+			check_variable = { paw_wfrs_sel = 671 }
+			671 = { is_core_of = PAW }
+		}
+		available = {
+			671 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			671 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			671 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			671 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_671 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_671
+		visible = {
+			check_variable = { paw_wfrs_sel = 671 }
+			671 = { is_core_of = PAW }
+		}
+		available = {
+			671 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			671 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			671 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			671 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_701 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_701
+		visible = {
+			check_variable = { paw_wfrs_sel = 701 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_701 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_701
+		visible = {
+			check_variable = { paw_wfrs_sel = 701 }
+			701 = { is_core_of = PAW }
+		}
+		available = {
+			701 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			701 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			701 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			701 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_701 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_701
+		visible = {
+			check_variable = { paw_wfrs_sel = 701 }
+			701 = { is_core_of = PAW }
+		}
+		available = {
+			701 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			701 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			701 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			701 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_724 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_724
+		visible = {
+			check_variable = { paw_wfrs_sel = 724 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_724 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_724
+		visible = {
+			check_variable = { paw_wfrs_sel = 724 }
+			724 = { is_core_of = PAW }
+		}
+		available = {
+			724 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			724 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			724 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			724 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_724 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_724
+		visible = {
+			check_variable = { paw_wfrs_sel = 724 }
+			724 = { is_core_of = PAW }
+		}
+		available = {
+			724 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			724 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			724 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			724 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_749 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_749
+		visible = {
+			check_variable = { paw_wfrs_sel = 749 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_749 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_749
+		visible = {
+			check_variable = { paw_wfrs_sel = 749 }
+			749 = { is_core_of = PAW }
+		}
+		available = {
+			749 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			749 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			749 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			749 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_749 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_749
+		visible = {
+			check_variable = { paw_wfrs_sel = 749 }
+			749 = { is_core_of = PAW }
+		}
+		available = {
+			749 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			749 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			749 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			749 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_750 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_750
+		visible = {
+			check_variable = { paw_wfrs_sel = 750 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_750 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_750
+		visible = {
+			check_variable = { paw_wfrs_sel = 750 }
+			750 = { is_core_of = PAW }
+		}
+		available = {
+			750 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			750 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			750 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			750 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_750 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_750
+		visible = {
+			check_variable = { paw_wfrs_sel = 750 }
+			750 = { is_core_of = PAW }
+		}
+		available = {
+			750 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			750 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			750 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			750 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_756 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_756
+		visible = {
+			check_variable = { paw_wfrs_sel = 756 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_756 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_756
+		visible = {
+			check_variable = { paw_wfrs_sel = 756 }
+			756 = { is_core_of = PAW }
+		}
+		available = {
+			756 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			756 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			756 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			756 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_756 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_756
+		visible = {
+			check_variable = { paw_wfrs_sel = 756 }
+			756 = { is_core_of = PAW }
+		}
+		available = {
+			756 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			756 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			756 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			756 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_790 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_790
+		visible = {
+			check_variable = { paw_wfrs_sel = 790 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_790 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_790
+		visible = {
+			check_variable = { paw_wfrs_sel = 790 }
+			790 = { is_core_of = PAW }
+		}
+		available = {
+			790 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			790 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			790 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			790 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_790 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_790
+		visible = {
+			check_variable = { paw_wfrs_sel = 790 }
+			790 = { is_core_of = PAW }
+		}
+		available = {
+			790 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			790 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			790 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			790 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_822 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_822
+		visible = {
+			check_variable = { paw_wfrs_sel = 822 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_822 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_822
+		visible = {
+			check_variable = { paw_wfrs_sel = 822 }
+			822 = { is_core_of = PAW }
+		}
+		available = {
+			822 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			822 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			822 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			822 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_822 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_822
+		visible = {
+			check_variable = { paw_wfrs_sel = 822 }
+			822 = { is_core_of = PAW }
+		}
+		available = {
+			822 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			822 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			822 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			822 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_823 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_823
+		visible = {
+			check_variable = { paw_wfrs_sel = 823 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_823 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_823
+		visible = {
+			check_variable = { paw_wfrs_sel = 823 }
+			823 = { is_core_of = PAW }
+		}
+		available = {
+			823 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			823 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			823 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			823 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_823 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_823
+		visible = {
+			check_variable = { paw_wfrs_sel = 823 }
+			823 = { is_core_of = PAW }
+		}
+		available = {
+			823 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			823 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			823 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			823 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_824 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_824
+		visible = {
+			check_variable = { paw_wfrs_sel = 824 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_824 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_824
+		visible = {
+			check_variable = { paw_wfrs_sel = 824 }
+			824 = { is_core_of = PAW }
+		}
+		available = {
+			824 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			824 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			824 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			824 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_824 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_824
+		visible = {
+			check_variable = { paw_wfrs_sel = 824 }
+			824 = { is_core_of = PAW }
+		}
+		available = {
+			824 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			824 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			824 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			824 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_825 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_825
+		visible = {
+			check_variable = { paw_wfrs_sel = 825 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_825 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_825
+		visible = {
+			check_variable = { paw_wfrs_sel = 825 }
+			825 = { is_core_of = PAW }
+		}
+		available = {
+			825 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			825 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			825 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			825 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_825 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_825
+		visible = {
+			check_variable = { paw_wfrs_sel = 825 }
+			825 = { is_core_of = PAW }
+		}
+		available = {
+			825 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			825 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			825 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			825 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_826 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_826
+		visible = {
+			check_variable = { paw_wfrs_sel = 826 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_826 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_826
+		visible = {
+			check_variable = { paw_wfrs_sel = 826 }
+			826 = { is_core_of = PAW }
+		}
+		available = {
+			826 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			826 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			826 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			826 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_826 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_826
+		visible = {
+			check_variable = { paw_wfrs_sel = 826 }
+			826 = { is_core_of = PAW }
+		}
+		available = {
+			826 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			826 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			826 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			826 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_827 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_827
+		visible = {
+			check_variable = { paw_wfrs_sel = 827 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_827 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_827
+		visible = {
+			check_variable = { paw_wfrs_sel = 827 }
+			827 = { is_core_of = PAW }
+		}
+		available = {
+			827 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			827 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			827 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			827 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_827 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_827
+		visible = {
+			check_variable = { paw_wfrs_sel = 827 }
+			827 = { is_core_of = PAW }
+		}
+		available = {
+			827 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			827 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			827 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			827 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_830 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_830
+		visible = {
+			check_variable = { paw_wfrs_sel = 830 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_830 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_830
+		visible = {
+			check_variable = { paw_wfrs_sel = 830 }
+			830 = { is_core_of = PAW }
+		}
+		available = {
+			830 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			830 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			830 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			830 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_830 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_830
+		visible = {
+			check_variable = { paw_wfrs_sel = 830 }
+			830 = { is_core_of = PAW }
+		}
+		available = {
+			830 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			830 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			830 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			830 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_831 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_831
+		visible = {
+			check_variable = { paw_wfrs_sel = 831 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_831 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_831
+		visible = {
+			check_variable = { paw_wfrs_sel = 831 }
+			831 = { is_core_of = PAW }
+		}
+		available = {
+			831 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			831 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			831 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			831 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_831 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_831
+		visible = {
+			check_variable = { paw_wfrs_sel = 831 }
+			831 = { is_core_of = PAW }
+		}
+		available = {
+			831 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			831 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			831 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			831 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_856 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_856
+		visible = {
+			check_variable = { paw_wfrs_sel = 856 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_856 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_856
+		visible = {
+			check_variable = { paw_wfrs_sel = 856 }
+			856 = { is_core_of = PAW }
+		}
+		available = {
+			856 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			856 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			856 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			856 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_856 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_856
+		visible = {
+			check_variable = { paw_wfrs_sel = 856 }
+			856 = { is_core_of = PAW }
+		}
+		available = {
+			856 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			856 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			856 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			856 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_857 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_857
+		visible = {
+			check_variable = { paw_wfrs_sel = 857 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_857 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_857
+		visible = {
+			check_variable = { paw_wfrs_sel = 857 }
+			857 = { is_core_of = PAW }
+		}
+		available = {
+			857 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			857 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			857 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			857 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_857 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_857
+		visible = {
+			check_variable = { paw_wfrs_sel = 857 }
+			857 = { is_core_of = PAW }
+		}
+		available = {
+			857 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			857 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			857 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			857 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_882 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_882
+		visible = {
+			check_variable = { paw_wfrs_sel = 882 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_882 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_882
+		visible = {
+			check_variable = { paw_wfrs_sel = 882 }
+			882 = { is_core_of = PAW }
+		}
+		available = {
+			882 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			882 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			882 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			882 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_882 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_882
+		visible = {
+			check_variable = { paw_wfrs_sel = 882 }
+			882 = { is_core_of = PAW }
+		}
+		available = {
+			882 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			882 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			882 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			882 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_d_999 = {
+		icon = generic_decision
+		name = PAW_wfrs_d_999
+		visible = {
+			check_variable = { paw_wfrs_sel = 999 }
+		}
+		available = { always = no }
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_baowei_999 = {
+		icon = generic_military
+		name = PAW_wfrs_baowei_999
+		visible = {
+			check_variable = { paw_wfrs_sel = 999 }
+			999 = { is_core_of = PAW }
+		}
+		available = {
+			999 = {
+				NOT = { 
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_baowei_state
+    					scope = PAW
+					}
+				}
+			}
+			999 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			999 = { NOT = { is_controlled_by = PAW } }
+			has_war = yes
+		}
+		cost = 25
+		complete_effect = {
+			999 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_baowei_state
+					scope = PAW
+					days = 60
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+	PAW_wfrs_gongye_999 = {
+		icon = generic_industry
+		name = PAW_wfrs_gongye_999
+		visible = {
+			check_variable = { paw_wfrs_sel = 999 }
+			999 = { is_core_of = PAW }
+		}
+		available = {
+			999 = {
+				NOT = {
+					has_dynamic_modifier = {
+   						modifier = PAW_wfrs_gongye_state
+    					scope = PAW
+					}
+				}
+			}
+			999 = { NOT = { has_dynamic_modifier = { modifier = PAW_heichao_state } } }
+			999 = { is_fully_controlled_by = ROOT }
+		}
+		cost = 50
+		complete_effect = {
+			999 = {
+				add_dynamic_modifier = {
+					modifier = PAW_wfrs_gongye_state
+					scope = PAW
+					days = 90
+				}
+			}
+		}
+		ai_will_do = { factor = 0 }
 	}
 }
