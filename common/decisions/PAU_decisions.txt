@@ -1,3 +1,21 @@
+PAU_Debug = {
+    xiaoyao_luxian = {
+        complete_effect = {
+            set_country_flag = has_PAU_xiaoyao
+            set_country_flag = has_PAU_xiaoyao2
+            set_country_flag = has_PAU_xiaoyao3
+            set_country_flag = has_PAU_xiaoyao4
+            set_country_flag = has_PAU_xiaoyao5
+            set_country_flag = has_PAU_xiaoyao6
+            set_country_flag = has_PAU_xiaoyao7
+            set_country_flag = has_PAU_xiaoyao8
+            set_country_flag = has_PAU_xiaoyao9
+            mark_focus_tree_layout_dirty = yes
+            custom_effect_tooltip = jiesuoguoce
+        }
+    }
+}
+
 PAU_LHS_weiji = {
     PAU_LHS_weiji_dec = {
         allowed = {
@@ -355,6 +373,7 @@ PAU_LHS_weiji = {
         cost = 50
         days_remove = 60
         modifier = {
+            stability_factor = -0.1
             civilian_factory_use = 1
         }
         remove_effect = {
@@ -387,7 +406,7 @@ PAU_LHS_weiji = {
         days_mission_timeout = 7
 
         timeout_effect = {
-            activate_mission = PAU_wl_attack
+            activate_mission = PAU_wl_attack_dec
             every_state = {
                 limit = {
                     or = {
@@ -553,7 +572,6 @@ PAU_hetong = {
                 set_country_flag = yaobuyaoguyong  #要不要
             }
 
-            custom_effect_tooltip = PAU_repay_mission_tt
         }
 
     }
@@ -581,7 +599,7 @@ PAU_hetong = {
             }
         }
 
-        days_mission_timeout = 3
+        days_mission_timeout = 30
         cancel_trigger = {
             or = {
                 FROM = {
@@ -597,26 +615,37 @@ PAU_hetong = {
         visible = {
         }
         cancel_effect = {
+            clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
+            FROM = {
+                clr_country_flag = PAU_bop_loan_active
+            }
         }
 
         complete_effect = {
-            clr_country_flag = yaobuyaoguyong  #要不要
-            activate_mission = PAU_guyong_attack
+            add_ideas = PAU_annex_debuff
+
             FROM = {
-                random_owned_controlled_state = {
-                    limit = {
-                        is_coastal = yes
-                    }
-                    transfer_state_to = PAU
-                    set_state_flag = PAU_guyong_state_flag #标记地区
-                }
+                clr_country_flag = yaobuyaoguyong  #要不要
             }
 
-            PAU = {
-                diplomatic_relation = {
-                    country = FROM
-                    relation = military_access
-                    active = yes
+            activate_mission = PAU_guyong_attack
+
+            if = {
+                limit = {
+                    FROM = { #对方控制省份数量大于1
+                        check_variable = { 
+                            num_controlled_states > 1 
+                        }
+                    }
+                }
+                FROM = {
+                    random_owned_controlled_state = {
+                        limit = {
+                            is_coastal = yes
+                        }
+                        transfer_state_to = PAU
+                        set_state_flag = PAU_guyong_state_flag #标记地区
+                    }
                 }
             }
 
@@ -640,22 +669,30 @@ PAU_hetong = {
         }
 
         timeout_effect = {
-            clr_country_flag = yaobuyaoguyong  #要不要
-            activate_mission = PAU_guyong_attack
+            add_ideas = PAU_annex_debuff
+            
             FROM = {
-                random_owned_controlled_state = {
-                    limit = {
-                        is_coastal = yes
-                    }
-                    transfer_state_to = PAU
-                    set_state_flag = PAU_guyong_state_flag #标记地区
-                }
+                clr_country_flag = yaobuyaoguyong  #要不要
             }
-            PAU = { #获得军通
-                diplomatic_relation = {
-                    country = FROM
-                    relation = military_access
-                    active = yes
+
+            activate_mission = PAU_guyong_attack
+
+            if = {
+                limit = {
+                    FROM = { #对方控制省份数量大于1
+                        check_variable = { 
+                            num_controlled_states > 1 
+                        }
+                    }
+                }
+                FROM = {
+                    random_owned_controlled_state = {
+                        limit = {
+                            is_coastal = yes
+                        }
+                        transfer_state_to = PAU
+                        set_state_flag = PAU_guyong_state_flag #标记地区
+                    }
                 }
             }
             every_country = {
@@ -678,7 +715,7 @@ PAU_hetong = {
         }
     }
 
-    PAU_guyong_attack = { #宣战
+    PAU_guyong_attack = { #作为雇佣兵宣战
         icon = GFX_PAM_pdtl
         allowed = { tag = PAU }
 
@@ -689,68 +726,258 @@ PAU_hetong = {
             always = no
         }
 
-        days_mission_timeout = 3650
+        days_mission_timeout = 365
         cancel_trigger = {
             or = {
-                FROM = {
+                any_country = {
+                    has_country_flag = PAU_bop_loan_active #同意的flag
                     or = {
                         has_war_with  = ROOT
                         has_war = no
                         exists = no
                     }
                 }
-
+                any_country = { #和非敌对雇佣国家作战
+                    not = {
+                        any_country = {
+                            has_country_flag = PAU_bop_loan_active #同意的flag
+                            has_war_with = PREV
+                        }
+                    }
+                    has_war_with = ROOT
+                }
+                has_country_flag = PAU_guyonged_touxiang_flag
             }
         }
         visible = {
         }
         cancel_effect = {
-            if = {
+            remove_ideas = PAU_annex_debuff
+            clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
+            if = { #投降
                 limit = {
-                    FROM = {
-                        or = {
-                            has_war_with  = ROOT
+                    has_country_flag = PAU_guyonged_touxiang_flag
+                }
+                add_timed_idea = {
+                    idea = PAU_guyong_debuff
+                    days = 90
+                }
+                every_country = {
+                    limit = {
+                        has_country_flag = PAU_will_guyonged_touxiang_flag
+                    }
+                    white_peace = {
+                        tag = PAU
+                        #message = PAM_win_LHS
+                    }
+                    clr_country_flag = PAU_will_guyonged_touxiang_flag
+                }
+                    random_country = {
+                        limit = {
+                            has_war_with = PAU
+                            any_country = {
+                                has_country_flag = PAU_bop_loan_active
+                                has_war_with = PREV
+                            }
+                        }
+                        every_state = {
+                            limit = {
+                                has_state_flag = PAU_guyong_state_flag #标记地区
+                            }
+                            transfer_state_to = PREV
+                            clr_state_flag = PAU_guyong_state_flag #标记地区
+                        }
+                    }
+                clr_country_flag = PAU_guyonged_touxiang_flag
+                add_to_variable = { 
+                    var = PAU_guyong_dianshu 
+                    value = -2
+                    tooltip = PAU_guyong_dianshu_tt 
+                }
+            }
+            else = {
+                if = {
+                    limit = {
+                        any_country = {
+                            has_country_flag = PAU_bop_loan_active #同意的flag
                             exists = no
                         }
                     }
+                    add_timed_idea = {
+                        idea = PAU_guyong_debuff
+                        days = 90
+                    }
+                    effect_tooltip = {
+                        add_to_variable = { 
+                            var = PAU_guyong_dianshu 
+                            value = -2
+                            tooltip = PAU_guyong_dianshu_tt 
+                        }
+                    }
+                    #因对方打输中断
+                    country_event = { id = PAU.175 hours = 6 }
+                    random_country = {
+                        limit = {
+                            has_war_with = PAU
+                        }
+                        every_state = {
+                            limit = {
+                                has_state_flag = PAU_guyong_state_flag #标记地区
+                            }
+                            transfer_state_to = PREV
+                            clr_state_flag = PAU_guyong_state_flag #标记地区
+                        }
+                    }
+                    every_country = {
+                        limit = {
+                            has_country_flag = PAU_guzhu_cap
+                        }
+                        white_peace = {
+                            tag = PAU
+                            #message = PAM_win_LHS
+                        }
+                    }
                 }
-                #因战争或对方打输中断
-                country_event = { id = PAU.176 hours = 6 }
+                else_if = {
+                    limit = {
+                        any_country = {
+                            has_country_flag = PAU_bop_loan_active #同意的flag
+                            has_war_with  = ROOT
+                        }
+                    }
+                    add_timed_idea = {
+                        idea = PAU_guyong_debuff
+                        days = 180
+                    }
+                    effect_tooltip = {
+                        add_to_variable = { 
+                            var = PAU_guyong_dianshu 
+                            value = -5
+                            tooltip = PAU_guyong_dianshu_tt 
+                        }
+                    }
+                    #因战争中断
+                    country_event = { id = PAU.179 hours = 6 }
+                    random_country = {
+                        limit = {
+                            has_war_with = PAU
+                            any_country = {
+                                has_country_flag = PAU_bop_loan_active
+                                has_war_with = PREV
+                            }
+                        }
+                        every_state = {
+                            limit = {
+                                has_state_flag = PAU_guyong_state_flag #标记地区
+                            }
+                            transfer_state_to = PREV
+                            clr_state_flag = PAU_guyong_state_flag #标记地区
+                        }
+                    }
+                }
+                else_if = {
+                    #顺利完成
+                    limit = {
+                        any_country = {
+                            has_war = no
+                            exists = yes
+                            has_country_flag = PAU_bop_loan_active
+                        }
+                    }
+                    every_country = {
+                        limit = {
+                            has_country_flag = PAU_bop_loan_active #同意的flag
+                        }
+                        every_state = {
+                            limit = {
+                                has_state_flag = PAU_guyong_state_flag #标记地区
+                            }
+                            transfer_state_to = PREV
+                            clr_state_flag = PAU_guyong_state_flag #标记地区
+                            add_claim_by = PAU
+                        }
+                    }
+                    effect_tooltip = {
+                        add_to_variable = { 
+                            var = PAU_guyong_dianshu 
+                            value = 2
+                            tooltip = PAU_guyong_dianshu_tt 
+                        }
+                    }
+                    country_event = { id = PAU.176 hours = 6 }
+                }
+                else = {
+                }
             }
-            else_if = {
-                #顺利完成
+            every_possible_country = {
                 limit = {
-                    FROM = {
-                        has_war = no
-                        exists = yes
-                        has_country_flag = PAU_bop_loan_active
-                    }
+                    has_country_flag = PAU_bop_loan_active
                 }
-                    FROM = {
-                        country_event = { id = PAU.1755 hours = 6 }
-                    }
-            }
-            else = {
-            }
-            FROM = {
                 clr_country_flag = PAU_bop_loan_active
-                clr_country_flag = PAU_bop_loan_active_re
             }
         }
 
         complete_effect = {
-            FROM = {
-                set_country_flag = PAU_bangzhu
-                set_country_flag = PAU_bop_loan_active_re
-            }
         }
 
         timeout_effect = {
-            FROM = {
+            effect_tooltip = {
+                add_to_variable = { 
+                    var = PAU_guyong_dianshu 
+                    value = -2
+                    tooltip = PAU_guyong_dianshu_tt 
+                }
+            }
+            every_country = {
+                limit = {
+                    has_country_flag = PAU_bop_loan_active #同意的flag
+                }
+                every_state = {
+                    limit = {
+                        has_state_flag = PAU_guyong_state_flag #标记地区
+                    }
+                    transfer_state_to = PREV
+                    clr_state_flag = PAU_guyong_state_flag #标记地区
+                }
                 clr_country_flag = PAU_bop_loan_active
-                clr_country_flag = PAU_bop_loan_active_re
+            }
+            remove_ideas = PAU_annex_debuff
+            clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
+            #超时失败
+            country_event = { id = PAU.177 hours = 6 }
+        }
+    }
+    PAU_guyong_touxiang = { #投降
+        icon = GFX_PAM_pdtl
+        allowed = { tag = PAU }
+
+        available = {
+            always = no
+        }
+        cost = 50
+
+        visible = {
+            has_idea = PAU_annex_debuff
+            has_war = yes
+        }
+
+        complete_effect = {
+            set_country_flag = PAU_guyonged_touxiang_flag
+
+            every_country = {
+                limit = {
+                    has_country_flag = PAU_bop_loan_active #同意的flag
+                }
+                every_country = {
+                    limit = {
+                        has_war_with = PREV
+                    }
+                    set_country_flag = PAU_will_guyonged_touxiang_flag
+                    country_event = { id = PAU.178 hours = 6 }
+                }
             }
         }
+
     }
 }
 
