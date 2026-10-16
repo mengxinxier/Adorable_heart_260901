@@ -1,0 +1,957 @@
+PAU_lhs_absorb = {
+    set_country_flag = PAU_lhs_absorbed # 野火已经被军团吞并
+    add_dynamic_modifier = { modifier = PAU_lhs_remnants } # 旧部和新血暂时混编
+    add_manpower = 10000 # 山谷战斗后收拢的残部和随军家属
+    add_mastery = { amount = 25 folder = land } # 与旧部交手让军团找回了过去的节奏
+}
+
+PAU_form_white_night_alliance = {
+    # 此时阵营已在接走雪伊时从莉兰迪亚公社继承下来，只改名和确立领导权，不再新建阵营。
+    if = {
+        limit = { is_in_faction = yes }
+        set_faction_leader = yes
+        set_faction_name = PAU_white_night_alliance
+    }
+}
+
+PAU_arrive_grail = {
+    set_country_flag = PAU_grail_camp # 军团在圣杯地块上落脚
+    add_dynamic_modifier = { modifier = PAU_grail_refuge } # 圣杯流亡营开始运转
+    299 = {
+        set_state_flag = PAU_grail_camp # 圣杯流亡营固定在 state 299
+        add_dynamic_modifier = { modifier = PAU_grail_camp_state } # 码头、营地和死气同时挤进这里
+    }
+    if = {
+        limit = { NOT = { has_dynamic_modifier = { modifier = PAU_grail_camp_network } } }
+        add_dynamic_modifier = { modifier = PAU_grail_camp_network }
+    }
+}
+
+PAU_grail_robbed = {
+    add_equipment_to_stockpile = {
+        type = infantry_equipment
+        amount = -500
+    } # 圣杯扣下了军团一半的口粮
+    add_to_variable = {
+        var = PAU_grail_rations
+        value = -50
+        tooltip = PAU_grail_rations_tt
+    } # 流亡营地的口粮储备被削掉
+    set_country_flag = PAU_grail_took_supplies # 流亡路上记住了这笔账
+}
+
+PAU_return_from_grail = {
+    set_country_flag = PAU_return_south_america # 调头回南美的命令已经下达
+    remove_dynamic_modifier = { modifier = PAU_grail_refuge } # 流亡营状态结束
+}
+
+PAU_start_undead_war = {
+    set_country_flag = PAU_undead_war # 亡灵战争正式开始
+    add_dynamic_modifier = { modifier = PAU_undead_pressure } # 死气一路追着军团
+}
+
+PAU_finish_undead_war = {
+    set_country_flag = PAU_undead_defeated # 亡灵战争已经结束
+    remove_dynamic_modifier = { modifier = PAU_undead_pressure } # 死气从南美退去
+}
+
+PAU_unlock_safe_harbor = {
+    set_country_flag = PAU_safe_harbor_unlocked # 莉兰迪亚避风港机制解锁
+    PAU_refresh_harbor_spillover_states = yes # 先给现有受控州挂上避风港辐射修正
+}
+
+PAU_barrow_death = {
+    set_country_flag = PAU_barrow_dead # 巴罗的名字已经写进阵亡名册
+    add_dynamic_modifier = { modifier = PAU_barrow_legacy } # 二连的规矩留在前线
+    scoped_play_song = "连长" # 巴罗的曲子
+}
+
+PAU_news_south_america = {
+    news_event = { id = PAU_news.1 }
+}
+
+PAU_news_sakura = {
+    news_event = { id = PAU_news.2 }
+}
+
+PAU_sakura_expedition = {
+    division_template = {
+        name = "白夜同盟远征军"
+        regiments = {
+            infantry = { x = 0 y = 0 }
+            infantry = { x = 0 y = 1 }
+            infantry = { x = 0 y = 2 }
+            motorized = { x = 1 y = 0 }
+            motorized = { x = 1 y = 1 }
+            light_armor = { x = 2 y = 0 }
+        }
+        support = {
+            engineer = { x = 0 y = 0 }
+            artillery = { x = 0 y = 1 }
+        }
+    }
+    capital_scope = {
+        create_unit = {
+            division = "name = \"远征军第一师\" division_template = \"白夜同盟远征军\" start_experience_factor = 0.5"
+            count = 1
+            owner = PAU
+        }
+        create_unit = {
+            division = "name = \"远征军第二师\" division_template = \"白夜同盟远征军\" start_experience_factor = 0.5"
+            count = 1
+            owner = PAU
+        }
+    }
+    add_mastery = { amount = 20 folder = naval }
+    add_mastery = { amount = 20 folder = air }
+}
+
+PAU_end_settlement = {
+    set_party_name = {
+        ideology = neutrality
+        name = PAU_white_night_party
+        long_name = PAU_white_night_party_long
+    }
+    custom_effect_tooltip = PAU_end_settlement_tt
+}
+
+PAU_refresh_mil_reform_tiers = {
+    if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_mil_reform } } check_variable = { PAU_mil_reform_progress > 0 } } add_dynamic_modifier = { modifier = PAU_mil_reform } }
+    if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }
+    if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }
+    if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }
+    if = { limit = { check_variable = { PAU_axia_eco > 0 } } set_country_flag = PAU_economy_reform_axia_unlocked }
+    if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
+    if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
+    set_variable = { PAU_mil_reform_org = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_org = 0.006 }
+    add_to_variable = { PAU_mil_reform_org = PAU_mil_reform_bonus_org }
+    set_variable = { PAU_mil_reform_planning = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_planning = 0.006 }
+    add_to_variable = { PAU_mil_reform_planning = PAU_mil_reform_bonus_planning }
+    set_variable = { PAU_mil_reform_breakthrough = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_breakthrough = 0.006 }
+    add_to_variable = { PAU_mil_reform_breakthrough = PAU_mil_reform_bonus_breakthrough }
+    set_variable = { PAU_mil_reform_coordination = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_coordination = 0.006 }
+    add_to_variable = { PAU_mil_reform_coordination = PAU_mil_reform_bonus_coordination }
+    set_variable = { PAU_mil_reform_initiative = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_initiative = 0.006 }
+    add_to_variable = { PAU_mil_reform_initiative = PAU_mil_reform_bonus_initiative }
+    set_variable = { PAU_mil_reform_recon = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_recon = 0.006 }
+    add_to_variable = { PAU_mil_reform_recon = PAU_mil_reform_bonus_recon }
+    set_variable = { PAU_mil_reform_morale = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_morale = 0.006 }
+    add_to_variable = { PAU_mil_reform_morale = PAU_mil_reform_bonus_morale }
+    set_variable = { PAU_mil_reform_speed = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_speed = 0.006 }
+    add_to_variable = { PAU_mil_reform_speed = PAU_mil_reform_bonus_speed }
+    set_variable = { PAU_mil_reform_naval_coordination = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_naval_coordination = 0.006 }
+    add_to_variable = { PAU_mil_reform_naval_coordination = PAU_mil_reform_bonus_naval_coordination }
+    set_variable = { PAU_mil_reform_ship_recovery = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_ship_recovery = 0.006 }
+    add_to_variable = { PAU_mil_reform_ship_recovery = PAU_mil_reform_bonus_ship_recovery }
+    set_variable = { PAU_mil_reform_supply = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_supply = -0.006 }
+    add_to_variable = { PAU_mil_reform_supply = PAU_mil_reform_bonus_supply }
+    set_variable = { PAU_mil_reform_out_of_supply = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_out_of_supply = -0.006 }
+    add_to_variable = { PAU_mil_reform_out_of_supply = PAU_mil_reform_bonus_out_of_supply }
+    set_variable = { PAU_mil_reform_attrition = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_attrition = -0.006 }
+    add_to_variable = { PAU_mil_reform_attrition = PAU_mil_reform_bonus_attrition }
+    set_variable = { PAU_mil_reform_training = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_training = -0.006 }
+    add_to_variable = { PAU_mil_reform_training = PAU_mil_reform_bonus_training }
+    set_variable = { PAU_mil_reform_naval_penalty = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_naval_penalty = -0.006 }
+    add_to_variable = { PAU_mil_reform_naval_penalty = PAU_mil_reform_bonus_naval_penalty }
+    set_variable = { PAU_mil_reform_invasion_prep = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_invasion_prep = -0.006 }
+    add_to_variable = { PAU_mil_reform_invasion_prep = PAU_mil_reform_bonus_invasion_prep }
+    set_variable = { PAU_mil_reform_attack = PAU_mil_reform_bonus_attack }
+    set_variable = { PAU_mil_reform_doctrine = PAU_mil_reform_progress }
+    multiply_variable = { PAU_mil_reform_doctrine = -0.01 }
+    clamp_variable = { var = PAU_mil_reform_doctrine min = -0.25 max = 0 }
+    multiply_variable = { PAU_mil_reform_doctrine = 20 }
+    round_variable = PAU_mil_reform_doctrine
+    divide_variable = { PAU_mil_reform_doctrine = 20 }
+    clamp_variable = { var = PAU_mil_reform_org min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_planning min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_breakthrough min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_coordination min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_initiative min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_recon min = 0 max = 0.10 }
+    clamp_variable = { var = PAU_mil_reform_morale min = 0 max = 0.10 }
+    clamp_variable = { var = PAU_mil_reform_speed min = 0 max = 0.10 }
+    clamp_variable = { var = PAU_mil_reform_naval_coordination min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_ship_recovery min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_mil_reform_supply min = -0.15 max = 0 }
+    clamp_variable = { var = PAU_mil_reform_out_of_supply min = -0.15 max = 0 }
+    clamp_variable = { var = PAU_mil_reform_attrition min = -0.15 max = 0 }
+    clamp_variable = { var = PAU_mil_reform_training min = -0.15 max = 0 }
+    clamp_variable = { var = PAU_mil_reform_naval_penalty min = -0.15 max = 0 }
+    clamp_variable = { var = PAU_mil_reform_invasion_prep min = -0.2 max = 0 }
+    clamp_variable = { var = PAU_mil_reform_attack min = 0 max = 0.1 }
+    multiply_variable = { PAU_mil_reform_org = 20 }
+    round_variable = PAU_mil_reform_org
+    divide_variable = { PAU_mil_reform_org = 20 }
+    multiply_variable = { PAU_mil_reform_planning = 20 }
+    round_variable = PAU_mil_reform_planning
+    divide_variable = { PAU_mil_reform_planning = 20 }
+    multiply_variable = { PAU_mil_reform_breakthrough = 20 }
+    round_variable = PAU_mil_reform_breakthrough
+    divide_variable = { PAU_mil_reform_breakthrough = 20 }
+    multiply_variable = { PAU_mil_reform_coordination = 20 }
+    round_variable = PAU_mil_reform_coordination
+    divide_variable = { PAU_mil_reform_coordination = 20 }
+    multiply_variable = { PAU_mil_reform_initiative = 20 }
+    round_variable = PAU_mil_reform_initiative
+    divide_variable = { PAU_mil_reform_initiative = 20 }
+    multiply_variable = { PAU_mil_reform_recon = 20 }
+    round_variable = PAU_mil_reform_recon
+    divide_variable = { PAU_mil_reform_recon = 20 }
+    multiply_variable = { PAU_mil_reform_morale = 20 }
+    round_variable = PAU_mil_reform_morale
+    divide_variable = { PAU_mil_reform_morale = 20 }
+    multiply_variable = { PAU_mil_reform_speed = 20 }
+    round_variable = PAU_mil_reform_speed
+    divide_variable = { PAU_mil_reform_speed = 20 }
+    multiply_variable = { PAU_mil_reform_naval_coordination = 20 }
+    round_variable = PAU_mil_reform_naval_coordination
+    divide_variable = { PAU_mil_reform_naval_coordination = 20 }
+    multiply_variable = { PAU_mil_reform_ship_recovery = 20 }
+    round_variable = PAU_mil_reform_ship_recovery
+    divide_variable = { PAU_mil_reform_ship_recovery = 20 }
+    multiply_variable = { PAU_mil_reform_supply = 20 }
+    round_variable = PAU_mil_reform_supply
+    divide_variable = { PAU_mil_reform_supply = 20 }
+    multiply_variable = { PAU_mil_reform_out_of_supply = 20 }
+    round_variable = PAU_mil_reform_out_of_supply
+    divide_variable = { PAU_mil_reform_out_of_supply = 20 }
+    multiply_variable = { PAU_mil_reform_attrition = 20 }
+    round_variable = PAU_mil_reform_attrition
+    divide_variable = { PAU_mil_reform_attrition = 20 }
+    multiply_variable = { PAU_mil_reform_training = 20 }
+    round_variable = PAU_mil_reform_training
+    divide_variable = { PAU_mil_reform_training = 20 }
+    multiply_variable = { PAU_mil_reform_naval_penalty = 20 }
+    round_variable = PAU_mil_reform_naval_penalty
+    divide_variable = { PAU_mil_reform_naval_penalty = 20 }
+    multiply_variable = { PAU_mil_reform_invasion_prep = 20 }
+    round_variable = PAU_mil_reform_invasion_prep
+    divide_variable = { PAU_mil_reform_invasion_prep = 20 }
+    multiply_variable = { PAU_mil_reform_attack = 20 }
+    round_variable = PAU_mil_reform_attack
+    divide_variable = { PAU_mil_reform_attack = 20 }
+}
+
+PAU_refresh_eco_reform_tiers = {
+    if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_eco_reform } } check_variable = { PAU_eco_reform_progress > 0 } } add_dynamic_modifier = { modifier = PAU_eco_reform } }
+    if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }
+    if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }
+    if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }
+    if = { limit = { check_variable = { PAU_axia_eco > 0 } } set_country_flag = PAU_economy_reform_axia_unlocked }
+    if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
+    if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
+    set_variable = { PAU_eco_reform_industry = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_industry = 0.006 }
+    add_to_variable = { PAU_eco_reform_industry = PAU_eco_reform_bonus_industry }
+    set_variable = { PAU_eco_reform_construction = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_construction = 0.006 }
+    add_to_variable = { PAU_eco_reform_construction = PAU_eco_reform_bonus_construction }
+    set_variable = { PAU_eco_reform_arms = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_arms = 0.006 }
+    add_to_variable = { PAU_eco_reform_arms = PAU_eco_reform_bonus_arms }
+    set_variable = { PAU_eco_reform_buildings = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_buildings = 0.006 }
+    add_to_variable = { PAU_eco_reform_buildings = PAU_eco_reform_bonus_buildings }
+    set_variable = { PAU_eco_reform_dockyard = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_dockyard = 0.006 }
+    add_to_variable = { PAU_eco_reform_dockyard = PAU_eco_reform_bonus_dockyard }
+    set_variable = { PAU_eco_reform_shipyard = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_shipyard = 0.006 }
+    add_to_variable = { PAU_eco_reform_shipyard = PAU_eco_reform_bonus_shipyard }
+    set_variable = { PAU_eco_reform_political = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_political = 0.006 }
+    add_to_variable = { PAU_eco_reform_political = PAU_eco_reform_bonus_political }
+    set_variable = { PAU_eco_reform_research = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_research = 0.006 }
+    add_to_variable = { PAU_eco_reform_research = PAU_eco_reform_bonus_research }
+    set_variable = { PAU_eco_reform_fuel = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_fuel = 0.006 }
+    add_to_variable = { PAU_eco_reform_fuel = PAU_eco_reform_bonus_fuel }
+    set_variable = { PAU_eco_reform_efficiency = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_efficiency = 0.006 }
+    add_to_variable = { PAU_eco_reform_efficiency = PAU_eco_reform_bonus_efficiency }
+    set_variable = { PAU_eco_reform_trade = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_trade = 0.006 }
+    add_to_variable = { PAU_eco_reform_trade = PAU_eco_reform_bonus_trade }
+    set_variable = { PAU_eco_reform_morale = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_morale = 0.006 }
+    add_to_variable = { PAU_eco_reform_morale = PAU_eco_reform_bonus_morale }
+    set_variable = { PAU_eco_reform_consumer = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_consumer = -0.006 }
+    add_to_variable = { PAU_eco_reform_consumer = PAU_eco_reform_bonus_consumer }
+    set_variable = { PAU_eco_reform_supply = PAU_eco_reform_progress }
+    multiply_variable = { PAU_eco_reform_supply = -0.006 }
+    add_to_variable = { PAU_eco_reform_supply = PAU_eco_reform_bonus_supply }
+    clamp_variable = { var = PAU_eco_reform_industry min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_construction min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_arms min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_buildings min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_dockyard min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_shipyard min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_political min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_research min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_fuel min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_efficiency min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_trade min = 0 max = 0.15 }
+    clamp_variable = { var = PAU_eco_reform_morale min = 0 max = 0.10 }
+    clamp_variable = { var = PAU_eco_reform_consumer min = -0.15 max = 0 }
+    clamp_variable = { var = PAU_eco_reform_supply min = -0.15 max = 0 }
+    multiply_variable = { PAU_eco_reform_industry = 20 }
+    round_variable = PAU_eco_reform_industry
+    divide_variable = { PAU_eco_reform_industry = 20 }
+    multiply_variable = { PAU_eco_reform_construction = 20 }
+    round_variable = PAU_eco_reform_construction
+    divide_variable = { PAU_eco_reform_construction = 20 }
+    multiply_variable = { PAU_eco_reform_arms = 20 }
+    round_variable = PAU_eco_reform_arms
+    divide_variable = { PAU_eco_reform_arms = 20 }
+    multiply_variable = { PAU_eco_reform_buildings = 20 }
+    round_variable = PAU_eco_reform_buildings
+    divide_variable = { PAU_eco_reform_buildings = 20 }
+    multiply_variable = { PAU_eco_reform_dockyard = 20 }
+    round_variable = PAU_eco_reform_dockyard
+    divide_variable = { PAU_eco_reform_dockyard = 20 }
+    multiply_variable = { PAU_eco_reform_shipyard = 20 }
+    round_variable = PAU_eco_reform_shipyard
+    divide_variable = { PAU_eco_reform_shipyard = 20 }
+    multiply_variable = { PAU_eco_reform_political = 20 }
+    round_variable = PAU_eco_reform_political
+    divide_variable = { PAU_eco_reform_political = 20 }
+    multiply_variable = { PAU_eco_reform_research = 20 }
+    round_variable = PAU_eco_reform_research
+    divide_variable = { PAU_eco_reform_research = 20 }
+    multiply_variable = { PAU_eco_reform_fuel = 20 }
+    round_variable = PAU_eco_reform_fuel
+    divide_variable = { PAU_eco_reform_fuel = 20 }
+    multiply_variable = { PAU_eco_reform_efficiency = 20 }
+    round_variable = PAU_eco_reform_efficiency
+    divide_variable = { PAU_eco_reform_efficiency = 20 }
+    multiply_variable = { PAU_eco_reform_trade = 20 }
+    round_variable = PAU_eco_reform_trade
+    divide_variable = { PAU_eco_reform_trade = 20 }
+    multiply_variable = { PAU_eco_reform_morale = 20 }
+    round_variable = PAU_eco_reform_morale
+    divide_variable = { PAU_eco_reform_morale = 20 }
+    multiply_variable = { PAU_eco_reform_consumer = 20 }
+    round_variable = PAU_eco_reform_consumer
+    divide_variable = { PAU_eco_reform_consumer = 20 }
+    multiply_variable = { PAU_eco_reform_supply = 20 }
+    round_variable = PAU_eco_reform_supply
+    divide_variable = { PAU_eco_reform_supply = 20 }
+}
+
+PAU_refresh_harbor_spillover_states = {
+    if = {
+        limit = { NOT = { has_variable = PAU_harbor_dev } }
+        set_variable = { PAU_harbor_dev = 0 }
+    }
+    every_controlled_state = {
+        limit = {
+            NOT = { has_state_flag = PAU_safe_harbor }
+        }
+        if = {
+            limit = {
+                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_1 } }
+            }
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_1 }
+        }
+        if = {
+            limit = {
+                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_2 } }
+            }
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_2 }
+        }
+        if = {
+            limit = {
+                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_3 } }
+            }
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_3 }
+        }
+        if = {
+            limit = {
+                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_4 } }
+            }
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_4 }
+        }
+    }
+}
+
+PAU_expand_safe_harbor = {
+    add_extra_state_shared_building_slots = 1
+}
+
+PAU_auto_harbor_expand_effect = {
+    if = {
+        limit = {
+            has_country_flag = PAU_auto_harbor
+            check_variable = { PAU_harbor_dev < 6 }
+            has_political_power > 24
+            any_controlled_state = { has_state_flag = PAU_safe_harbor }
+        }
+        add_political_power = -25
+        random_controlled_state = {
+            limit = { has_state_flag = PAU_safe_harbor is_controlled_by = ROOT }
+            PAU_expand_safe_harbor = yes
+        }
+        add_to_variable = {
+            var = PAU_harbor_dev
+            value = 1
+            tooltip = PAU_harbor_dev_tt
+        }
+    }
+}
+
+PAU_do_baiye_patrol_once = {
+    clr_country_flag = PAU_baiye_patrol_done
+    random_controlled_state = {
+        limit = {
+            NOT = { has_state_flag = PAU_xiaoyao_state_flag }
+        }
+        set_state_flag = PAU_xiaoyao_state_flag
+        add_dynamic_modifier = { modifier = PAU_baiye_state }
+        ROOT = { set_country_flag = PAU_baiye_patrol_done }
+    }
+    if = {
+        limit = { has_country_flag = PAU_baiye_patrol_done }
+        add_to_variable = {
+            var = PAU_baiye_patrol_count
+            value = 1
+            tooltip = PAU_baiye_patrol_count_tt
+        }
+    }
+    clr_country_flag = PAU_baiye_patrol_done
+}
+
+PAU_auto_baiye_patrol_effect = {
+    if = {
+        limit = {
+            has_country_flag = PAU_auto_baiye
+            has_political_power > 4
+            any_controlled_state = {
+                NOT = { has_state_flag = PAU_xiaoyao_state_flag }
+            }
+        }
+        add_political_power = -5
+        PAU_do_baiye_patrol_once = yes
+    }
+}
+
+PAU_write_off_royal_arrears = {
+    if = {
+        limit = { has_idea = PAU_royal_arrears }
+        remove_ideas = PAU_royal_arrears
+    }
+    set_variable = { PAU_debt = 0 }
+    set_country_flag = PAU_arrears_written_off
+}
+
+PAU_queue_infrastructure_once = {
+    clr_country_flag = PAU_infra_queued_done
+    random_owned_controlled_state = {
+        limit = {
+            free_building_slots = { building = infrastructure size > 0 }
+            NOT = { has_state_flag = PAU_auto_infra_queued }
+        }
+        add_building_construction = { type = infrastructure level = 1 }
+        set_state_flag = { flag = PAU_auto_infra_queued days = 365 }
+        ROOT = { set_country_flag = PAU_infra_queued_done }
+    }
+    if = {
+        limit = { has_country_flag = PAU_infra_queued_done }
+        add_to_variable = {
+            var = PAU_auto_infra_count
+            value = 1
+            tooltip = PAU_auto_infra_count_tt
+        }
+    }
+    clr_country_flag = PAU_infra_queued_done
+}
+
+PAU_auto_infrastructure_effect = {
+    if = {
+        limit = {
+            has_country_flag = PAU_auto_infrastructure
+            has_political_power > 9
+            any_controlled_state = {
+                free_building_slots = { building = infrastructure size > 0 }
+                NOT = { has_state_flag = PAU_auto_infra_queued }
+            }
+        }
+        add_political_power = -10
+        PAU_queue_infrastructure_once = yes
+    }
+}
+
+PAU_refresh_undead_pressure = {
+    if = {
+        limit = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+            check_variable = { PAU_undead_pressure > 0 }
+        }
+        if = {
+            limit = { NOT = { has_dynamic_modifier = { modifier = PAU_undead_pressure } } }
+            add_dynamic_modifier = { modifier = PAU_undead_pressure }
+        }
+    }
+    else = {
+        remove_dynamic_modifier = { modifier = PAU_undead_pressure }
+    }
+}
+
+PAU_pull_into_white_night_faction = {
+    # 白夜同盟此时应已存在，不再新建阵营；仅把愿意入伙的一方拉进已有阵营。
+    if = {
+        limit = { PAU = { is_in_faction = yes is_faction_leader = yes } }
+        if = {
+            limit = { ROOT = { is_faction_leader = yes } }
+            ROOT = {
+                every_faction_member = {
+                    display_individual_scopes = yes
+                    leave_faction = yes
+                    PAU = { add_to_faction = PREV }
+                }
+            }
+        }
+        else = {
+            if = {
+                limit = { ROOT = { is_in_faction = yes } }
+                ROOT = { leave_faction = yes }
+            }
+            PAU = { add_to_faction = ROOT }
+        }
+    }
+}
+
+PAU_join_soviet_faction = {
+    if = {
+        limit = {
+            PAU = { is_in_faction = yes is_faction_leader = yes }
+            SOV = { is_in_faction = yes is_faction_leader = yes }
+            NOT = { PAU = { is_in_faction_with = SOV } }
+        }
+        PAU = {
+            every_faction_member = {
+                display_individual_scopes = yes
+                leave_faction = yes
+                ROOT = { add_to_faction = PREV }
+            }
+        }
+    }
+    else_if = {
+        limit = {
+            SOV = { is_in_faction = yes is_faction_leader = yes }
+            PAU = { NOT = { is_in_faction_with = SOV } }
+        }
+        if = {
+            limit = { PAU = { is_in_faction = yes } }
+            PAU = { leave_faction = yes }
+        }
+        SOV = { add_to_faction = PAU }
+    }
+}
+
+PAU_add_sakura_cores = {
+    every_controlled_state = {
+        limit = { is_core_of = JAP }
+        add_core_of = PAU
+    }
+}
+
+PAU_demand_sakura_cores_effect = {
+    every_country = {
+        limit = {
+            exists = yes
+            NOT = { tag = PAU }
+            NOT = { is_subject_of = ROOT }
+            NOT = { has_war_with = ROOT }
+            any_controlled_state = { is_core_of = JAP }
+        }
+        country_event = { id = PAU.550 hours = 1 }
+    }
+}
+
+PAU_refresh_south_america_members = {
+    if = {
+        limit = { has_country_flag = PAU_south_america_super_fired }
+        set_variable = { PAU_south_america_members = 0 }
+        every_faction_member = {
+            limit = {
+                NOT = { tag = PAU }
+                capital_scope = { is_on_continent = south_america }
+            }
+            ROOT = { add_to_variable = { PAU_south_america_members = 1 } }
+        }
+    }
+}
+
+PAU_refresh_south_america_development = {
+    if = {
+        limit = { has_country_flag = PAU_south_america_super_fired }
+        remove_dynamic_modifier = { modifier = PAU_south_america_development_tier1 }
+        remove_dynamic_modifier = { modifier = PAU_south_america_development_tier2 }
+        remove_dynamic_modifier = { modifier = PAU_south_america_development_tier3 }
+        if = {
+            limit = { check_variable = { PAU_south_america_development > 8 } }
+            add_dynamic_modifier = { modifier = PAU_south_america_development_tier3 }
+        }
+        else = {
+            if = {
+                limit = { check_variable = { PAU_south_america_development > 4 } }
+                add_dynamic_modifier = { modifier = PAU_south_america_development_tier2 }
+            }
+            else = {
+                if = {
+                    limit = { check_variable = { PAU_south_america_development > 0 } }
+                    add_dynamic_modifier = { modifier = PAU_south_america_development_tier1 }
+                }
+            }
+        }
+    }
+}
+
+PAU_refresh_late_networks = {
+    if = {
+        limit = {
+            OR = {
+                has_country_flag = PAU_revolution_network_active
+                has_country_flag = PAU_world_revolution
+            }
+        }
+        set_country_flag = PAU_revolution_network_active
+        if = {
+            limit = { check_variable = { PAU_export_successes > 4 } }
+            if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_revolution_network_3 } } } add_dynamic_modifier = { modifier = PAU_revolution_network_3 } }
+            remove_dynamic_modifier = { modifier = PAU_revolution_network_2 }
+            remove_dynamic_modifier = { modifier = PAU_revolution_network }
+        }
+        else = {
+            if = {
+                limit = { check_variable = { PAU_export_successes > 2 } }
+                if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_revolution_network_2 } } } add_dynamic_modifier = { modifier = PAU_revolution_network_2 } }
+                remove_dynamic_modifier = { modifier = PAU_revolution_network }
+                remove_dynamic_modifier = { modifier = PAU_revolution_network_3 }
+            }
+            else = {
+                if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_revolution_network } } } add_dynamic_modifier = { modifier = PAU_revolution_network } }
+                remove_dynamic_modifier = { modifier = PAU_revolution_network_2 }
+                remove_dynamic_modifier = { modifier = PAU_revolution_network_3 }
+            }
+        }
+    }
+    if = {
+        limit = {
+            OR = {
+                has_country_flag = PAU_trade_network_active
+                has_country_flag = PAU_peaceful_coexistence
+            }
+        }
+        set_country_flag = PAU_trade_network_active
+        if = {
+            limit = { check_variable = { PAU_trade_partners > 4 } }
+            if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_trade_network_3 } } } add_dynamic_modifier = { modifier = PAU_trade_network_3 } }
+            remove_dynamic_modifier = { modifier = PAU_trade_network_2 }
+            remove_dynamic_modifier = { modifier = PAU_trade_network }
+        }
+        else = {
+            if = {
+                limit = { check_variable = { PAU_trade_partners > 2 } }
+                if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_trade_network_2 } } } add_dynamic_modifier = { modifier = PAU_trade_network_2 } }
+                remove_dynamic_modifier = { modifier = PAU_trade_network }
+                remove_dynamic_modifier = { modifier = PAU_trade_network_3 }
+            }
+            else = {
+                if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_trade_network } } } add_dynamic_modifier = { modifier = PAU_trade_network } }
+                remove_dynamic_modifier = { modifier = PAU_trade_network_2 }
+                remove_dynamic_modifier = { modifier = PAU_trade_network_3 }
+            }
+        }
+    }
+    if = {
+        limit = {
+            OR = {
+                has_country_flag = PAU_coastal_network_active
+                has_country_flag = PAU_armed_neutrality
+            }
+        }
+        set_country_flag = PAU_coastal_network_active
+        if = {
+            limit = { check_variable = { PAU_coastal_defenses > 4 } }
+            if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_coastal_network_3 } } } add_dynamic_modifier = { modifier = PAU_coastal_network_3 } }
+            remove_dynamic_modifier = { modifier = PAU_coastal_network_2 }
+            remove_dynamic_modifier = { modifier = PAU_coastal_network }
+        }
+        else = {
+            if = {
+                limit = { check_variable = { PAU_coastal_defenses > 2 } }
+                if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_coastal_network_2 } } } add_dynamic_modifier = { modifier = PAU_coastal_network_2 } }
+                remove_dynamic_modifier = { modifier = PAU_coastal_network }
+                remove_dynamic_modifier = { modifier = PAU_coastal_network_3 }
+            }
+            else = {
+                if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_coastal_network } } } add_dynamic_modifier = { modifier = PAU_coastal_network } }
+                remove_dynamic_modifier = { modifier = PAU_coastal_network_2 }
+                remove_dynamic_modifier = { modifier = PAU_coastal_network_3 }
+            }
+        }
+    }
+}
+
+PAU_call_joint_staff_college = {
+    every_faction_member = {
+        limit = {
+            NOT = { tag = PAU }
+            capital_scope = { is_on_continent = south_america }
+        }
+        country_event = { id = PAU.580 days = 1 }
+    }
+}
+
+PAU_refresh_joint_staff_college = {
+    remove_dynamic_modifier = { modifier = PAU_joint_staff_college_tier1 }
+    remove_dynamic_modifier = { modifier = PAU_joint_staff_college_tier2 }
+    remove_dynamic_modifier = { modifier = PAU_joint_staff_college_tier3 }
+    set_variable = { PAU_sa_college_tier = 0 }
+    if = {
+        limit = {
+            check_variable = { PAU_sa_college_armor > 2 }
+            check_variable = { PAU_sa_college_infantry > 2 }
+            check_variable = { PAU_sa_college_operations > 2 }
+        }
+        add_dynamic_modifier = { modifier = PAU_joint_staff_college_tier3 }
+        set_variable = { PAU_sa_college_tier = 3 }
+    }
+    else_if = {
+        limit = {
+            check_variable = { PAU_sa_college_armor > 1 }
+            check_variable = { PAU_sa_college_infantry > 1 }
+            check_variable = { PAU_sa_college_operations > 1 }
+        }
+        add_dynamic_modifier = { modifier = PAU_joint_staff_college_tier2 }
+        set_variable = { PAU_sa_college_tier = 2 }
+    }
+    else_if = {
+        limit = {
+            check_variable = { PAU_sa_college_armor > 0 }
+            check_variable = { PAU_sa_college_infantry > 0 }
+            check_variable = { PAU_sa_college_operations > 0 }
+        }
+        add_dynamic_modifier = { modifier = PAU_joint_staff_college_tier1 }
+        set_variable = { PAU_sa_college_tier = 1 }
+    }
+}
+
+PAU_call_state_council_missions = {
+    every_faction_member = {
+        limit = {
+            NOT = { tag = PAU }
+            capital_scope = { is_on_continent = south_america }
+        }
+        country_event = { id = PAU.610 days = 1 }
+    }
+}
+
+PAU_refresh_state_council = {
+    remove_dynamic_modifier = { modifier = PAU_state_council_tier1 }
+    remove_dynamic_modifier = { modifier = PAU_state_council_tier2 }
+    remove_dynamic_modifier = { modifier = PAU_state_council_tier3 }
+    set_variable = { PAU_sa_state_tier = 0 }
+    if = {
+        limit = {
+            check_variable = { PAU_sa_state_industry > 2 }
+            check_variable = { PAU_sa_state_infrastructure > 2 }
+            check_variable = { PAU_sa_state_trade > 2 }
+            check_variable = { PAU_sa_state_diplomacy > 2 }
+            check_variable = { PAU_sa_state_welfare > 2 }
+            check_variable = { PAU_sa_state_mobilization > 2 }
+        }
+        add_dynamic_modifier = { modifier = PAU_state_council_tier3 }
+        set_variable = { PAU_sa_state_tier = 3 }
+    }
+    else_if = {
+        limit = {
+            check_variable = { PAU_sa_state_industry > 1 }
+            check_variable = { PAU_sa_state_infrastructure > 1 }
+            check_variable = { PAU_sa_state_trade > 1 }
+            check_variable = { PAU_sa_state_diplomacy > 1 }
+            check_variable = { PAU_sa_state_welfare > 1 }
+            check_variable = { PAU_sa_state_mobilization > 1 }
+        }
+        add_dynamic_modifier = { modifier = PAU_state_council_tier2 }
+        set_variable = { PAU_sa_state_tier = 2 }
+    }
+    else_if = {
+        limit = {
+            check_variable = { PAU_sa_state_industry > 0 }
+            check_variable = { PAU_sa_state_infrastructure > 0 }
+            check_variable = { PAU_sa_state_trade > 0 }
+            check_variable = { PAU_sa_state_diplomacy > 0 }
+            check_variable = { PAU_sa_state_welfare > 0 }
+            check_variable = { PAU_sa_state_mobilization > 0 }
+        }
+        add_dynamic_modifier = { modifier = PAU_state_council_tier1 }
+        set_variable = { PAU_sa_state_tier = 1 }
+    }
+}
+
+PAU_refresh_axia_reform = {
+    remove_dynamic_modifier = { modifier = PAU_path_axia_tier1 }
+    remove_dynamic_modifier = { modifier = PAU_path_axia_tier2 }
+    remove_dynamic_modifier = { modifier = PAU_path_axia_tier3 }
+    if = {
+        limit = { check_variable = { PAU_axia_reform_progress > 8 } }
+        add_dynamic_modifier = { modifier = PAU_path_axia_tier3 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_axia_reform_progress > 4 } }
+        add_dynamic_modifier = { modifier = PAU_path_axia_tier2 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_axia_reform_progress > 0 } }
+        add_dynamic_modifier = { modifier = PAU_path_axia_tier1 }
+    }
+}
+
+PAU_refresh_xfxy_reform = {
+    remove_dynamic_modifier = { modifier = PAU_path_xfxy_tier1 }
+    remove_dynamic_modifier = { modifier = PAU_path_xfxy_tier2 }
+    remove_dynamic_modifier = { modifier = PAU_path_xfxy_tier3 }
+    if = {
+        limit = { check_variable = { PAU_xfxy_reform_progress > 8 } }
+        add_dynamic_modifier = { modifier = PAU_path_xfxy_tier3 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_xfxy_reform_progress > 4 } }
+        add_dynamic_modifier = { modifier = PAU_path_xfxy_tier2 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_xfxy_reform_progress > 0 } }
+        add_dynamic_modifier = { modifier = PAU_path_xfxy_tier1 }
+    }
+}
+
+PAU_refresh_xiaoyao_reform = {
+    remove_dynamic_modifier = { modifier = PAU_path_xiaoyao_tier1 }
+    remove_dynamic_modifier = { modifier = PAU_path_xiaoyao_tier2 }
+    remove_dynamic_modifier = { modifier = PAU_path_xiaoyao_tier3 }
+    if = {
+        limit = { check_variable = { PAU_xiaoyao_reform_progress > 8 } }
+        add_dynamic_modifier = { modifier = PAU_path_xiaoyao_tier3 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_xiaoyao_reform_progress > 4 } }
+        add_dynamic_modifier = { modifier = PAU_path_xiaoyao_tier2 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_xiaoyao_reform_progress > 0 } }
+        add_dynamic_modifier = { modifier = PAU_path_xiaoyao_tier1 }
+    }
+}
+
+PAU_init_diplomacy_vars = {
+    if = { limit = { NOT = { has_variable = PAU_china_agreements } } set_variable = { PAU_china_agreements = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_china_refusals } } set_variable = { PAU_china_refusals = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_north_america_agreements } } set_variable = { PAU_north_america_agreements = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_north_america_refusals } } set_variable = { PAU_north_america_refusals = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_export_successes } } set_variable = { PAU_export_successes = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_trade_partners } } set_variable = { PAU_trade_partners = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_coastal_defenses } } set_variable = { PAU_coastal_defenses = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_baiye_patrol_count } } set_variable = { PAU_baiye_patrol_count = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_auto_infra_count } } set_variable = { PAU_auto_infra_count = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_south_america_members } } set_variable = { PAU_south_america_members = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_south_america_development } } set_variable = { PAU_south_america_development = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_college_armor } } set_variable = { PAU_sa_college_armor = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_college_infantry } } set_variable = { PAU_sa_college_infantry = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_college_operations } } set_variable = { PAU_sa_college_operations = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_study_points } } set_variable = { PAU_sa_study_points = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_college_tier } } set_variable = { PAU_sa_college_tier = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_industry } } set_variable = { PAU_sa_state_industry = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_infrastructure } } set_variable = { PAU_sa_state_infrastructure = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_trade } } set_variable = { PAU_sa_state_trade = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_diplomacy } } set_variable = { PAU_sa_state_diplomacy = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_welfare } } set_variable = { PAU_sa_state_welfare = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_mobilization } } set_variable = { PAU_sa_state_mobilization = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_points } } set_variable = { PAU_sa_state_points = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_sa_state_tier } } set_variable = { PAU_sa_state_tier = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_axia_reform_progress } } set_variable = { PAU_axia_reform_progress = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_xfxy_reform_progress } } set_variable = { PAU_xfxy_reform_progress = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_xiaoyao_reform_progress } } set_variable = { PAU_xiaoyao_reform_progress = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_org } } set_variable = { PAU_mil_reform_org = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_org } } set_variable = { PAU_mil_reform_bonus_org = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_planning } } set_variable = { PAU_mil_reform_planning = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_planning } } set_variable = { PAU_mil_reform_bonus_planning = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_attack } } set_variable = { PAU_mil_reform_attack = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_attack } } set_variable = { PAU_mil_reform_bonus_attack = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_breakthrough } } set_variable = { PAU_mil_reform_breakthrough = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_breakthrough } } set_variable = { PAU_mil_reform_bonus_breakthrough = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_coordination } } set_variable = { PAU_mil_reform_coordination = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_coordination } } set_variable = { PAU_mil_reform_bonus_coordination = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_initiative } } set_variable = { PAU_mil_reform_initiative = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_initiative } } set_variable = { PAU_mil_reform_bonus_initiative = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_recon } } set_variable = { PAU_mil_reform_recon = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_recon } } set_variable = { PAU_mil_reform_bonus_recon = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_supply } } set_variable = { PAU_mil_reform_supply = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_supply } } set_variable = { PAU_mil_reform_bonus_supply = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_out_of_supply } } set_variable = { PAU_mil_reform_out_of_supply = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_out_of_supply } } set_variable = { PAU_mil_reform_bonus_out_of_supply = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_attrition } } set_variable = { PAU_mil_reform_attrition = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_attrition } } set_variable = { PAU_mil_reform_bonus_attrition = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_training } } set_variable = { PAU_mil_reform_training = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_training } } set_variable = { PAU_mil_reform_bonus_training = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_morale } } set_variable = { PAU_mil_reform_morale = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_morale } } set_variable = { PAU_mil_reform_bonus_morale = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_speed } } set_variable = { PAU_mil_reform_speed = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_speed } } set_variable = { PAU_mil_reform_bonus_speed = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_naval_coordination } } set_variable = { PAU_mil_reform_naval_coordination = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_naval_coordination } } set_variable = { PAU_mil_reform_bonus_naval_coordination = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_ship_recovery } } set_variable = { PAU_mil_reform_ship_recovery = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_ship_recovery } } set_variable = { PAU_mil_reform_bonus_ship_recovery = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_invasion_prep } } set_variable = { PAU_mil_reform_invasion_prep = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_invasion_prep } } set_variable = { PAU_mil_reform_bonus_invasion_prep = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_naval_penalty } } set_variable = { PAU_mil_reform_naval_penalty = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_naval_penalty } } set_variable = { PAU_mil_reform_bonus_naval_penalty = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_industry } } set_variable = { PAU_eco_reform_industry = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_industry } } set_variable = { PAU_eco_reform_bonus_industry = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_construction } } set_variable = { PAU_eco_reform_construction = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_construction } } set_variable = { PAU_eco_reform_bonus_construction = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_arms } } set_variable = { PAU_eco_reform_arms = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_arms } } set_variable = { PAU_eco_reform_bonus_arms = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_buildings } } set_variable = { PAU_eco_reform_buildings = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_buildings } } set_variable = { PAU_eco_reform_bonus_buildings = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_dockyard } } set_variable = { PAU_eco_reform_dockyard = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_dockyard } } set_variable = { PAU_eco_reform_bonus_dockyard = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_shipyard } } set_variable = { PAU_eco_reform_shipyard = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_shipyard } } set_variable = { PAU_eco_reform_bonus_shipyard = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_consumer } } set_variable = { PAU_eco_reform_consumer = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_consumer } } set_variable = { PAU_eco_reform_bonus_consumer = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_political } } set_variable = { PAU_eco_reform_political = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_political } } set_variable = { PAU_eco_reform_bonus_political = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_research } } set_variable = { PAU_eco_reform_research = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_research } } set_variable = { PAU_eco_reform_bonus_research = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_fuel } } set_variable = { PAU_eco_reform_fuel = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_fuel } } set_variable = { PAU_eco_reform_bonus_fuel = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_efficiency } } set_variable = { PAU_eco_reform_efficiency = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_efficiency } } set_variable = { PAU_eco_reform_bonus_efficiency = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_trade } } set_variable = { PAU_eco_reform_trade = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_trade } } set_variable = { PAU_eco_reform_bonus_trade = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_morale } } set_variable = { PAU_eco_reform_morale = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_morale } } set_variable = { PAU_eco_reform_bonus_morale = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_supply } } set_variable = { PAU_eco_reform_supply = 0 } }
+    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_supply } } set_variable = { PAU_eco_reform_bonus_supply = 0 } }
+}
