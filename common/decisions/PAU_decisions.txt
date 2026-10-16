@@ -42,6 +42,7 @@ PAU_LHS_weiji = {
 
         timeout_effect = {
             set_country_flag = PAU_weiji1
+            effect_tooltip = {
                 278 = {
                     CONTROLLER = {
                         diplomatic_relation = {
@@ -59,6 +60,7 @@ PAU_LHS_weiji = {
                         declare_war_on = { target = PREV type = annex_everything }
                     }
                 }
+            }
         }
         complete_effect = {
         }
@@ -384,7 +386,10 @@ PAU_LHS_weiji = {
         }
         icon = GFX_weaving_death_shroud
         available = {
-            always = no
+            or = {
+                not = { country_exists = PAU }
+                has_completed_focus = PAU_jjka
+            }
         }
         activation = {
             always = no
@@ -429,6 +434,7 @@ PAU_LHS_weiji = {
         available = {
             NOT = { has_country_flag = xiaoyao_plan_flag } #正在进行
             FROM = {
+                has_state_flag = is_lldy_state_flag
                 or = {
                     any_neighbor_state = {
                         has_state_flag = PAU_xiaoyao_state_flag
@@ -438,6 +444,7 @@ PAU_LHS_weiji = {
             }
         }
         visible = {
+            has_country_flag = has_PAU_xiaoyao
             NOT = { has_country_flag = PAU_auto_baiye }
         }
         on_map_mode = map_and_decisions_view
@@ -453,10 +460,7 @@ PAU_LHS_weiji = {
                     }
                     is_controlled_by = PAU
                 }
-                or = {
-                    is_core_of = PAU
-                    is_core_of = PAM
-                }
+                has_state_flag = is_lldy_state_flag
             }
         }
         #target_array = controlled_states
@@ -477,43 +481,24 @@ PAU_LHS_weiji = {
                     modifier = PAU_baiye_state
                 }
             }
-            add_to_variable = {
-                var = PAU_baiye_patrol_count
-                value = 1
-                tooltip = PAU_baiye_patrol_count_tt
-            }
         }
         ai_will_do = {
             factor = 0
         }
     }
-    PAU_baiye_patrol_once = {
-        icon = GFX_PAU_baiye_state
-        allowed = { original_tag = PAU }
-        visible = { has_country_flag = has_PAU_xiaoyao3 NOT = { has_country_flag = PAU_auto_baiye } }
-        available = {
-            has_political_power > 4
-            any_controlled_state = {
-                NOT = { has_state_flag = PAU_xiaoyao_state_flag }
-            }
-        }
-        cost = 5
-        fire_only_once = no
-        complete_effect = {
-            PAU_do_baiye_patrol_once = yes
-        }
-        ai_will_do = { factor = 10 }
-    }
 
     PAU_baiye_auto = {
         icon = GFX_PAM_denghuo
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = has_PAU_xiaoyao3 NOT = { has_country_flag = PAU_auto_baiye } }
+        visible = { 
+            has_completed_focus = PAU_tyzz
+            NOT = { has_country_flag = PAU_auto_baiye } 
+        }
         cost = 0
         fire_only_once = no
-        custom_effect_tooltip = PAU_baiye_auto_on_tt
         complete_effect = {
             set_country_flag = PAU_auto_baiye
+            custom_effect_tooltip = PAU_baiye_auto_on_tt
             activate_mission = PAU_baiye_auto_task
         }
         ai_will_do = { factor = 0 }
@@ -523,26 +508,34 @@ PAU_LHS_weiji = {
         icon = GFX_PAM_pdtl
         allowed = { original_tag = PAU }
         available = { always = no }
-        activation = { has_country_flag = PAU_auto_baiye }
+        activation = { always = no }
         selectable_mission = no
         is_good = yes
-        custom_effect_tooltip = PAU_baiye_auto_task_tt
         days_mission_timeout = 30
-        cancel_trigger = { NOT = { has_country_flag = PAU_auto_baiye } }
+        cancel_trigger = { not = { has_country_flag = PAU_auto_baiye } }
         timeout_effect = {
+        custom_effect_tooltip = PAU_baiye_auto_task_tt
             if = {
                 limit = {
-                    has_country_flag = PAU_auto_baiye
-                    has_political_power > 4
-                    any_controlled_state = { NOT = { has_state_flag = PAU_xiaoyao_state_flag } }
+                    any_controlled_state = { 
+                        has_state_flag = is_lldy_state_flag
+                        not = { 
+                            has_state_flag = PAU_xiaoyao_state_flag 
+                        } 
+                    }
                 }
-                add_political_power = -5
+                add_political_power = -10
                 random_controlled_state = {
-                    limit = { NOT = { has_state_flag = PAU_xiaoyao_state_flag } }
+                    limit = { 
+                        any_neighbor_state = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                        not = { has_state_flag = PAU_xiaoyao_state_flag } 
+                        has_state_flag = is_lldy_state_flag
+                    }
                     set_state_flag = PAU_xiaoyao_state_flag
                     add_dynamic_modifier = { modifier = PAU_baiye_state }
                 }
-                add_to_variable = { var = PAU_baiye_patrol_count value = 1 tooltip = PAU_baiye_patrol_count_tt }
             }
             activate_mission = PAU_baiye_auto_task
         }
@@ -554,7 +547,10 @@ PAU_LHS_weiji = {
     PAU_baiye_auto_cancel = {
         icon = GFX_FRA_button_close
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = has_PAU_xiaoyao3 has_country_flag = PAU_auto_baiye }
+        visible = { 
+            has_completed_focus = PAU_tyzz
+            has_country_flag = PAU_auto_baiye 
+        }
         cost = 0
         fire_only_once = no
         complete_effect = {
@@ -609,7 +605,7 @@ PAU_hetong = {
         on_map_mode = decision_view_only
         allowed = { tag = PAU }
         visible = {
-            #has_completed_focus = PAU_gxzp
+            has_completed_focus = PAU_gxzp
         }
         available = {
             has_war = no
@@ -694,7 +690,7 @@ PAU_hetong = {
         }
 
         complete_effect = {
-            add_dynamic_modifier = { modifier = PAU_annex_debuff }
+            add_ideas = PAU_annex_debuff
 
             FROM = {
                 clr_country_flag = yaobuyaoguyong  #要不要
@@ -741,7 +737,7 @@ PAU_hetong = {
         }
 
         timeout_effect = {
-            add_dynamic_modifier = { modifier = PAU_annex_debuff }
+            add_ideas = PAU_annex_debuff
 
             FROM = {
                 clr_country_flag = yaobuyaoguyong  #要不要
@@ -824,14 +820,14 @@ PAU_hetong = {
         visible = {
         }
         cancel_effect = {
-            remove_dynamic_modifier = { modifier = PAU_annex_debuff }
+            remove_ideas = PAU_annex_debuff
             clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
             if = { #投降
                 limit = {
                     has_country_flag = PAU_guyonged_touxiang_flag
                 }
-                add_dynamic_modifier = {
-                    modifier = PAU_guyong_debuff
+                add_timed_idea = {
+                    idea = PAU_guyong_debuff
                     days = 90
                 }
                 every_country = {
@@ -875,8 +871,8 @@ PAU_hetong = {
                             exists = no
                         }
                     }
-                    add_dynamic_modifier = {
-                        modifier = PAU_guyong_debuff
+                    add_timed_idea = {
+                        idea = PAU_guyong_debuff
                         days = 90
                     }
                     effect_tooltip = {
@@ -917,8 +913,8 @@ PAU_hetong = {
                             has_war_with  = ROOT
                         }
                     }
-                    add_dynamic_modifier = {
-                        modifier = PAU_guyong_debuff
+                    add_timed_idea = {
+                        idea = PAU_guyong_debuff
                         days = 180
                     }
                     effect_tooltip = {
@@ -1013,7 +1009,7 @@ PAU_hetong = {
                 }
                 clr_country_flag = PAU_bop_loan_active
             }
-            remove_dynamic_modifier = { modifier = PAU_annex_debuff }
+            remove_ideas = PAU_annex_debuff
             clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
             #超时失败
             country_event = { id = PAU.177 hours = 6 }
@@ -1024,13 +1020,13 @@ PAU_hetong = {
         allowed = { tag = PAU }
 
         available = {
-            has_dynamic_modifier = { modifier = PAU_annex_debuff }
+            has_idea = PAU_annex_debuff 
             has_war = yes
         }
         cost = 50
 
         visible = {
-            has_dynamic_modifier = { modifier = PAU_annex_debuff }
+            has_idea = PAU_annex_debuff 
             has_war = yes
         }
 
@@ -1059,11 +1055,12 @@ PAU_hetong = {
 
 
 
-PAU_lhs_integration = {
+PAU_lhs_integration = { #有点东西，但东西不多
     PAU_lhs_keep_cadres = {
         icon = GFX_youji_on_me3
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_lhs_absorbed }
+        visible = { 
+        }
         cost = 25
         fire_only_once = yes
         days_remove = 30
@@ -1081,7 +1078,7 @@ PAU_lhs_integration = {
     PAU_lhs_dissolve = {
         icon = GFX_USA_Reform_of_Red_Army_Red_Star
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_lhs_absorbed }
+        visible = {  }
         cost = 25
         fire_only_once = yes
         days_remove = 30
@@ -1098,7 +1095,7 @@ PAU_lhs_integration = {
     PAU_lhs_joint_drill = {
         icon = GFX_KNM_military_exercise
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_lhs_absorbed }
+        visible = {  }
         available = { check_variable = { PAU_lhs_integration < 100 } }
         cost = 25
         fire_only_once = yes
@@ -1116,7 +1113,7 @@ PAU_lhs_integration = {
     PAU_lhs_finish = {
         icon = GFX_youji_on_me2
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_lhs_absorbed }
+        visible = {  }
         available = {
             custom_trigger_tooltip = {
                 tooltip = PAU_lhs_finish_available_tt
@@ -1166,7 +1163,7 @@ PAU_lhs_integration = {
     }
 }
 
-PAU_grail_camp = {
+PAU_grail_camp = { #存疑
     PAU_grail_split_rations = {
         icon = GFX_mission_feed_the_mad_dog
         allowed = { original_tag = PAU }
@@ -1244,7 +1241,7 @@ PAU_grail_camp = {
     }
 }
 
-PAU_safe_harbor = {
+PAU_safe_harbor = { #奇怪的修正
     PAU_designate_safe_harbor = {
         icon = GFX_mission_build_nest_for_seagull
         allowed = { original_tag = PAU }
@@ -1447,7 +1444,7 @@ PAU_safe_harbor = {
     }
 }
 
-PAU_undead_containment = {
+PAU_undead_containment = { #？
     PAU_undead_evacuate = {
         icon = GFX_KNM_KFL_transfer1
         allowed = { original_tag = PAU }
@@ -1598,7 +1595,6 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_recon_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1608,7 +1604,6 @@ PAU_army_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_nyjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_supply_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1633,7 +1628,6 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_supply_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1643,7 +1637,6 @@ PAU_army_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_nyfy
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_armor_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1668,7 +1661,6 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_armor_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1678,7 +1670,6 @@ PAU_army_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_jhdd
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_medics_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1698,7 +1689,6 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_medics_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1708,7 +1698,6 @@ PAU_army_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_zsjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_field_kitchen_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1733,7 +1722,6 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_field_kitchen_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1743,7 +1731,6 @@ PAU_army_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_sjjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_night_march_done } }
         }
         cost = 10
         fire_only_once = yes
@@ -1768,7 +1755,6 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_night_march_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1778,7 +1764,6 @@ PAU_army_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_nlwq2
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_veteran_school_done } }
         }
         cost = 25
         fire_only_once = yes
@@ -1803,23 +1788,22 @@ PAU_army_reform_axia = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_veteran_school_done
         }
         ai_will_do = { factor = 10 }
     }
     PAU_accel_axia_mil_1 = {
         icon = GFX_decision_category_USA_war_measures
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjs }
+        }
         available = {
             has_completed_focus = PAM_ax_bz
-            NOT = { has_completed_focus = PAM_ax_sjjs }
             has_political_power > 24
         }
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_ax_bz cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_ax_nyjs cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_ax_nyfy cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_ax_jhdd cost = 12 }
@@ -1832,19 +1816,16 @@ PAU_army_reform_axia = {
     PAU_accel_axia_mil_2 = {
         icon = GFX_decision_All_Star
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjs }
+        }
         available = {
             has_completed_focus = PAM_ax_jhdd
-            NOT = { has_completed_focus = PAM_ax_sjjs }
             has_political_power > 49
         }
         cost = 50
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_ax_bz cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_ax_nyjs cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_ax_nyfy cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_ax_jhdd cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_ax_zsjs cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_ax_sjjs cost = 13 }
         }
@@ -1859,7 +1840,6 @@ PAU_army_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_jsgz
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_command_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1884,7 +1864,6 @@ PAU_army_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_command_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1894,7 +1873,6 @@ PAU_army_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_nyjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_signal_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1914,7 +1892,6 @@ PAU_army_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_signal_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1924,7 +1901,6 @@ PAU_army_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_nytjjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_joint_defense_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1949,7 +1925,6 @@ PAU_army_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_joint_defense_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1959,7 +1934,6 @@ PAU_army_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_ycdd
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_radio_net_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -1984,7 +1958,6 @@ PAU_army_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_radio_net_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -1994,7 +1967,6 @@ PAU_army_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_zsjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_signal_drill_done } }
         }
         cost = 10
         fire_only_once = yes
@@ -2019,7 +1991,6 @@ PAU_army_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_signal_drill_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2029,7 +2000,6 @@ PAU_army_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_sjjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_winter_gear_done } }
         }
         cost = 25
         fire_only_once = yes
@@ -2054,23 +2024,22 @@ PAU_army_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_winter_gear_done
         }
         ai_will_do = { factor = 10 }
     }
     PAU_accel_xfxy_mil_1 = {
         icon = GFX_trait_LUG_the_training_trait
         allowed = { original_tag = PAU }
-        visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_jsgz
-            NOT = { has_completed_focus = PAM_xfxy_sjjs }
             has_political_power > 24
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjjs }
         }
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xfxy_jsgz cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_nyjs cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_nytjjs cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_ycdd cost = 12 }
@@ -2083,19 +2052,16 @@ PAU_army_reform_xfxy = {
     PAU_accel_xfxy_mil_2 = {
         icon = GFX_faction_logo_MiddleEast_Cooperation_Council_miniature
         allowed = { original_tag = PAU }
-        visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_ycdd
-            NOT = { has_completed_focus = PAM_xfxy_sjjs }
             has_political_power > 49
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjjs }
         }
         cost = 50
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xfxy_jsgz cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xfxy_nyjs cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xfxy_nytjjs cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xfxy_ycdd cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_zsjs cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_sjjs cost = 13 }
         }
@@ -2110,7 +2076,6 @@ PAU_army_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_fy
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_navy_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2135,7 +2100,6 @@ PAU_army_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_navy_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2145,7 +2109,6 @@ PAU_army_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_nyjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_expedition_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2170,7 +2133,6 @@ PAU_army_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_expedition_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2180,7 +2142,6 @@ PAU_army_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_tltx
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_landing_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2205,7 +2166,6 @@ PAU_army_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_landing_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2215,7 +2175,6 @@ PAU_army_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_ydjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_landing_craft_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2240,7 +2199,6 @@ PAU_army_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_landing_craft_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2250,7 +2208,6 @@ PAU_army_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_zsjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_shore_drill_done } }
         }
         cost = 10
         fire_only_once = yes
@@ -2275,7 +2232,6 @@ PAU_army_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_shore_drill_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2285,7 +2241,6 @@ PAU_army_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_sjjs
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_marine_corps_done } }
         }
         cost = 25
         fire_only_once = yes
@@ -2310,23 +2265,22 @@ PAU_army_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_marine_corps_done
         }
         ai_will_do = { factor = 10 }
     }
     PAU_accel_xy_mil_1 = {
         icon = GFX_EMI_Kivotos_special_module_radar_navy
         allowed = { original_tag = PAU }
-        visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_fy
-            NOT = { has_completed_focus = PAM_xy_sjjs }
             has_political_power > 24
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjs }
         }
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xy_fy cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xy_nyjs cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xy_tltx cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xy_ydjs cost = 12 }
@@ -2339,19 +2293,16 @@ PAU_army_reform_xiaoyao = {
     PAU_accel_xy_mil_2 = {
         icon = GFX_icon_Friendship_mutual_aid_faction
         allowed = { original_tag = PAU }
-        visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_ydjs
-            NOT = { has_completed_focus = PAM_xy_sjjs }
             has_political_power > 49
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjs }
         }
         cost = 50
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xy_fy cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xy_nyjs cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xy_tltx cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xy_ydjs cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xy_zsjs cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xy_sjjs cost = 13 }
         }
@@ -2366,7 +2317,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_jt
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_granary_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2386,7 +2336,6 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_granary_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2396,7 +2345,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_nyjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_workshop_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2421,7 +2369,6 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_workshop_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2431,7 +2378,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_nyxx
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_currency_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2456,7 +2402,6 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_currency_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2466,7 +2411,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_hyjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_trade_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2491,7 +2435,6 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_trade_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2501,7 +2444,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_zsjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_ration_standard_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2526,7 +2468,6 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_ration_standard_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2536,7 +2477,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_ax_sjjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_granary_audit_done } }
         }
         cost = 10
         fire_only_once = yes
@@ -2561,7 +2501,6 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_granary_audit_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2571,7 +2510,6 @@ PAU_economy_reform_axia = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_nljj2
-            hidden_trigger = { NOT = { has_country_flag = PAU_axia_tool_recovery_done } }
         }
         cost = 25
         fire_only_once = yes
@@ -2596,23 +2534,22 @@ PAU_economy_reform_axia = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_axia_tool_recovery_done
         }
         ai_will_do = { factor = 10 }
     }
     PAU_accel_axia_eco_1 = {
         icon = GFX_decision_generic_electricity
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjj }
+        }
         available = {
             has_completed_focus = PAM_ax_jt
-            NOT = { has_completed_focus = PAM_ax_sjjj }
             has_political_power > 24
         }
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_ax_jt cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_ax_nyjj cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_ax_nyxx cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_ax_hyjj cost = 12 }
@@ -2625,19 +2562,16 @@ PAU_economy_reform_axia = {
     PAU_accel_axia_eco_2 = {
         icon = GFX_FRA_Kappa_Heavy_Industries_state_modifier
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjj }
+        }
         available = {
             has_completed_focus = PAM_ax_hyjj
-            NOT = { has_completed_focus = PAM_ax_sjjj }
             has_political_power > 49
         }
         cost = 50
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_ax_jt cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_ax_nyjj cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_ax_nyxx cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_ax_hyjj cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_ax_zsjj cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_ax_sjjj cost = 13 }
         }
@@ -2652,7 +2586,6 @@ PAU_economy_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_jjhf
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_wages_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2672,7 +2605,6 @@ PAU_economy_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_wages_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2682,7 +2614,6 @@ PAU_economy_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_nyjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_procurement_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2707,7 +2638,6 @@ PAU_economy_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_procurement_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2717,7 +2647,6 @@ PAU_economy_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_nykf
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_audit_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2737,7 +2666,6 @@ PAU_economy_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_audit_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2747,7 +2675,6 @@ PAU_economy_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_hybd
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_factory_ledger_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2772,7 +2699,6 @@ PAU_economy_reform_xfxy = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_factory_ledger_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2782,7 +2708,6 @@ PAU_economy_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_zsjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_spare_parts_done } }
         }
         cost = 10
         fire_only_once = yes
@@ -2808,7 +2733,6 @@ PAU_economy_reform_xfxy = {
                 PAU_refresh_mil_reform_tiers = yes
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_spare_parts_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2818,7 +2742,6 @@ PAU_economy_reform_xfxy = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xfxy_sjmy
-            hidden_trigger = { NOT = { has_country_flag = PAU_xfxy_rail_dispatch_done } }
         }
         cost = 25
         fire_only_once = yes
@@ -2844,23 +2767,22 @@ PAU_economy_reform_xfxy = {
                 PAU_refresh_mil_reform_tiers = yes
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xfxy_rail_dispatch_done
         }
         ai_will_do = { factor = 10 }
     }
     PAU_accel_xfxy_eco_1 = {
         icon = GFX_decision_duihuan_gongchang_1
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjmy }
+        }
         available = {
             has_completed_focus = PAM_xfxy_jjhf
-            NOT = { has_completed_focus = PAM_xfxy_sjmy }
             has_political_power > 24
         }
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xfxy_jjhf cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_nyjj cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_nykf cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_hybd cost = 12 }
@@ -2873,7 +2795,9 @@ PAU_economy_reform_xfxy = {
     PAU_accel_xfxy_eco_2 = {
         icon = GFX_NGD_Special_Economic_Zone
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjmy }
+        }
         available = {
             has_completed_focus = PAM_xfxy_hybd
             NOT = { has_completed_focus = PAM_xfxy_sjmy }
@@ -2882,10 +2806,6 @@ PAU_economy_reform_xfxy = {
         cost = 50
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xfxy_jjhf cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xfxy_nyjj cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xfxy_nykf cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xfxy_hybd cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_zsjj cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_sjmy cost = 13 }
         }
@@ -2900,7 +2820,6 @@ PAU_economy_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_sc
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_market_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2920,7 +2839,6 @@ PAU_economy_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_market_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2930,7 +2848,6 @@ PAU_economy_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_nyjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_food_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2950,7 +2867,6 @@ PAU_economy_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_food_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2960,7 +2876,6 @@ PAU_economy_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_zjdq
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_land_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -2985,7 +2900,6 @@ PAU_economy_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_land_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -2995,7 +2909,6 @@ PAU_economy_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_ydjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_public_market_done } }
         }
         cost = 15
         fire_only_once = yes
@@ -3020,7 +2933,6 @@ PAU_economy_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_public_market_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -3030,7 +2942,6 @@ PAU_economy_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_mdtz
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_food_drive_done } }
         }
         cost = 10
         fire_only_once = yes
@@ -3055,7 +2966,6 @@ PAU_economy_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_food_drive_done
         }
         ai_will_do = { factor = 10 }
     }
@@ -3065,7 +2975,6 @@ PAU_economy_reform_xiaoyao = {
         visible = { always = yes }
         available = {
             has_completed_focus = PAM_xy_sjjj
-            hidden_trigger = { NOT = { has_country_flag = PAU_xiaoyao_land_reform_done } }
         }
         cost = 25
         fire_only_once = yes
@@ -3090,23 +2999,22 @@ PAU_economy_reform_xiaoyao = {
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            set_country_flag = PAU_xiaoyao_land_reform_done
         }
         ai_will_do = { factor = 10 }
     }
     PAU_accel_xy_eco_1 = {
         icon = GFX_LHS_jjzs
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjj }
+        }
         available = {
             has_completed_focus = PAM_xy_sc
-            NOT = { has_completed_focus = PAM_xy_sjjj }
             has_political_power > 24
         }
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xy_sc cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xy_nyjj cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xy_zjdq cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xy_ydjj cost = 12 }
@@ -3119,19 +3027,16 @@ PAU_economy_reform_xiaoyao = {
     PAU_accel_xy_eco_2 = {
         icon = GFX_gongyejihua
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjj }
+        }
         available = {
             has_completed_focus = PAM_xy_ydjj
-            NOT = { has_completed_focus = PAM_xy_sjjj }
             has_political_power > 49
         }
         cost = 50
         fire_only_once = yes
         complete_effect = {
-            reduce_focus_completion_cost = { focus = PAM_xy_sc cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xy_nyjj cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xy_zjdq cost = 13 }
-            reduce_focus_completion_cost = { focus = PAM_xy_ydjj cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xy_mdtz cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xy_sjjj cost = 13 }
         }
@@ -3207,7 +3112,10 @@ PAU_auto_construction = {
     PAU_manual_infrastructure = {
         icon = GFX_decision_infrastructure
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_auto_infrastructure_unlocked NOT = { has_country_flag = PAU_auto_infrastructure } }
+        visible = { 
+            has_country_flag = PAU_auto_infrastructure_unlocked 
+            NOT = { has_country_flag = PAU_auto_infrastructure } 
+        }
         available = {
             has_political_power > 9
             any_controlled_state = {
