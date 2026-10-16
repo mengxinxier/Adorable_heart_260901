@@ -14,7 +14,6 @@ PAU_Debug = {
             set_country_flag =  has_PAU_xfzb2
             set_country_flag =  has_PAU_xfzb3
             mark_focus_tree_layout_dirty = yes
-            custom_effect_tooltip = jiesuoguoce
         }
     }
 }
@@ -24,10 +23,10 @@ PAU_LHS_weiji = {
         allowed = {
             original_tag = PAU
         }
-        icon = GFX_weijiao
+        icon = GFX_weiji
 
         available = {
-            NOT = { country_exists = PAU}
+            always = no
         }
         activation = {
             not = {
@@ -39,14 +38,11 @@ PAU_LHS_weiji = {
 
         is_good = no
 
-        war_with_on_timeout = LHS
-        #可选，将使游戏假设任务在其范围内将向指定国家宣战。这用于让AI为宣战做准备并在边境集结军队,这也将向目标及其所有盟友发出通知。
-
         days_mission_timeout = 90
 
         timeout_effect = {
             set_country_flag = PAU_weiji1
-			effect_tooltip = {
+            effect_tooltip = {
                 278 = {
                     CONTROLLER = {
                         diplomatic_relation = {
@@ -61,11 +57,10 @@ PAU_LHS_weiji = {
                             relation = military_access
                             active = no
                         }
-                        declare_war_on = { target = PREV type = annex_everything}
-
+                        declare_war_on = { target = PREV type = annex_everything }
                     }
                 }
-			}
+            }
         }
         complete_effect = {
         }
@@ -83,7 +78,7 @@ PAU_LHS_weiji = {
         icon = GFX_wangshizhuangjia
 
         available = {
-            NOT = { country_exists = PAU}
+            always = no
         }
         activation = {
             always = no
@@ -97,7 +92,6 @@ PAU_LHS_weiji = {
         days_mission_timeout = 30
 
         timeout_effect = {
-                custom_effect_tooltip = wangshiyuanjun
                 PAU = {
                     hidden_effect = {
                         set_technology = { basic_light_tank_chassis = 1 }
@@ -195,7 +189,7 @@ PAU_LHS_weiji = {
                 #        activate_mission = LHS_weiji3
                 #    }
                 #}
-            
+
         }
         complete_effect = {
         }
@@ -210,10 +204,10 @@ PAU_LHS_weiji = {
         allowed = {
             original_tag = PAU
         }
-        icon = GFX_wangshizhuangjia
+        icon = GFX_trait_Princess
 
         available = {
-            NOT = { country_exists = PAU}
+            always = no
         }
         activation = {
             always = no
@@ -229,7 +223,6 @@ PAU_LHS_weiji = {
         days_mission_timeout = 30
 
         timeout_effect = {
-                custom_effect_tooltip = wangshiyuanjun2
                 PAU = {
                     hidden_effect = {
                         set_technology = { basic_light_tank_chassis = 1 }
@@ -342,7 +335,7 @@ PAU_LHS_weiji = {
         allowed = {
             original_tag = PAU
         }
-        icon = GFX_KNM_xj_de
+        icon = GFX_decision_generic_shovels
         available = {
         }
         ai_will_do = {
@@ -391,10 +384,10 @@ PAU_LHS_weiji = {
         allowed = {
             original_tag = PAU
         }
-        icon = GFX_wangshizhuangjia
+        icon = GFX_weaving_death_shroud
         available = {
             or = {
-                NOT = { country_exists = PAU}
+                not = { country_exists = PAU }
                 has_completed_focus = PAU_jjka
             }
         }
@@ -432,15 +425,16 @@ PAU_LHS_weiji = {
         cancel_effect = {
         }
     }
-    
+
     PAU_xiaoyao_plan = { #白夜巡游记
-        icon = GFX_KNM_xj_de
+        icon = GFX_PAM_Wolf
         allowed = {
             original_tag = PAU
         }
         available = {
             NOT = { has_country_flag = xiaoyao_plan_flag } #正在进行
             FROM = {
+                has_state_flag = is_lldy_state_flag
                 or = {
                     any_neighbor_state = {
                         has_state_flag = PAU_xiaoyao_state_flag
@@ -450,7 +444,8 @@ PAU_LHS_weiji = {
             }
         }
         visible = {
-            #has_country_flag = has_PAU_xiaoyao
+            has_country_flag = has_PAU_xiaoyao
+            NOT = { has_country_flag = PAU_auto_baiye }
         }
         on_map_mode = map_and_decisions_view
         state_target = yes
@@ -465,10 +460,7 @@ PAU_LHS_weiji = {
                     }
                     is_controlled_by = PAU
                 }
-                or = {
-                    is_core_of = PAU
-                    is_core_of = PAM
-                }
+                has_state_flag = is_lldy_state_flag
             }
         }
         #target_array = controlled_states
@@ -494,15 +486,88 @@ PAU_LHS_weiji = {
             factor = 0
         }
     }
+
+    PAU_baiye_auto = {
+        icon = GFX_PAM_denghuo
+        allowed = { original_tag = PAU }
+        visible = { 
+            has_completed_focus = PAU_tyzz
+            NOT = { has_country_flag = PAU_auto_baiye } 
+        }
+        cost = 0
+        fire_only_once = no
+        complete_effect = {
+            set_country_flag = PAU_auto_baiye
+            custom_effect_tooltip = PAU_baiye_auto_on_tt
+            activate_mission = PAU_baiye_auto_task
+        }
+        ai_will_do = { factor = 0 }
+    }
+
+    PAU_baiye_auto_task = {
+        icon = GFX_PAM_pdtl
+        allowed = { original_tag = PAU }
+        available = { always = no }
+        activation = { always = no }
+        selectable_mission = no
+        is_good = yes
+        days_mission_timeout = 30
+        cancel_trigger = { not = { has_country_flag = PAU_auto_baiye } }
+        timeout_effect = {
+        custom_effect_tooltip = PAU_baiye_auto_task_tt
+            if = {
+                limit = {
+                    any_controlled_state = { 
+                        has_state_flag = is_lldy_state_flag
+                        not = { 
+                            has_state_flag = PAU_xiaoyao_state_flag 
+                        } 
+                    }
+                }
+                add_political_power = -10
+                random_controlled_state = {
+                    limit = { 
+                        any_neighbor_state = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                        not = { has_state_flag = PAU_xiaoyao_state_flag } 
+                        has_state_flag = is_lldy_state_flag
+                    }
+                    set_state_flag = PAU_xiaoyao_state_flag
+                    add_dynamic_modifier = { modifier = PAU_baiye_state }
+                }
+            }
+            activate_mission = PAU_baiye_auto_task
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_auto_baiye
+        }
+    }
+
+    PAU_baiye_auto_cancel = {
+        icon = GFX_FRA_button_close
+        allowed = { original_tag = PAU }
+        visible = { 
+            has_completed_focus = PAU_tyzz
+            has_country_flag = PAU_auto_baiye 
+        }
+        cost = 0
+        fire_only_once = no
+        complete_effect = {
+            clr_country_flag = PAU_auto_baiye
+        }
+        ai_will_do = { factor = 0 }
+    }
+
     #亡灵反制
     PAU_wl_anti = {
         allowed = {
             original_tag = PAU
         }
-        icon = GFX_wangshizhuangjia
+        icon = GFX_mobilize_undead_looters
 
         available = {
-            NOT = { country_exists = PAU}
+            always = no
         }
         activation = {
             always = no
@@ -536,11 +601,11 @@ PAU_LHS_weiji = {
 
 PAU_hetong = {
     PAU_guyong = { #发出
-        icon = GFX_PAM_denghuo
+        icon = GFX_LHS_laosuo
         on_map_mode = decision_view_only
         allowed = { tag = PAU }
         visible = {
-            #has_completed_focus = PAU_gxzp
+            has_completed_focus = PAU_gxzp
         }
         available = {
             has_war = no
@@ -580,7 +645,7 @@ PAU_hetong = {
     }
 
     PAU_guyong_zhunbei = { #准备
-        icon = GFX_PAM_pdtl
+        icon = GFX_KNM_zhaoji_chunling_lianmeng
         allowed = { tag = PAU }
 
         available = {
@@ -636,8 +701,8 @@ PAU_hetong = {
             if = {
                 limit = {
                     FROM = { #对方控制省份数量大于1
-                        check_variable = { 
-                            num_controlled_states > 1 
+                        check_variable = {
+                            num_controlled_states > 1
                         }
                     }
                 }
@@ -673,7 +738,7 @@ PAU_hetong = {
 
         timeout_effect = {
             add_ideas = PAU_annex_debuff
-            
+
             FROM = {
                 clr_country_flag = yaobuyaoguyong  #要不要
             }
@@ -683,8 +748,8 @@ PAU_hetong = {
             if = {
                 limit = {
                     FROM = { #对方控制省份数量大于1
-                        check_variable = { 
-                            num_controlled_states > 1 
+                        check_variable = {
+                            num_controlled_states > 1
                         }
                     }
                 }
@@ -719,7 +784,7 @@ PAU_hetong = {
     }
 
     PAU_guyong_attack = { #作为雇佣兵宣战
-        icon = GFX_PAM_pdtl
+        icon = GFX_KNM_lili_war
         allowed = { tag = PAU }
 
         available = {
@@ -792,10 +857,10 @@ PAU_hetong = {
                         }
                     }
                 clr_country_flag = PAU_guyonged_touxiang_flag
-                add_to_variable = { 
-                    var = PAU_guyong_dianshu 
+                add_to_variable = {
+                    var = PAU_guyong_dianshu
                     value = -2
-                    tooltip = PAU_guyong_dianshu_tt 
+                    tooltip = PAU_guyong_dianshu_tt
                 }
             }
             else = {
@@ -811,10 +876,10 @@ PAU_hetong = {
                         days = 90
                     }
                     effect_tooltip = {
-                        add_to_variable = { 
-                            var = PAU_guyong_dianshu 
+                        add_to_variable = {
+                            var = PAU_guyong_dianshu
                             value = -2
-                            tooltip = PAU_guyong_dianshu_tt 
+                            tooltip = PAU_guyong_dianshu_tt
                         }
                     }
                     #因对方打输中断
@@ -853,10 +918,10 @@ PAU_hetong = {
                         days = 180
                     }
                     effect_tooltip = {
-                        add_to_variable = { 
-                            var = PAU_guyong_dianshu 
+                        add_to_variable = {
+                            var = PAU_guyong_dianshu
                             value = -5
-                            tooltip = PAU_guyong_dianshu_tt 
+                            tooltip = PAU_guyong_dianshu_tt
                         }
                     }
                     #因战争中断
@@ -901,10 +966,10 @@ PAU_hetong = {
                         }
                     }
                     effect_tooltip = {
-                        add_to_variable = { 
-                            var = PAU_guyong_dianshu 
+                        add_to_variable = {
+                            var = PAU_guyong_dianshu
                             value = 2
-                            tooltip = PAU_guyong_dianshu_tt 
+                            tooltip = PAU_guyong_dianshu_tt
                         }
                     }
                     country_event = { id = PAU.176 hours = 6 }
@@ -925,10 +990,10 @@ PAU_hetong = {
 
         timeout_effect = {
             effect_tooltip = {
-                add_to_variable = { 
-                    var = PAU_guyong_dianshu 
+                add_to_variable = {
+                    var = PAU_guyong_dianshu
                     value = -2
-                    tooltip = PAU_guyong_dianshu_tt 
+                    tooltip = PAU_guyong_dianshu_tt
                 }
             }
             every_country = {
@@ -951,16 +1016,17 @@ PAU_hetong = {
         }
     }
     PAU_guyong_touxiang = { #投降
-        icon = GFX_PAM_pdtl
+        icon = GFX_defeat_the_world
         allowed = { tag = PAU }
 
         available = {
-            always = no
+            has_idea = PAU_annex_debuff 
+            has_war = yes
         }
         cost = 50
 
         visible = {
-            has_idea = PAU_annex_debuff
+            has_idea = PAU_annex_debuff 
             has_war = yes
         }
 
@@ -984,3 +1050,2656 @@ PAU_hetong = {
     }
 }
 
+
+
+
+
+
+PAU_lhs_integration = { #有点东西，但东西不多
+    PAU_lhs_keep_cadres = {
+        icon = GFX_youji_on_me3
+        allowed = { original_tag = PAU }
+        visible = { 
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_lhs_integration
+                value = -10
+                tooltip = PAU_lhs_integration_tt
+            }
+            add_mastery = { amount = 20 folder = land }
+            set_country_flag = PAU_lhs_old_cadres
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_lhs_dissolve = {
+        icon = GFX_USA_Reform_of_Red_Army_Red_Star
+        allowed = { original_tag = PAU }
+        visible = {  }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_lhs_integration
+                value = 10
+                tooltip = PAU_lhs_integration_tt
+            }
+            add_manpower = 5000
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_lhs_joint_drill = {
+        icon = GFX_KNM_military_exercise
+        allowed = { original_tag = PAU }
+        visible = {  }
+        available = { check_variable = { PAU_lhs_integration < 100 } }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_lhs_integration
+                value = 10
+                tooltip = PAU_lhs_integration_tt
+            }
+            add_mastery = { amount = 20 folder = land }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_lhs_finish = {
+        icon = GFX_youji_on_me2
+        allowed = { original_tag = PAU }
+        visible = {  }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = PAU_lhs_finish_available_tt
+                check_variable = { PAU_lhs_integration > 29 }
+            }
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            set_country_flag = PAU_lhs_integrated
+            hidden_effect = { PAU_ml_remove_PAU_lhs_remnants = yes }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            hidden_effect = { add_to_variable = { var = PAU_ml_count_PAU_lhs_integrated value = 1 } }
+            add_to_variable = {
+                var = PAU_ml_raw_planning_speed
+                value = 0.05
+                tooltip = planning_speed_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_army_org_factor
+                value = 0.15
+                tooltip = army_org_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_coordination_bonus
+                value = 0.05
+                tooltip = coordination_bonus_tt
+            }
+remove_ideas = PAU_divided_legion
+            set_technology = { youjidui_tech = 1 }
+            set_sub_doctrine = youji_on_end
+            set_sub_doctrine = LHS_guerilla_war
+            if = {
+                limit = { country_exists = LHS }
+                LHS = {
+                    every_character = {
+                        limit = { is_general_advisor = no }
+                        set_nationality = ROOT
+                    }
+                }
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_lhs_officer_exchange = {
+        icon = GFX_decision_attache
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = { check_variable = { PAU_lhs_integration < 100 } }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_lhs_integration
+                value = 10
+                tooltip = PAU_lhs_integration_tt
+            }
+            add_mastery = { amount = 25 folder = land }
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_grail_camp = { #存疑
+    PAU_grail_split_rations = {
+        icon = GFX_mission_feed_the_mad_dog
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_grail_camp }
+        available = { check_variable = { PAU_grail_rations > 49 } }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_grail_rations
+                value = -50
+                tooltip = PAU_grail_rations_tt
+            }
+            add_manpower = 5000
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_grail_trade_arms = {
+        icon = GFX_KNM_buy_infantry_equipment
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_grail_camp }
+        available = { has_equipment = { infantry_equipment > 499 } }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_grail_parts
+                value = 50
+                tooltip = PAU_grail_parts_tt
+            }
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = -500
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_grail_repair_ships = {
+        icon = GFX_LHS_xgz
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_grail_camp }
+        available = { check_variable = { PAU_grail_parts > 49 } }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_grail_parts
+                value = -50
+                tooltip = PAU_grail_parts_tt
+            }
+            add_mastery = { amount = 20 folder = naval }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_grail_fortify_docks = {
+        icon = GFX_EMI_ship_undead_keel
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = { check_variable = { PAU_grail_parts > 9 } }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_grail_parts
+                value = -10
+                tooltip = PAU_grail_parts_tt
+            }
+            add_mastery = { amount = 25 folder = naval }
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_safe_harbor = { #奇怪的修正
+    PAU_designate_safe_harbor = {
+        icon = GFX_mission_build_nest_for_seagull
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_safe_harbor_unlocked
+            NOT = { has_country_flag = PAU_auto_harbor }
+        }
+        available = { check_variable = { PAU_harbor_count < 3 } }
+        on_map_mode = map_and_decisions_view
+        state_target = yes
+        target_trigger = {
+            FROM = {
+                is_coastal = yes
+                is_controlled_by = ROOT
+                NOT = { has_state_flag = PAU_safe_harbor }
+            }
+        }
+        cost = 50
+        days_remove = 30
+        remove_effect = {
+            FROM = {
+                set_state_flag = PAU_safe_harbor
+                hidden_effect = {
+                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_1 }
+                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_2 }
+                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_3 }
+                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_4 }
+                }
+                add_dynamic_modifier = { modifier = PAU_safe_harbor_state }
+            }
+            if = {
+                limit = { NOT = { has_dynamic_modifier = { modifier = PAU_safe_harbor_network } } }
+                add_dynamic_modifier = { modifier = PAU_safe_harbor_network }
+            }
+            add_to_variable = {
+                var = PAU_harbor_count
+                value = 1
+                tooltip = PAU_harbor_count_tt
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_safe_harbor_refugees = {
+        icon = GFX_decision_category_NOR_nortraship1_category
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_safe_harbor_unlocked
+            NOT = { has_country_flag = PAU_auto_harbor }
+        }
+
+        available = {
+            any_controlled_state = { has_state_flag = PAU_safe_harbor }
+        }
+        cost = 25
+        days_remove = 30
+        remove_effect = {
+            add_manpower = 5000
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_safe_harbor_repair = {
+        icon = GFX_sacrifice_ghost_dockyards
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_safe_harbor_unlocked
+            NOT = { has_country_flag = PAU_auto_harbor }
+        }
+
+        available = {
+            any_controlled_state = { has_state_flag = PAU_safe_harbor }
+        }
+        cost = 25
+        days_remove = 30
+        remove_effect = {
+            add_mastery = { amount = 20 folder = naval }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_safe_harbor_lane = {
+        icon = GFX_KNM_zhanling_zhuanyi_KFL
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_safe_harbor_unlocked
+            NOT = { has_country_flag = PAU_auto_harbor }
+        }
+
+        available = {
+            any_controlled_state = { has_state_flag = PAU_safe_harbor }
+        }
+        cost = 25
+        days_remove = 30
+        remove_effect = {
+            add_manpower = 5000
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_safe_harbor_smuggle = {
+        icon = GFX_decision_generic_secret_service
+        allowed = { original_tag = PAU }
+        visible = {
+            always = yes
+            NOT = { has_country_flag = PAU_auto_harbor }
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            add_manpower = 5000
+            add_equipment_to_stockpile = {
+                type = support_equipment
+                amount = 1500
+                producer = PAU
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_safe_harbor_expand = {
+        icon = GFX_SWE_five_year_plan_decision
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_safe_harbor_unlocked
+            NOT = { has_country_flag = PAU_auto_harbor }
+        }
+        available = {
+            check_variable = { PAU_harbor_dev < 6 }
+            any_controlled_state = { has_state_flag = PAU_safe_harbor }
+        }
+
+        cost = 25
+        fire_only_once = no
+        days_remove = 30
+        remove_effect = {
+            random_controlled_state = {
+                limit = { has_state_flag = PAU_safe_harbor is_controlled_by = ROOT }
+                PAU_expand_safe_harbor = yes
+            }
+            add_to_variable = {
+                var = PAU_harbor_dev
+                value = 1
+                tooltip = PAU_harbor_dev_tt
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_safe_harbor_auto = {
+        icon = GFX_trait_nextform
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_safe_harbor_unlocked NOT = { has_country_flag = PAU_auto_harbor } }
+        cost = 0
+        fire_only_once = no
+        custom_effect_tooltip = PAU_safe_harbor_auto_on_tt
+        complete_effect = {
+            set_country_flag = PAU_auto_harbor
+            activate_mission = PAU_safe_harbor_auto_task
+        }
+        ai_will_do = { factor = 0 }
+    }
+
+    PAU_safe_harbor_auto_task = {
+        icon = GFX_EMI_Kivotos_auto_repair
+        allowed = { original_tag = PAU }
+        available = { always = no }
+        activation = { has_country_flag = PAU_auto_harbor }
+        selectable_mission = no
+        is_good = yes
+        custom_effect_tooltip = PAU_safe_harbor_auto_task_tt
+        days_mission_timeout = 30
+        cancel_trigger = { NOT = { has_country_flag = PAU_auto_harbor } }
+        timeout_effect = {
+            if = {
+                limit = {
+                    has_country_flag = PAU_auto_harbor
+                    check_variable = { PAU_harbor_dev < 6 }
+                    has_political_power > 24
+                    any_controlled_state = { has_state_flag = PAU_safe_harbor }
+                }
+                add_political_power = -25
+                random_controlled_state = {
+                    limit = { has_state_flag = PAU_safe_harbor is_controlled_by = ROOT }
+                    add_extra_state_shared_building_slots = 1
+                }
+                add_to_variable = { var = PAU_harbor_dev value = 1 tooltip = PAU_harbor_dev_tt }
+            }
+            activate_mission = PAU_safe_harbor_auto_task
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_auto_harbor
+        }
+    }
+
+    PAU_safe_harbor_auto_cancel = {
+        icon = GFX_PA1_event_button_minimize
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_safe_harbor_unlocked has_country_flag = PAU_auto_harbor }
+        cost = 0
+        fire_only_once = no
+        complete_effect = {
+            clr_country_flag = PAU_auto_harbor
+        }
+        ai_will_do = { factor = 0 }
+    }
+}
+
+PAU_undead_containment = { #？
+    PAU_undead_evacuate = {
+        icon = GFX_KNM_KFL_transfer1
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_undead_war }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            check_variable = { PAU_undead_pressure > 0 }
+        }
+        cost = 25
+        days_re_enable = 30
+        complete_effect = {
+            add_manpower = 5000
+            add_to_variable = {
+                var = PAU_undead_pressure
+                value = -10
+                tooltip = PAU_undead_pressure_tt
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_undead_counterattack = {
+        icon = GFX_cash_in_undead_arrows
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_undead_war }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            check_variable = { PAU_undead_pressure > 0 }
+        }
+        cost = 25
+        days_re_enable = 30
+        complete_effect = {
+            add_mastery = { amount = 20 folder = land }
+            add_to_variable = {
+                var = PAU_undead_pressure
+                value = -10
+                tooltip = PAU_undead_pressure_tt
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_undead_burn_depot = {
+        icon = GFX_EMI_Kivotos_flamethrower
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_undead_war }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            check_variable = { PAU_undead_pressure > 0 }
+        }
+        cost = 25
+        days_re_enable = 30
+        complete_effect = {
+            add_fuel = -500
+            add_to_variable = {
+                var = PAU_undead_pressure
+                value = -10
+                tooltip = PAU_undead_pressure_tt
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_undead_scorched_earth = {
+        icon = GFX_refine_undead_essence
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            check_variable = { PAU_undead_pressure > 0 }
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            add_to_variable = {
+                var = PAU_undead_pressure
+                value = -10
+                tooltip = PAU_undead_pressure_tt
+            }
+            add_fuel = -500
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_barrow_memorial = {
+    PAU_barrow_memorial_farm = {
+        icon = GFX_LHS_nongshi
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_barrow_dead }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            add_to_variable = {
+                var = PAU_camp_supply
+                value = 50
+                tooltip = PAU_camp_supply_tt
+            }
+            add_manpower = 5000
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_barrow_memorial_veterans = {
+        icon = GFX_decision_poland_Virtuti_Militari
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_barrow_dead }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            add_mastery = { amount = 20 folder = land }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_barrow_memorial_school = {
+        icon = GFX_decision_Chinese_Academy_of_Sciences_icon
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            add_mastery = { amount = 25 folder = land }
+            add_manpower = 5000
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_army_reform_axia = {
+    PAU_axia_recon = {
+        icon = GFX_mission_candy_and_recon
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_bz
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_recon
+                value = 0.05
+                tooltip = recon_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_supply = {
+        icon = GFX_decision_supplies
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_nyjs
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_supply
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_out_of_supply
+                value = -0.05
+                tooltip = out_of_supply_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_armor = {
+        icon = GFX_decision_category_tank
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_nyfy
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_breakthrough
+                value = 0.05
+                tooltip = breakthrough_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_attack
+                value = 0.05
+                tooltip = army_attack_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_medics = {
+        icon = GFX_decision_poland_sanitation_left
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_jhdd
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_attrition
+                value = -0.05
+                tooltip = attrition_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_field_kitchen = {
+        icon = GFX_feed_the_struggling_wolves
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_zsjs
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_supply
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_night_march = {
+        icon = GFX_Moon_Shield
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_sjjs
+        }
+        cost = 10
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_planning
+                value = 0.05
+                tooltip = planning_speed_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_org
+                value = 0.05
+                tooltip = army_org_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_veteran_school = {
+        icon = GFX_decision_buy_books_for_xiaofeng
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_nlwq2
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_mil
+                value = -10
+                tooltip = PAU_axia_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_training
+                value = -0.05
+                tooltip = training_time_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_org
+                value = 0.05
+                tooltip = army_org_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_accel_axia_mil_1 = {
+        icon = GFX_decision_category_USA_war_measures
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjs }
+        }
+        available = {
+            has_completed_focus = PAM_ax_bz
+            has_political_power > 24
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_ax_nyjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_nyfy cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_jhdd cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_zsjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_sjjs cost = 12 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+
+    PAU_accel_axia_mil_2 = {
+        icon = GFX_decision_All_Star
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjs }
+        }
+        available = {
+            has_completed_focus = PAM_ax_jhdd
+            has_political_power > 49
+        }
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_ax_zsjs cost = 13 }
+            reduce_focus_completion_cost = { focus = PAM_ax_sjjs cost = 13 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+}
+
+PAU_army_reform_xfxy = {
+    PAU_xfxy_command = {
+        icon = GFX_mission_delegate_command
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_jsgz
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_mil
+                value = -10
+                tooltip = PAU_xfxy_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_coordination
+                value = 0.05
+                tooltip = coordination_bonus_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_planning
+                value = 0.05
+                tooltip = planning_speed_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_signal = {
+        icon = GFX_EMI_Kivotos_hand_signal
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_nyjs
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_mil
+                value = -10
+                tooltip = PAU_xfxy_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_initiative
+                value = 0.05
+                tooltip = initiative_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_joint_defense = {
+        icon = GFX_ENG_defense_small
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_nytjjs
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_mil
+                value = -10
+                tooltip = PAU_xfxy_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_org
+                value = 0.05
+                tooltip = army_org_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_planning
+                value = 0.05
+                tooltip = planning_speed_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_radio_net = {
+        icon = GFX_decision_category_ROC_spy
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_ycdd
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_mil
+                value = -10
+                tooltip = PAU_xfxy_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_initiative
+                value = 0.05
+                tooltip = initiative_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_coordination
+                value = 0.05
+                tooltip = coordination_bonus_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_signal_drill = {
+        icon = GFX_decision_generic_spy
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_zsjs
+        }
+        cost = 10
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_mil
+                value = -10
+                tooltip = PAU_xfxy_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_initiative
+                value = 0.05
+                tooltip = initiative_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_coordination
+                value = 0.05
+                tooltip = coordination_bonus_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_winter_gear = {
+        icon = GFX_decision_buy_supplies_for_xueyi
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_sjjs
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_mil
+                value = -10
+                tooltip = PAU_xfxy_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_attrition
+                value = -0.05
+                tooltip = attrition_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_speed
+                value = 0.05
+                tooltip = army_speed_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_accel_xfxy_mil_1 = {
+        icon = GFX_trait_LUG_the_training_trait
+        allowed = { original_tag = PAU }
+        available = {
+            has_completed_focus = PAM_xfxy_jsgz
+            has_political_power > 24
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjjs }
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xfxy_nyjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_nytjjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_ycdd cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_zsjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_sjjs cost = 12 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+
+    PAU_accel_xfxy_mil_2 = {
+        icon = GFX_faction_logo_MiddleEast_Cooperation_Council_miniature
+        allowed = { original_tag = PAU }
+        available = {
+            has_completed_focus = PAM_xfxy_ycdd
+            has_political_power > 49
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjjs }
+        }
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xfxy_zsjs cost = 13 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_sjjs cost = 13 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+}
+
+PAU_army_reform_xiaoyao = {
+    PAU_xiaoyao_navy = {
+        icon = GFX_trait_ROC_dianlei_navy
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_fy
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_mil
+                value = -10
+                tooltip = PAU_xiaoyao_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_naval_coordination
+                value = 0.05
+                tooltip = naval_coordination_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_ship_recovery
+                value = 0.05
+                tooltip = naval_ship_recovery_chance_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_expedition = {
+        icon = GFX_KNM_buy_military_vehicles
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_nyjs
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_mil
+                value = -10
+                tooltip = PAU_xiaoyao_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_invasion_prep
+                value = -0.05
+                tooltip = invasion_preparation_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_naval_penalty
+                value = -0.05
+                tooltip = PAU_tt_naval_invasion_penalty
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_landing = {
+        icon = GFX_decision_india_forward
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_tltx
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_mil
+                value = -10
+                tooltip = PAU_xiaoyao_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_invasion_prep
+                value = -0.05
+                tooltip = invasion_preparation_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_naval_penalty
+                value = -0.05
+                tooltip = PAU_tt_naval_invasion_penalty
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_landing_craft = {
+        icon = GFX_decision_submarine
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_ydjs
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_mil
+                value = -10
+                tooltip = PAU_xiaoyao_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_invasion_prep
+                value = -0.05
+                tooltip = invasion_preparation_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_naval_penalty
+                value = -0.05
+                tooltip = PAU_tt_naval_invasion_penalty
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_shore_drill = {
+        icon = GFX_KNM_xj_de
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_zsjs
+        }
+        cost = 10
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_mil
+                value = -10
+                tooltip = PAU_xiaoyao_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_invasion_prep
+                value = -0.05
+                tooltip = invasion_preparation_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_naval_penalty
+                value = -0.05
+                tooltip = PAU_tt_naval_invasion_penalty
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_marine_corps = {
+        icon = GFX_trait_ROC_Min_navy
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_sjjs
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_mil
+                value = -10
+                tooltip = PAU_xiaoyao_mil_tt
+            }
+            custom_effect_tooltip = PAU_mil_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_org
+                value = 0.05
+                tooltip = army_org_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_accel_xy_mil_1 = {
+        icon = GFX_EMI_Kivotos_special_module_radar_navy
+        allowed = { original_tag = PAU }
+        available = {
+            has_completed_focus = PAM_xy_fy
+            has_political_power > 24
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjs }
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xy_nyjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_tltx cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_ydjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_zsjs cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_sjjs cost = 12 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+
+    PAU_accel_xy_mil_2 = {
+        icon = GFX_icon_Friendship_mutual_aid_faction
+        allowed = { original_tag = PAU }
+        available = {
+            has_completed_focus = PAM_xy_ydjs
+            has_political_power > 49
+        }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjs }
+        }
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xy_zsjs cost = 13 }
+            reduce_focus_completion_cost = { focus = PAM_xy_sjjs cost = 13 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+}
+
+PAU_economy_reform_axia = {
+    PAU_axia_granary = {
+        icon = GFX_LHS_zhongzi
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_jt
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_workshop = {
+        icon = GFX_modifiers_industry
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_nyjj
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_construction
+                value = 0.05
+                tooltip = production_speed_industrial_complex_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_arms
+                value = 0.05
+                tooltip = production_speed_arms_factory_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_currency = {
+        icon = GFX_cash_in_economic_loot
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_nyxx
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_industry
+                value = 0.05
+                tooltip = industrial_capacity_factory_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_political
+                value = 0.05
+                tooltip = political_power_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_trade = {
+        icon = GFX_spring_market
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_hyjj
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_fuel
+                value = 0.05
+                tooltip = fuel_gain_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_shipyard
+                value = 0.05
+                tooltip = production_speed_dockyard_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_ration_standard = {
+        icon = GFX_LHS_flzs
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_zsjj
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_consumer
+                value = -0.05
+                tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_granary_audit = {
+        icon = GFX_decision_generic_scales
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_ax_sjjj
+        }
+        cost = 10
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_supply
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_axia_tool_recovery = {
+        icon = GFX_EMI_Kivotos_tool_kit
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_nljj2
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_axia_eco
+                value = -10
+                tooltip = PAU_axia_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_construction
+                value = 0.05
+                tooltip = production_speed_industrial_complex_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_arms
+                value = 0.05
+                tooltip = production_speed_arms_factory_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_accel_axia_eco_1 = {
+        icon = GFX_decision_generic_electricity
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjj }
+        }
+        available = {
+            has_completed_focus = PAM_ax_jt
+            has_political_power > 24
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_ax_nyjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_nyxx cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_hyjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_zsjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_ax_sjjj cost = 12 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+
+    PAU_accel_axia_eco_2 = {
+        icon = GFX_FRA_Kappa_Heavy_Industries_state_modifier
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_ax_sjjj }
+        }
+        available = {
+            has_completed_focus = PAM_ax_hyjj
+            has_political_power > 49
+        }
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_ax_zsjj cost = 13 }
+            reduce_focus_completion_cost = { focus = PAM_ax_sjjj cost = 13 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+}
+
+PAU_economy_reform_xfxy = {
+    PAU_xfxy_wages = {
+        icon = GFX_decision_united_party
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_jjhf
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_consumer
+                value = -0.05
+                tooltip = consumer_goods_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_procurement = {
+        icon = GFX_Customs_Union_decision
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_nyjj
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_arms
+                value = 0.05
+                tooltip = production_speed_arms_factory_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_industry
+                value = 0.05
+                tooltip = industrial_capacity_factory_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_audit = {
+        icon = GFX_Shanghai_Economic_Circle
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_nykf
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_political
+                value = 0.05
+                tooltip = political_power_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_factory_ledger = {
+        icon = GFX_decision_duihuan_gongchang_2
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_hybd
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_industry
+                value = 0.05
+                tooltip = industrial_capacity_factory_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_political
+                value = 0.05
+                tooltip = political_power_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_spare_parts = {
+        icon = GFX_FRA_Renault_state_modifier
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_zsjj
+        }
+        cost = 10
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
+            custom_effect_tooltip = PAU_mil_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_arms
+                value = 0.05
+                tooltip = production_speed_arms_factory_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_attrition
+                value = -0.05
+                tooltip = attrition_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xfxy_rail_dispatch = {
+        icon = GFX_modifiers_railroad
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xfxy_sjmy
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
+            custom_effect_tooltip = PAU_mil_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_mil_reform_bonus_supply
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_efficiency
+                value = 0.05
+                tooltip = production_factory_max_efficiency_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_mil_reform_tiers = yes
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_accel_xfxy_eco_1 = {
+        icon = GFX_decision_duihuan_gongchang_1
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjmy }
+        }
+        available = {
+            has_completed_focus = PAM_xfxy_jjhf
+            has_political_power > 24
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xfxy_nyjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_nykf cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_hybd cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_zsjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_sjmy cost = 12 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+
+    PAU_accel_xfxy_eco_2 = {
+        icon = GFX_NGD_Special_Economic_Zone
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xfxy_sjmy }
+        }
+        available = {
+            has_completed_focus = PAM_xfxy_hybd
+            NOT = { has_completed_focus = PAM_xfxy_sjmy }
+            has_political_power > 49
+        }
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xfxy_zsjj cost = 13 }
+            reduce_focus_completion_cost = { focus = PAM_xfxy_sjmy cost = 13 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+}
+
+PAU_economy_reform_xiaoyao = {
+    PAU_xiaoyao_market = {
+        icon = GFX_generic_economy_faction_decision
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_sc
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_eco
+                value = -10
+                tooltip = PAU_xiaoyao_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_trade
+                value = 0.05
+                tooltip = trade_opinion_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_food = {
+        icon = GFX_decision_generic_agriculture
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_nyjj
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_eco
+                value = -10
+                tooltip = PAU_xiaoyao_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_land = {
+        icon = GFX_land_owners_guizu
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_zjdq
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_eco
+                value = -10
+                tooltip = PAU_xiaoyao_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_construction
+                value = 0.05
+                tooltip = production_speed_industrial_complex_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_consumer
+                value = -0.05
+                tooltip = consumer_goods_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_public_market = {
+        icon = GFX_gudong
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_ydjj
+        }
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_eco
+                value = -10
+                tooltip = PAU_xiaoyao_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_consumer
+                value = -0.05
+                tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_trade
+                value = 0.05
+                tooltip = trade_opinion_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_food_drive = {
+        icon = GFX_KNM_buy_better
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_mdtz
+        }
+        cost = 10
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_eco
+                value = -10
+                tooltip = PAU_xiaoyao_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_consumer
+                value = -0.05
+                tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_xiaoyao_land_reform = {
+        icon = GFX_LHS_zlsc
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            has_completed_focus = PAM_xy_sjjj
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_xiaoyao_eco
+                value = -10
+                tooltip = PAU_xiaoyao_eco_tt
+            }
+            custom_effect_tooltip = PAU_eco_reform_append_tt
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_morale
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_eco_reform_bonus_industry
+                value = 0.05
+                tooltip = industrial_capacity_factory_tt
+            }
+            hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_accel_xy_eco_1 = {
+        icon = GFX_LHS_jjzs
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjj }
+        }
+        available = {
+            has_completed_focus = PAM_xy_sc
+            has_political_power > 24
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xy_nyjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_zjdq cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_ydjj cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_mdtz cost = 12 }
+            reduce_focus_completion_cost = { focus = PAM_xy_sjjj cost = 12 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+
+    PAU_accel_xy_eco_2 = {
+        icon = GFX_gongyejihua
+        allowed = { original_tag = PAU }
+        visible = { 
+            NOT = { has_completed_focus = PAM_xy_sjjj }
+        }
+        available = {
+            has_completed_focus = PAM_xy_ydjj
+            has_political_power > 49
+        }
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            reduce_focus_completion_cost = { focus = PAM_xy_mdtz cost = 13 }
+            reduce_focus_completion_cost = { focus = PAM_xy_sjjj cost = 13 }
+        }
+        ai_will_do = { factor = 8 }
+    }
+}
+
+PAU_bop_name = {
+    PAU_bop_workers_committee = {
+        icon = GFX_faction_logo_Magical_Girl_Union_miniature
+        allowed = { original_tag = PAU }
+        visible = { has_completed_focus = PAU_tyzz }
+        cost = 25
+        fire_only_once = no
+        days_re_enable = 30
+        days_remove = 30
+        remove_effect = {
+            if = {
+                limit = { NOT = { has_country_flag = PAU_bop_workers } }
+                set_country_flag = PAU_bop_workers
+            }
+            add_power_balance_value = {
+                id = PAU_bop
+                value = -0.25
+                tooltip_side = PAU_bop_left_side
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_bop_veterans_council = {
+        icon = GFX_faction_logo_Solidarity_Pact_miniature
+        allowed = { original_tag = PAU }
+        visible = { has_completed_focus = PAU_tyzz }
+        cost = 25
+        fire_only_once = no
+        days_re_enable = 30
+        days_remove = 30
+        remove_effect = {
+            if = {
+                limit = { NOT = { has_country_flag = PAU_bop_veterans } }
+                set_country_flag = PAU_bop_veterans
+            }
+            add_power_balance_value = {
+                id = PAU_bop
+                value = 0.25
+                tooltip_side = PAU_bop_right_side
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_bop_joint_meeting = {
+        icon = GFX_decision_congress
+        allowed = { original_tag = PAU }
+        visible = { has_completed_focus = PAU_tyzz }
+        available = {
+            has_country_flag = PAU_bop_workers
+            has_country_flag = PAU_bop_veterans
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            set_power_balance = {
+                id = PAU_bop
+                set_value = 0
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_auto_construction = {
+    PAU_manual_infrastructure = {
+        icon = GFX_decision_infrastructure
+        allowed = { original_tag = PAU }
+        visible = { 
+            has_country_flag = PAU_auto_infrastructure_unlocked 
+            NOT = { has_country_flag = PAU_auto_infrastructure } 
+        }
+        available = {
+            has_political_power > 9
+            any_controlled_state = {
+                free_building_slots = { building = infrastructure size > 0 }
+                NOT = { has_state_flag = PAU_auto_infra_queued }
+            }
+        }
+        cost = 10
+        fire_only_once = no
+        complete_effect = {
+            PAU_queue_infrastructure_once = yes
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_auto_infrastructure = {
+        icon = GFX_decision_railroad
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_auto_infrastructure_unlocked NOT = { has_country_flag = PAU_auto_infrastructure } }
+        cost = 0
+        fire_only_once = no
+        custom_effect_tooltip = PAU_auto_infrastructure_on_tt
+        complete_effect = {
+            set_country_flag = PAU_auto_infrastructure
+            activate_mission = PAU_auto_infrastructure_task
+        }
+        ai_will_do = { factor = 0 }
+    }
+
+    PAU_auto_infrastructure_task = {
+        icon = GFX_decision_railroads
+        allowed = { original_tag = PAU }
+        available = { always = no }
+        activation = { has_country_flag = PAU_auto_infrastructure }
+        selectable_mission = no
+        is_good = yes
+        custom_effect_tooltip = PAU_auto_infrastructure_task_tt
+        days_mission_timeout = 30
+        cancel_trigger = { NOT = { has_country_flag = PAU_auto_infrastructure } }
+        timeout_effect = {
+            if = {
+                limit = {
+                    has_country_flag = PAU_auto_infrastructure
+                    has_political_power > 9
+                    any_controlled_state = {
+                        free_building_slots = { building = infrastructure size > 0 }
+                        NOT = { has_state_flag = PAU_auto_infra_queued }
+                    }
+                }
+                add_political_power = -10
+                random_owned_controlled_state = {
+                    limit = {
+                        free_building_slots = { building = infrastructure size > 0 }
+                        NOT = { has_state_flag = PAU_auto_infra_queued }
+                    }
+                    add_building_construction = { type = infrastructure level = 1 }
+                    set_state_flag = { flag = PAU_auto_infra_queued days = 365 }
+                }
+                add_to_variable = { var = PAU_auto_infra_count value = 1 tooltip = PAU_auto_infra_count_tt }
+            }
+            activate_mission = PAU_auto_infrastructure_task
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_auto_infrastructure
+        }
+    }
+
+    PAU_auto_infrastructure_cancel = {
+        icon = GFX_event_button_minimize2
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_auto_infrastructure_unlocked has_country_flag = PAU_auto_infrastructure }
+        cost = 0
+        fire_only_once = no
+        complete_effect = {
+            clr_country_flag = PAU_auto_infrastructure
+        }
+        ai_will_do = { factor = 0 }
+    }
+}
+
+PAU_late_doctrine = {
+    PAU_export_revolution = {
+        icon = GFX_yuanzhu
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_world_revolution }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                has_war = yes
+                is_subject = no
+                is_major = no
+                NOT = { is_in_faction_with = ROOT }
+                NOT = { has_war_with = ROOT }
+                NOT = { has_government = fascism }
+                NOT = { has_government = neutrality }
+                NOT = { has_country_flag = PAU_received_revolutionary_aid }
+                NOT = { has_country_flag = PAU_refused_revolutionary_aid }
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        days_re_enable = 30
+        complete_effect = {
+            FROM = { country_event = { id = PAU.520 hours = 1 } }
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_peace_trade_mission = {
+        icon = GFX_Berlin_Economic_Agreement_decision
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_peaceful_coexistence }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                has_war = no
+                is_subject = no
+                NOT = { has_country_flag = PAU_received_trade_mission }
+                NOT = { has_country_flag = PAU_refused_trade_mission }
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        days_re_enable = 30
+        complete_effect = {
+            FROM = { country_event = { id = PAU.530 hours = 1 } }
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_coastal_fortification = {
+        icon = GFX_ENG_London_state_info_fortress_icon
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_armed_neutrality }
+        available = { has_country_flag = PAU_armed_neutrality }
+        on_map_mode = map_and_decisions_view
+        state_target = yes
+        target_trigger = {
+            FROM = {
+                is_coastal = yes
+                is_controlled_by = ROOT
+                NOT = { has_state_flag = PAU_coastal_fortified }
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        days_re_enable = 30
+        complete_effect = {
+            FROM = {
+                set_state_flag = PAU_coastal_fortified
+                add_building_construction = {
+                    type = coastal_bunker
+                    level = 1
+                    province = {
+                        all_provinces = yes
+                        limit_to_coastal = yes
+                    }
+                }
+            }
+            add_to_variable = {
+                var = PAU_coastal_defenses
+                value = 1
+            }
+            hidden_effect = {
+                PAU_refresh_late_networks = yes
+            }
+            add_mastery = { amount = 20 folder = naval }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_revolutionary_alliance = {
+        icon = GFX_faction_logo_United_Front_of_Workers_miniature
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_world_revolution
+            check_variable = { PAU_export_successes > 0 }
+            is_in_faction = yes
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                is_subject = no
+                has_country_flag = PAU_received_revolutionary_aid
+                has_opinion = { target = ROOT value > 50 }
+                is_major = no
+                is_in_faction = no
+                NOT = { has_war_with = ROOT }
+                NOT = { original_tag = MGU }
+                NOT = { original_tag = DVL }
+                NOT = { original_tag = ALG }
+                NOT = { original_tag = GEU }
+                NOT = { original_tag = ELF }
+            }
+        }
+        cost = 40
+        fire_only_once = no
+        days_re_enable = 90
+        complete_effect = {
+            add_to_faction = FROM
+            add_stability = 0.05
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_revolutionary_ultimatum = {
+        icon = GFX_PAM_zhtd
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_world_revolution
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                is_subject = no
+                is_major = no
+                NOT = { is_in_faction_with = ROOT }
+                has_country_flag = PAU_refused_revolutionary_aid
+                NOT = { has_war_with = ROOT }
+                NOT = { has_government = communism }
+                NOT = { original_tag = MGU }
+                NOT = { original_tag = DVL }
+                NOT = { original_tag = ALG }
+                NOT = { original_tag = GEU }
+                NOT = { original_tag = ELF }
+            }
+        }
+        cost = 50
+        fire_only_once = no
+        days_re_enable = 120
+        complete_effect = {
+            declare_war_on = { target = FROM type = annex_everything }
+            add_stability = 0.05
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+
+    PAU_peaceful_alliance = {
+        icon = GFX_LHS_qjf
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_peaceful_coexistence
+            check_variable = { PAU_trade_partners > 0 }
+            is_in_faction = yes
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                is_subject = no
+                has_war = no
+                is_in_faction = no
+                has_country_flag = PAU_received_trade_mission
+                has_opinion = { target = ROOT value > 50 }
+                is_major = no
+                NOT = { has_government = fascism }
+            }
+        }
+        cost = 40
+        fire_only_once = no
+        days_re_enable = 60
+        complete_effect = {
+            add_to_faction = FROM
+            add_stability = 0.05
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_peace_enforcement = {
+        icon = GFX_PAO_mqjj_target
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_peaceful_coexistence
+            check_variable = { PAU_trade_partners > 2 }
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                is_subject = no
+                has_war = yes
+            }
+        }
+        cost = 50
+        fire_only_once = no
+        days_re_enable = 120
+        complete_effect = {
+            every_country = {
+                limit = { has_war_with = FROM }
+                FROM = {
+                    white_peace = { tag = PREV }
+                }
+            }
+            add_stability = 0.05
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_neutrality_guarantee = {
+        icon = GFX_PAO_rmzj_target
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_armed_neutrality
+            check_variable = { PAU_coastal_defenses > 2 }
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                is_subject = no
+                has_war = no
+                is_in_faction = no
+                has_opinion = { target = ROOT value > 0 }
+                NOT = { has_war_with = ROOT }
+            }
+        }
+        cost = 40
+        fire_only_once = no
+        days_re_enable = 60
+        complete_effect = {
+            give_guarantee = FROM
+            add_stability = 0.05
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_neutrality_ultimatum = {
+        icon = GFX_weijiao
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_armed_neutrality
+            check_variable = { PAU_coastal_defenses > 4 }
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                is_subject = no
+                NOT = { has_war_with = ROOT }
+                NOT = { is_in_faction_with = ROOT }
+            }
+        }
+        cost = 50
+        fire_only_once = no
+        days_re_enable = 120
+        complete_effect = {
+            declare_war_on = { target = FROM type = annex_everything }
+            add_stability = 0.05
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_national_unification = {
+    PAU_south_america_super_event = {
+        icon = GFX_nmty
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = has_PAU_xiaoyao5 has_completed_focus = PAU_sztytz }
+        available = {
+            is_in_faction = yes
+            all_country = {
+                OR = {
+                    tag = ROOT
+                    NOT = { capital_scope = { is_on_continent = south_america } }
+                    is_in_faction_with = ROOT
+                }
+            }
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            set_country_flag = PAU_south_america_super_fired
+            unlock_decision_category_tooltip = PAU_joint_institutions
+            hidden_effect = {
+                every_faction_member = {
+                    limit = {
+                        NOT = { tag = PAU }
+                        capital_scope = { is_on_continent = south_america }
+                    }
+                    add_ideas = PAU_south_america_union_member
+                }
+                add_dynamic_modifier = { modifier = PAU_south_america_leader }
+                PAU_refresh_south_america_members = yes
+                PAU_refresh_joint_staff_college = yes
+                PAU_refresh_state_council = yes
+            }
+            hidden_effect = { PAU_news_south_america = yes }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_sakura_super_event = {
+        icon = GFX_decision_category_MTK_sun_rising
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = has_PAU_xiaoyao7 has_completed_focus = PAU_zgjd }
+        available = {
+            OR = {
+                NOT = { country_exists = JAP }
+                JAP = {
+                    all_core_state = {
+                        is_controlled_by = ROOT
+                    }
+                }
+            }
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            set_country_flag = PAU_sakura_super_fired
+            PAU_add_sakura_cores = yes
+            hidden_effect = { PAU_news_sakura = yes }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    PAU_demand_sakura_cores = {
+        icon = GFX_PAO_back_PAM3
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = has_PAU_xiaoyao7
+            has_completed_focus = PAU_llbg
+            OR = {
+                NOT = { country_exists = JAP }
+                JAP = { has_capitulated = yes }
+                JAP = {
+                    all_core_state = { NOT = { is_controlled_by = JAP } }
+                }
+            }
+        }
+        available = {
+            has_completed_focus = PAU_llbg
+            hidden_trigger = { NOT = { has_country_flag = PAU_sakura_demand_done } }
+            any_country = {
+                exists = yes
+                NOT = { tag = PAU }
+                NOT = { is_subject_of = ROOT }
+                NOT = { has_war_with = ROOT }
+                any_controlled_state = { is_core_of = JAP }
+            }
+        }
+        cost = 50
+        fire_only_once = yes
+        custom_effect_tooltip = PAU_demand_sakura_cores_effect_tt
+        days_remove = 30
+        remove_effect = {
+            set_country_flag = PAU_sakura_demand_done
+            PAU_demand_sakura_cores_effect = yes
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
+PAU_joint_institutions = {
+    PAU_south_america_joint_logistics = {
+        icon = GFX_decision_Whampoa_icon
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_south_america_super_fired }
+        available = {
+            any_country = {
+                is_in_faction_with = ROOT
+                NOT = { tag = ROOT }
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        cost = 25
+        days_re_enable = 90
+        complete_effect = {
+            country_event = { id = PAU.560 hours = 6 }
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_south_america_defense_council = {
+        icon = GFX_decision_category_form_nordic_league_category
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_south_america_super_fired }
+        available = {
+            has_political_power > 24
+            any_country = {
+                is_in_faction_with = ROOT
+                NOT = { tag = ROOT }
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        cost = 25
+        days_re_enable = 90
+        complete_effect = {
+            PAU_call_joint_staff_college = yes
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_south_america_development_fund = {
+        icon = GFX_faction_research_plan
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_south_america_super_fired }
+        available = {
+            has_political_power > 24
+            check_variable = { PAU_sa_study_points > 2 }
+            any_country = {
+                is_in_faction_with = ROOT
+                NOT = { tag = ROOT }
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        cost = 25
+        days_re_enable = 60
+        complete_effect = {
+            subtract_from_variable = { PAU_sa_study_points = 3 }
+            country_event = { id = PAU.570 hours = 6 }
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_south_america_state_council = {
+        icon = GFX_decision_generic_court
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_south_america_super_fired }
+        available = {
+            has_political_power > 24
+            any_country = {
+                is_in_faction_with = ROOT
+                NOT = { tag = ROOT }
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        cost = 25
+        days_re_enable = 90
+        complete_effect = {
+            country_event = { id = PAU.600 hours = 6 }
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_south_america_member_mission = {
+        icon = GFX_mission_xiaofeng_chip_exchange_proposal
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_south_america_super_fired }
+        available = {
+            has_political_power > 24
+            any_country = {
+                is_in_faction_with = ROOT
+                NOT = { tag = ROOT }
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        cost = 25
+        days_re_enable = 90
+        complete_effect = {
+            PAU_call_state_council_missions = yes
+        }
+        ai_will_do = { factor = 10 }
+    }
+
+    PAU_south_america_development_program = {
+        icon = GFX_gongyejihua2
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_south_america_super_fired }
+        available = {
+            has_political_power > 24
+            check_variable = { PAU_sa_state_points > 2 }
+            any_country = {
+                is_in_faction_with = ROOT
+                NOT = { tag = ROOT }
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        cost = 25
+        days_re_enable = 60
+        complete_effect = {
+            subtract_from_variable = { PAU_sa_state_points = 3 }
+            country_event = { id = PAU.620 hours = 6 }
+        }
+        ai_will_do = { factor = 10 }
+    }
+}

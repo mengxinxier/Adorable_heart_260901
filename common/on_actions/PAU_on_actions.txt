@@ -1,18 +1,95 @@
 on_actions = {
+    on_startup = {
+        effect = {
+            every_state = {
+                limit = {
+                    or = {
+                        is_core_of = PAM
+                        is_core_of = CHL
+                        is_core_of = PAU
+                        is_core_of = LHS
+                    }
+                }
+                set_state_flag = is_lldy_state_flag
+            }
+        }
+    }
+    on_monthly = {
+        effect = {
+            if = {
+                limit = {
+                    has_idea = PAU_royal_arrears
+                    check_variable = { PAU_debt < 1 }
+                }
+                remove_ideas = PAU_royal_arrears
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU_safe_harbor_unlocked
+                }
+                PAU_refresh_harbor_spillover_states = yes
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU_auto_harbor
+                    NOT = { has_active_mission = PAU_safe_harbor_auto_task }
+                }
+                activate_mission = PAU_safe_harbor_auto_task
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU_auto_baiye
+                    NOT = { has_active_mission = PAU_baiye_auto_task }
+                }
+                activate_mission = PAU_baiye_auto_task
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU_auto_infrastructure
+                    NOT = { has_active_mission = PAU_auto_infrastructure_task }
+                }
+                activate_mission = PAU_auto_infrastructure_task
+            }
+            if = {
+                limit = { has_country_flag = PAU_undead_war }
+                PAU_refresh_undead_pressure = yes
+            }
+            if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }
+            if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }
+            if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }
+            if = { limit = { check_variable = { PAU_axia_eco > 0 } } set_country_flag = PAU_economy_reform_axia_unlocked }
+            if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
+            if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
+            PAU_refresh_late_networks = yes
+            PAU_refresh_south_america_members = yes
+            PAU_refresh_south_america_development = yes
+            PAU_init_diplomacy_vars = yes
+            PAU_refresh_joint_staff_college = yes
+            PAU_refresh_state_council = yes
+            PAU_refresh_mil_reform_tiers = yes
+            PAU_refresh_eco_reform_tiers = yes
+}
+    }
     on_capitulation = {
         effect = {
-            every_country = {
+            if = {
                 limit = {
-                    has_country_flag = PAU_bop_loan_active #同意的flag
+                    ROOT = {
+                        has_country_flag = PAU_bop_loan_active #同意的flag
+                    }
                 }
                 every_country = {
                     limit = {
-                        has_war_with = PREV
+                        has_country_flag = PAU_bop_loan_active #同意的flag
                     }
-                    set_country_flag = PAU_guzhu_cap
+                    every_country = {
+                        limit = {
+                            has_war_with = PREV
+                        }
+                        set_country_flag = PAU_guzhu_cap
+                    }
                 }
             }
-
         }
     }
 }
