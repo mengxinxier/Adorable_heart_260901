@@ -165,12 +165,6 @@ PAU_refresh_mil_reform_tiers = {
     multiply_variable = { PAU_mil_reform_invasion_prep = -0.006 }
     add_to_variable = { PAU_mil_reform_invasion_prep = PAU_mil_reform_bonus_invasion_prep }
     set_variable = { PAU_mil_reform_attack = PAU_mil_reform_bonus_attack }
-    set_variable = { PAU_mil_reform_doctrine = PAU_mil_reform_progress }
-    multiply_variable = { PAU_mil_reform_doctrine = -0.01 }
-    clamp_variable = { var = PAU_mil_reform_doctrine min = -0.25 max = 0 }
-    multiply_variable = { PAU_mil_reform_doctrine = 20 }
-    round_variable = PAU_mil_reform_doctrine
-    divide_variable = { PAU_mil_reform_doctrine = 20 }
     clamp_variable = { var = PAU_mil_reform_org min = 0 max = 0.15 }
     clamp_variable = { var = PAU_mil_reform_planning min = 0 max = 0.15 }
     clamp_variable = { var = PAU_mil_reform_breakthrough min = 0 max = 0.15 }
@@ -389,26 +383,6 @@ PAU_expand_safe_harbor = {
     add_extra_state_shared_building_slots = 1
 }
 
-PAU_auto_harbor_expand_effect = {
-    if = {
-        limit = {
-            has_country_flag = PAU_auto_harbor
-            check_variable = { PAU_harbor_dev < 6 }
-            has_political_power > 24
-            any_controlled_state = { has_state_flag = PAU_safe_harbor }
-        }
-        add_political_power = -25
-        random_controlled_state = {
-            limit = { has_state_flag = PAU_safe_harbor is_controlled_by = ROOT }
-            PAU_expand_safe_harbor = yes
-        }
-        add_to_variable = {
-            var = PAU_harbor_dev
-            value = 1
-            tooltip = PAU_harbor_dev_tt
-        }
-    }
-}
 
 PAU_queue_infrastructure_once = {
     clr_country_flag = PAU_infra_queued_done
@@ -432,20 +406,6 @@ PAU_queue_infrastructure_once = {
     clr_country_flag = PAU_infra_queued_done
 }
 
-PAU_auto_infrastructure_effect = {
-    if = {
-        limit = {
-            has_country_flag = PAU_auto_infrastructure
-            has_political_power > 9
-            any_controlled_state = {
-                free_building_slots = { building = infrastructure size > 0 }
-                NOT = { has_state_flag = PAU_auto_infra_queued }
-            }
-        }
-        add_political_power = -10
-        PAU_queue_infrastructure_once = yes
-    }
-}
 
 PAU_refresh_undead_pressure = {
     if = {
@@ -759,59 +719,8 @@ PAU_refresh_state_council = {
     }
 }
 
-PAU_refresh_axia_reform = {
-    hidden_effect = { PAU_ml_remove_PAU_path_axia_tier1 = yes }
-    hidden_effect = { PAU_ml_remove_PAU_path_axia_tier2 = yes }
-    hidden_effect = { PAU_ml_remove_PAU_path_axia_tier3 = yes }
-    if = {
-        limit = { check_variable = { PAU_axia_reform_progress > 8 } }
-        hidden_effect = { PAU_ml_add_PAU_path_axia_tier3 = yes }
-    }
-    else_if = {
-        limit = { check_variable = { PAU_axia_reform_progress > 4 } }
-        hidden_effect = { PAU_ml_add_PAU_path_axia_tier2 = yes }
-    }
-    else_if = {
-        limit = { check_variable = { PAU_axia_reform_progress > 0 } }
-        hidden_effect = { PAU_ml_add_PAU_path_axia_tier1 = yes }
-    }
-}
 
-PAU_refresh_xfxy_reform = {
-    hidden_effect = { PAU_ml_remove_PAU_path_xfxy_tier1 = yes }
-    hidden_effect = { PAU_ml_remove_PAU_path_xfxy_tier2 = yes }
-    hidden_effect = { PAU_ml_remove_PAU_path_xfxy_tier3 = yes }
-    if = {
-        limit = { check_variable = { PAU_xfxy_reform_progress > 8 } }
-        hidden_effect = { PAU_ml_add_PAU_path_xfxy_tier3 = yes }
-    }
-    else_if = {
-        limit = { check_variable = { PAU_xfxy_reform_progress > 4 } }
-        hidden_effect = { PAU_ml_add_PAU_path_xfxy_tier2 = yes }
-    }
-    else_if = {
-        limit = { check_variable = { PAU_xfxy_reform_progress > 0 } }
-        hidden_effect = { PAU_ml_add_PAU_path_xfxy_tier1 = yes }
-    }
-}
 
-PAU_refresh_xiaoyao_reform = {
-    hidden_effect = { PAU_ml_remove_PAU_path_xiaoyao_tier1 = yes }
-    hidden_effect = { PAU_ml_remove_PAU_path_xiaoyao_tier2 = yes }
-    hidden_effect = { PAU_ml_remove_PAU_path_xiaoyao_tier3 = yes }
-    if = {
-        limit = { check_variable = { PAU_xiaoyao_reform_progress > 8 } }
-        hidden_effect = { PAU_ml_add_PAU_path_xiaoyao_tier3 = yes }
-    }
-    else_if = {
-        limit = { check_variable = { PAU_xiaoyao_reform_progress > 4 } }
-        hidden_effect = { PAU_ml_add_PAU_path_xiaoyao_tier2 = yes }
-    }
-    else_if = {
-        limit = { check_variable = { PAU_xiaoyao_reform_progress > 0 } }
-        hidden_effect = { PAU_ml_add_PAU_path_xiaoyao_tier1 = yes }
-    }
-}
 
 PAU_init_diplomacy_vars = {
     if = { limit = { NOT = { has_variable = PAU_china_agreements } } set_variable = { PAU_china_agreements = 0 } }
@@ -837,9 +746,6 @@ PAU_init_diplomacy_vars = {
     if = { limit = { NOT = { has_variable = PAU_sa_state_mobilization } } set_variable = { PAU_sa_state_mobilization = 0 } }
     if = { limit = { NOT = { has_variable = PAU_sa_state_points } } set_variable = { PAU_sa_state_points = 0 } }
     if = { limit = { NOT = { has_variable = PAU_sa_state_tier } } set_variable = { PAU_sa_state_tier = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_axia_reform_progress } } set_variable = { PAU_axia_reform_progress = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_xfxy_reform_progress } } set_variable = { PAU_xfxy_reform_progress = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_xiaoyao_reform_progress } } set_variable = { PAU_xiaoyao_reform_progress = 0 } }
     if = { limit = { NOT = { has_variable = PAU_mil_reform_org } } set_variable = { PAU_mil_reform_org = 0 } }
     if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_org } } set_variable = { PAU_mil_reform_bonus_org = 0 } }
     if = { limit = { NOT = { has_variable = PAU_mil_reform_planning } } set_variable = { PAU_mil_reform_planning = 0 } }
@@ -906,393 +812,73 @@ PAU_init_diplomacy_vars = {
 
 PAU_ml_ensure_vars = {
     if = { limit = { NOT = { has_variable = PAU_ml_raw_political_power_factor } } set_variable = { PAU_ml_raw_political_power_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_political_power_factor } } set_variable = { PAU_ml_political_power_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_fuel_gain_factor } } set_variable = { PAU_ml_raw_fuel_gain_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_fuel_gain_factor } } set_variable = { PAU_ml_fuel_gain_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_research_speed_factor } } set_variable = { PAU_ml_raw_research_speed_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_research_speed_factor } } set_variable = { PAU_ml_research_speed_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_army_org_factor } } set_variable = { PAU_ml_raw_army_org_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_army_org_factor } } set_variable = { PAU_ml_army_org_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_buildings_factor } } set_variable = { PAU_ml_raw_production_speed_buildings_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_production_speed_buildings_factor } } set_variable = { PAU_ml_production_speed_buildings_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_improve_relations_maintain_cost_factor } } set_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_improve_relations_maintain_cost_factor } } set_variable = { PAU_ml_improve_relations_maintain_cost_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_attrition } } set_variable = { PAU_ml_raw_attrition = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_attrition } } set_variable = { PAU_ml_attrition = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_coordination_bonus } } set_variable = { PAU_ml_raw_coordination_bonus = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_coordination_bonus } } set_variable = { PAU_ml_coordination_bonus = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_recon_factor } } set_variable = { PAU_ml_raw_recon_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_recon_factor } } set_variable = { PAU_ml_recon_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_initiative_factor } } set_variable = { PAU_ml_raw_initiative_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_initiative_factor } } set_variable = { PAU_ml_initiative_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_coordination } } set_variable = { PAU_ml_raw_naval_coordination = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_naval_coordination } } set_variable = { PAU_ml_naval_coordination = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_dockyard_factor } } set_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_production_speed_dockyard_factor } } set_variable = { PAU_ml_production_speed_dockyard_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_ship_recovery_chance_factor } } set_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_naval_ship_recovery_chance_factor } } set_variable = { PAU_ml_naval_ship_recovery_chance_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_consumer_goods_factor } } set_variable = { PAU_ml_raw_consumer_goods_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_consumer_goods_factor } } set_variable = { PAU_ml_consumer_goods_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_defense_factor } } set_variable = { PAU_ml_raw_naval_defense_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_naval_defense_factor } } set_variable = { PAU_ml_naval_defense_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_army_morale_factor } } set_variable = { PAU_ml_raw_army_morale_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_army_morale_factor } } set_variable = { PAU_ml_army_morale_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_trade_opinion_factor } } set_variable = { PAU_ml_raw_trade_opinion_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_trade_opinion_factor } } set_variable = { PAU_ml_trade_opinion_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_breakthrough_factor } } set_variable = { PAU_ml_raw_breakthrough_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_breakthrough_factor } } set_variable = { PAU_ml_breakthrough_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_industrial_complex_factor } } set_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_production_speed_industrial_complex_factor } } set_variable = { PAU_ml_production_speed_industrial_complex_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_industrial_capacity_factory } } set_variable = { PAU_ml_raw_industrial_capacity_factory = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_industrial_capacity_factory } } set_variable = { PAU_ml_industrial_capacity_factory = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_planning_speed } } set_variable = { PAU_ml_raw_planning_speed = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_planning_speed } } set_variable = { PAU_ml_planning_speed = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_training_time_factor } } set_variable = { PAU_ml_raw_training_time_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_training_time_factor } } set_variable = { PAU_ml_training_time_factor = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_raw_out_of_supply_factor } } set_variable = { PAU_ml_raw_out_of_supply_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_out_of_supply_factor } } set_variable = { PAU_ml_out_of_supply_factor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_administration_reform } } set_variable = { PAU_ml_count_PAU_administration_reform = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_asia_neighbors } } set_variable = { PAU_ml_count_PAU_asia_neighbors = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_barrow_legacy } } set_variable = { PAU_ml_count_PAU_barrow_legacy = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_china_hardline } } set_variable = { PAU_ml_count_PAU_china_hardline = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_civil_reconstruction } } set_variable = { PAU_ml_count_PAU_civil_reconstruction = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network } } set_variable = { PAU_ml_count_PAU_coastal_network = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_2 } } set_variable = { PAU_ml_count_PAU_coastal_network_2 = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_3 } } set_variable = { PAU_ml_count_PAU_coastal_network_3 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_defy_death } } set_variable = { PAU_ml_count_PAU_defy_death = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_eng_cooperation } } set_variable = { PAU_ml_count_PAU_eng_cooperation = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_final_settlement } } set_variable = { PAU_ml_count_PAU_final_settlement = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_formal_government } } set_variable = { PAU_ml_count_PAU_formal_government = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_full_tanks } } set_variable = { PAU_ml_count_PAU_full_tanks = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_camp_network } } set_variable = { PAU_ml_count_PAU_grail_camp_network = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_camp_state } } set_variable = { PAU_ml_count_PAU_grail_camp_state = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_refuge } } set_variable = { PAU_ml_count_PAU_grail_refuge = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_homeland_network } } set_variable = { PAU_ml_count_PAU_homeland_network = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_lhs_integrated } } set_variable = { PAU_ml_count_PAU_lhs_integrated = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_lhs_remnants } } set_variable = { PAU_ml_count_PAU_lhs_remnants = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_nightingale_legacy } } set_variable = { PAU_ml_count_PAU_nightingale_legacy = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_pacific_defense } } set_variable = { PAU_ml_count_PAU_pacific_defense = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_pacific_peace } } set_variable = { PAU_ml_count_PAU_pacific_peace = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_axia_tier1 } } set_variable = { PAU_ml_count_PAU_path_axia_tier1 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_axia_tier2 } } set_variable = { PAU_ml_count_PAU_path_axia_tier2 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_axia_tier3 } } set_variable = { PAU_ml_count_PAU_path_axia_tier3 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_xfxy_tier1 } } set_variable = { PAU_ml_count_PAU_path_xfxy_tier1 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_xfxy_tier2 } } set_variable = { PAU_ml_count_PAU_path_xfxy_tier2 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_xfxy_tier3 } } set_variable = { PAU_ml_count_PAU_path_xfxy_tier3 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_xiaoyao_tier1 } } set_variable = { PAU_ml_count_PAU_path_xiaoyao_tier1 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_xiaoyao_tier2 } } set_variable = { PAU_ml_count_PAU_path_xiaoyao_tier2 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_path_xiaoyao_tier3 } } set_variable = { PAU_ml_count_PAU_path_xiaoyao_tier3 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_pursuit_authorized } } set_variable = { PAU_ml_count_PAU_pursuit_authorized = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_reconstruction_mobilized } } set_variable = { PAU_ml_count_PAU_reconstruction_mobilized = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_reform_land } } set_variable = { PAU_ml_count_PAU_reform_land = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_reform_navy } } set_variable = { PAU_ml_count_PAU_reform_navy = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_reform_supply } } set_variable = { PAU_ml_count_PAU_reform_supply = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_reform_trade } } set_variable = { PAU_ml_count_PAU_reform_trade = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_restitution_goodwill } } set_variable = { PAU_ml_count_PAU_restitution_goodwill = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network } } set_variable = { PAU_ml_count_PAU_revolution_network = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_2 } } set_variable = { PAU_ml_count_PAU_revolution_network_2 = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_3 } } set_variable = { PAU_ml_count_PAU_revolution_network_3 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_road_to_harbor } } set_variable = { PAU_ml_count_PAU_road_to_harbor = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_rule_of_law } } set_variable = { PAU_ml_count_PAU_rule_of_law = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_sakura_administration } } set_variable = { PAU_ml_count_PAU_sakura_administration = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_schools_opened } } set_variable = { PAU_ml_count_PAU_schools_opened = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_shared_guilt } } set_variable = { PAU_ml_count_PAU_shared_guilt = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_shipyard_mobilization } } set_variable = { PAU_ml_count_PAU_shipyard_mobilization = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_soviet_contact } } set_variable = { PAU_ml_count_PAU_soviet_contact = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_stage_grail } } set_variable = { PAU_ml_count_PAU_stage_grail = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_stage_reconstruction } } set_variable = { PAU_ml_count_PAU_stage_reconstruction = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_stage_sakura } } set_variable = { PAU_ml_count_PAU_stage_sakura = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_stage_south_america } } set_variable = { PAU_ml_count_PAU_stage_south_america = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_stage_undead_vanguard } } set_variable = { PAU_ml_count_PAU_stage_undead_vanguard = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_stage_world } } set_variable = { PAU_ml_count_PAU_stage_world = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network } } set_variable = { PAU_ml_count_PAU_trade_network = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_2 } } set_variable = { PAU_ml_count_PAU_trade_network_2 = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_3 } } set_variable = { PAU_ml_count_PAU_trade_network_3 = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_tram_restored } } set_variable = { PAU_ml_count_PAU_tram_restored = 0 } }
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_pressure } } set_variable = { PAU_ml_count_PAU_undead_pressure = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_readiness } } set_variable = { PAU_ml_count_PAU_undead_readiness = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_unified_currency } } set_variable = { PAU_ml_count_PAU_unified_currency = 0 } }
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_white_night_beast } } set_variable = { PAU_ml_count_PAU_white_night_beast = 0 } }
 }
 
-PAU_ml_add_PAU_administration_reform = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_administration_reform < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_administration_reform = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_fuel_gain_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_administration_reform = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_administration_reform > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_administration_reform = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_fuel_gain_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_asia_neighbors = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_asia_neighbors < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_asia_neighbors = 1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-}
-}
-PAU_ml_remove_PAU_asia_neighbors = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_asia_neighbors > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_asia_neighbors = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-}
-}
 
 PAU_ml_add_PAU_barrow_legacy = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_barrow_legacy < 1 } }
         add_to_variable = { PAU_ml_count_PAU_barrow_legacy = 1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_barrow_legacy = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_barrow_legacy > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_barrow_legacy = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
+        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_attrition = -0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 } #需修改
 }
 }
 
-PAU_ml_add_PAU_china_hardline = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_china_hardline < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_china_hardline = 1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_china_hardline = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_china_hardline > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_china_hardline = 1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_civil_reconstruction = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_civil_reconstruction < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_civil_reconstruction = 1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_recon_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_civil_reconstruction = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_civil_reconstruction > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_civil_reconstruction = 1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_recon_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_coastal_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_coastal_network = 1 }
-        add_to_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_coastal_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_coastal_network = 1 }
-        subtract_from_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_coastal_network_2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_2 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_coastal_network_2 = 1 }
-        add_to_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_coastal_network_2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_2 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_coastal_network_2 = 1 }
-        subtract_from_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_coastal_network_3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_3 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_coastal_network_3 = 1 }
-        add_to_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_coastal_network_3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_3 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_coastal_network_3 = 1 }
-        subtract_from_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.1 }
-}
-}
 
-PAU_ml_add_PAU_defy_death = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_defy_death < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_defy_death = 1 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 }
-}
-}
-PAU_ml_remove_PAU_defy_death = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_defy_death > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_defy_death = 1 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 }
-}
-}
 
-PAU_ml_add_PAU_eng_cooperation = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_eng_cooperation < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_eng_cooperation = 1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-}
-}
-PAU_ml_remove_PAU_eng_cooperation = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_eng_cooperation > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_eng_cooperation = 1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-}
-}
 
-PAU_ml_add_PAU_final_settlement = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_final_settlement < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_final_settlement = 1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_final_settlement = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_final_settlement > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_final_settlement = 1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_formal_government = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_formal_government < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_formal_government = 1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_formal_government = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_formal_government > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_formal_government = 1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_full_tanks = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_full_tanks < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_full_tanks = 1 }
-        add_to_variable = { PAU_ml_raw_breakthrough_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_full_tanks = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_full_tanks > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_full_tanks = 1 }
-        subtract_from_variable = { PAU_ml_raw_breakthrough_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-}
-}
 
-PAU_ml_add_PAU_grail_camp_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_grail_camp_network < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_grail_camp_network = 1 }
-        add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_grail_camp_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_grail_camp_network > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_grail_camp_network = 1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
 
 PAU_ml_add_PAU_grail_camp_state = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_grail_camp_state < 1 } }
         add_to_variable = { PAU_ml_count_PAU_grail_camp_state = 1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_grail_camp_state = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_grail_camp_state > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_grail_camp_state = 1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
+        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 } #需修改
 }
 }
 
@@ -1300,816 +886,39 @@ PAU_ml_add_PAU_grail_refuge = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_grail_refuge < 1 } }
         add_to_variable = { PAU_ml_count_PAU_grail_refuge = 1 }
-        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
+        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 } #需修改
 }
 }
 PAU_ml_remove_PAU_grail_refuge = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_grail_refuge > 0 } }
         subtract_from_variable = { PAU_ml_count_PAU_grail_refuge = 1 }
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
+        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 } #需修改
+        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 } #需修改
+        subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 } #需修改
 }
 }
 
-PAU_ml_add_PAU_homeland_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_homeland_network < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_homeland_network = 1 }
-        add_to_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_recon_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_homeland_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_homeland_network > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_homeland_network = 1 }
-        subtract_from_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_recon_factor = 0.05 }
-}
-}
 
-PAU_ml_add_PAU_lhs_integrated = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_integrated < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_lhs_integrated = 1 }
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-}
-}
-PAU_ml_remove_PAU_lhs_integrated = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_integrated > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_lhs_integrated = 1 }
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-}
-}
 
 PAU_ml_add_PAU_lhs_remnants = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_remnants < 1 } }
         add_to_variable = { PAU_ml_count_PAU_lhs_remnants = 1 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.1 }
+        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 } #需修改
 }
 }
 PAU_ml_remove_PAU_lhs_remnants = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_remnants > 0 } }
         subtract_from_variable = { PAU_ml_count_PAU_lhs_remnants = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_nightingale_legacy = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_nightingale_legacy < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_nightingale_legacy = 1 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_nightingale_legacy = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_nightingale_legacy > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_nightingale_legacy = 1 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_pacific_defense = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_pacific_defense < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_pacific_defense = 1 }
-        add_to_variable = { PAU_ml_raw_training_time_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 }
-}
-}
-PAU_ml_remove_PAU_pacific_defense = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_pacific_defense > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_pacific_defense = 1 }
-        subtract_from_variable = { PAU_ml_raw_training_time_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_pacific_peace = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_pacific_peace < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_pacific_peace = 1 }
-        add_to_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_pacific_peace = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_pacific_peace > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_pacific_peace = 1 }
-        subtract_from_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_path_axia_tier1 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_axia_tier1 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_axia_tier1 = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_path_axia_tier1 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_axia_tier1 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_axia_tier1 = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_path_axia_tier2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_axia_tier2 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_axia_tier2 = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_path_axia_tier2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_axia_tier2 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_axia_tier2 = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_path_axia_tier3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_axia_tier3 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_axia_tier3 = 1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_path_axia_tier3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_axia_tier3 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_axia_tier3 = 1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_path_xfxy_tier1 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xfxy_tier1 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_xfxy_tier1 = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_path_xfxy_tier1 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xfxy_tier1 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_xfxy_tier1 = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_path_xfxy_tier2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xfxy_tier2 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_xfxy_tier2 = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_path_xfxy_tier2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xfxy_tier2 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_xfxy_tier2 = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_path_xfxy_tier3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xfxy_tier3 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_xfxy_tier3 = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.15 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_path_xfxy_tier3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xfxy_tier3 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_xfxy_tier3 = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.15 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_path_xiaoyao_tier1 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xiaoyao_tier1 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_xiaoyao_tier1 = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_path_xiaoyao_tier1 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xiaoyao_tier1 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_xiaoyao_tier1 = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_path_xiaoyao_tier2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xiaoyao_tier2 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_xiaoyao_tier2 = 1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_path_xiaoyao_tier2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xiaoyao_tier2 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_xiaoyao_tier2 = 1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_path_xiaoyao_tier3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xiaoyao_tier3 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_path_xiaoyao_tier3 = 1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.15 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_path_xiaoyao_tier3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_path_xiaoyao_tier3 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_path_xiaoyao_tier3 = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.15 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_pursuit_authorized = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_pursuit_authorized < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_pursuit_authorized = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_pursuit_authorized = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_pursuit_authorized > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_pursuit_authorized = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_reconstruction_mobilized = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reconstruction_mobilized < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_reconstruction_mobilized = 1 }
-        add_to_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_reconstruction_mobilized = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reconstruction_mobilized > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_reconstruction_mobilized = 1 }
-        subtract_from_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_reform_land = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_land < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_reform_land = 1 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        add_to_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_reform_land = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_land > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_reform_land = 1 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_reform_navy = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_navy < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_reform_navy = 1 }
-        add_to_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_reform_navy = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_navy > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_reform_navy = 1 }
-        subtract_from_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_reform_supply = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_supply < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_reform_supply = 1 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_out_of_supply_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_attrition = -0.1 }
-}
-}
-PAU_ml_remove_PAU_reform_supply = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_supply > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_reform_supply = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_out_of_supply_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.1 }
-}
-}
-
-PAU_ml_add_PAU_reform_trade = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_trade < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_reform_trade = 1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_reform_trade = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_reform_trade > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_reform_trade = 1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_restitution_goodwill = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_restitution_goodwill < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_restitution_goodwill = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_restitution_goodwill = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_restitution_goodwill > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_restitution_goodwill = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_revolution_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_revolution_network = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_revolution_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_revolution_network = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_revolution_network_2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_2 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_revolution_network_2 = 1 }
-        add_to_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_revolution_network_2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_2 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_revolution_network_2 = 1 }
-        subtract_from_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_revolution_network_3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_3 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_revolution_network_3 = 1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-}
-}
-PAU_ml_remove_PAU_revolution_network_3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_3 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_revolution_network_3 = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 }
-}
-}
-
-PAU_ml_add_PAU_road_to_harbor = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_road_to_harbor < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_road_to_harbor = 1 }
-        add_to_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_road_to_harbor = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_road_to_harbor > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_road_to_harbor = 1 }
-        subtract_from_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_naval_coordination = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_rule_of_law = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_rule_of_law < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_rule_of_law = 1 }
-        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-}
-}
-PAU_ml_remove_PAU_rule_of_law = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_rule_of_law > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_rule_of_law = 1 }
-        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-}
-}
-
-PAU_ml_add_PAU_sakura_administration = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_sakura_administration < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_sakura_administration = 1 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_sakura_administration = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_sakura_administration > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_sakura_administration = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_schools_opened = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_schools_opened < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_schools_opened = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_schools_opened = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_schools_opened > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_schools_opened = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_shared_guilt = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_shared_guilt < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_shared_guilt = 1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_shared_guilt = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_shared_guilt > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_shared_guilt = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_shipyard_mobilization = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_shipyard_mobilization < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_shipyard_mobilization = 1 }
-        add_to_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        add_to_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_shipyard_mobilization = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_shipyard_mobilization > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_shipyard_mobilization = 1 }
-        subtract_from_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        subtract_from_variable = { PAU_ml_raw_naval_defense_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_soviet_contact = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_soviet_contact < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_soviet_contact = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_soviet_contact = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_soviet_contact > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_soviet_contact = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_stage_grail = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_grail < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_stage_grail = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_stage_grail = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_grail > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_stage_grail = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_stage_reconstruction = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_reconstruction < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_stage_reconstruction = 1 }
-        add_to_variable = { PAU_ml_raw_recon_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.15 }
-}
-}
-PAU_ml_remove_PAU_stage_reconstruction = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_reconstruction > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_stage_reconstruction = 1 }
-        subtract_from_variable = { PAU_ml_raw_recon_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_initiative_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_stage_sakura = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_sakura < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_stage_sakura = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_stage_sakura = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_sakura > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_stage_sakura = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_stage_south_america = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_south_america < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_stage_south_america = 1 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_stage_south_america = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_south_america > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_stage_south_america = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_stage_undead_vanguard = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_undead_vanguard < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_stage_undead_vanguard = 1 }
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_stage_undead_vanguard = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_undead_vanguard > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_stage_undead_vanguard = 1 }
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_stage_world = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_world < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_stage_world = 1 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_stage_world = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_stage_world > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_stage_world = 1 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_trade_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_trade_network = 1 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-PAU_ml_remove_PAU_trade_network = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_trade_network = 1 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.15 }
-}
-}
-
-PAU_ml_add_PAU_trade_network_2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_2 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_trade_network_2 = 1 }
-        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-}
-}
-PAU_ml_remove_PAU_trade_network_2 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_2 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_trade_network_2 = 1 }
-        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-}
-}
-
-PAU_ml_add_PAU_trade_network_3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_3 < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_trade_network_3 = 1 }
-        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-}
-}
-PAU_ml_remove_PAU_trade_network_3 = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_3 > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_trade_network_3 = 1 }
-        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_tram_restored = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_tram_restored < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_tram_restored = 1 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.1 }
-}
-}
-PAU_ml_remove_PAU_tram_restored = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_tram_restored > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_tram_restored = 1 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.1 }
+        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #需修改
+        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 } #需修改
+        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 } #需修改
 }
 }
 
@@ -2117,74 +926,17 @@ PAU_ml_add_PAU_undead_pressure = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure < 1 } }
         add_to_variable = { PAU_ml_count_PAU_undead_pressure = 1 }
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 }
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.1 }
+        add_to_variable = { PAU_ml_raw_attrition = -0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 } #需修改
+        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #需修改
 }
 }
 PAU_ml_remove_PAU_undead_pressure = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } }
         subtract_from_variable = { PAU_ml_count_PAU_undead_pressure = 1 }
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 }
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.15 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.1 }
-}
-}
-
-PAU_ml_add_PAU_undead_readiness = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_readiness < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_undead_readiness = 1 }
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_undead_readiness = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_readiness > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_undead_readiness = 1 }
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_unified_currency = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_unified_currency < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_unified_currency = 1 }
-        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.15 }
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
-PAU_ml_remove_PAU_unified_currency = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_unified_currency > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_unified_currency = 1 }
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.15 }
-        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }
-}
-}
-
-PAU_ml_add_PAU_white_night_beast = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_white_night_beast < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_white_night_beast = 1 }
-        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.1 }
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 }
-}
-}
-PAU_ml_remove_PAU_white_night_beast = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_white_night_beast > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_white_night_beast = 1 }
-        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 }
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.1 }
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 }
+        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 } #需修改
+        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 } #需修改
+        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #需修改
 }
 }
