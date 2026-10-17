@@ -99,7 +99,6 @@ PAU_LHS_weiji = {
         timeout_effect = {
                 PAU = {
                     hidden_effect = {
-                        set_technology = { basic_light_tank_chassis = 1 }
                         create_equipment_variant = {
                             name = "莉兰迪亚皇家坦克"
                             type = light_tank_chassis_1
@@ -189,11 +188,11 @@ PAU_LHS_weiji = {
                 }
                 activate_mission = PAU_LHS_weiji_dec3
 
-                #hidden_effect = {
-                #   LHS = {
-                #       activate_mission = LHS_weiji3
-                #   }
-                #}
+                hidden_effect = {
+                   LHS = {
+                       activate_mission = LHS_weiji3
+                   }
+                }
 
         }
         complete_effect = {
@@ -230,7 +229,6 @@ PAU_LHS_weiji = {
         timeout_effect = {
                 PAU = {
                     hidden_effect = {
-                        set_technology = { basic_light_tank_chassis = 1 }
                         create_equipment_variant = {
                             name = "莉兰迪亚皇家坦克"
                             type = light_tank_chassis_1
@@ -1173,27 +1171,31 @@ PAU_hetong = {
 
 
 #剧情定位：野火旧部整编：保留骨干或解散旧部，两条互斥路线
-PAU_lhs_integration = { #有点东西，但东西不多
+PAU_lhs_integration = {
     #决议名：保留旧部连队编制
     PAU_lhs_keep_cadres = {
         icon = GFX_youji_on_me3
         allowed = { original_tag = PAU }
         visible = { 
         }
-        available = { NOT = { has_country_flag = PAU_lhs_dissolved } }
+        available = {
+            NOT = { has_country_flag = PAU_lhs_dissolved }
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_lhs_integration_lt100_tt
+                check_variable = { PAU_lhs_integration < 100 } #野火旧部整编度（0-100）
+            }
+        }
         cost = 25
-        fire_only_once = yes
+        fire_only_once = no
         days_remove = 30
         remove_effect = {
             add_to_variable = {
-                var = PAU_lhs_integration #野火旧部整编度（0-100）：达到30可完成整编
+                var = PAU_lhs_integration #野火旧部整编度（0-100）
                 value = 10
                 tooltip = PAU_lhs_integration_tt
             }
-            army_experience = 50
-            add_manpower = 3000
-            set_country_flag = PAU_lhs_old_cadres
             set_country_flag = PAU_lhs_kept_cadres
+            custom_effect_tooltip = PAU_lhs_keep_cadres_tt
         }
         ai_will_do = { factor = 10 }
     }
@@ -1202,20 +1204,24 @@ PAU_lhs_integration = { #有点东西，但东西不多
         icon = GFX_USA_Reform_of_Red_Army_Red_Star
         allowed = { original_tag = PAU }
         visible = {  }
-        available = { NOT = { has_country_flag = PAU_lhs_kept_cadres } }
+        available = {
+            NOT = { has_country_flag = PAU_lhs_kept_cadres }
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_lhs_integration_lt100_tt
+                check_variable = { PAU_lhs_integration < 100 } #野火旧部整编度（0-100）
+            }
+        }
         cost = 25
-        fire_only_once = yes
+        fire_only_once = no
         days_remove = 30
         remove_effect = {
             add_to_variable = {
-                var = PAU_lhs_integration #野火旧部整编度（0-100）：达到30可完成整编
-                value = 15
+                var = PAU_lhs_integration #野火旧部整编度（0-100）
+                value = 10
                 tooltip = PAU_lhs_integration_tt
             }
-            add_manpower = 10000
-            army_experience = 25
-            clr_country_flag = PAU_lhs_old_cadres
-            set_country_flag = PAU_lhs_dissolved
+            set_country_flag = PAU_lhs_dissolve
+            custom_effect_tooltip = PAU_lhs_dissolve_tt
         }
         ai_will_do = { factor = 10 }
     }
@@ -1225,28 +1231,65 @@ PAU_lhs_integration = { #有点东西，但东西不多
         allowed = { original_tag = PAU }
         visible = {  }
         available = {
-            OR = {
-                has_country_flag = PAU_lhs_old_cadres
-                has_country_flag = PAU_lhs_dissolved
-            }
+            has_war = no
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_lhs_integration_lt100_tt
-                check_variable = { PAU_lhs_integration < 100 } #野火旧部整编度（0-100）：达到30可完成整编
+                check_variable = { PAU_lhs_integration < 100 } #野火旧部整编度（0-100）
             }
         }
         cost = 25
         fire_only_once = yes
         days_remove = 30
         remove_effect = {
-            add_manpower = -3000
-            set_country_flag = PAU_lhs_joint_drill_done
             add_to_variable = {
-                var = PAU_lhs_integration #野火旧部整编度（0-100）：达到30可完成整编
+                var = PAU_lhs_integration #野火旧部整编度（0-100）
                 value = 10
                 tooltip = PAU_lhs_integration_tt
             }
-            army_experience = 75
+            army_experience = 25
             command_power = 25
+        }
+        ai_will_do = { factor = 10 }
+    }
+    #决议名：让旧部军官去带新兵
+    PAU_lhs_officer_exchange = {
+        icon = GFX_decision_attache
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = PAU_lhs_finish_available_tt
+                check_variable = { PAU_lhs_integration > 29 } #野火旧部整编度（0-100）
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        days_remove = 60
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_lhs_integration #野火旧部整编度（0-100）
+                value = -10
+                tooltip = PAU_lhs_integration_tt
+            }
+            add_manpower = -5000
+            division_template = {
+                name = "莉兰迪亚红军"
+                is_locked = no
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    infantry = { x = 0 y = 2 }
+                    infantry = { x = 0 y = 3 }
+                    infantry = { x = 1 y = 0 }
+                }
+            }
+            random_controlled_state = {
+                create_unit = {
+                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
+                    count = 1
+                    owner = PAU
+                }
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1256,11 +1299,9 @@ PAU_lhs_integration = { #有点东西，但东西不多
         allowed = { original_tag = PAU }
         visible = {  }
         available = {
-            has_country_flag = PAU_lhs_joint_drill_done
-            has_country_flag = PAU_lhs_officer_done
             custom_trigger_tooltip = {
                 tooltip = PAU_lhs_finish_available_tt
-                check_variable = { PAU_lhs_integration > 29 } #野火旧部整编度（0-100）：达到30可完成整编
+                check_variable = { PAU_lhs_integration > 99 } #野火旧部整编度（0-100）
             }
         }
         cost = 25
@@ -1285,56 +1326,19 @@ PAU_lhs_integration = { #有点东西，但东西不多
                 value = 0.05  #需修改
                 tooltip = coordination_bonus_tt
             }
-remove_ideas = PAU_divided_legion
-            army_experience = 100
-            command_power = 50
-            set_technology = { youjidui_tech = 1 }
-            set_sub_doctrine = youji_on_end
-            set_sub_doctrine = LHS_guerilla_war
-            if = {
-                limit = { country_exists = LHS }
-                LHS = {
-                    every_character = {
-                        limit = { is_general_advisor = no }
-                        set_nationality = ROOT
-                    }
-                }
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：让旧部军官去带新兵
-    PAU_lhs_officer_exchange = {
-        icon = GFX_decision_attache
-        allowed = { original_tag = PAU }
-        visible = { always = yes }
-        available = {
-            OR = {
-                has_country_flag = PAU_lhs_old_cadres
-                has_country_flag = PAU_lhs_dissolved
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_lhs_integration_lt100_tt
-                check_variable = { PAU_lhs_integration < 100 } #野火旧部整编度（0-100）：达到30可完成整编
-            }
-        }
-        cost = 25
-        fire_only_once = yes
-        days_remove = 30
-        remove_effect = {
-            add_manpower = -2000
-            set_country_flag = PAU_lhs_officer_done
-            add_to_variable = {
-                var = PAU_lhs_integration #野火旧部整编度（0-100）：达到30可完成整编
-                value = 10
-                tooltip = PAU_lhs_integration_tt
-            }
-            add_manpower = 5000
-            army_experience = 35
             add_to_variable = {
                 var = PAU_ml_raw_training_time_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
                 value = -0.05  #TODO 统一默认5%，请按需修改
                 tooltip = training_time_factor_tt
+            }
+            remove_ideas = PAU_divided_legion2
+            set_technology = { youjidui_tech = 1 }
+            custom_effect_tooltip = PAU_lhs_finish_tt
+            LHS = {
+                every_character = {
+                    limit = { is_general_advisor = no }
+                    set_nationality = ROOT
+                }
             }
         }
         ai_will_do = { factor = 10 }
