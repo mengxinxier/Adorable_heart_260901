@@ -41,11 +41,26 @@ focus_tree = {
             base = 10
         }
         completion_reward = {
+            add_stability = -0.05
+            custom_effect_tooltip = PAU_tx_tt
+			add_to_variable = {
+				var = ubs_save
+				value = 1
+				tooltip = ubs_save_tt
+			}
+            add_to_variable = {
+                var = PAU_debt #王室欠饷债务：偿还/勾销后移除王室欠饷
+                value = 49
+                tooltip = PAU_debt_tt
+            }
+            swap_ideas = {
+                remove_idea = PAU_borderless_army
+                add_idea = PAU_borderless_army1
+            }
             country_event = {
                 id = PAU.1
                 hours = 6
             }
-            add_stability = 0.05
 }
     }
 
@@ -74,6 +89,10 @@ focus_tree = {
         }
         completion_reward = {
             add_war_support = 0.05
+            swap_ideas = {
+                remove_idea = PAU_divided_legion
+                add_idea = PAU_divided_legion1
+            }
             country_event = {
                 id = PAU.4
                 hours = 6
@@ -108,8 +127,7 @@ focus_tree = {
             base = 10
         }
         completion_reward = {
-            army_experience = 50
-            custom_effect_tooltip = PAU_LHS_weiji_mission_tt
+            #custom_effect_tooltip = PAU_LHS_weiji_mission_tt
             activate_mission = PAU_LHS_weiji_dec2
             hidden_effect = {
                 LHS = {
@@ -136,7 +154,6 @@ focus_tree = {
             custom_trigger_tooltip = {
                 tooltip = PAM_lhs_cap
                 or = {
-                    #has_country_flag = PAM_lhs_cap
                     not = {
                         country_exists = LHS
                     }
@@ -185,14 +202,10 @@ focus_tree = {
             }
             set_country_flag = PAU_lhs_absorbed #野火已经被军团吞并
             PAU_ml_add_PAU_lhs_remnants = yes #旧部和新血暂时混编
+
             add_manpower = 10000 #山谷战斗后收拢的残部和随军家属
             army_experience = 50 #与旧部交手让军团找回了过去的节奏
-            if = {
-                limit = { has_idea = PAU_royal_arrears }
-                remove_ideas = PAU_royal_arrears
-            }
-            set_variable = { PAU_debt = 0 } #王室欠饷债务：偿还/勾销后移除王室欠饷
-            set_country_flag = PAU_arrears_written_off #王室欠饷已勾销
+
             unlock_decision_category_tooltip = PAU_lhs_integration #野火旧部整编度（0-100）：达到30可完成整编
             unlock_decision_tooltip = PAU_lhs_keep_cadres
             unlock_decision_tooltip = PAU_lhs_dissolve
@@ -684,12 +697,41 @@ add_research_slot = 1
             base = 10
         }
         completion_reward = {
-            set_power_balance = {
-                id = PAU_bop
-                left_side = PAU_bop_left_side
-                right_side = PAU_bop_right_side
-                set_default = yes
+            if = {
+                limit = {
+                    NOT = { has_country_flag = PAU_lhs_dissolved }
+                    NOT = { has_country_flag = PAU_lhs_keep_cadres }
+                }
+                set_power_balance = {
+                    id = PAU_bop
+                    left_side = PAU_bop_left_side
+                    right_side = PAU_bop_right_side
+                    set_default = yes
+                }
             }
+            else_if = {
+                limit = {
+                    has_country_flag = PAU_lhs_keep_cadres 
+                }
+                set_power_balance = {
+                    id = PAU_bop
+                    left_side = PAU_bop_left_side
+                    right_side = PAU_bop_right_side
+                    set_value = 0.45
+                }
+            }
+            else_if = {
+                limit = {
+                    has_country_flag = PAU_lhs_dissolved 
+                }
+                set_power_balance = {
+                    id = PAU_bop
+                    left_side = PAU_bop_left_side
+                    right_side = PAU_bop_right_side
+                    set_value = -0.15
+                }
+            }
+            
             unlock_decision_category_tooltip = PAU_bop_name
             custom_effect_tooltip = PAU_auto_baiye_unlock_tt
 

@@ -48,7 +48,7 @@ PAU_return_from_grail = {
 #PAU_start_undead_war：开启亡灵战争：设置战争旗标并挂上亡灵压力修正
 PAU_start_undead_war = {
     set_country_flag = PAU_undead_war #亡灵战争正式开始
-    PAU_ml_add_PAU_undead_pressure = yes #死气一路追着军团
+    # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
 }
 
 #PAU_finish_undead_war：结束亡灵战争：设置胜利旗标并移除压力修正
@@ -428,6 +428,10 @@ PAU_refresh_undead_pressure = {
                 limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } #主线动态修正计数：控制对应修正启停，避免重复叠加
                 hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes }
             }
+        }
+        else = {
+            # 压力归零：撤掉亡灵压迫带来的损耗/士气/政治点debuff
+            hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes }
         }
         #每两个月触发一次可见的亡灵反扑事件
         if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } } #亡灵反扑计时：每2个月触发一次反扑事件
@@ -1004,9 +1008,9 @@ PAU_ml_add_PAU_undead_pressure = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
         add_to_variable = { PAU_ml_count_PAU_undead_pressure = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
+        add_to_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5% #需修改
+        add_to_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点-5% #需修改
+        add_to_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5% #需修改
 }
 }
 #PAU_ml_remove_PAU_undead_pressure：主线修正计数-1：移除对应修正
@@ -1014,9 +1018,9 @@ PAU_ml_remove_PAU_undead_pressure = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
         subtract_from_variable = { PAU_ml_count_PAU_undead_pressure = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_attrition = -0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
+        subtract_from_variable = { PAU_ml_raw_attrition = 0.05 } # 移除亡灵压迫：损耗-5%
+        subtract_from_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 移除亡灵压迫：政治点+5%
+        subtract_from_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 移除亡灵压迫：陆军士气+5%
 }
 }
 

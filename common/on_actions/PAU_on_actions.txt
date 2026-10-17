@@ -13,10 +13,34 @@ on_actions = {
                 }
                 set_state_flag = is_lldy_state_flag
             }
+            every_country = {
+                if = {
+                    limit = {
+                        tag = PAU
+                    }
+                    add_to_variable = {
+                        var = ubs_load
+                        value = 100
+                    }
+                }
+            }
         }
     }
     on_monthly = {
         effect = {
+            if = {
+                limit = { original_tag = PAU }
+                if = {
+                    limit = {
+                        check_variable = { ubs_save < 0 }
+                    }
+                    subtract_from_variable = { ubs_load = ubs_save }
+                    clamp_variable = {
+                        var = ubs_save
+                        min = 0
+                    }
+                }
+            }
             if = {
                 limit = { original_tag = PAU }
                 if = {
