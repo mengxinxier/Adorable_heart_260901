@@ -133,7 +133,6 @@ country_event = {
 
     option = {
         name = PAU.4.a
-
         ai_chance = {
             base = 100
         }
@@ -142,8 +141,26 @@ country_event = {
             add_idea = PAU_divided_legion2
         }
 
+        # 取消王室欠饷最后通牒任务，避免 90 天后再宣战一次
+        if = {
+            limit = { has_active_mission = PAU_LHS_weiji_dec }
+            remove_mission = PAU_LHS_weiji_dec
+        }
+
+        # 只有尚未与 LHS 交战时才宣战，防止旧存档重复宣战
+        if = {
+            limit = {
+                country_exists = LHS
+                NOT = { has_war_with = LHS }
+            }
+            declare_war_on = {
+                target = LHS
+                type = annex_everything
+            }
+        }
     }
 }
+
 
 country_event = {
     id = PAU.5
@@ -448,7 +465,7 @@ country_event = {
         ai_chance = {
             base = 100
         }
-        load_oob = PAU_sakura_cruisers
+        hidden_effect = { load_oob = PAU_sakura_cruisers }
         custom_effect_tooltip = PAU_sakura_cruisers_tt
 
 
@@ -547,9 +564,11 @@ country_event = {
             limit = { country_exists = CHL }
             if = {
                 limit = { CHL = { is_in_faction = yes } }
-                #由阵营领袖把 PAU 拉进 CHL 所在的阵营，然后 PAU 再取得领导权，最后才吞并 CHL。
+                #由 CHL 所在阵营的实际领袖把 PAU 拉进同一阵营；即使领袖不是 CHL，也能正常加入。
                 CHL = {
-                    add_to_faction = PAU
+                    faction_leader = {
+                        add_to_faction = ROOT
+                    }
                 }
                 set_faction_leader = yes
             }
@@ -557,6 +576,8 @@ country_event = {
                 target = CHL
                 transfer_troops = yes
             }
+            # 吞并后若只剩 PAU 自己，重建白夜同盟阵营，避免单人阵营失效
+            PAU_form_white_night_alliance = yes
         }
         else_if = {
             limit = { 
@@ -564,7 +585,7 @@ country_event = {
                     country_exists = CHL 
                 }
             }
-            create_faction_from_template = faction_template_nmgr
+            PAU_form_white_night_alliance = yes
         }
 
         hidden_effect = {
@@ -613,11 +634,7 @@ country_event = {
             base = 100
         }
         transfer_state = 299
-        add_to_variable = {
-            var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
-            value = -50
-            tooltip = PAU_grail_rations_tt
-        }
+        PAU_grail_robbed = yes
         set_country_flag = PAU_grail_tax_paid #已向圣杯缴纳税款
         add_equipment_to_stockpile = {
             type = infantry_equipment
@@ -800,6 +817,10 @@ country_event = {
         }
 
         hidden_effect = {
+            if = {
+                limit = { has_country_flag = PAU_undead_defeated } #亡灵战争已经结束
+                set_variable = { PAU_baiye_story_stage = 5 } #白夜巡游剧情阶段：5=战后直接收束，不再补播旧事件
+            }
         }
 
     }
@@ -1019,17 +1040,22 @@ country_event = {
     option = {
         name = PAU.26.a
         ai_chance = {
-            base = 100
+            base = 65
         }
+        # 由白夜同盟所在阵营的实际领袖把 MGU 拉入阵营
         PAU_pull_into_white_night_faction = yes
-        hidden_effect = {
-            PAU = {
+    }
 
-            }
+    option = {
+        name = PAU.26.b
+        ai_chance = {
+            base = 35
         }
-
+        # MGU 拒绝合作，保持独立
+        add_stability = 0.01
     }
 }
+
 
 country_event = {
     id = PAU.27
@@ -1042,20 +1068,31 @@ country_event = {
 
     option = {
         name = PAU.27.a
-
-        add_manpower = 5000
         ai_chance = {
             base = 100
         }
-
-        hidden_effect = {
-            PAU = {
-
-            }
+        # add_manpower 作用于事件目标 LFC，而不是 PAU
+        add_manpower = 5000
+        # 把 LFC 拉入白夜同盟阵营；PAU 是否为领袖均可
+        PAU_pull_into_white_night_faction = yes
+        PAU = {
+            set_country_flag = PAU_grail_expedition_joined
         }
+    }
 
+    option = {
+        name = PAU.27.b
+        ai_chance = {
+            base = 0
+        }
+        # LFC 拒绝合作，保持独立
+        add_stability = 0.01
+        PAU = {
+            set_country_flag = PAU_grail_expedition_refused
+        }
     }
 }
+
 
 country_event = {
     id = PAU.28
@@ -1377,7 +1414,9 @@ country_event = {
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        PAU = { has_country_flag = PAU_grail_expedition_joined }
+    }
     option = {
         name = PAU.35.a
 
@@ -1458,7 +1497,9 @@ country_event = {
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        PAU = { has_country_flag = PAU_grail_expedition_joined }
+    }
     option = {
         name = PAU.38.a
 
@@ -2351,7 +2392,9 @@ country_event = {
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        PAU = { has_country_flag = PAU_grail_expedition_joined }
+    }
     option = {
         name = PAU.55.a
         ai_chance = {
@@ -2461,6 +2504,40 @@ country_event = {
         }
         add_mastery = { amount = 20 folder = land track = operations }
         add_dynamic_modifier = { modifier = PAU_sa_seminar_operations days = 120 } #联合参谋学院研讨会临时进度
+    }
+}
+
+country_event = {
+    id = PAU.56
+    title = PAU.56.t
+    desc = PAU.56.d
+    major = no
+    picture = GFX_event_KNM_lili
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.56.a
+        ai_chance = { base = 100 }
+        country_event = { id = PAU.566 hours = 6 }
+    }
+}
+
+country_event = {
+    id = PAU.566
+    title = PAU.566.t
+    desc = PAU.566.d
+    major = no
+    picture = GFX_event_KNM_lili
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.566.a
+        ai_chance = { base = 100 }
+        set_country_flag = PAU_zkdh_done
+        add_stability = 0.05
+        add_political_power = 50
     }
 }
 
@@ -2958,6 +3035,7 @@ country_event = {
             add_building_construction = {
                 type = coastal_bunker
                 level = 1
+                instant_build = yes
                 province = {
                     all_provinces = yes
                     limit_to_coastal = yes
@@ -2969,6 +3047,7 @@ country_event = {
             add_building_construction = {
                 type = coastal_bunker
                 level = 1
+                instant_build = yes
                 province = {
                     all_provinces = yes
                     limit_to_coastal = yes
@@ -3092,7 +3171,7 @@ country_event = {
         }
     }
     option = {
-        name = PAU.600.d
+        name = PAU.600.g
         ai_chance = { base = 100 }
         add_dynamic_modifier = { modifier = PAU_sa_state_diplomacy days = 180 } #国务委员会外交发展值
         add_to_variable = { var = PAU_sa_state_diplomacy value = 1 } #国务委员会外交发展值
@@ -3147,7 +3226,7 @@ country_event = {
 country_event = {
     id = PAU.610
     title = PAU.610.t
-    desc = PAU.610.d
+    desc = PAU.610.desc
     major = no
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
@@ -3190,7 +3269,7 @@ country_event = {
         }
     }
     option = {
-        name = PAU.610.d
+        name = PAU.610.g
         ai_chance = { base = 100 }
         add_dynamic_modifier = { modifier = PAU_sa_state_diplomacy days = 180 } #国务委员会外交发展值
         PAU = {
@@ -3328,6 +3407,9 @@ country_event = {
             base = 100
         }
         country_event = { id = PAU.55 hours = 8}
+        set_country_flag = PAU_zkdh_unlocked
+        mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = PAU_zkdh_unlock_tt
         hidden_effect = {
             set_variable = {
                 end_ui_var = 1

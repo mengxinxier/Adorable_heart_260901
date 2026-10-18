@@ -84,7 +84,11 @@ focus_tree = {
         }
         will_lead_to_war_with = LHS
         ai_will_do = {
-            base = 10
+            base = 0
+            modifier = {
+                has_war_with = LHS
+                add = 100
+            }
         }
         completion_reward = {
             add_war_support = 0.05
@@ -126,7 +130,6 @@ focus_tree = {
             base = 10
         }
         completion_reward = {
-            #custom_effect_tooltip = PAU_LHS_weiji_mission_tt
             activate_mission = PAU_LHS_weiji_dec2
             hidden_effect = {
                 LHS = {
@@ -199,17 +202,16 @@ focus_tree = {
                 id = PAU.6
                 hours = 6
             }
-            PAU_ml_ensure_vars = yes
             custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = { 
+            add_to_variable = {
                 PAU_ml_raw_unit_infantry_design_cost_factor = -0.5
                 tooltip = unit_infantry_design_cost_factor_tt
             }
-            add_to_variable = { 
+            add_to_variable = {
                 PAU_ml_raw_unit_artillery_brigade_design_cost_factor = -0.5
                 tooltip = unit_artillery_brigade_design_cost_factor_tt
             }
-            add_to_variable = { 
+            add_to_variable = {
                 PAU_ml_raw_unit_cavalry_design_cost_factor = -0.5
                 tooltip = unit_cavalry_design_cost_factor_tt
             }
@@ -227,7 +229,7 @@ focus_tree = {
         relative_position_id = PAU_tx
         x = -5
         y = 1
-        cost = 7
+        cost = 2
         available = {
         }
         bypass = {
@@ -241,7 +243,6 @@ focus_tree = {
         completion_reward = {
             add_stability = -0.05
             add_war_support = 0.05
-            unlock_decision_tooltip = PAU_undead_evacuate
             country_event = {
                 id = PAU.7
                 hours = 6
@@ -258,7 +259,7 @@ focus_tree = {
         relative_position_id = PAU_tx
         x = -7
         y = 1
-        cost = 5
+        cost = 2
         available = {
         }
         bypass = {
@@ -291,7 +292,7 @@ focus_tree = {
         relative_position_id = PAU_tx
         x = -8
         y = -1
-        cost = 5
+        cost = 2
         available = {
         }
         bypass = {
@@ -325,7 +326,7 @@ focus_tree = {
         relative_position_id = PAU_tx
         x = -10
         y = -2
-        cost = 3
+        cost = 2
         available = {
         }
         bypass = {
@@ -359,7 +360,7 @@ focus_tree = {
         relative_position_id = PAU_tx
         x = -12
         y = 2
-        cost = 3
+        cost = 2
         available = {
         }
         bypass = {
@@ -394,7 +395,7 @@ focus_tree = {
         relative_position_id = PAU_tx
         x = -9
         y = 4
-        cost = 5
+        cost = 2
         available = {
         }
         bypass = {
@@ -433,11 +434,6 @@ focus_tree = {
             }
             PAU_arrive_grail = yes
             unlock_decision_category_tooltip = PAU_grail_camp
-            unlock_decision_tooltip = PAU_wl_attack_dec
-            unlock_decision_tooltip = PAU_grail_split_rations
-            unlock_decision_tooltip = PAU_grail_trade_arms
-            unlock_decision_tooltip = PAU_grail_repair_ships
-            unlock_decision_tooltip = PAU_grail_fortify_docks
         }
     }
 
@@ -473,7 +469,6 @@ focus_tree = {
             set_country_flag = has_PAU_xfzb3 #亡灵战争支线：反攻深渊
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
-            PAU_grail_robbed = yes
         }
     }
 
@@ -520,6 +515,16 @@ focus_tree = {
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
             PAU_return_from_grail = yes
+            # 选择封锁蚕食分支时此前未与 ZDW 交战；返航后自动汇合到亡灵决战
+            if = {
+                limit = {
+                    country_exists = ZDW
+                    NOT = { has_war_with = ZDW }
+                    NOT = { has_country_flag = PAU_undead_defeated }
+                    NOT = { ZDW = { has_capitulated = yes } }
+                }
+                declare_war_on = { target = ZDW type = annex_everything }
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_consumer_goods_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
@@ -538,9 +543,11 @@ focus_tree = {
             }
             add_research_slot = 1
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = industrial_complex
                     level = 1
+                    instant_build = yes
                 }
             }
         }
@@ -660,7 +667,7 @@ focus_tree = {
             if = {
                 limit = {
                     NOT = { has_country_flag = PAU_lhs_dissolved }
-                    NOT = { has_country_flag = PAU_lhs_keep_cadres }
+                    NOT = { has_country_flag = PAU_lhs_kept_cadres }
                 }
                 set_power_balance = {
                     id = PAU_bop
@@ -671,7 +678,7 @@ focus_tree = {
             }
             else_if = {
                 limit = {
-                    has_country_flag = PAU_lhs_keep_cadres
+                    has_country_flag = PAU_lhs_kept_cadres
                 }
                 set_power_balance = {
                     id = PAU_bop
@@ -696,10 +703,6 @@ focus_tree = {
             custom_effect_tooltip = PAU_auto_baiye_unlock_tt
 
             add_stability = 0.05
-            unlock_decision_tooltip = PAU_bop_workers_committee
-            unlock_decision_tooltip = PAU_bop_veterans_council
-            unlock_decision_tooltip = PAU_bop_joint_meeting
-            unlock_decision_tooltip = PAU_baiye_auto
         }
     }
 
@@ -726,8 +729,10 @@ focus_tree = {
         ai_will_do = {
             base = 10
         }
-        completion_reward = {
+                completion_reward = {
             set_country_flag = has_PAU_xiaoyao4 #主线阶段4：南美经营期
+            set_country_flag = PAU_nightingale_ended # 夜莺之国事件已处理
+
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_coordination_bonus #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
@@ -744,11 +749,18 @@ focus_tree = {
                 value = 0.05  #需修改
                 tooltip = initiative_factor_tt
             }
+
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
 
+            country_event = {
+                id = PAU.22
+                hours = 6
+            }
+
             add_political_power = 50
         }
+
     }
 
     #挂上新招牌
@@ -837,18 +849,6 @@ focus_tree = {
         completion_reward = {
             PAU_unlock_safe_harbor = yes
             unlock_decision_category_tooltip = PAU_safe_harbor
-            unlock_decision_tooltip = PAU_designate_safe_harbor
-            unlock_decision_tooltip = PAU_safe_harbor_refugees
-            unlock_decision_tooltip = PAU_safe_harbor_repair
-            unlock_decision_tooltip = PAU_safe_harbor_lane
-            unlock_decision_tooltip = PAU_safe_harbor_smuggle
-            unlock_decision_tooltip = PAU_safe_harbor_expand
-            unlock_decision_tooltip = PAU_safe_harbor_auto
-            unlock_decision_tooltip = PAU_safe_harbor_auto_cancel
-            unlock_decision_tooltip = PAU_designate_safe_harbor
-            unlock_decision_tooltip = PAU_harbor_military
-            unlock_decision_tooltip = PAU_harbor_trade
-            unlock_decision_tooltip = PAU_harbor_refugee
             navy_experience = 50
         }
     }
@@ -1070,9 +1070,11 @@ focus_tree = {
                 tooltip = political_power_factor_tt
             }
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = industrial_complex
                     level = 1
+                    instant_build = yes
                 }
             }
         }
@@ -1103,7 +1105,7 @@ focus_tree = {
         ai_will_do = {
             base = 10
         }
-        completion_reward = {
+                completion_reward = {
             set_country_flag = has_PAU_xiaoyao6 #主线阶段6：南美统一后
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
@@ -1121,31 +1123,23 @@ focus_tree = {
                 value = 0.05  #需修改
                 tooltip = initiative_factor_tt
             }
-            custom_effect_tooltip = jiesuoguoce
-            mark_focus_tree_layout_dirty = yes
-            custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = {
-                var = PAU_ml_raw_recon_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = recon_factor_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_initiative_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = initiative_factor_tt
-            }
             add_to_variable = {
                 var = PAU_ml_raw_coordination_bonus #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
                 value = 0.05  #需修改
                 tooltip = coordination_bonus_tt
             }
+            custom_effect_tooltip = jiesuoguoce
+            mark_focus_tree_layout_dirty = yes
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = industrial_complex
                     level = 1
+                    instant_build = yes
                 }
             }
         }
+
     }
 
     #直接拍板不就行了
@@ -1508,9 +1502,11 @@ focus_tree = {
             }
             add_research_slot = 1
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = military_factory
                     level = 1
+                    instant_build = yes
                 }
             }
         }
@@ -1560,9 +1556,11 @@ focus_tree = {
                 hours = 6
             }
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = dockyard
                     level = 1
+                    instant_build = yes
                 }
             }
         }
@@ -1734,6 +1732,12 @@ focus_tree = {
             has_completed_focus = PAU_llbg
             #樱花战败，控制樱花
             has_war = no
+            OR = {
+                NOT = { country_exists = JAP }
+                JAP = { has_capitulated = yes }
+                JAP = { is_subject_of = ROOT }
+                282 = { is_controlled_by_ROOT_or_ally = yes }
+            }
         }
         bypass = {
         }
@@ -1755,9 +1759,6 @@ focus_tree = {
             mark_focus_tree_layout_dirty = yes
             PAU_barrow_death = yes
             unlock_decision_category_tooltip = PAU_barrow_memorial
-            unlock_decision_tooltip = PAU_barrow_memorial_farm
-            unlock_decision_tooltip = PAU_barrow_memorial_veterans
-            unlock_decision_tooltip = PAU_barrow_memorial_school
         }
     }
 
@@ -1974,7 +1975,7 @@ focus_tree = {
         ai_will_do = {
             base = 10
         }
-        completion_reward = {
+                completion_reward = {
             SOV = {
                 country_event = {
                     id = PAU.51
@@ -2001,29 +2002,21 @@ focus_tree = {
                 value = 0.05  #需修改
                 tooltip = army_org_factor_tt
             }
-            custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = {
-                var = PAU_ml_raw_political_power_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = political_power_factor_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_research_speed_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = research_speed_factor_tt
-            }
             add_to_variable = {
                 var = PAU_ml_raw_production_speed_buildings_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
                 value = 0.05  #需修改
                 tooltip = production_speed_buildings_factor_tt
             }
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = military_factory
                     level = 1
+                    instant_build = yes
                 }
             }
         }
+
     }
 
     #以后是邻居了
@@ -2355,6 +2348,9 @@ focus_tree = {
                 create_wargoal = { target = 361.owner type = annex_everything }
             }
             set_country_flag = PAU_pacific_defense #对北美路线：太平洋防御
+            hidden_effect = {
+                add_to_variable = { PAU_north_america_refusals = 1 } #对北美路线：太平洋防御
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_training_time_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
@@ -2486,16 +2482,28 @@ focus_tree = {
         y = 11
         cost = 5
         available = {
-            has_country_flag = PAU_grail_refused
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_north_america_refusals_gt0_tt
-                check_variable = { PAU_north_america_refusals > 0 } #对北美外交网络：被拒绝次数
-            }
             OR = {
+                has_country_flag = PAU_grail_refused
+                has_country_flag = PAU_pacific_defense
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_north_america_refusals_gt0_tt
+                    check_variable = { PAU_north_america_refusals > 0 } #对北美外交网络：被拒绝次数
+                }
                 has_country_flag = PAU_china_hardline
                 custom_trigger_tooltip = {
                     tooltip = PAU_cond_china_refusals_gt0_tt
                     check_variable = { PAU_china_refusals > 0 } #对华外交网络：被拒绝次数
+                }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_zdbf_fallback_tt
+                    NOT = {
+                        AND = {
+                            has_country_flag = PAU_soviet_ally
+                            has_country_flag = PAU_grail_peace
+                            check_variable = { PAU_north_america_agreements > 0 } #对北美外交网络：达成协议次数
+                            check_variable = { PAU_china_agreements > 0 } #对华外交网络：达成协议次数
+                        }
+                    }
                 }
             }
         }
@@ -2684,6 +2692,37 @@ focus_tree = {
         }
     }
 
+    #召开第一次全国大会
+
+    focus = {
+        id = PAU_zkdh
+        icon = GFX_PAU_tyzz
+        relative_position_id = PAU_tx
+        x = 0
+        y = 13
+        cost = 5
+        available = {
+        }
+        bypass = {
+        }
+        allow_branch = {
+            has_country_flag = has_PAU_xiaoyao9
+            has_country_flag = PAU_zkdh_unlocked
+        }
+        prerequisite = {
+            focus = PAU_fby
+        }
+        ai_will_do = {
+            base = 10
+        }
+        completion_reward = {
+            country_event = {
+                id = PAU.56
+                hours = 6
+            }
+        }
+    }
+
     #明天就交给你们了
 
     focus = {
@@ -2730,9 +2769,11 @@ focus_tree = {
                 tooltip = army_morale_factor_tt
             }
             capital_scope = {
+                add_extra_state_shared_building_slots = 1
                 add_building_construction = {
                     type = military_factory
                     level = 1
+                    instant_build = yes
                 }
             }
         }
@@ -2989,6 +3030,7 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_axia_recon
             add_daily_mastery = { amount = 0.25 days = 120 name = PAM_ax_bz_daily folder = land track = infantry }
+            unlock_decision_tooltip = PAU_accel_axia_mil_1
         }
     }
 
@@ -3100,6 +3142,7 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_axia_medics
             navy_experience = 75
+            unlock_decision_tooltip = PAU_accel_axia_mil_2
         }
     }
 
@@ -3137,8 +3180,6 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_axia_field_kitchen
             add_doctrine_cost_reduction = { name = PAM_ax_zsjs_doctrine cost_reduction = 0.15 uses = 2 category = land_doctrine }
-            unlock_decision_tooltip = PAU_accel_axia_mil_1
-            unlock_decision_tooltip = PAU_accel_axia_mil_2
         }
     }
 
@@ -3214,6 +3255,7 @@ focus_tree = {
             unlock_decision_tooltip = PAU_xfxy_command
             set_country_flag = PAU_army_reform_xfxy_unlocked
             command_power = 50
+            unlock_decision_tooltip = PAU_accel_xfxy_mil_1
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -3325,6 +3367,7 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_xfxy_radio_net
             command_power = 50
+            unlock_decision_tooltip = PAU_accel_xfxy_mil_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -3362,8 +3405,6 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_xfxy_signal_drill
             command_power = 75
-            unlock_decision_tooltip = PAU_accel_xfxy_mil_1
-            unlock_decision_tooltip = PAU_accel_xfxy_mil_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
@@ -3442,6 +3483,7 @@ focus_tree = {
             unlock_decision_tooltip = PAU_xiaoyao_navy
             set_country_flag = PAU_army_reform_xiaoyao_unlocked
             navy_experience = 75
+            unlock_decision_tooltip = PAU_accel_xy_mil_1
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -3553,6 +3595,7 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_xiaoyao_landing_craft
             navy_experience = 75
+            unlock_decision_tooltip = PAU_accel_xy_mil_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -3590,8 +3633,6 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_xiaoyao_shore_drill
             add_daily_mastery = { amount = 0.25 days = 150 name = PAM_xy_zsjs_daily folder = naval }
-            unlock_decision_tooltip = PAU_accel_xy_mil_1
-            unlock_decision_tooltip = PAU_accel_xy_mil_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
@@ -3915,6 +3956,7 @@ focus_tree = {
                 PAU_refresh_eco_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_axia_trade
+            unlock_decision_tooltip = PAU_accel_axia_eco_2
         }
     }
 
@@ -3952,6 +3994,7 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_axia_granary
             random_owned_controlled_state = { limit = { free_building_slots = { building = industrial_complex size > 0 } } add_extra_state_shared_building_slots = 1 }
+            unlock_decision_tooltip = PAU_accel_axia_eco_1
         }
     }
 
@@ -4028,8 +4071,6 @@ focus_tree = {
             unlock_decision_tooltip = PAU_axia_ration_standard
 
             add_political_power = 50
-            unlock_decision_tooltip = PAU_accel_axia_eco_1
-            unlock_decision_tooltip = PAU_accel_axia_eco_2
         }
     }
 
@@ -4104,6 +4145,7 @@ focus_tree = {
             unlock_decision_category_tooltip = PAU_economy_reform_xfxy
             unlock_decision_tooltip = PAU_xfxy_wages
             set_country_flag = PAU_economy_reform_xfxy_unlocked
+            unlock_decision_tooltip = PAU_accel_xfxy_eco_1
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -4140,8 +4182,6 @@ focus_tree = {
                 PAU_refresh_eco_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_xfxy_audit
-            unlock_decision_tooltip = PAU_accel_xfxy_eco_1
-            unlock_decision_tooltip = PAU_accel_xfxy_eco_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao6
@@ -4253,6 +4293,7 @@ focus_tree = {
             }
             unlock_decision_tooltip = PAU_xfxy_factory_ledger
             add_political_power = 50
+            unlock_decision_tooltip = PAU_accel_xfxy_eco_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -4329,6 +4370,7 @@ focus_tree = {
             unlock_decision_category_tooltip = PAU_economy_reform_xiaoyao
             unlock_decision_tooltip = PAU_xiaoyao_market
             set_country_flag = PAU_economy_reform_xiaoyao_unlocked
+            unlock_decision_tooltip = PAU_accel_xy_eco_1
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -4401,6 +4443,7 @@ focus_tree = {
                 PAU_refresh_eco_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_xiaoyao_public_market
+            unlock_decision_tooltip = PAU_accel_xy_eco_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -4473,8 +4516,6 @@ focus_tree = {
                 PAU_refresh_eco_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_xiaoyao_food_drive
-            unlock_decision_tooltip = PAU_accel_xy_eco_1
-            unlock_decision_tooltip = PAU_accel_xy_eco_2
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
