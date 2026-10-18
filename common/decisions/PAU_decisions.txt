@@ -1024,7 +1024,7 @@ PAU_hetong = {
                     if = {
                         limit = { check_variable = { PAU_mercenary_reputation > 69 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
                         add_manpower = 8000
-                        army_experience = 100
+                        army_experience = 50
                         add_equipment_to_stockpile = {
                             type = infantry_equipment
                             amount = 5000
@@ -1038,7 +1038,7 @@ PAU_hetong = {
                     else_if = {
                         limit = { check_variable = { PAU_mercenary_reputation > 39 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
                         add_manpower = 5000
-                        army_experience = 75
+                        command_power = 35
                         add_equipment_to_stockpile = {
                             type = infantry_equipment
                             amount = 3000
@@ -1051,7 +1051,7 @@ PAU_hetong = {
                     }
                     else = {
                         add_manpower = 2500
-                        army_experience = 40
+                        command_power = 20
                         add_equipment_to_stockpile = {
                             type = infantry_equipment
                             amount = 1500
@@ -1195,7 +1195,6 @@ PAU_lhs_integration = {
                 tooltip = PAU_lhs_integration_tt
             }
             set_country_flag = PAU_lhs_kept_cadres
-            custom_effect_tooltip = PAU_lhs_keep_cadres_tt
         }
         ai_will_do = { factor = 10 }
     }
@@ -1221,7 +1220,6 @@ PAU_lhs_integration = {
                 tooltip = PAU_lhs_integration_tt
             }
             set_country_flag = PAU_lhs_dissolve
-            custom_effect_tooltip = PAU_lhs_dissolve_tt
         }
         ai_will_do = { factor = 10 }
     }
@@ -1246,8 +1244,7 @@ PAU_lhs_integration = {
                 value = 10
                 tooltip = PAU_lhs_integration_tt
             }
-            army_experience = 25
-            command_power = 25
+            army_experience = 50
         }
         ai_will_do = { factor = 10 }
     }
@@ -1858,7 +1855,8 @@ PAU_undead_containment = { #？
         cost = 25
         days_re_enable = 30
         complete_effect = {
-            army_experience = 80
+            army_experience = 50
+            add_war_support = 0.05
             add_to_variable = {
                 var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
                 value = -25
@@ -1892,7 +1890,8 @@ PAU_undead_containment = { #？
         days_re_enable = 30
         complete_effect = {
             add_fuel = -500
-            army_experience = 50
+            command_power = 25
+            add_war_support = 0.03
             set_country_flag = PAU_undead_fuel_denied #已焚毁亡灵油料补给
             add_to_variable = {
                 var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
@@ -1957,7 +1956,7 @@ PAU_barrow_memorial = {
         fire_only_once = yes
         complete_effect = {
             add_manpower = 5000
-            army_experience = 50
+            army_experience = 25
             set_country_flag = PAU_barrow_veterans
         }
         ai_will_do = { factor = 10 }
@@ -1971,7 +1970,7 @@ PAU_barrow_memorial = {
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            army_experience = 75
+            command_power = 50
             add_to_variable = {
                 var = PAU_ml_raw_army_org_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
                 value = 0.05  #TODO 统一默认5%，请按需修改
@@ -3627,6 +3626,11 @@ PAU_late_doctrine = {
                 has_war = yes
                 is_subject = no
                 is_major = no
+                has_opinion = { target = ROOT value > -20 }
+                any_owned_state = {
+                    is_coastal = yes
+                    is_controlled_by = FROM
+                }
                 NOT = { is_in_faction_with = ROOT }
                 NOT = { has_war_with = ROOT }
                 NOT = { has_government = fascism }
@@ -3642,7 +3646,7 @@ PAU_late_doctrine = {
             FROM = { country_event = { id = PAU.520 hours = 1 } }
             if = {
                 limit = { check_variable = { PAU_mercenary_reputation > 59 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
-                army_experience = 50
+                add_war_support = 0.05
             }
         }
         ai_will_do = { factor = 10 }
@@ -3658,6 +3662,11 @@ PAU_late_doctrine = {
                 exists = yes
                 has_war = no
                 is_subject = no
+                has_opinion = { target = ROOT value > 0 }
+                any_owned_state = {
+                    is_coastal = yes
+                    is_controlled_by = FROM
+                }
                 NOT = { has_country_flag = PAU_received_trade_mission }
                 NOT = { has_country_flag = PAU_refused_trade_mission }
             }
@@ -3741,7 +3750,9 @@ PAU_late_doctrine = {
                 exists = yes
                 is_subject = no
                 has_country_flag = PAU_received_revolutionary_aid
-                has_opinion = { target = ROOT value > 50 }
+                has_opinion = { target = ROOT value > 75 }
+                NOT = { has_country_flag = PAU_joined_revolutionary_international }
+                NOT = { has_country_flag = PAU_refused_revolutionary_international }
                 is_major = no
                 is_in_faction = no
                 NOT = { has_war_with = ROOT }
@@ -3756,12 +3767,8 @@ PAU_late_doctrine = {
         fire_only_once = no
         days_re_enable = 90
         complete_effect = {
-            add_to_faction = FROM
-            subtract_from_variable = { PAU_export_successes = 2 tooltip = PAU_export_successes_tt } #革命输出成果：决定革命网络等级与接受率
-            add_political_power = 50
-            add_manpower = 10000
-            army_experience = 75
-            add_stability = 0.05
+            FROM = { country_event = { id = PAU.630 hours = 1 } }
+            subtract_from_variable = { PAU_export_successes = 1 tooltip = PAU_export_successes_tt } #革命输出成果：决定革命网络等级与接受率
         }
         ai_will_do = { factor = 10 }
     }
@@ -3772,6 +3779,10 @@ PAU_late_doctrine = {
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_world_revolution
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_export_successes_gt4_tt
+                check_variable = { PAU_export_successes > 4 } #革命输出成果：决定革命网络等级与接受率
+            }
         }
         target_trigger = {
             FROM = {
@@ -3789,14 +3800,15 @@ PAU_late_doctrine = {
                 NOT = { original_tag = ELF }
             }
         }
-        cost = 50
+        cost = 75
         fire_only_once = no
         days_re_enable = 120
         complete_effect = {
-            declare_war_on = { target = FROM type = annex_everything }
+            create_wargoal = { target = FROM type = annex_everything }
+            add_timed_idea = { idea = PAU_ultimatum_resolve days = 90 }
             subtract_from_variable = { PAU_export_successes = 3 tooltip = PAU_export_successes_tt } #革命输出成果：决定革命网络等级与接受率
-            army_experience = 75
-            add_war_support = 0.05
+            command_power = 50
+            add_war_support = 0.08
         }
         ai_will_do = { factor = 10 }
     }
@@ -3821,7 +3833,9 @@ PAU_late_doctrine = {
                 has_war = no
                 is_in_faction = no
                 has_country_flag = PAU_received_trade_mission
-                has_opinion = { target = ROOT value > 50 }
+                has_opinion = { target = ROOT value > 75 }
+                NOT = { has_country_flag = PAU_joined_peace_league }
+                NOT = { has_country_flag = PAU_refused_peace_league }
                 is_major = no
                 NOT = { has_government = fascism }
             }
@@ -3830,10 +3844,8 @@ PAU_late_doctrine = {
         fire_only_once = no
         days_re_enable = 60
         complete_effect = {
-            add_to_faction = FROM
+            FROM = { country_event = { id = PAU.640 hours = 1 } }
             subtract_from_variable = { PAU_trade_partners = 1 tooltip = PAU_trade_partners_tt } #贸易伙伴数：决定和平贸易网络等级
-            add_political_power = 50
-            add_stability = 0.05
         }
         ai_will_do = { factor = 10 }
     }
@@ -3845,15 +3857,17 @@ PAU_late_doctrine = {
         visible = {
             has_country_flag = PAU_peaceful_coexistence
             custom_trigger_tooltip = {
-                tooltip = PAU_cond_trade_partners_gt2_tt
-                check_variable = { PAU_trade_partners > 2 } #贸易伙伴数：决定和平贸易网络等级
+                tooltip = PAU_cond_trade_partners_gt4_tt
+                check_variable = { PAU_trade_partners > 4 } #贸易伙伴数：决定和平贸易网络等级
             }
         }
         target_trigger = {
             FROM = {
                 exists = yes
                 is_subject = no
+                is_major = no
                 has_war = yes
+                NOT = { has_war_with = ROOT }
             }
         }
         cost = 50
@@ -3861,14 +3875,15 @@ PAU_late_doctrine = {
         days_re_enable = 120
         complete_effect = {
             subtract_from_variable = { PAU_trade_partners = 2 tooltip = PAU_trade_partners_tt } #贸易伙伴数：决定和平贸易网络等级
-            add_political_power = 75
+            add_timed_idea = { idea = PAU_trade_boom_diplomacy days = 180 }
+            add_political_power = 40
             every_country = {
                 limit = { has_war_with = FROM }
                 FROM = {
                     white_peace = { tag = PREV }
                 }
             }
-            add_stability = 0.05
+            add_stability = 0.03
         }
         ai_will_do = { factor = 10 }
     }
@@ -3890,7 +3905,10 @@ PAU_late_doctrine = {
                 is_subject = no
                 has_war = no
                 is_in_faction = no
-                has_opinion = { target = ROOT value > 0 }
+                has_opinion = { target = ROOT value > 20 }
+                any_owned_state = {
+                    is_coastal = yes
+                }
                 NOT = { has_war_with = ROOT }
             }
         }
@@ -3899,9 +3917,11 @@ PAU_late_doctrine = {
         days_re_enable = 60
         complete_effect = {
             give_guarantee = FROM
+            add_timed_idea = { idea = PAU_coastal_security days = 180 }
             subtract_from_variable = { PAU_coastal_defenses = 1 tooltip = PAU_coastal_defenses_tt } #岸防建设值：决定武装中立岸防网络等级
-            add_political_power = 75
-            navy_experience = 50
+            add_political_power = 25
+            navy_experience = 25
+            add_stability = 0.03
         }
         ai_will_do = { factor = 10 }
     }
@@ -3921,18 +3941,22 @@ PAU_late_doctrine = {
             FROM = {
                 exists = yes
                 is_subject = no
+                any_owned_state = {
+                    is_coastal = yes
+                }
                 NOT = { has_war_with = ROOT }
                 NOT = { is_in_faction_with = ROOT }
             }
         }
-        cost = 50
+        cost = 75
         fire_only_once = no
         days_re_enable = 120
         complete_effect = {
-            declare_war_on = { target = FROM type = annex_everything }
+            create_wargoal = { target = FROM type = annex_everything }
+            add_timed_idea = { idea = PAU_ultimatum_resolve days = 90 }
             subtract_from_variable = { PAU_coastal_defenses = 2 tooltip = PAU_coastal_defenses_tt } #岸防建设值：决定武装中立岸防网络等级
-            army_experience = 75
-            add_war_support = 0.05
+            navy_experience = 50
+            add_war_support = 0.08
         }
         ai_will_do = { factor = 10 }
     }
@@ -3962,48 +3986,48 @@ PAU_national_unification = {
             LHS_Nymph = {
             set_portraits = {
                 army = {
-                    large = "gfx/leaders/PAU/xiaofeng2.png"
+                    large = "gfx/leaders/PAU/xf.png"
                 }
                 army = {
-                    small = "gfx/leaders/PAU/small/xiaofeng2_small.png"
+                    small = "gfx/leaders/PAU/small/xf_small.png"
                 }
                 civilian = {
-                    large = "gfx/leaders/PAU/xiaofeng2.png"
+                    large = "gfx/leaders/PAU/xf.png"
                 }
                 civilian = {
-                    small = "gfx/leaders/PAU/small/xiaofeng2_small.png"
+                    small = "gfx/leaders/PAU/small/xf_small.png"
                 }
             }
         }
         LHS_xueyi = {
             set_portraits = {
                 army = {
-                    large = "gfx/leaders/PAU/xueyi2.png"
+                    large = "gfx/leaders/PAU/xueyi.png"
                 }
                 army = {
-                    small = "gfx/leaders/PAU/small/xueyi2_small.png"
+                    small = "gfx/leaders/PAU/small/xueyi_small.png"
                 }
                 civilian = {
-                    large = "gfx/leaders/PAU/xueyi2.png"
+                    large = "gfx/leaders/PAU/xueyi.png"
                 }
                 civilian = {
-                    small = "gfx/leaders/PAU/small/xueyi2_small.png"
+                    small = "gfx/leaders/PAU/small/xueyi_small.png"
                 }
             }
         }
         LHS_xiaoguo = {
             set_portraits = {
                 army = {
-                    large = "gfx/leaders/PAU/xiaoguo2.png"
+                    large = "gfx/leaders/PAU/xiaoguo.png"
                 }
                 army = {
-                    small = "gfx/leaders/PAU/small/xiaoguo2_small.png"
+                    small = "gfx/leaders/PAU/small/xiaoguo_small.png"
                 }
                 civilian = {
-                    large = "gfx/leaders/PAU/xiaoguo2.png"
+                    large = "gfx/leaders/PAU/xiaoguo.png"
                 }
                 civilian = {
-                    small = "gfx/leaders/PAU/small/xiaoguo2_small.png"
+                    small = "gfx/leaders/PAU/small/xiaoguo_small.png"
                 }
             }
         }

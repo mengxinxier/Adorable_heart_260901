@@ -169,7 +169,7 @@ country_event = {
             add_ideas = subsidized_contracts_army_spirit
         }
         else = {
-            army_experience = 50
+            command_power = 25
         }
     }
 }
@@ -662,7 +662,7 @@ country_event = {
     option = {
         name = PAU.16.a
 
-        army_experience = 50
+        navy_experience = 50
         ai_chance = {
             base = 100
         }
@@ -1386,7 +1386,7 @@ country_event = {
     }
     option = {
         name = PAU.35.b
-
+        send_embargo = PAU
         PAU = {
             country_event = {
                 id = PAU.36
@@ -2362,7 +2362,7 @@ country_event = {
     }
 }
 
-country_event = {
+news_event = {
     id = PAU_news.1
     title = PAU_news.1.t
     desc = PAU_news.1.d
@@ -2384,7 +2384,7 @@ country_event = {
     }
 }
 
-country_event = {
+news_event = {
     id = PAU_news.2
     title = PAU_news.2.t
     desc = PAU_news.2.d
@@ -2833,7 +2833,7 @@ country_event = {
             limit = {
                 FROM = { any_controlled_state = { has_state_flag = PAU_harbor_type_military } }
             }
-            army_experience = 25
+            command_power = 25
         }
     }
     option = {
@@ -3343,7 +3343,7 @@ country_event = {
         name = PAU_by_h1.a
         ai_chance = { base = 100 }
         add_stability = 0.02
-        army_experience = 15
+        add_manpower = 2000
     }
 }
 
@@ -3359,7 +3359,7 @@ country_event = {
         name = PAU_by_h2.a
         ai_chance = { base = 100 }
         add_manpower = 3000
-        army_experience = 15
+        add_stability = 0.02
     }
 }
 
@@ -3390,7 +3390,7 @@ country_event = {
     option = {
         name = PAU_by_h4.a
         ai_chance = { base = 100 }
-        army_experience = 25
+        command_power = 25
         add_war_support = 0.03
     }
 }
@@ -3407,7 +3407,7 @@ country_event = {
         name = PAU_by_h5.a
         ai_chance = { base = 100 }
         add_manpower = 5000
-        army_experience = 50
+        add_war_support = 0.05
         add_stability = 0.03
         country_event = { id = PAU.7006 hours = 6 }
     }
@@ -3425,7 +3425,7 @@ country_event = {
         name = PAU_by_wide.a
         ai_chance = { base = 100 }
         add_political_power = 50
-        army_experience = 75
+        command_power = 75
         add_stability = 0.05
     }
 }
@@ -3458,6 +3458,132 @@ country_event = {
             var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
             value = 5
             tooltip = PAU_undead_pressure_tt
+        }
+    }
+}
+
+country_event = {
+    id = PAU.630
+    title = PAU.630.t
+    desc = PAU.630.d
+    major = no
+    picture = GFX_event_KNM_lili
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.630.a
+        ai_chance = {
+            base = 55
+            modifier = {
+                factor = 1.5
+                has_opinion = { target = FROM value > 100 }
+            }
+            modifier = {
+                factor = 1.25
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.5
+                has_war = no
+            }
+        }
+        set_country_flag = PAU_joined_revolutionary_international
+        #由白夜同盟所在阵营的领袖把目标国拉进同一阵营
+        PAU = {
+            faction_leader = {
+                add_to_faction = ROOT
+            }
+        }
+        FROM = {
+            add_political_power = 25
+            add_war_support = 0.05
+            add_manpower = 3000
+            add_to_variable = {
+                var = PAU_export_successes
+                value = 1
+                tooltip = PAU_export_successes_tt
+            }
+            add_timed_idea = { idea = PAU_international_brigade days = 180 }
+            if = {
+                limit = { ROOT = { num_of_factories > 20 } }
+                add_manpower = 3000
+                add_political_power = 25
+            }
+        }
+    }
+    option = {
+        name = PAU.630.b
+        ai_chance = { base = 45 }
+        set_country_flag = PAU_refused_revolutionary_international
+        FROM = {
+            add_to_variable = {
+                var = PAU_export_successes
+                value = -1
+                tooltip = PAU_export_successes_tt
+            }
+            clamp_variable = { var = PAU_export_successes min = 0 max = 999 }
+            add_stability = -0.02
+        }
+    }
+}
+
+country_event = {
+    id = PAU.640
+    title = PAU.640.t
+    desc = PAU.640.d
+    major = no
+    picture = GFX_event_KNM_lili
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.640.a
+        ai_chance = {
+            base = 60
+            modifier = {
+                factor = 1.5
+                has_opinion = { target = FROM value > 100 }
+            }
+            modifier = {
+                factor = 1.25
+                has_war = no
+            }
+        }
+        set_country_flag = PAU_joined_peace_league
+        # 由白夜同盟所在阵营的领袖把目标国拉进同一阵营
+        PAU = {
+            faction_leader = {
+                add_to_faction = ROOT
+            }
+        }
+        FROM = {
+            add_political_power = 25
+            add_stability = 0.03
+            add_to_variable = {
+                var = PAU_trade_partners
+                value = 1
+                tooltip = PAU_trade_partners_tt
+            }
+            add_timed_idea = { idea = PAU_trade_boom_diplomacy days = 180 }
+            if = {
+                limit = { ROOT = { num_of_factories > 20 } }
+                add_political_power = 25
+            }
+        }
+    }
+    option = {
+        name = PAU.640.b
+        ai_chance = { base = 40 }
+        set_country_flag = PAU_refused_peace_league
+        FROM = {
+            add_to_variable = {
+                var = PAU_trade_partners
+                value = -1
+                tooltip = PAU_trade_partners_tt
+            }
+            clamp_variable = { var = PAU_trade_partners min = 0 max = 999 }
+            add_stability = -0.02
         }
     }
 }
