@@ -45,17 +45,7 @@ PAU_return_from_grail = {
     PAU_ml_remove_PAU_grail_refuge = yes #流亡营状态结束
 }
 
-#PAU_start_undead_war：开启亡灵战争：设置战争旗标并挂上亡灵压力修正
-PAU_start_undead_war = {
-    set_country_flag = PAU_undead_war #亡灵战争正式开始
-    # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
-}
 
-#PAU_finish_undead_war：结束亡灵战争：设置胜利旗标并移除压力修正
-PAU_finish_undead_war = {
-    set_country_flag = PAU_undead_defeated #亡灵战争已经结束
-    PAU_ml_remove_PAU_undead_pressure = yes #死气从南美退去
-}
 
 #PAU_unlock_safe_harbor：解锁避风港机制：设置旗标并刷新避风港辐射
 PAU_unlock_safe_harbor = {
@@ -402,50 +392,6 @@ PAU_expand_safe_harbor = {
     add_extra_state_shared_building_slots = 1
 }
 
-#PAU_refresh_undead_pressure：亡灵压力月结：每月+3压力，每2个月触发一次反扑事件
-PAU_refresh_undead_pressure = {
-    if = {
-        limit = {
-            has_country_flag = PAU_undead_war
-            NOT = { has_country_flag = PAU_undead_defeated }
-        }
-        add_to_variable = { PAU_undead_pressure = 3 } #亡灵每月反扑
-        if = {
-            limit = { has_country_flag = PAU_undead_fuel_denied }
-            add_to_variable = { PAU_undead_pressure = -1 } #燃料已焚毁，尸潮失去补给
-        }
-        if = {
-            limit = { has_country_flag = PAU_undead_scorched_earth }
-            add_to_variable = { PAU_undead_pressure = -1 } #隔离带阻滞尸潮
-        }
-        if = {
-            limit = { any_controlled_state = { has_state_flag = PAU_xiaoyao_state_flag } }
-            add_to_variable = { PAU_undead_pressure = -1 } #白夜庇护稳住防线
-        }
-        if = {
-            limit = { check_variable = { PAU_undead_pressure > 0 } } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            if = {
-                limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-                hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes }
-            }
-        }
-        else = {
-            # 压力归零：撤掉亡灵压迫带来的损耗/士气/政治点debuff
-            hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes }
-        }
-        #每两个月触发一次可见的亡灵反扑事件
-        if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } } #亡灵反扑计时：每2个月触发一次反扑事件
-        add_to_variable = { PAU_undead_surge_timer = 1 } #亡灵反扑计时：每2个月触发一次反扑事件
-        if = {
-            limit = { check_variable = { PAU_undead_surge_timer > 1 } } #亡灵反扑计时：每2个月触发一次反扑事件
-            set_variable = { PAU_undead_surge_timer = 0 } #亡灵反扑计时：每2个月触发一次反扑事件
-            country_event = { id = PAU.7010 hours = 6 }
-        }
-    }
-    else = {
-        hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes }
-    }
-}
 
 #PAU_pull_into_white_night_faction：把目标国拉入白夜同盟阵营
 PAU_pull_into_white_night_faction = {
@@ -853,7 +799,6 @@ PAU_init_diplomacy_vars = {
     if = { limit = { NOT = { has_variable = PAU_lhs_integration } } set_variable = { PAU_lhs_integration = 0 } } #野火旧部整编度（0-100）：达到30可完成整编
     if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } } #圣杯流亡营口粮：分粮、贸易与换零件消耗
     if = { limit = { NOT = { has_variable = PAU_grail_parts } } set_variable = { PAU_grail_parts = 100 } } #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-    if = { limit = { NOT = { has_variable = PAU_undead_pressure } } set_variable = { PAU_undead_pressure = 0 } } #亡灵压迫：亡灵战争核心压力，归零可压制死气
     if = { limit = { NOT = { has_variable = PAU_harbor_count } } set_variable = { PAU_harbor_count = 0 } } #避风港数量：已指定为避风港的州数
     if = { limit = { NOT = { has_variable = PAU_harbor_dev } } set_variable = { PAU_harbor_dev = 0 } } #避风港发展度：扩建避风港积累值
     if = { limit = { NOT = { has_variable = PAU_mil_reform_progress } } set_variable = { PAU_mil_reform_progress = 0 } } #军事改革总进度：决定 PAU_mil_reform 动态修正层级
@@ -895,7 +840,6 @@ PAU_init_diplomacy_vars = {
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network } } set_variable = { PAU_ml_count_PAU_trade_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_2 } } set_variable = { PAU_ml_count_PAU_trade_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_3 } } set_variable = { PAU_ml_count_PAU_trade_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_pressure } } set_variable = { PAU_ml_count_PAU_undead_pressure = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
     if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } } #亡灵反扑计时：每2个月触发一次反扑事件
 }
 
@@ -938,7 +882,6 @@ PAU_ml_ensure_vars = {
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network } } set_variable = { PAU_ml_count_PAU_trade_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_2 } } set_variable = { PAU_ml_count_PAU_trade_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
     if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_3 } } set_variable = { PAU_ml_count_PAU_trade_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_pressure } } set_variable = { PAU_ml_count_PAU_undead_pressure = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
 }
 
 #PAU_ml_add_PAU_barrow_legacy：主线修正计数+1：添加对应修正并避免重复
@@ -976,51 +919,15 @@ PAU_ml_remove_PAU_grail_refuge = {
     PAU_ml_ensure_vars = yes
     if = { limit = { check_variable = { PAU_ml_count_PAU_grail_refuge > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
         subtract_from_variable = { PAU_ml_count_PAU_grail_refuge = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
-
-#PAU_ml_add_PAU_lhs_remnants：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_lhs_remnants = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_remnants < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_lhs_remnants = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
-#PAU_ml_remove_PAU_lhs_remnants：主线修正计数-1：移除对应修正
-PAU_ml_remove_PAU_lhs_remnants = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_remnants > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_count_PAU_lhs_remnants = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
-
-#PAU_ml_add_PAU_undead_pressure：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_undead_pressure = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_undead_pressure = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5% #需修改
-        add_to_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点-5% #需修改
-        add_to_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5% #需修改
-}
-}
-#PAU_ml_remove_PAU_undead_pressure：主线修正计数-1：移除对应修正
-PAU_ml_remove_PAU_undead_pressure = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_count_PAU_undead_pressure = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_attrition = 0.05 } # 移除亡灵压迫：损耗-5%
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 移除亡灵压迫：政治点+5%
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 移除亡灵压迫：陆军士气+5%
+        subtract_from_variable = { 
+            PAU_ml_raw_industrial_capacity_factory = 0.05 
+        } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
+        subtract_from_variable = { 
+            PAU_ml_raw_consumer_goods_factor = -0.05 
+        } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
+        subtract_from_variable = { 
+            PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 
+        } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
 }
 }
 
