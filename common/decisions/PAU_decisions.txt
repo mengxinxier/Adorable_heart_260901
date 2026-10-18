@@ -383,58 +383,6 @@ PAU_LHS_weiji = {
         }
     }
 
-    #可选，由直接宣战变为决议倒计时的亡灵缓慢蚕食
-    PAU_wl_attack_dec = {
-        allowed = {
-            original_tag = PAU
-        }
-        icon = GFX_weaving_death_shroud
-        available = {
-            or = {
-                not = { country_exists = PAU }
-                has_completed_focus = PAU_jjka
-            }
-        }
-        activation = {
-            always = no
-        }
-        selectable_mission = no
-        #如果设置，会将任务转换为玩家必须选择按钮的任务。
-
-        is_good = no
-
-        days_mission_timeout = 180
-
-        timeout_effect = {
-            add_to_variable = { PAU_undead_pressure = 10 } #尸潮反扑
-            activate_mission = PAU_wl_attack_dec
-            if = {
-                limit = { check_variable = { PAU_undead_pressure > 49 } } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                every_state = {
-                    limit = {
-                        or = {
-                            is_owned_by = PAU
-                            is_owned_by = LHS
-                            is_owned_by = PAM
-                            is_owned_by = CHL
-                        }
-                        any_neighbor_state = {
-                            is_controlled_by = ROOT
-                        }
-                    }
-                    transfer_state_to = ZDW
-                }
-            }
-        }
-        complete_effect = {
-        }
-        cancel_trigger = {
-            has_country_flag = PAU_undead_defeated
-        }
-        cancel_effect = {
-        }
-    }
-
     PAU_xiaoyao_plan = { #白夜巡游记
         icon = GFX_PAM_Wolf
         allowed = {
@@ -555,7 +503,7 @@ PAU_LHS_weiji = {
         }
     }
 
-    PAU_baiye_auto_cancel = {
+    PAU_baiye_auto_cancel = { #取消自动
         icon = GFX_FRA_button_close
         allowed = { original_tag = PAU }
         visible = { 
@@ -568,6 +516,54 @@ PAU_LHS_weiji = {
             clr_country_flag = PAU_auto_baiye
         }
         ai_will_do = { factor = 0 }
+    }
+
+    #可选，由直接宣战变为决议倒计时的亡灵缓慢蚕食
+    PAU_wl_attack_dec = {
+        allowed = {
+            original_tag = PAU
+        }
+        icon = GFX_weaving_death_shroud
+        available = {
+            or = {
+                not = { country_exists = PAU }
+                has_completed_focus = PAU_jjka
+            }
+        }
+        activation = {
+            always = no
+        }
+        selectable_mission = no
+        #如果设置，会将任务转换为玩家必须选择按钮的任务。
+
+        is_good = no
+
+        days_mission_timeout = var:wl_attack_day
+
+        timeout_effect = {
+            activate_mission = PAU_wl_attack_dec
+                every_state = {
+                    limit = {
+                        or = {
+                            is_owned_by = PAU
+                            is_owned_by = LHS
+                            is_owned_by = PAM
+                            is_owned_by = CHL
+                        }
+                        any_neighbor_state = {
+                            is_controlled_by = ZDW
+                        }
+                    }
+                    transfer_state_to = ZDW
+                }
+        }
+        complete_effect = {
+        }
+        cancel_trigger = {
+            has_country_flag = PAU_undead_defeated
+        }
+        cancel_effect = {
+        }
     }
 
     #亡灵反制
@@ -589,7 +585,6 @@ PAU_LHS_weiji = {
         days_mission_timeout = 30
 
         timeout_effect = {
-            add_to_variable = { PAU_undead_pressure = 5 } #亡灵反扑吞没白夜庇护
             random_owned_state = {
                 limit = {
                     is_controlled_by = ROOT
@@ -611,6 +606,192 @@ PAU_LHS_weiji = {
         }
     }
 }
+#剧情定位：亡灵清剿：疏散、反冲击、焚库与焦土隔离
+PAU_undead_containment = { #
+    #决议名：先把活人撤出来
+    PAU_undead_evacuate = {
+        icon = GFX_KNM_KFL_transfer1
+        allowed = { original_tag = PAU }
+        visible = { 
+            has_country_flag = PAU_undead_war 
+            has_completed_focus = PAU_sdjt
+        }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+        }
+        cost = 25
+        days_remove = 15
+        fire_only_once = no
+        remove_effect = {
+            add_manpower = 1000
+            add_stability = 0.01
+            if = {
+                limit = {
+                    not = {
+                        has_completed_focus = PAU_zjwyj
+                    }
+                }
+                reduce_focus_completion_cost = { 
+                    focus = PAU_ddjr 
+                    cost = 3
+                }
+                reduce_focus_completion_cost = { 
+                    focus = PAU_zbgk 
+                    cost = 3
+                }
+                reduce_focus_completion_cost = { 
+                    focus = PAU_jmyx 
+                    cost = 3
+                }
+                reduce_focus_completion_cost = { 
+                    focus = PAU_zjwyj 
+                    cost = 3
+                }
+            }
+            else = {
+                reduce_focus_completion_cost = { 
+                    focus = PAU_zmxx 
+                    cost = 3
+                }
+            }
+
+        }
+        ai_will_do = { factor = 10 }
+    }
+    #决议名：组织反冲击
+    PAU_undead_counterattack = {
+        icon = GFX_cash_in_undead_arrows
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_undead_war }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            any_neighbor_state = {
+                is_controlled_by = ZDW
+            }
+            custom_trigger_tooltip = {
+                not = {
+		            has_country_flag = PAU_undead_counterattack_re
+                }
+                tooltip = PAU_undead_counterattack_re_15_days
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        days_remove = 10
+
+        complete_effect = {
+            if = {
+                limit = {
+                    has_country_flag = control_dec
+                }
+                add_days_mission_timeout  = {
+                    mission = PAU_wl_attack_dec
+                    days = 3
+                }
+            }
+            else = {
+                ZDW = {
+                    add_timed_idea = {
+                        idea = PAU_undead_counterattack
+                        days = 3
+                    }
+                }
+            }
+        }
+        remove_effect = {
+		    set_country_flag = {
+                flag = PAU_undead_counterattack_re
+                days = 14
+                value = 1
+            }
+        }
+        ai_will_do = { factor = 10 }
+    }
+    #决议名：烧掉带不走的油库
+    PAU_undead_burn_depot = {
+        icon = GFX_EMI_Kivotos_flamethrower
+        allowed = { original_tag = PAU }
+        visible = { has_country_flag = PAU_undead_war }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_fuel_gt499_tt
+                has_fuel > 4999
+            }
+            any_neighbor_state = {
+                is_controlled_by = ZDW
+            }
+        }
+        cost = 25
+        fire_only_once = yes
+        complete_effect = {
+            add_fuel = -5000
+            if = {
+                limit = {
+                    has_country_flag = control_dec
+                }
+                add_days_mission_timeout  = {
+                    mission = PAU_wl_attack_dec
+                    days = 15
+                }
+            }
+            else = {
+                ZDW = {
+                    add_timed_idea = {
+                        idea = PAU_undead_burn_depot
+                        days = 3
+                    }
+                }
+            }
+            #set_country_flag = PAU_undead_fuel_denied #已焚毁亡灵油料补给
+        }
+        ai_will_do = { factor = 10 }
+    }
+    #决议名：烧出一条隔离带
+    PAU_undead_scorched_earth = {
+        icon = GFX_refine_undead_essence
+        allowed = { original_tag = PAU }
+        visible = { always = yes }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_fuel > 99999
+            any_neighbor_state = {
+                is_controlled_by = ZDW
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        complete_effect = {
+            add_fuel = -10000
+                random_state = {
+                    limit = {
+                        or = {
+                            is_owned_by = PAU
+                            is_owned_by = LHS
+                            is_owned_by = CHL
+                        }
+                        any_neighbor_state = {
+                            is_controlled_by = ZDW
+                        }
+                    }
+                    transfer_state_to = WRQ
+                    set_state_flag = scorched_state
+                }
+                hidden_effect = {
+                    ZDW = {
+                        country_event = {
+                            id = PAU.66
+                            days = 15
+                        }
+                    }
+                }
+            custom_effect_tooltip = PAU_undead_scorched_earth_tt
+            #set_country_flag = PAU_undead_scorched_earth #已烧出亡灵隔离带
+        }
+        ai_will_do = { factor = 10 }
+    }
+}
+
 
 #剧情定位：雇佣兵合同期：接单、准备、开战、撤退或投降结算
 PAU_hetong = {
@@ -1309,24 +1490,9 @@ PAU_lhs_integration = {
             hidden_effect = { PAU_ml_remove_PAU_lhs_remnants = yes }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_planning_speed #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = planning_speed_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_army_org_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = army_org_factor_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_coordination_bonus #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = coordination_bonus_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_training_time_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = -0.05  #TODO 统一默认5%，请按需修改
-                tooltip = training_time_factor_tt
+                var = PAU_ml_raw_unit_youjibudui_design_cost_factor
+                value = -0.5
+                tooltip = unit_youjibudui_design_cost_factor_tt
             }
             remove_ideas = PAU_divided_legion2
             set_technology = { youjidui_tech = 1 }
@@ -1697,10 +1863,6 @@ PAU_safe_harbor = { #奇怪的修正
                 amount = 2500
                 producer = PAU
             }
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = 3
-            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1810,122 +1972,6 @@ PAU_safe_harbor = { #奇怪的修正
             clr_country_flag = PAU_auto_harbor
         }
         ai_will_do = { factor = 0 }
-    }
-}
-
-#剧情定位：亡灵清剿：疏散、反冲击、焚库与焦土隔离
-PAU_undead_containment = { #？
-    #决议名：先把活人撤出来
-    PAU_undead_evacuate = {
-        icon = GFX_KNM_KFL_transfer1
-        allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_undead_war }
-        available = {
-            NOT = { has_country_flag = PAU_undead_defeated }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_undead_pressure_gt0_tt
-                check_variable = { PAU_undead_pressure > 0 } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            }
-        }
-        cost = 25
-        days_re_enable = 30
-        complete_effect = {
-            add_manpower = 10000
-            add_stability = 0.05
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -15
-                tooltip = PAU_undead_pressure_tt
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：组织反冲击
-    PAU_undead_counterattack = {
-        icon = GFX_cash_in_undead_arrows
-        allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_undead_war }
-        available = {
-            NOT = { has_country_flag = PAU_undead_defeated }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_undead_pressure_gt0_tt
-                check_variable = { PAU_undead_pressure > 0 } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            }
-        }
-        cost = 25
-        days_re_enable = 30
-        complete_effect = {
-            army_experience = 50
-            add_war_support = 0.05
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -25
-                tooltip = PAU_undead_pressure_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_army_org_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #TODO 统一默认5%，请按需修改
-                tooltip = army_org_factor_tt
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：烧掉带不走的油库
-    PAU_undead_burn_depot = {
-        icon = GFX_EMI_Kivotos_flamethrower
-        allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_undead_war }
-        available = {
-            NOT = { has_country_flag = PAU_undead_defeated }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_undead_pressure_gt0_tt
-                check_variable = { PAU_undead_pressure > 0 } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_fuel_gt499_tt
-                has_fuel > 499
-            }
-        }
-        cost = 25
-        days_re_enable = 30
-        complete_effect = {
-            add_fuel = -500
-            command_power = 25
-            add_war_support = 0.03
-            set_country_flag = PAU_undead_fuel_denied #已焚毁亡灵油料补给
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -25
-                tooltip = PAU_undead_pressure_tt
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：烧出一条隔离带
-    PAU_undead_scorched_earth = {
-        icon = GFX_refine_undead_essence
-        allowed = { original_tag = PAU }
-        visible = { always = yes }
-        available = {
-            NOT = { has_country_flag = PAU_undead_defeated }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_undead_pressure_gt0_tt
-                check_variable = { PAU_undead_pressure > 0 } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            }
-        }
-        cost = 25
-        fire_only_once = yes
-        complete_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -40
-                tooltip = PAU_undead_pressure_tt
-            }
-            add_fuel = -1000
-            add_war_support = -0.05
-            set_country_flag = PAU_undead_scorched_earth #已烧出亡灵隔离带
-        }
-        ai_will_do = { factor = 10 }
     }
 }
 
@@ -4253,35 +4299,5 @@ PAU_joint_institutions = {
             country_event = { id = PAU.620 hours = 6 }
         }
         ai_will_do = { factor = 10 }
-    }
-}
-
-#剧情定位：亡灵危机：发现亡灵威胁后决定何时宣战
-PAU_undead_crisis = {
-    #决议名：向亡灵宣战
-    PAU_declare_undead_war = {
-        icon = GFX_mobilize_undead_looters
-        allowed = { original_tag = PAU }
-        visible = {
-            OR = {
-                has_country_flag = PAU_undead_crisis
-                has_country_flag = PAU_undead_cleanup_unlocked
-            }
-            NOT = { has_country_flag = PAU_undead_war }
-            NOT = { has_country_flag = PAU_undead_defeated }
-        }
-        available = { always = yes }
-        cost = 0
-        fire_only_once = yes
-        complete_effect = {
-            PAU_start_undead_war = yes
-            clr_country_flag = PAU_undead_crisis
-            PAU_raise_white_night_militia = yes
-            unlock_decision_tooltip = PAU_undead_evacuate
-            unlock_decision_tooltip = PAU_undead_counterattack
-            unlock_decision_tooltip = PAU_undead_burn_depot
-            unlock_decision_tooltip = PAU_undead_scorched_earth
-        }
-        ai_will_do = { factor = 100 }
     }
 }

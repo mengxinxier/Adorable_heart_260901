@@ -190,6 +190,7 @@ country_event = {
         }
         set_country_flag = has_PAU_xfzb #亡灵战争支线：迎战亡灵
         mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = jiesuoguoce
         hidden_effect = {
             ZDW = {
                 add_to_variable = {
@@ -325,6 +326,15 @@ country_event = {
             declare_war_on = { target = CHL type = annex_everything}
         }
 
+            set_country_flag = PAU_undead_war #亡灵战争正式开始
+            # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
+            PAU_raise_white_night_militia = yes
+
+            unlock_decision_tooltip = PAU_undead_evacuate
+            unlock_decision_tooltip = PAU_undead_counterattack
+            unlock_decision_tooltip = PAU_undead_burn_depot
+            unlock_decision_tooltip = PAU_undead_scorched_earth
+
         hidden_effect = {
             every_state = {
                 limit = {
@@ -345,10 +355,21 @@ country_event = {
         ai_chance = {
             base = 100
         }
+        set_country_flag = control_dec
         activate_mission = PAU_wl_attack_dec
         set_country_flag = has_PAU_xfzb #亡灵战争支线：迎战亡灵
         mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = jiesuoguoce
 
+            set_country_flag = PAU_undead_war #亡灵战争正式开始
+            # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
+            PAU_raise_white_night_militia = yes
+
+            unlock_decision_tooltip = PAU_undead_evacuate
+            unlock_decision_tooltip = PAU_undead_counterattack
+            unlock_decision_tooltip = PAU_undead_burn_depot
+            unlock_decision_tooltip = PAU_undead_scorched_earth
+        
         hidden_effect = {
             every_state = {
                 limit = {
@@ -367,6 +388,30 @@ country_event = {
 }
 
 country_event = {
+    id = PAU.66
+    title = PAU.66.t
+    desc = PAU.66.d
+    major = no
+    picture = GFX_event_taiyang
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.66.a
+        ai_chance = {
+            base = 100
+        }
+                every_state = {
+                    limit = {
+                        has_state_flag = scorched_state
+                    }
+                    transfer_state_to = ZDW
+                }
+
+    }
+}
+
+country_event = {
     id = PAU.7
     title = PAU.7.t
     desc = PAU.7.d
@@ -378,12 +423,11 @@ country_event = {
     option = {
         name = PAU.7.a
 
-        add_manpower = 5000
-        load_oob = PAU_sakura_cruisers
-        custom_effect_tooltip = PAU_sakura_cruisers_tt
         ai_chance = {
             base = 100
         }
+        add_manpower = 5000
+        add_political_power = 150
 
 
     }
@@ -401,10 +445,11 @@ country_event = {
     option = {
         name = PAU.8.a
 
-        add_manpower = 5000
         ai_chance = {
             base = 100
         }
+        load_oob = PAU_sakura_cruisers
+        custom_effect_tooltip = PAU_sakura_cruisers_tt
 
 
     }
@@ -422,17 +467,16 @@ country_event = {
     option = {
         name = PAU.9.a
 
-        add_fuel = 500
         ai_chance = {
             base = 100
         }
+        add_political_power = 50
 
 
     }
 
     option = {
         name = PAU.9.b
-        add_fuel = 500
         ai_chance = {
             base = 100
         }
@@ -462,11 +506,6 @@ country_event = {
 
         hidden_effect = {
            scoped_sound_effect = "汽车"
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = 10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -490,28 +529,27 @@ country_event = {
         ai_chance = {
             base = 100
         }
-        if = {
-            limit = { country_exists = CHL }
             CHL = {
-                every_core_state = {
-                    add_core_of = ROOT
+                LHS_xueyi = {
+                    set_nationality = ROOT
                 }
-                every_character = {
-                    limit = { is_general_advisor = no }
+                LHS_ald = {
                     set_nationality = ROOT
                 }
             }
+            every_state = {
+                limit = {
+                    has_state_flag = CHL_orgin_controlled_state
+                }
+                add_core_of = ROOT
+            }
+        if = {
+            limit = { country_exists = CHL }
             if = {
                 limit = { CHL = { is_in_faction = yes } }
-                if = {
-                    limit = { is_in_faction = yes }
-                    leave_faction = yes
-                }
                 #由阵营领袖把 PAU 拉进 CHL 所在的阵营，然后 PAU 再取得领导权，最后才吞并 CHL。
                 CHL = {
-                    faction_leader = {
-                        add_to_faction = PAU
-                    }
+                    add_to_faction = PAU
                 }
                 set_faction_leader = yes
             }
@@ -519,20 +557,17 @@ country_event = {
                 target = CHL
                 transfer_troops = yes
             }
-            #吞并后再次确认 PAU 留在原阵营的领导位上。
-            if = {
-                limit = { is_in_faction = yes }
-                set_faction_leader = yes
+        }
+        else_if = {
+            limit = { 
+                not = {
+                    country_exists = CHL 
+                }
             }
-            set_country_flag = PAU_chl_inherited
+            create_faction_from_template = faction_template_nmgr
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = 10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -668,11 +703,6 @@ country_event = {
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -748,7 +778,6 @@ country_event = {
             base = 100
         }
         add_manpower = 10000
-        set_country_flag = PAU_undead_crisis #亡灵危机已浮现，可宣战
     }
 }
 
@@ -771,11 +800,6 @@ country_event = {
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -799,11 +823,6 @@ country_event = {
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -826,11 +845,6 @@ country_event = {
         country_event = PAU.211
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -871,11 +885,6 @@ country_event = {
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -901,11 +910,6 @@ country_event = {
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -3447,22 +3451,12 @@ country_event = {
         name = PAU.7010.a
         ai_chance = { base = 50 }
         add_manpower = -2000
-        add_to_variable = {
-            var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            value = -8
-            tooltip = PAU_undead_pressure_tt
-        }
     }
     option = {
         name = PAU.7010.b
         ai_chance = { base = 50 }
         add_war_support = -0.02
         add_stability = -0.02
-        add_to_variable = {
-            var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            value = 5
-            tooltip = PAU_undead_pressure_tt
-        }
     }
 }
 
