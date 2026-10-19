@@ -492,8 +492,11 @@ PAU_LHS_weiji = {
                 }
                 add_political_power = -10
                 random_controlled_state = {
-                    limit = {
-                        not = { has_state_flag = PAU_xiaoyao_state_flag }
+                    limit = { 
+                        any_neighbor_state = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                        not = { has_state_flag = PAU_xiaoyao_state_flag } 
                         has_state_flag = is_lldy_state_flag
                     }
                     set_state_flag = PAU_xiaoyao_state_flag
@@ -800,6 +803,7 @@ PAU_hetong = {
             is_subject = no
             not = { has_war_with = ROOT }
             not = { has_country_flag = PAU_guyonged_flag } #没有同时给其他人雇佣
+            not = { has_country_flag = pau_guyong_xiuxi } #休息
         }
 
         fire_only_once = no
@@ -1088,9 +1092,20 @@ PAU_hetong = {
             else = {
                 if = {
                     limit = {
-                        any_country = {
-                            has_country_flag = PAU_bop_loan_active #同意的flag
-                            exists = no
+                        or = {
+                            any_country = {
+                                has_country_flag = PAU_bop_loan_active #同意的flag
+                                exists = no
+                            }
+                            any_country = { #和非敌对雇佣国家作战
+                                not = {
+                                    any_country = {
+                                        has_country_flag = PAU_bop_loan_active #同意的flag
+                                        has_war_with = PREV
+                                    }
+                                }
+                                has_war_with = ROOT
+                            }
                         }
                     }
                     add_timed_idea = {
@@ -1252,11 +1267,15 @@ PAU_hetong = {
                 else = {
                 }
             }
-            every_possible_country = {
-                limit = {
-                    has_country_flag = PAU_bop_loan_active
+            hidden_effect = {
+                set_country_flag = {
+                    flag = pau_guyong_xiuxi
+                    days = 30
+                    value = 1
                 }
-                clr_country_flag = PAU_bop_loan_active
+                AHM = {
+                    country_event = { id = PAU.180 days = 30 }
+                }
             }
         }
 
@@ -1521,6 +1540,7 @@ PAU_lhs_integration = {
             }
             remove_ideas = PAU_divided_legion2
             set_technology = { youjidui_tech = 1 }
+            custom_effect_tooltip = PAU_lhs_finish_tt
             LHS = {
                 every_character = {
                     limit = { is_general_advisor = no }
