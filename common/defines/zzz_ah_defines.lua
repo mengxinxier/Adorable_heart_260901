@@ -93,6 +93,7 @@ NDefines.NProduction.MINIMUM_NUMBER_OF_FACTORIES_TAKEN_BY_CONSUMER_GOODS_PERCENT
 
 -- 丝滑的摄像机
 NDefines_Graphics.NFrontend.CAMERA_MIN_HEIGHT = 30.0
+NDefines_Graphics.NFrontend.CAMERA_MAX_HEIGHT = 3475.0
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED = 50
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_KEY_SCALE = 0.02
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED_DISTANCE_MULT = 8.0
