@@ -527,12 +527,20 @@ PAU_refresh_late_networks = {
 
 #PAU_call_joint_staff_college：联合参谋学院课程结算：按课程刷新等级与奖励
 PAU_call_joint_staff_college = {
+    PAU_refresh_south_america_members = yes
     every_faction_member = {
         limit = {
             NOT = { tag = PAU }
             capital_scope = { is_on_continent = south_america }
         }
         country_event = { id = PAU.580 days = 1 }
+    }
+    if = {
+        limit = { check_variable = { PAU_south_america_members < 2 } }
+        if = { limit = { check_variable = { PAU_sa_college_armor < 3 } } add_to_variable = { PAU_sa_college_armor = 1 } }
+        if = { limit = { check_variable = { PAU_sa_college_infantry < 3 } } add_to_variable = { PAU_sa_college_infantry = 1 } }
+        if = { limit = { check_variable = { PAU_sa_college_operations < 3 } } add_to_variable = { PAU_sa_college_operations = 1 } }
+        hidden_effect = { PAU_refresh_joint_staff_college = yes }
     }
 }
 
@@ -573,12 +581,23 @@ PAU_refresh_joint_staff_college = {
 
 #PAU_call_state_council_missions：国务委员会任务结算：按领域任务刷新委员会加成
 PAU_call_state_council_missions = {
+    PAU_refresh_south_america_members = yes
     every_faction_member = {
         limit = {
             NOT = { tag = PAU }
             capital_scope = { is_on_continent = south_america }
         }
         country_event = { id = PAU.610 days = 1 }
+    }
+    if = {
+        limit = { check_variable = { PAU_south_america_members < 2 } }
+        if = { limit = { check_variable = { PAU_sa_state_industry < 3 } } add_to_variable = { PAU_sa_state_industry = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_infrastructure < 3 } } add_to_variable = { PAU_sa_state_infrastructure = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_trade < 3 } } add_to_variable = { PAU_sa_state_trade = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_diplomacy < 3 } } add_to_variable = { PAU_sa_state_diplomacy = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_welfare < 3 } } add_to_variable = { PAU_sa_state_welfare = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_mobilization < 3 } } add_to_variable = { PAU_sa_state_mobilization = 1 } }
+        hidden_effect = { PAU_refresh_state_council = yes }
     }
 }
 
@@ -702,6 +721,14 @@ PAU_advance_baiye_story = {
         }
         set_variable = { PAU_baiye_story_stage = 4 } #白夜巡游剧情阶段：1-4依次推进小事件
         country_event = { id = PAU.7004 hours = 6 }
+    }
+    if = {
+        limit = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+        }
+        add_to_variable = { PAU_undead_pressure = -5 }
+        clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
     }
 }
 
@@ -887,6 +914,36 @@ PAU_refresh_undead_pressure = {
         if = { limit = { has_country_flag = PAU_undead_scorched_earth } add_to_variable = { PAU_undead_pressure = -1 } }
         if = { limit = { any_controlled_state = { has_state_flag = PAU_xiaoyao_state_flag } } add_to_variable = { PAU_undead_pressure = -1 } }
         clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
+        if = {
+            limit = { check_variable = { PAU_undead_pressure > 49 } }
+            if = {
+                limit = {
+                    any_controlled_state = {
+                        is_owned_by = ROOT
+                        is_capital = no
+                        any_neighbor_state = { is_controlled_by = ZDW }
+                    }
+                }
+                random_controlled_state = {
+                    limit = {
+                        is_owned_by = ROOT
+                        is_capital = no
+                        any_neighbor_state = { is_controlled_by = ZDW }
+                    }
+                    transfer_state_to = ZDW
+                }
+            }
+            else = {
+                random_controlled_state = {
+                    limit = {
+                        is_owned_by = ROOT
+                        is_capital = no
+                    }
+                    transfer_state_to = ZDW
+                }
+            }
+            subtract_from_variable = { PAU_undead_pressure = 20 }
+        }
         if = {
             limit = { check_variable = { PAU_undead_pressure > 0 } }
             if = { limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes } }
