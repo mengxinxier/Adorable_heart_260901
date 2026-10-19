@@ -294,7 +294,7 @@ PAU_expand_safe_harbor = {
 
 #PAU_pull_into_white_night_faction：把目标国拉入白夜同盟阵营
 PAU_pull_into_white_night_faction = {
-    #确保白夜同盟存在；目标国若已有阵营，则把其整个阵营一并带入白夜同盟
+    #确保白夜同盟存在；普通阵营可整块带入，轴心/魔导/圣杯/苏联主导阵营只接收直接目标国
     PAU = {
         if = {
             limit = { NOT = { is_in_faction = yes } }
@@ -311,14 +311,32 @@ PAU_pull_into_white_night_faction = {
         }
         if = {
             limit = { ROOT = { is_in_faction = yes } }
-            ROOT = {
-                every_faction_member = {
-                    display_individual_scopes = yes
-                    leave_faction = yes
-                    PAU = {
-                        faction_leader = {
-                            #PREV 是 PAU，PREV.PREV 是当前阵营成员
-                            add_to_faction = PREV.PREV
+            if = {
+                limit = {
+                    ROOT = {
+                        NOT = { has_country_flag = PAU_allow_major_faction_pull }
+                        OR = {
+                            faction_leader = { OR = { tag = GER tag = DVL tag = ENG tag = SOV } }
+                            has_faction_template = faction_template_axis
+                            has_faction_template = faction_template_allies
+                            has_faction_template = faction_template_comintern
+                        }
+                    }
+                }
+                #轴心国/魔导国/圣杯/苏联的主导阵营只接收被直接点名的目标国，不整块拖拽
+                ROOT = { leave_faction = yes }
+                PAU = { faction_leader = { add_to_faction = ROOT } }
+            }
+            else = {
+                ROOT = {
+                    every_faction_member = {
+                        display_individual_scopes = yes
+                        leave_faction = yes
+                        PAU = {
+                            faction_leader = {
+                                #PREV 是 PAU，PREV.PREV 是当前阵营成员
+                                add_to_faction = PREV.PREV
+                            }
                         }
                     }
                 }
@@ -328,6 +346,7 @@ PAU_pull_into_white_night_faction = {
             PAU = { faction_leader = { add_to_faction = ROOT } }
         }
     }
+    ROOT = { clr_country_flag = PAU_allow_major_faction_pull }
 }
 
 #PAU_join_soviet_faction：加入苏联阵营
