@@ -1,33 +1,5 @@
 #PAU 系统效果总表：本文件定义资源结算、动态修正刷新、剧情推进与旧存档变量兜底等 scripted_effects。
 #=====================================================================
-#PAU_form_white_night_alliance：组建白夜同盟：建立阵营/政治架构并刷新状态
-PAU_form_white_night_alliance = {
-    #无阵营或只剩自己时重建阵营，避免单人阵营失效导致后续拉人事件全部静默
-    if = {
-        limit = {
-            OR = {
-                NOT = { is_in_faction = yes }
-                NOT = {
-                    any_country = {
-                        is_in_faction_with = PREV
-                        NOT = { tag = PREV }
-                    }
-                }
-            }
-        }
-        if = {
-            limit = { is_in_faction = yes }
-            leave_faction = yes
-        }
-        create_faction_from_template = faction_template_nmgr
-    }
-    if = {
-        limit = { is_in_faction = yes }
-        set_faction_leader = yes
-        set_faction_name = PAU_white_night_alliance
-    }
-}
-
 #PAU_arrive_grail：抵达圣杯流亡营地：初始化营地资源与旗标
 PAU_arrive_grail = {
     set_country_flag = PAU_grail_camp #军团在圣杯地块上落脚
@@ -322,23 +294,23 @@ PAU_expand_safe_harbor = {
 
 #PAU_pull_into_white_night_faction：把目标国拉入白夜同盟阵营
 PAU_pull_into_white_night_faction = {
-    #白夜同盟没有阵营时先建立阵营；否则后续 add_to_faction 会静默失效。
+    #确保白夜同盟存在；目标国若已有阵营，则把其整个阵营一并带入白夜同盟
     PAU = {
         if = {
             limit = { NOT = { is_in_faction = yes } }
             create_faction_from_template = faction_template_nmgr
             set_faction_leader = yes
             set_faction_name = PAU_white_night_alliance
+            set_faction_manifest = PAU_faction_manifest_white_night
         }
     }
-    #即使白夜同盟不是阵营领袖，也要通过 faction_leader 找到实际领袖并加入。
     if = {
         limit = {
             PAU = { is_in_faction = yes }
             ROOT = { NOT = { is_in_faction_with = PAU } }
         }
         if = {
-            limit = { ROOT = { is_faction_leader = yes } }
+            limit = { ROOT = { is_in_faction = yes } }
             ROOT = {
                 every_faction_member = {
                     display_individual_scopes = yes
@@ -353,10 +325,6 @@ PAU_pull_into_white_night_faction = {
             }
         }
         else = {
-            if = {
-                limit = { ROOT = { is_in_faction = yes } }
-                ROOT = { leave_faction = yes }
-            }
             PAU = { faction_leader = { add_to_faction = ROOT } }
         }
     }
@@ -364,30 +332,45 @@ PAU_pull_into_white_night_faction = {
 
 #PAU_join_soviet_faction：加入苏联阵营
 PAU_join_soviet_faction = {
+    #无论苏联是否已有阵营、是否为阵营领袖，都保证 PAU 能完成阵营合并。
     if = {
-        limit = {
-            PAU = { is_in_faction = yes is_faction_leader = yes }
-            SOV = { is_in_faction = yes is_faction_leader = yes }
-            NOT = { PAU = { is_in_faction_with = SOV } }
-        }
-        PAU = {
-            every_faction_member = {
-                display_individual_scopes = yes
-                leave_faction = yes
-                ROOT = { add_to_faction = PREV }
+        limit = { SOV = { is_in_faction = yes } }
+        if = {
+            limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
+            if = {
+                limit = { PAU = { is_in_faction = yes } }
+                PAU = {
+                    every_faction_member = {
+                        limit = { NOT = { tag = PAU } }
+                        display_individual_scopes = yes
+                        leave_faction = yes
+                        SOV = {
+                            faction_leader = {
+                                add_to_faction = PREV.PREV
+                            }
+                        }
+                    }
+                    leave_faction = yes
+                }
             }
+            SOV = { faction_leader = { add_to_faction = PAU } }
         }
     }
-    else_if = {
-        limit = {
-            SOV = { is_in_faction = yes is_faction_leader = yes }
-            PAU = { NOT = { is_in_faction_with = SOV } }
-        }
+    else = {
+        #苏联没有阵营时，不新建一个空壳苏维埃阵营，而是让苏联加入白夜同盟。
         if = {
             limit = { PAU = { is_in_faction = yes } }
-            PAU = { leave_faction = yes }
+            PAU = { faction_leader = { add_to_faction = SOV } }
         }
-        SOV = { add_to_faction = PAU }
+        else = {
+            PAU = {
+                create_faction_from_template = faction_template_nmgr
+                set_faction_leader = yes
+                set_faction_name = PAU_white_night_alliance
+                set_faction_manifest = PAU_faction_manifest_white_night
+                add_to_faction = SOV
+            }
+        }
     }
 }
 

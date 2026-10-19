@@ -77,7 +77,6 @@ PAU_LHS_weiji = {
         allowed = {
             original_tag = PAU
         }
-		name = PAU_LHS_weiji_dec2
         icon = GFX_wangshizhuangjia
 
         available = {
@@ -203,7 +202,6 @@ PAU_LHS_weiji = {
     #王室精英援兵
     #决议名：装甲援军在路上
     PAU_LHS_weiji_dec3 = {
-		name = LHS_weiji3
         allowed = {
             original_tag = PAU
         }
@@ -374,8 +372,8 @@ PAU_LHS_weiji = {
         }
         fire_only_once = yes
         #target_array = controlled_states
-        cost = 50
-        days_remove = 60
+        cost = 25
+        days_remove = 20
         modifier = {
             stability_factor = -0.1
             civilian_factory_use = 1
@@ -383,6 +381,11 @@ PAU_LHS_weiji = {
         remove_effect = {
             FROM = {
                 transfer_state_to = PAU
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
             }
         }
     }
@@ -445,9 +448,7 @@ PAU_LHS_weiji = {
             }
             PAU_advance_baiye_story = yes
         }
-        ai_will_do = {
-            factor = 0
-        }
+        ai_will_do = { factor = 25 }
     }
 
     #决议名：自动放白夜出去溜达
@@ -629,39 +630,21 @@ PAU_undead_containment = { #
         cost = 25
         days_remove = 15
         fire_only_once = no
-        remove_effect = {
-            add_manpower = 1000
-            add_stability = 0.01
+        complete_effect = {
             if = {
-                limit = {
-                    not = {
-                        has_completed_focus = PAU_zjwyj
-                    }
-                }
-                reduce_focus_completion_cost = {
-                    focus = PAU_ddjr
-                    cost = 3
-                }
-                reduce_focus_completion_cost = {
-                    focus = PAU_zbgk
-                    cost = 3
-                }
-                reduce_focus_completion_cost = {
-                    focus = PAU_jmyx
-                    cost = 3
-                }
-                reduce_focus_completion_cost = {
-                    focus = PAU_zjwyj
-                    cost = 3
-                }
+                limit = { NOT = { has_completed_focus = PAU_zjwyj } }
+                reduce_focus_completion_cost = { focus = PAU_ddjr cost = 3 }
+                reduce_focus_completion_cost = { focus = PAU_zbgk cost = 3 }
+                reduce_focus_completion_cost = { focus = PAU_jmyx cost = 3 }
+                reduce_focus_completion_cost = { focus = PAU_zjwyj cost = 3 }
             }
             else = {
-                reduce_focus_completion_cost = {
-                    focus = PAU_zmxx
-                    cost = 3
-                }
+                reduce_focus_completion_cost = { focus = PAU_zmxx cost = 3 }
             }
-
+        }
+        remove_effect = {
+            add_manpower = 2000
+            add_stability = 0.02
         }
         ai_will_do = { factor = 10 }
     }
@@ -693,17 +676,18 @@ PAU_undead_containment = { #
                 }
                 add_days_mission_timeout  = {
                     mission = PAU_wl_attack_dec
-                    days = 3
+                    days = 10
                 }
             }
             else = {
                 ZDW = {
                     add_timed_idea = {
                         idea = PAU_undead_counterattack
-                        days = 3
+                        days = 14
                     }
                 }
             }
+            army_experience = 15
         }
         remove_effect = {
 		    set_country_flag = {
@@ -723,7 +707,7 @@ PAU_undead_containment = { #
             NOT = { has_country_flag = PAU_undead_defeated }
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_fuel_gt499_tt
-                has_fuel > 4999
+                has_fuel > 499
             }
             any_neighbor_state = {
                 is_controlled_by = ZDW
@@ -732,7 +716,7 @@ PAU_undead_containment = { #
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            add_fuel = -5000
+            add_fuel = -500
             if = {
                 limit = {
                     has_country_flag = control_dec
@@ -746,7 +730,7 @@ PAU_undead_containment = { #
                 ZDW = {
                     add_timed_idea = {
                         idea = PAU_undead_burn_depot
-                        days = 3
+                        days = 30
                     }
                 }
             }
@@ -758,18 +742,19 @@ PAU_undead_containment = { #
     PAU_undead_scorched_earth = {
         icon = GFX_refine_undead_essence
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = { has_country_flag = PAU_undead_war }
         available = {
             NOT = { has_country_flag = PAU_undead_defeated }
-            has_fuel > 99999
+            has_fuel > 999
             any_neighbor_state = {
                 is_controlled_by = ZDW
             }
         }
         cost = 25
         fire_only_once = no
+        days_re_enable = 30
         complete_effect = {
-            add_fuel = -10000
+            add_fuel = -1000
                 random_state = {
                     limit = {
                         or = {
@@ -1369,15 +1354,40 @@ PAU_lhs_integration = {
             }
         }
         cost = 25
-        fire_only_once = no
-        days_remove = 30
+        fire_only_once = yes
+        days_remove = 20
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
-                value = 10
+                value = 20
                 tooltip = PAU_lhs_integration_tt
             }
             set_country_flag = PAU_lhs_kept_cadres
+            army_experience = 50
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_coordination_bonus
+                value = 0.05
+                tooltip = coordination_bonus_tt
+            }
+            division_template = {
+                name = "野火山地游击队"
+                is_locked = no
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    infantry = { x = 0 y = 2 }
+                    infantry = { x = 0 y = 3 }
+                    infantry = { x = 1 y = 0 }
+                }
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"野火山地游击队\" division_template = \"野火山地游击队\" start_experience_factor = 1.0 start_equipment_factor = 1.0"
+                    count = 2
+                    owner = PAU
+                }
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1394,15 +1404,27 @@ PAU_lhs_integration = {
             }
         }
         cost = 25
-        fire_only_once = no
-        days_remove = 30
+        fire_only_once = yes
+        days_remove = 20
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
-                value = 10
+                value = 20
                 tooltip = PAU_lhs_integration_tt
             }
             set_country_flag = PAU_lhs_dissolved
+            add_manpower = 6000
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 1500
+                producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_army_org_factor
+                value = 0.05
+                tooltip = army_org_factor_tt
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1420,14 +1442,15 @@ PAU_lhs_integration = {
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 30
+        days_remove = 20
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
-                value = 10
+                value = 15
                 tooltip = PAU_lhs_integration_tt
             }
             army_experience = 50
+            command_power = 30
         }
         ai_will_do = { factor = 10 }
     }
@@ -1439,19 +1462,19 @@ PAU_lhs_integration = {
         available = {
             custom_trigger_tooltip = {
                 tooltip = PAU_lhs_finish_available_tt
-                check_variable = { PAU_lhs_integration > 29 } #野火旧部整编度（0-100）
+                check_variable = { PAU_lhs_integration > 14 } #野火旧部整编度（0-100）
             }
         }
         cost = 25
-        fire_only_once = no
-        days_remove = 60
+        fire_only_once = yes
+        days_remove = 25
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
-                value = -10
+                value = 15
                 tooltip = PAU_lhs_integration_tt
             }
-            add_manpower = -5000
+            add_manpower = -1000
             division_template = {
                 name = "莉兰迪亚红军"
                 is_locked = no
@@ -1465,11 +1488,12 @@ PAU_lhs_integration = {
             }
             random_controlled_state = {
                 create_unit = {
-                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
-                    count = 1
+                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.4 start_equipment_factor = 1.0"
+                    count = 2
                     owner = PAU
                 }
             }
+            add_doctrine_cost_reduction = { name = PAU_lhs_officer_exchange_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1481,12 +1505,12 @@ PAU_lhs_integration = {
         available = {
             custom_trigger_tooltip = {
                 tooltip = PAU_lhs_finish_available_tt
-                check_variable = { PAU_lhs_integration > 99 } #野火旧部整编度（0-100）
+                check_variable = { PAU_lhs_integration > 29 } #野火旧部整编度（0-100）
             }
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 60
+        days_remove = 20
         remove_effect = {
             set_country_flag = PAU_lhs_integrated
             custom_effect_tooltip = PAU_mainline_append_tt
@@ -1523,7 +1547,7 @@ PAU_grail_camp = { #存疑
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 15
+        days_remove = 10
         remove_effect = {
             add_to_variable = {
                 var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
@@ -1535,6 +1559,7 @@ PAU_grail_camp = { #存疑
             set_country_flag = PAU_grail_rations_shared
         }
         ai_will_do = { factor = 10 }
+        # TODO(待确认): 圣杯流亡营实际有4个决议且原本已是days_remove=15，按提速目标统一改为10。
     }
     #决议名：用军械换淡水
     PAU_grail_trade_arms = {
@@ -1547,7 +1572,7 @@ PAU_grail_camp = { #存疑
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 15
+        days_remove = 10
         remove_effect = {
             add_to_variable = {
                 var = PAU_grail_parts #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
@@ -1578,7 +1603,7 @@ PAU_grail_camp = { #存疑
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 15
+        days_remove = 10
         remove_effect = {
             set_country_flag = PAU_grail_leave #选择离开圣杯营地
             add_to_variable = {
@@ -1610,7 +1635,7 @@ PAU_grail_camp = { #存疑
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 15
+        days_remove = 10
         remove_effect = {
             set_country_flag = PAU_grail_stay #选择留在圣杯营地
             add_to_variable = {
@@ -1641,7 +1666,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
         available = {
             custom_trigger_tooltip = {
@@ -1689,7 +1713,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
         available = {
             any_controlled_state = { has_state_flag = PAU_safe_harbor }
@@ -1720,7 +1743,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
         available = {
             any_controlled_state = { has_state_flag = PAU_safe_harbor }
@@ -1751,7 +1773,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
         available = {
             any_controlled_state = { has_state_flag = PAU_safe_harbor }
@@ -1782,7 +1803,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
 
         available = {
@@ -1790,9 +1810,22 @@ PAU_safe_harbor = { #奇怪的修正
         }
         cost = 25
         days_remove = 30
+        days_re_enable = 60
         remove_effect = {
             add_manpower = 8000
-            add_stability = 0.03
+            add_stability = 0.05
+            random_controlled_state = {
+                limit = {
+                    has_state_flag = PAU_harbor_type_refugee
+                    is_controlled_by = ROOT
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = industrial_complex
+                    level = 1
+                    instant_build = yes
+                }
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1802,7 +1835,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
 
         available = {
@@ -1810,12 +1842,28 @@ PAU_safe_harbor = { #奇怪的修正
         }
         cost = 25
         days_remove = 30
+        days_re_enable = 60
         remove_effect = {
             navy_experience = 60
-            add_to_variable = {
-                var = PAU_ml_raw_naval_ship_recovery_chance_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #TODO 统一默认5%，请按需修改
-                tooltip = naval_ship_recovery_chance_factor_tt
+            random_controlled_state = {
+                limit = {
+                    has_state_flag = PAU_harbor_type_military
+                    is_controlled_by = ROOT
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = dockyard
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            if = {
+                limit = { check_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor < 0.15 } }
+                add_to_variable = {
+                    var = PAU_ml_raw_naval_ship_recovery_chance_factor
+                    value = 0.05
+                    tooltip = naval_ship_recovery_chance_factor_tt
+                }
             }
         }
         ai_will_do = { factor = 10 }
@@ -1826,7 +1874,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
 
         available = {
@@ -1834,12 +1881,17 @@ PAU_safe_harbor = { #奇怪的修正
         }
         cost = 25
         days_remove = 30
+        days_re_enable = 60
         remove_effect = {
-            add_fuel = 500
-            add_to_variable = {
-                var = PAU_ml_raw_trade_opinion_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #TODO 统一默认5%，请按需修改
-                tooltip = trade_opinion_factor_tt
+            add_fuel = 5000
+            add_equipment_to_stockpile = { type = convoy amount = 30 }
+            if = {
+                limit = { check_variable = { PAU_ml_raw_trade_opinion_factor < 0.15 } }
+                add_to_variable = {
+                    var = PAU_ml_raw_trade_opinion_factor
+                    value = 0.05
+                    tooltip = trade_opinion_factor_tt
+                }
             }
         }
         ai_will_do = { factor = 10 }
@@ -1850,7 +1902,6 @@ PAU_safe_harbor = { #奇怪的修正
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
-            NOT = { has_country_flag = PAU_auto_harbor }
         }
         available = {
             any_controlled_state = { has_state_flag = PAU_safe_harbor }
@@ -2055,12 +2106,14 @@ PAU_army_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_recon #军事改革购买加成：侦察
@@ -2072,6 +2125,7 @@ PAU_army_reform_axia = {
             }
         }
         ai_will_do = { factor = 10 }
+        # TODO(待确认): 38个改革决议原有-10扣除位于remove_effect，已按点击立即扣除要求移至complete_effect。
     }
     #决议名：弹药按人头分，别再半路漏掉
     PAU_axia_supply = {
@@ -2088,12 +2142,14 @@ PAU_army_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_supply #军事改革购买加成：补给消耗
@@ -2126,12 +2182,14 @@ PAU_army_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_breakthrough #军事改革购买加成：突破
@@ -2164,12 +2222,14 @@ PAU_army_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_attrition #军事改革购买加成：损耗
@@ -2197,12 +2257,14 @@ PAU_army_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_morale #军事改革购买加成：士气
@@ -2235,12 +2297,14 @@ PAU_army_reform_axia = {
         cost = 10
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_planning #军事改革购买加成：计划速度
@@ -2273,12 +2337,14 @@ PAU_army_reform_axia = {
         cost = 25
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_mil #阿夏系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_training #军事改革购买加成：训练时间
@@ -2357,12 +2423,14 @@ PAU_army_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_mil #晓枫雪伊系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_coordination #军事改革购买加成：协调
@@ -2395,12 +2463,14 @@ PAU_army_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_mil #晓枫雪伊系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_initiative #军事改革购买加成：主动性
@@ -2428,12 +2498,14 @@ PAU_army_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_mil #晓枫雪伊系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_org #军事改革购买加成：陆军组织度
@@ -2466,12 +2538,14 @@ PAU_army_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_mil #晓枫雪伊系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_initiative #军事改革购买加成：主动性
@@ -2504,12 +2578,14 @@ PAU_army_reform_xfxy = {
         cost = 10
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_mil #晓枫雪伊系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_initiative #军事改革购买加成：主动性
@@ -2542,12 +2618,14 @@ PAU_army_reform_xfxy = {
         cost = 25
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_mil #晓枫雪伊系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_attrition #军事改革购买加成：损耗
@@ -2626,12 +2704,14 @@ PAU_army_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil #小遥系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_naval_coordination #军事改革购买加成：海军协同
@@ -2664,12 +2744,14 @@ PAU_army_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil #小遥系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_invasion_prep #军事改革购买加成：登陆准备
@@ -2702,12 +2784,14 @@ PAU_army_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil #小遥系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_invasion_prep #军事改革购买加成：登陆准备
@@ -2740,12 +2824,14 @@ PAU_army_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil #小遥系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_invasion_prep #军事改革购买加成：登陆准备
@@ -2778,12 +2864,14 @@ PAU_army_reform_xiaoyao = {
         cost = 10
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil #小遥系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_invasion_prep #军事改革购买加成：登陆准备
@@ -2816,12 +2904,14 @@ PAU_army_reform_xiaoyao = {
         cost = 25
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil #小遥系军事改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_mil_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_morale #军事改革购买加成：士气
@@ -2900,12 +2990,14 @@ PAU_economy_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_morale #经济改革购买加成：陆军士气
@@ -2933,12 +3025,14 @@ PAU_economy_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_construction #经济改革购买加成：建造速度
@@ -2971,12 +3065,14 @@ PAU_economy_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_industry #经济改革购买加成：工业产出
@@ -3009,12 +3105,14 @@ PAU_economy_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_fuel #经济改革购买加成：燃料获取
@@ -3047,12 +3145,14 @@ PAU_economy_reform_axia = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_consumer #经济改革购买加成：消费品工厂
@@ -3085,12 +3185,14 @@ PAU_economy_reform_axia = {
         cost = 10
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_supply #经济改革购买加成：补给消耗
@@ -3123,12 +3225,14 @@ PAU_economy_reform_axia = {
         cost = 25
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_axia_eco #阿夏系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_axia_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_construction #经济改革购买加成：建造速度
@@ -3207,12 +3311,14 @@ PAU_economy_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_consumer #经济改革购买加成：消费品工厂
@@ -3240,12 +3346,14 @@ PAU_economy_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_arms #经济改革购买加成：军工厂建造
@@ -3278,12 +3386,14 @@ PAU_economy_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_political #经济改革购买加成：政治点获取
@@ -3311,12 +3421,14 @@ PAU_economy_reform_xfxy = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_industry #经济改革购买加成：工业产出
@@ -3349,12 +3461,14 @@ PAU_economy_reform_xfxy = {
         cost = 10
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_arms #经济改革购买加成：军工厂建造
@@ -3388,12 +3502,14 @@ PAU_economy_reform_xfxy = {
         cost = 25
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xfxy_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_mil_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_mil_reform_bonus_supply #军事改革购买加成：补给消耗
@@ -3474,12 +3590,14 @@ PAU_economy_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_eco #小遥系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_trade #经济改革购买加成：贸易好感
@@ -3507,12 +3625,14 @@ PAU_economy_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_eco #小遥系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_morale #经济改革购买加成：陆军士气
@@ -3540,12 +3660,14 @@ PAU_economy_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_eco #小遥系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_construction #经济改革购买加成：建造速度
@@ -3578,12 +3700,14 @@ PAU_economy_reform_xiaoyao = {
         cost = 15
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_eco #小遥系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_consumer #经济改革购买加成：消费品工厂
@@ -3616,12 +3740,14 @@ PAU_economy_reform_xiaoyao = {
         cost = 10
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_eco #小遥系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_consumer #经济改革购买加成：消费品工厂
@@ -3654,12 +3780,14 @@ PAU_economy_reform_xiaoyao = {
         cost = 25
         fire_only_once = yes
         days_remove = 30
-        remove_effect = {
+        complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_eco #小遥系经济改革点：国策+10，改革决议-10
                 value = -10
                 tooltip = PAU_xiaoyao_eco_tt
             }
+        }
+        remove_effect = {
             custom_effect_tooltip = PAU_eco_reform_append_tt
             add_to_variable = {
                 var = PAU_eco_reform_bonus_morale #经济改革购买加成：陆军士气
@@ -3736,6 +3864,12 @@ PAU_bop_name = {
             if = {
                 limit = { NOT = { has_country_flag = PAU_bop_workers } }
                 set_country_flag = PAU_bop_workers #工人委员会已建立
+                custom_effect_tooltip = PAU_mainline_append_tt
+                add_to_variable = {
+                    var = PAU_ml_raw_production_factory_max_efficiency_factor
+                    value = 0.05
+                    tooltip = production_factory_max_efficiency_factor_tt
+                }
             }
             add_power_balance_value = {
                 id = PAU_bop
@@ -3743,11 +3877,7 @@ PAU_bop_name = {
                 tooltip_side = PAU_bop_left_side
             }
             if = {
-                limit = {
-                    has_completed_focus = PAU_tyzz
-                    check_variable = { PAU_axia_eco > 4 } #阿夏系经济改革点：国策+10，改革决议-10
-                }
-                subtract_from_variable = { PAU_axia_eco = 5 } #阿夏系经济改革点：国策+10，改革决议-10
+                limit = { check_variable = { PAU_eco_reform_progress > 3 } }
                 add_power_balance_value = {
                     id = PAU_bop
                     value = -0.15
@@ -3770,6 +3900,12 @@ PAU_bop_name = {
             if = {
                 limit = { NOT = { has_country_flag = PAU_bop_veterans } }
                 set_country_flag = PAU_bop_veterans #老兵委员会已建立
+                custom_effect_tooltip = PAU_mainline_append_tt
+                add_to_variable = {
+                    var = PAU_ml_raw_breakthrough_factor
+                    value = 0.05
+                    tooltip = breakthrough_factor_tt
+                }
             }
             add_power_balance_value = {
                 id = PAU_bop
@@ -3777,11 +3913,7 @@ PAU_bop_name = {
                 tooltip_side = PAU_bop_right_side
             }
             if = {
-                limit = {
-                    has_completed_focus = PAU_tyzz
-                    check_variable = { PAU_axia_mil > 4 } #阿夏系军事改革点：国策+10，改革决议-10
-                }
-                subtract_from_variable = { PAU_axia_mil = 5 } #阿夏系军事改革点：国策+10，改革决议-10
+                limit = { check_variable = { PAU_mil_reform_progress > 3 } }
                 add_power_balance_value = {
                     id = PAU_bop
                     value = 0.15
@@ -3801,16 +3933,14 @@ PAU_bop_name = {
             has_country_flag = PAU_bop_veterans
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_joint_meeting_reform_tt
-                check_variable = { PAU_axia_eco > 4 } #阿夏系经济改革点：国策+10，改革决议-10
-                check_variable = { PAU_axia_mil > 4 } #阿夏系军事改革点：国策+10，改革决议-10
+                check_variable = { PAU_eco_reform_progress > 3 }
+                check_variable = { PAU_mil_reform_progress > 3 }
             }
         }
         cost = 25
         fire_only_once = yes
         days_remove = 30
         remove_effect = {
-            subtract_from_variable = { PAU_axia_eco = 5 } #阿夏系经济改革点：国策+10，改革决议-10
-            subtract_from_variable = { PAU_axia_mil = 5 } #阿夏系军事改革点：国策+10，改革决议-10
             set_power_balance = {
                 id = PAU_bop
                 set_value = 0
@@ -4184,13 +4314,12 @@ PAU_national_unification = {
                     NOT = { capital_scope = { is_on_continent = south_america } }
                     is_in_faction_with = ROOT
                     is_subject_of = ROOT
-                    capital_scope = { is_controlled_by = ROOT }
                 }
             }
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 60
+        days_remove = 10
         remove_effect = {
             LHS_Nymph = {
             set_portraits = {
@@ -4362,7 +4491,6 @@ PAU_joint_institutions = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_south_america_super_fired }
         available = {
-            has_political_power > 24
             all_country = {
                 OR = {
                     tag = ROOT
@@ -4387,7 +4515,6 @@ PAU_joint_institutions = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_south_america_super_fired }
         available = {
-            has_political_power > 24
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_sa_study_points_gt2_tt
                 check_variable = { PAU_sa_study_points > 2 } #联合参谋学院积分：召开学说研讨会消耗3
@@ -4417,7 +4544,6 @@ PAU_joint_institutions = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_south_america_super_fired }
         available = {
-            has_political_power > 24
             all_country = {
                 OR = {
                     tag = ROOT
@@ -4432,6 +4558,11 @@ PAU_joint_institutions = {
         days_re_enable = 90
         complete_effect = {
             country_event = { id = PAU.600 hours = 6 }
+            add_to_variable = {
+                var = PAU_south_america_development
+                value = 1
+                tooltip = PAU_south_america_development_tt
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -4442,7 +4573,6 @@ PAU_joint_institutions = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_south_america_super_fired }
         available = {
-            has_political_power > 24
             all_country = {
                 OR = {
                     tag = ROOT
@@ -4457,6 +4587,11 @@ PAU_joint_institutions = {
         days_re_enable = 90
         complete_effect = {
             PAU_call_state_council_missions = yes
+            add_to_variable = {
+                var = PAU_south_america_development
+                value = 1
+                tooltip = PAU_south_america_development_tt
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -4467,7 +4602,6 @@ PAU_joint_institutions = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_south_america_super_fired }
         available = {
-            has_political_power > 24
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_sa_state_points_gt2_tt
                 check_variable = { PAU_sa_state_points > 2 } #联合国务委员会积分：启动发展计划消耗3
