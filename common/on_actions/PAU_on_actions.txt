@@ -22,6 +22,25 @@ on_actions = {
                         var = ubs_load
                         value = 100
                     }
+
+                    # 旧存档兜底：只补非零默认值
+                    if = { limit = { NOT = { has_variable = PAU_mercenary_reputation } } set_variable = { PAU_mercenary_reputation = 50 } }
+                    if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } }
+                    if = { limit = { NOT = { has_variable = PAU_grail_parts } } set_variable = { PAU_grail_parts = 100 } }
+                    if = { limit = { NOT = { has_variable = wl_attack_day } } set_variable = { wl_attack_day = 7 } }
+                    if = { limit = { NOT = { has_variable = PAU_debt } } set_variable = { PAU_debt = 500 } }
+
+                    # 仍被 check_variable 依赖的状态机计数器
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network } } set_variable = { PAU_ml_count_PAU_revolution_network = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_2 } } set_variable = { PAU_ml_count_PAU_revolution_network_2 = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_3 } } set_variable = { PAU_ml_count_PAU_revolution_network_3 = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network } } set_variable = { PAU_ml_count_PAU_trade_network = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_2 } } set_variable = { PAU_ml_count_PAU_trade_network_2 = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_3 } } set_variable = { PAU_ml_count_PAU_trade_network_3 = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network } } set_variable = { PAU_ml_count_PAU_coastal_network = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_2 } } set_variable = { PAU_ml_count_PAU_coastal_network_2 = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_3 } } set_variable = { PAU_ml_count_PAU_coastal_network_3 = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_pressure } } set_variable = { PAU_ml_count_PAU_undead_pressure = 0 } }
                 }
             }
         }
@@ -40,16 +59,6 @@ on_actions = {
                         min = 0
                     }
                 }
-            }
-            if = {
-                limit = { original_tag = PAU }
-                if = {
-                    limit = {
-                        has_idea = PAU_royal_arrears
-                    check_variable = { PAU_debt < 1 } # 王室欠饷债务：偿还/勾销后移除王室欠饷
-                }
-                remove_ideas = PAU_royal_arrears
-            }
             if = {
                 limit = {
                     has_country_flag = PAU_safe_harbor_unlocked
@@ -57,37 +66,8 @@ on_actions = {
                 PAU_refresh_harbor_spillover_states = yes
             }
             if = {
-                limit = {
-                    has_country_flag = PAU_auto_harbor
-                    NOT = { has_active_mission = PAU_safe_harbor_auto_task }
-                }
-                activate_mission = PAU_safe_harbor_auto_task
-            }
-            if = {
-                limit = {
-                    has_country_flag = PAU_auto_baiye
-                    NOT = { has_active_mission = PAU_baiye_auto_task }
-                }
-                activate_mission = PAU_baiye_auto_task
-            }
-            if = {
                 limit = { has_country_flag = PAU_undead_war }
                 PAU_refresh_undead_pressure = yes
-            }
-            if = {
-                limit = {
-                    has_completed_focus = PAU_mzyy
-                    NOT = { has_country_flag = PAU_nightingale_ended }
-                    OR = {
-                        NOT = { country_exists = PAM }
-                        PAM = {
-                            exists = yes
-                            has_capitulated = yes
-                        }
-                    }
-                }
-                set_country_flag = PAU_nightingale_ended # 夜莺之国事件已处理
-                country_event = { id = PAU.22 hours = 6 }
             }
             if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked } # 阿夏系军事改革点：国策+10，改革决议-10
             if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked } # 晓枫雪伊系军事改革点：国策+10，改革决议-10
@@ -98,14 +78,13 @@ on_actions = {
             PAU_refresh_late_networks = yes
             PAU_refresh_south_america_members = yes
             PAU_refresh_south_america_development = yes
-            PAU_init_diplomacy_vars = yes
             PAU_refresh_joint_staff_college = yes
             PAU_refresh_state_council = yes
             PAU_refresh_mil_reform_tiers = yes
             PAU_refresh_eco_reform_tiers = yes
             }
-}
-    }
+            }
+        }
     on_capitulation = {
         effect = {
             if = {

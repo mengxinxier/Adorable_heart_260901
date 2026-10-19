@@ -17,9 +17,6 @@ country_event = {
 
     option = {
         name = PAU.1.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.1000
         }
@@ -38,9 +35,6 @@ country_event = {
 
     option = {
         name = PAU.1000.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.2
             hours = 1
@@ -61,9 +55,6 @@ country_event = {
 
     option = {
         name = PAU.2.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.3
         }
@@ -133,17 +124,32 @@ country_event = {
 
     option = {
         name = PAU.4.a
-
-        ai_chance = {
-            base = 100
-        }
         swap_ideas = {
             remove_idea = PAU_divided_legion1
             add_idea = PAU_divided_legion2
         }
 
+        # 取消王室欠饷最后通牒任务，避免 90 天后再宣战一次
+        if = {
+            limit = { has_active_mission = PAU_LHS_weiji_dec }
+            remove_mission = PAU_LHS_weiji_dec
+        }
+
+        # 只有尚未与 LHS 交战时才宣战，防止旧存档重复宣战
+        if = {
+            limit = {
+                country_exists = LHS
+                NOT = { has_war_with = LHS }
+            }
+            declare_war_on = {
+                target = LHS
+                type = annex_everything
+            }
+        }
+        set_country_flag = PAU_weiji1
     }
 }
+
 
 country_event = {
     id = PAU.5
@@ -156,9 +162,6 @@ country_event = {
 
     option = {
         name = PAU.5.a
-        ai_chance = {
-            base = 100
-        }
         if = {
             limit = {
                 not = {
@@ -190,6 +193,7 @@ country_event = {
         }
         set_country_flag = has_PAU_xfzb #亡灵战争支线：迎战亡灵
         mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = jiesuoguoce
         hidden_effect = {
             ZDW = {
                 add_to_variable = {
@@ -325,6 +329,15 @@ country_event = {
             declare_war_on = { target = CHL type = annex_everything}
         }
 
+            set_country_flag = PAU_undead_war #亡灵战争正式开始
+            # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
+            PAU_raise_white_night_militia = yes
+
+            unlock_decision_tooltip = PAU_undead_evacuate
+            unlock_decision_tooltip = PAU_undead_counterattack
+            unlock_decision_tooltip = PAU_undead_burn_depot
+            unlock_decision_tooltip = PAU_undead_scorched_earth
+
         hidden_effect = {
             every_state = {
                 limit = {
@@ -343,12 +356,23 @@ country_event = {
     option = {
         name = PAU.6.b
         ai_chance = {
-            base = 100
+            base = 0
         }
+        set_country_flag = control_dec
         activate_mission = PAU_wl_attack_dec
         set_country_flag = has_PAU_xfzb #亡灵战争支线：迎战亡灵
         mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = jiesuoguoce
 
+            set_country_flag = PAU_undead_war #亡灵战争正式开始
+            # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
+            PAU_raise_white_night_militia = yes
+
+            unlock_decision_tooltip = PAU_undead_evacuate
+            unlock_decision_tooltip = PAU_undead_counterattack
+            unlock_decision_tooltip = PAU_undead_burn_depot
+            unlock_decision_tooltip = PAU_undead_scorched_earth
+        
         hidden_effect = {
             every_state = {
                 limit = {
@@ -367,6 +391,27 @@ country_event = {
 }
 
 country_event = {
+    id = PAU.66
+    title = PAU.66.t
+    desc = PAU.66.d
+    major = no
+    picture = GFX_event_taiyang
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.66.a
+                every_state = {
+                    limit = {
+                        has_state_flag = scorched_state
+                    }
+                    transfer_state_to = ZDW
+                }
+
+    }
+}
+
+country_event = {
     id = PAU.7
     title = PAU.7.t
     desc = PAU.7.d
@@ -377,13 +422,12 @@ country_event = {
 
     option = {
         name = PAU.7.a
-
-        add_manpower = 5000
-        load_oob = PAU_sakura_cruisers
-        custom_effect_tooltip = PAU_sakura_cruisers_tt
-        ai_chance = {
-            base = 100
+        add_manpower = 1500
+        add_equipment_to_stockpile = {
+            type = infantry_equipment
+            amount = -200
         }
+        add_political_power = 50
 
 
     }
@@ -400,11 +444,9 @@ country_event = {
 
     option = {
         name = PAU.8.a
-
-        add_manpower = 5000
-        ai_chance = {
-            base = 100
-        }
+        hidden_effect = { load_oob = PAU_sakura_cruisers }
+        custom_effect_tooltip = PAU_sakura_cruisers_tt
+        add_fuel = 2500
 
 
     }
@@ -422,19 +464,18 @@ country_event = {
     option = {
         name = PAU.9.a
 
-        add_fuel = 500
         ai_chance = {
             base = 100
         }
+        add_political_power = 50
 
 
     }
 
     option = {
         name = PAU.9.b
-        add_fuel = 500
         ai_chance = {
-            base = 100
+            base = 0
         }
         custom_effect_tooltip = PAU.9.b_tt
 
@@ -452,9 +493,6 @@ country_event = {
 
     option = {
         name = PAU.10.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.11
             hours = 6
@@ -462,11 +500,6 @@ country_event = {
 
         hidden_effect = {
            scoped_sound_effect = "汽车"
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = 10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -487,30 +520,28 @@ country_event = {
     }
     option = {
         name = PAU.11.a
-        ai_chance = {
-            base = 100
-        }
-        if = {
-            limit = { country_exists = CHL }
             CHL = {
-                every_core_state = {
-                    add_core_of = ROOT
+                LHS_xueyi = {
+                    set_nationality = ROOT
                 }
-                every_character = {
-                    limit = { is_general_advisor = no }
+                LHS_ald = {
                     set_nationality = ROOT
                 }
             }
+            every_state = {
+                limit = {
+                    has_state_flag = CHL_orgin_controlled_state
+                }
+                add_core_of = ROOT
+            }
+        if = {
+            limit = { country_exists = CHL }
             if = {
                 limit = { CHL = { is_in_faction = yes } }
-                if = {
-                    limit = { is_in_faction = yes }
-                    leave_faction = yes
-                }
-                #由阵营领袖把 PAU 拉进 CHL 所在的阵营，然后 PAU 再取得领导权，最后才吞并 CHL。
+                #由 CHL 所在阵营的实际领袖把 PAU 拉进同一阵营；即使领袖不是 CHL，也能正常加入。
                 CHL = {
                     faction_leader = {
-                        add_to_faction = PAU
+                        add_to_faction = ROOT
                     }
                 }
                 set_faction_leader = yes
@@ -519,20 +550,17 @@ country_event = {
                 target = CHL
                 transfer_troops = yes
             }
-            #吞并后再次确认 PAU 留在原阵营的领导位上。
-            if = {
-                limit = { is_in_faction = yes }
-                set_faction_leader = yes
+        }
+        else_if = {
+            limit = { 
+                not = {
+                    country_exists = CHL 
+                }
             }
-            set_country_flag = PAU_chl_inherited
+            create_faction_from_template = faction_template_nmgr
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = 10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -550,10 +578,8 @@ country_event = {
     option = {
         name = PAU.12.a
 
-        add_manpower = 5000
-        ai_chance = {
-            base = 100
-        }
+        add_stability = -0.02
+        add_war_support = 0.05
 
 
     }
@@ -574,15 +600,8 @@ country_event = {
     }
     option = {
         name = PAU.13.a
-        ai_chance = {
-            base = 100
-        }
         transfer_state = 299
-        add_to_variable = {
-            var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
-            value = -50
-            tooltip = PAU_grail_rations_tt
-        }
+        PAU_grail_robbed = yes
         set_country_flag = PAU_grail_tax_paid #已向圣杯缴纳税款
         add_equipment_to_stockpile = {
             type = infantry_equipment
@@ -614,9 +633,6 @@ country_event = {
         name = PAU.14.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.15
 
     }
@@ -635,9 +651,6 @@ country_event = {
         name = PAU.15.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
          country_event = PAU.16
         hidden_effect = {
             add_to_variable = {
@@ -663,16 +676,8 @@ country_event = {
         name = PAU.16.a
 
         navy_experience = 50
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -691,9 +696,6 @@ country_event = {
         name = PAU.17.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
         navy_experience = 25
 
     }
@@ -714,9 +716,6 @@ country_event = {
     }
     option = {
         name = PAU.18.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.188
 
         hidden_effect = {
@@ -744,11 +743,8 @@ country_event = {
     }
     option = {
         name = PAU.188.a
-        ai_chance = {
-            base = 100
-        }
-        add_manpower = 10000
-        set_country_flag = PAU_undead_crisis #亡灵危机已浮现，可宣战
+        add_war_support = 0.10
+        command_power = 35
     }
 }
 
@@ -766,15 +762,11 @@ country_event = {
 
         add_manpower = 5000
         country_event = { id = PAU.7005 hours = 6 }
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
+            if = {
+                limit = { has_country_flag = PAU_undead_defeated } #亡灵战争已经结束
+                set_variable = { PAU_baiye_story_stage = 5 } #白夜巡游剧情阶段：5=战后直接收束，不再补播旧事件
             }
         }
 
@@ -794,16 +786,8 @@ country_event = {
         name = PAU.20.a
 
         add_war_support = 0.05
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -820,17 +804,9 @@ country_event = {
 
     option = {
         name = PAU.21.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.211
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -846,9 +822,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.211.a
-        ai_chance = {
-            base = 100
-        }
         add_political_power = 50
     }
 }
@@ -866,16 +839,8 @@ country_event = {
         name = PAU.22.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -892,20 +857,12 @@ country_event = {
 
     option = {
         name = PAU.23.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.24
             hours = 6
         }
 
         hidden_effect = {
-            add_to_variable = {
-                var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-                value = -10
-                tooltip = PAU_undead_pressure_tt
-            }
         }
 
     }
@@ -922,9 +879,6 @@ country_event = {
 
     option = {
         name = PAU.24.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.244
 
 
@@ -941,9 +895,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.244.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.25
     }
 }
@@ -959,9 +910,6 @@ country_event = {
 
     option = {
         name = PAU.25.a
-        ai_chance = {
-            base = 100
-        }
         PAU_Nymph = {
             set_portraits = {
                 army = {
@@ -1015,17 +963,22 @@ country_event = {
     option = {
         name = PAU.26.a
         ai_chance = {
-            base = 100
+            base = 65
         }
+        # 由白夜同盟所在阵营的实际领袖把 MGU 拉入阵营
         PAU_pull_into_white_night_faction = yes
-        hidden_effect = {
-            PAU = {
+    }
 
-            }
+    option = {
+        name = PAU.26.b
+        ai_chance = {
+            base = 0
         }
-
+        # MGU 拒绝合作，保持独立
+        add_stability = 0.01
     }
 }
+
 
 country_event = {
     id = PAU.27
@@ -1038,20 +991,38 @@ country_event = {
 
     option = {
         name = PAU.27.a
-
-        add_manpower = 5000
         ai_chance = {
-            base = 100
+            base = 90
         }
+        # add_manpower 作用于事件目标 LFC，而不是 PAU
+        add_manpower = 5000
+        # 把 LFC 拉入白夜同盟阵营；PAU 是否为领袖均可
+        PAU_pull_into_white_night_faction = yes
+        PAU = {
+            set_country_flag = PAU_grail_expedition_joined
+        }
+        navy_experience = 50
+    }
 
-        hidden_effect = {
-            PAU = {
-
+    option = {
+        name = PAU.27.b
+        ai_chance = {
+            base = 0
+        }
+        # LFC 拒绝合作，保持独立
+        add_stability = 0.01
+        PAU = {
+            set_country_flag = PAU_grail_expedition_refused
+        }
+        PAU = {
+            create_wargoal = {
+                target = ROOT
+                type = annex_everything
             }
         }
-
     }
 }
+
 
 country_event = {
     id = PAU.28
@@ -1160,9 +1131,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.281.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.29
             hours = 6
@@ -1182,9 +1150,6 @@ country_event = {
 
     option = {
         name = PAU.29.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.299
         }
@@ -1203,10 +1168,34 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.299.a
-        ai_chance = {
-            base = 100
+        PAU = {
+            set_cosmetic_tag = PAU_white_night
+            if = {
+                limit = { is_in_faction = yes }
+                every_faction_member = {
+                    limit = { NOT = { tag = PAU } }
+                    set_country_flag = PAU_bytm_faction_transfer
+                }
+                leave_faction = yes
+            }
+            clr_country_flag = PAU_white_night_goal_installed
+            create_faction_from_template = faction_template_bytm
+            set_faction_leader = yes
+            set_faction_name = PAU_white_night_alliance
+            set_faction_manifest = PAU_faction_manifest_white_night
+            every_country = {
+                limit = { has_country_flag = PAU_bytm_faction_transfer }
+                if = {
+                    limit = { is_in_faction = yes }
+                    leave_faction = yes
+                }
+                PAU = { add_to_faction = PREV }
+                clr_country_flag = PAU_bytm_faction_transfer
+            }
+                add_faction_goal_slot = { category = long_term value = 1 }
+                add_faction_goal = PAU_faction_goal_white_night
+                set_country_flag = PAU_white_night_goal_installed
         }
-        PAU = { PAU_form_white_night_alliance = yes }
         add_political_power = 50
     }
 }
@@ -1222,9 +1211,6 @@ country_event = {
 
     option = {
         name = PAU.30.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.300
 
 
@@ -1241,9 +1227,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.300.a
-        ai_chance = {
-            base = 100
-        }
         add_political_power = 50
     }
 }
@@ -1259,14 +1242,9 @@ country_event = {
 
     option = {
         name = PAU.31.a
-
-        add_stability = 0.05
         country_event = {
             id = PAU.32
             hours = 6
-        }
-        ai_chance = {
-            base = 100
         }
 
 
@@ -1284,25 +1262,11 @@ country_event = {
 
     option = {
         name = PAU.32.a
-
-        add_war_support = 0.05
         country_event = {
             id = PAU.33
             hours = 6
         }
-        ai_chance = {
-            base = 100
-        }
-
-        hidden_effect = {
-                add_to_variable = {
-                    var = PAU_camp_supply
-                    value = 10
-                    tooltip = PAU_camp_supply_tt
-                }
-        }
-
-        }
+    }
 }
 
 country_event = {
@@ -1316,9 +1280,6 @@ country_event = {
 
     option = {
         name = PAU.33.a
-        ai_chance = {
-            base = 100
-        }
         country_event = {
             id = PAU.333
         }
@@ -1337,10 +1298,9 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.333.a
-        ai_chance = {
-            base = 100
-        }
         add_political_power = 50
+        add_stability = 0.05
+        add_war_support = 0.05
     }
 }
 
@@ -1357,9 +1317,6 @@ country_event = {
         name = PAU.34.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
 
 
     }
@@ -1373,7 +1330,9 @@ country_event = {
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        PAU = { has_country_flag = PAU_grail_expedition_joined }
+    }
     option = {
         name = PAU.35.a
 
@@ -1417,9 +1376,6 @@ country_event = {
         add_stability = 0.05
         add_war_support = 0.05
         navy_experience = 25
-        ai_chance = {
-            base = 100
-        }
 
 
     }
@@ -1438,9 +1394,6 @@ country_event = {
         name = PAU.37.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
 
 
     }
@@ -1454,14 +1407,13 @@ country_event = {
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        PAU = { has_country_flag = PAU_grail_expedition_joined }
+    }
     option = {
         name = PAU.38.a
 
         army_experience = 50
-        ai_chance = {
-            base = 100
-        }
 
 
     }
@@ -1480,9 +1432,6 @@ country_event = {
         name = PAU.39.a
 
         add_war_support = 0.05
-        ai_chance = {
-            base = 100
-        }
 
 
     }
@@ -1501,9 +1450,6 @@ country_event = {
         name = PAU.40.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
 
 
     }
@@ -1521,13 +1467,10 @@ country_event = {
     option = {
         name = PAU.41.a
 
-        add_stability = 0.05
+        add_war_support = 0.05
         country_event = {
             id = PAU.42
             hours = 6
-        }
-        ai_chance = {
-            base = 100
         }
 
 
@@ -1546,10 +1489,7 @@ country_event = {
     option = {
         name = PAU.42.a
 
-        add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
+        add_political_power = 15
 
 
     }
@@ -1567,9 +1507,6 @@ country_event = {
     option = {
         name = PAU.43.a
         country_event = PAU.433
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
             scoped_play_song = "连长"
@@ -1588,10 +1525,9 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.433.a
-        ai_chance = {
-            base = 100
-        }
-        add_manpower = 10000
+        add_manpower = -1
+        army_experience = 50
+        add_war_support = 0.10
     }
 }
 
@@ -1605,34 +1541,7 @@ country_event = {
     fire_only_once = yes
 
     option = {
-        name = PAU.44.a
-        set_politics = { ruling_party = communism elections_allowed = no }
-        set_country_leader_ideology = syndicalism
-
-        add_political_power = 50
-        ai_chance = {
-            base = 100
-        }
-
-
-    }
-    option = {
-        name = PAU.44.b
-        set_politics = { ruling_party = communism elections_allowed = no }
-        set_country_leader_ideology = Spartacus
-
-        add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
-
-
-    }
-    option = {
         name = PAU.44.c
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.444
 
 
@@ -1649,9 +1558,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.444.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.4444
     }
 }
@@ -1669,24 +1575,30 @@ country_event = {
         set_politics = { ruling_party = communism elections_allowed = no }
         set_country_leader_ideology = syndicalism
         ai_chance = {
-            base = 0
+            base = 25
         }
+        add_political_power = 100
+        add_stability = 0.05
     }
     option = {
         name = PAU.4444.b
         set_politics = { ruling_party = communism elections_allowed = no }
         set_country_leader_ideology = warm_syndicalism_group
         ai_chance = {
-            base = 0
+            base = 25
         }
+        add_political_power = 100
+        add_stability = 0.05
     }
     option = {
         name = PAU.4444.c
         set_politics = { ruling_party = communism elections_allowed = no }
         set_country_leader_ideology = leninism
         ai_chance = {
-            base = 100
+            base = 50
         }
+        add_political_power = 100
+        add_stability = 0.05
     }
 }
 
@@ -1701,9 +1613,6 @@ country_event = {
 
     option = {
         name = PAU.45.a
-        ai_chance = {
-            base = 100
-        }
 
         add_dynamic_modifier = {
 
@@ -1727,9 +1636,6 @@ country_event = {
 
     option = {
         name = PAU.46.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.466
 
         hidden_effect = {
@@ -1754,9 +1660,6 @@ country_event = {
             scoped_play_song = "盛夏，窗户，蓝天"
         }
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
     }
 }
 
@@ -1771,9 +1674,6 @@ country_event = {
 
     option = {
         name = PAU.47.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.477
 
         hidden_effect = {
@@ -1796,9 +1696,6 @@ country_event = {
         name = PAU.477.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
             scoped_play_song = "雨"
@@ -1819,19 +1716,10 @@ country_event = {
     option = {
         name = PAU.48.a
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value > 20 }
-            }
-            modifier = {
-                factor = 2
-                has_government = communism
-            }
-            modifier = {
-                factor = 0.5
-                has_government = fascism
-            }
+            base = 85
+            modifier = { factor = 5 has_government = communism }
+            modifier = { factor = 5 has_government = democratic }
+            modifier = { factor = 0.5 has_government = fascism }
         }
         PAU = {
             add_to_variable = {
@@ -1846,15 +1734,11 @@ country_event = {
     option = {
         name = PAU.48.b
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value < 0 }
-            }
-            modifier = {
-                factor = 2
-                has_government = fascism
-            }
+            base = 15
+            modifier = { factor = 5 has_government = fascism }
+            modifier = { factor = 3 has_opinion = { target = PAU value < -20 } }
+            modifier = { factor = 0 has_opinion = { target = PAU value > 0 } NOT = { has_government = fascism } }
+            modifier = { factor = 0 NOT = { has_government = fascism } }
         }
         PAU = {
             add_to_variable = {
@@ -1880,19 +1764,10 @@ country_event = {
     option = {
         name = PAU.49.a
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value > 20 }
-            }
-            modifier = {
-                factor = 1.5
-                has_government = democratic
-            }
-            modifier = {
-                factor = 0.5
-                has_government = fascism
-            }
+            base = 85
+            modifier = { factor = 3 has_government = democratic }
+            modifier = { factor = 3 has_government = communism }
+            modifier = { factor = 0.5 has_government = fascism }
         }
         PAU_pull_into_white_night_faction = yes
         PAU = {
@@ -1908,15 +1783,10 @@ country_event = {
     option = {
         name = PAU.49.b
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value < 0 }
-            }
-            modifier = {
-                factor = 2
-                has_government = fascism
-            }
+            base = 20
+            modifier = { factor = 5 has_government = fascism }
+            modifier = { factor = 0.1 has_government = democratic has_opinion = { target = PAU value > 0 } }
+            modifier = { factor = 0 NOT = { has_government = fascism } }
         }
         PAU = {
             add_to_variable = {
@@ -1942,15 +1812,10 @@ country_event = {
     option = {
         name = PAU.50.a
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value > 20 }
-            }
-            modifier = {
-                factor = 0.5
-                has_government = fascism
-            }
+            base = 85
+            modifier = { factor = 3 has_government = democratic }
+            modifier = { factor = 3 has_government = communism }
+            modifier = { factor = 0.5 has_government = fascism }
         }
         PAU = { set_country_flag = PAU_grail_peace } #与圣杯达成和谈
 
@@ -1960,15 +1825,10 @@ country_event = {
     option = {
         name = PAU.50.b
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value < 0 }
-            }
-            modifier = {
-                factor = 2
-                has_government = fascism
-            }
+            base = 20
+            modifier = { factor = 5 has_government = fascism }
+            modifier = { factor = 0.1 has_government = democratic has_opinion = { target = PAU value > 0 } }
+            modifier = { factor = 0 NOT = { has_government = fascism } }
         }
         PAU = { set_country_flag = PAU_grail_refused } #拒绝圣杯条件
 
@@ -1989,15 +1849,8 @@ country_event = {
     option = {
         name = PAU.51.a
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value > 20 }
-            }
-            modifier = {
-                factor = 2
-                has_government = communism
-            }
+            base = 85
+            modifier = { factor = 10 has_government = communism }
         }
         PAU = { set_country_flag = PAU_soviet_ally }
         PAU_join_soviet_faction = yes
@@ -2008,15 +1861,9 @@ country_event = {
     option = {
         name = PAU.51.b
         ai_chance = {
-            base = 50
-            modifier = {
-                factor = 2
-                has_opinion = { target = PAU value < 0 }
-            }
-            modifier = {
-                factor = 2
-                has_government = fascism
-            }
+            base = 10
+            modifier = { factor = 0 has_government = communism NOT = { has_war_with = PAU } }
+            modifier = { factor = 0 NOT = { has_government = fascism } }
         }
         PAU = { set_country_flag = PAU_soviet_refused }
 
@@ -2036,9 +1883,6 @@ country_event = {
 
     option = {
         name = PAU.52.a
-        ai_chance = {
-            base = 100
-        }
         country_event = PAU.522
     }
 }
@@ -2056,9 +1900,6 @@ country_event = {
         name = PAU.522.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 100
-        }
 
         hidden_effect = {
             scoped_play_song = "彼方の破片"
@@ -2077,10 +1918,6 @@ country_event = {
     option = {
         name = PAU.53.a
 
-        add_stability = 0.05
-        ai_chance = {
-            base = 10
-        }
         hidden_effect = {
             country_event = PAU.533
         }
@@ -2102,10 +1939,6 @@ country_event = {
     option = {
         name = PAU.533.a
 
-        add_stability = 0.05
-        ai_chance = {
-            base = 10
-        }
         hidden_effect = {
             country_event = PAU.5333
         }
@@ -2124,10 +1957,6 @@ country_event = {
          hidden_effect = {
             country_event = PAU.53333
         }
-        add_stability = 0.05
-        ai_chance = {
-            base = 10
-        }
     }
 }
 
@@ -2142,9 +1971,6 @@ country_event = {
         name = PAU.53333.a
 
         add_stability = 0.05
-        ai_chance = {
-            base = 10
-        }
     }
 }
 
@@ -2202,9 +2028,6 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.173.a
-        ai_chance = {
-            base = 100
-        }
         #unlock_decision_tooltip = PAU_bop_repay_mission
         #activate_mission = PAU_guyong_zhunbei
         unlock_decision_tooltip = PAU_guyong_zhunbei
@@ -2233,9 +2056,6 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.174.a
-        ai_chance = {
-            base = 100
-        }
         clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
     }
 }
@@ -2248,9 +2068,6 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.175.a
-        ai_chance = {
-            base = 100
-        }
         add_to_variable = {
             var = PAU_guyong_dianshu #雇佣合同进度点：合同事件中增减，影响合同结算
             value = -2
@@ -2267,9 +2084,6 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.176.a
-        ai_chance = {
-            base = 100
-        }
         add_to_variable = {
             var = PAU_guyong_dianshu #雇佣合同进度点：合同事件中增减，影响合同结算
             value = 2
@@ -2297,9 +2111,6 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.177.a
-        ai_chance = {
-            base = 100
-        }
         add_to_variable = {
             var = PAU_guyong_dianshu #雇佣合同进度点：合同事件中增减，影响合同结算
             value = -2
@@ -2329,15 +2140,63 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.178.a
-        ai_chance = {
-            base = 100
-        }
         add_dynamic_modifier = {
             modifier = PAU_guyong_buff
             days = 90
         }
     }
 }
+country_event = {
+    id = PAU.179
+    title = PAU.179.t
+    desc = PAU.179.d
+    picture = GFX_event_yeying8
+    is_triggered_only = yes
+    option = {
+        name = PAU.179.a
+        ai_chance = { base = 100 }
+        add_to_variable = {
+            var = PAU_guyong_dianshu #雇佣合同进度点：合同事件中增减，影响合同结算
+            value = -5
+            tooltip = PAU_guyong_dianshu_tt
+        }
+        custom_effect_tooltip = PAU.179_tt
+        every_country = {
+            limit = {
+                has_war_with = PAU
+                any_country = {
+                    has_country_flag = PAU_bop_loan_active
+                    has_war_with = PREV
+                }
+            }
+            white_peace = {
+                tag = PAU
+                #message = PAM_win_LHS
+            }
+            country_event = { id = PAU.178 hours = 6 }
+        }
+    }
+}
+
+country_event = {
+    id = PAU.180
+    title = PAU.180.t
+    desc = PAU.180.d
+    picture = GFX_event_yeying8
+    is_triggered_only = yes
+    hidden = yes
+    option = {
+        name = PAU.180.a
+        ai_chance = { base = 100 }
+            every_possible_country = {
+                limit = {
+                    has_country_flag = PAU_bop_loan_active
+                }
+                clr_country_flag = PAU_bop_loan_active
+            }
+    }
+}
+
 
 country_event = {
     id = PAU.55
@@ -2347,12 +2206,11 @@ country_event = {
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        PAU = { has_country_flag = PAU_grail_expedition_joined }
+    }
     option = {
         name = PAU.55.a
-        ai_chance = {
-            base = 100
-        }
         WRQ = {
             PAU_am = {
                 set_nationality = PAU
@@ -2378,9 +2236,6 @@ news_event = {
     major = yes
     option = {
         name = PAU_news.1.a
-        ai_chance = {
-            base = 100
-        }
         hidden_effect = {
             set_variable = { adorable_heart_super_event_var = 8121 }
             adorable_heart_fire_super_event = yes
@@ -2400,9 +2255,6 @@ news_event = {
     major = yes
     option = {
         name = PAU_news.2.a
-        ai_chance = {
-            base = 100
-        }
         hidden_effect = {
             set_variable = { adorable_heart_super_event_var = 8122 }
             adorable_heart_fire_super_event = yes
@@ -2457,6 +2309,38 @@ country_event = {
         }
         add_mastery = { amount = 20 folder = land track = operations }
         add_dynamic_modifier = { modifier = PAU_sa_seminar_operations days = 120 } #联合参谋学院研讨会临时进度
+    }
+}
+
+country_event = {
+    id = PAU.56
+    title = PAU.56.t
+    desc = PAU.56.d
+    major = no
+    picture = GFX_event_KNM_lili
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.56.a
+        country_event = { id = PAU.566 hours = 6 }
+    }
+}
+
+country_event = {
+    id = PAU.566
+    title = PAU.566.t
+    desc = PAU.566.d
+    major = no
+    picture = GFX_event_KNM_lili
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.566.a
+        set_country_flag = PAU_zkdh_done
+        add_stability = 0.05
+        add_political_power = 50
     }
 }
 
@@ -2650,19 +2534,19 @@ country_event = {
     option = {
         name = PAU.480.a
         ai_chance = { base = 100 }
-        add_dynamic_modifier = {
-
-            modifier = PAU_goodwill_asia
-
-            days = 360
-
+        add_political_power = -50
+        add_equipment_to_stockpile = { type = support_equipment amount = -300 }
+        add_dynamic_modifier = { modifier = PAU_goodwill_asia days = 360 }
+        capital_scope = {
+            add_extra_state_shared_building_slots = 2
+            add_building_construction = { type = military_factory level = 1 instant_build = yes }
+            add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
         }
-        add_political_power = 50
     }
     option = {
         name = PAU.480.b
         ai_chance = { base = 100 }
-        add_political_power = 50
+        add_political_power = 75
     }
 }
 
@@ -2677,19 +2561,18 @@ country_event = {
     option = {
         name = PAU.490.a
         ai_chance = { base = 100 }
-        add_dynamic_modifier = {
-
-            modifier = PAU_pacific_detente
-
-            days = 360
-
+        add_political_power = -50
+        add_dynamic_modifier = { modifier = PAU_pacific_detente days = 360 }
+        capital_scope = {
+            add_extra_state_shared_building_slots = 2
+            add_building_construction = { type = dockyard level = 2 instant_build = yes }
         }
-        add_political_power = 50
+        add_fuel = 5000
     }
     option = {
         name = PAU.490.b
         ai_chance = { base = 100 }
-        add_political_power = 50
+        add_political_power = 75
     }
 }
 
@@ -2704,6 +2587,7 @@ country_event = {
     option = {
         name = PAU.500.a
         ai_chance = { base = 100 }
+        add_political_power = -25
         trigger = { has_country_flag = PAU_grail_peace }
         add_dynamic_modifier = {
             modifier = PAU_peace_trade_boom
@@ -2713,6 +2597,7 @@ country_event = {
     option = {
         name = PAU.500.b
         ai_chance = { base = 100 }
+        add_political_power = -25
         trigger = { has_country_flag = PAU_grail_refused }
         add_dynamic_modifier = {
             modifier = PAU_fortress_neutrality_engine
@@ -2738,18 +2623,15 @@ country_event = {
         name = PAU.510.a
         ai_chance = { base = 100 }
         trigger = { has_country_flag = PAU_soviet_ally }
-        add_dynamic_modifier = {
-
-            modifier = PAU_soviet_military_mission
-
-            days = 360
-
-        }
+        add_political_power = -50
+        add_dynamic_modifier = { modifier = PAU_soviet_military_mission days = 360 }
+        army_experience = 75
+        add_doctrine_cost_reduction = { name = PAU_soviet_mission_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine }
     }
     option = {
         name = PAU.510.b
         ai_chance = { base = 100 }
-        add_political_power = 50
+        add_political_power = 75
     }
 }
 
@@ -2954,6 +2836,7 @@ country_event = {
             add_building_construction = {
                 type = coastal_bunker
                 level = 1
+                instant_build = yes
                 province = {
                     all_provinces = yes
                     limit_to_coastal = yes
@@ -2965,6 +2848,7 @@ country_event = {
             add_building_construction = {
                 type = coastal_bunker
                 level = 1
+                instant_build = yes
                 province = {
                     all_provinces = yes
                     limit_to_coastal = yes
@@ -3088,7 +2972,7 @@ country_event = {
         }
     }
     option = {
-        name = PAU.600.d
+        name = PAU.600.g
         ai_chance = { base = 100 }
         add_dynamic_modifier = { modifier = PAU_sa_state_diplomacy days = 180 } #国务委员会外交发展值
         add_to_variable = { var = PAU_sa_state_diplomacy value = 1 } #国务委员会外交发展值
@@ -3143,7 +3027,7 @@ country_event = {
 country_event = {
     id = PAU.610
     title = PAU.610.t
-    desc = PAU.610.d
+    desc = PAU.610.desc
     major = no
     picture = GFX_event_KNM_lili
     is_triggered_only = yes
@@ -3186,7 +3070,7 @@ country_event = {
         }
     }
     option = {
-        name = PAU.610.d
+        name = PAU.610.g
         ai_chance = { base = 100 }
         add_dynamic_modifier = { modifier = PAU_sa_state_diplomacy days = 180 } #国务委员会外交发展值
         PAU = {
@@ -3279,38 +3163,6 @@ country_event = {
 }
 
 country_event = {
-    id = PAU.179
-    title = PAU.179.t
-    desc = PAU.179.d
-    picture = GFX_event_yeying8
-    is_triggered_only = yes
-    option = {
-        name = PAU.179.a
-        ai_chance = { base = 100 }
-        add_to_variable = {
-            var = PAU_guyong_dianshu #雇佣合同进度点：合同事件中增减，影响合同结算
-            value = -5
-            tooltip = PAU_guyong_dianshu_tt
-        }
-        custom_effect_tooltip = PAU.179_tt
-        every_country = {
-            limit = {
-                has_war_with = PAU
-                any_country = {
-                    has_country_flag = PAU_bop_loan_active
-                    has_war_with = PREV
-                }
-            }
-            white_peace = {
-                tag = PAU
-                #message = PAM_win_LHS
-            }
-            country_event = { id = PAU.178 hours = 6 }
-        }
-    }
-}
-
-country_event = {
     id = PAU.54
     title = PAU.54.t
     desc = PAU.54.d
@@ -3320,10 +3172,10 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU.54.a
-        ai_chance = {
-            base = 100
-        }
         country_event = { id = PAU.55 hours = 8}
+        set_country_flag = PAU_zkdh_unlocked
+        mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = PAU_zkdh_unlock_tt
         hidden_effect = {
             set_variable = {
                 end_ui_var = 1
@@ -3345,9 +3197,7 @@ country_event = {
 
     option = {
         name = PAU_by_h1.a
-        ai_chance = { base = 100 }
-        add_stability = 0.02
-        add_manpower = 2000
+        add_political_power = 15
     }
 }
 
@@ -3361,9 +3211,7 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU_by_h2.a
-        ai_chance = { base = 100 }
-        add_manpower = 3000
-        add_stability = 0.02
+        add_political_power = 15
     }
 }
 
@@ -3377,9 +3225,7 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU_by_h3.a
-        ai_chance = { base = 100 }
-        add_stability = 0.02
-        command_power = 10
+        add_political_power = 15
     }
 }
 
@@ -3393,9 +3239,7 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU_by_h4.a
-        ai_chance = { base = 100 }
-        command_power = 25
-        add_war_support = 0.03
+        add_political_power = 15
     }
 }
 
@@ -3409,9 +3253,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU_by_h5.a
-        ai_chance = { base = 100 }
-        add_manpower = 5000
-        add_war_support = 0.05
         add_stability = 0.03
         country_event = { id = PAU.7006 hours = 6 }
     }
@@ -3427,7 +3268,6 @@ country_event = {
     fire_only_once = yes
     option = {
         name = PAU_by_wide.a
-        ai_chance = { base = 100 }
         add_political_power = 50
         command_power = 75
         add_stability = 0.05
@@ -3447,22 +3287,12 @@ country_event = {
         name = PAU.7010.a
         ai_chance = { base = 50 }
         add_manpower = -2000
-        add_to_variable = {
-            var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            value = -8
-            tooltip = PAU_undead_pressure_tt
-        }
     }
     option = {
         name = PAU.7010.b
         ai_chance = { base = 50 }
         add_war_support = -0.02
         add_stability = -0.02
-        add_to_variable = {
-            var = PAU_undead_pressure #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            value = 5
-            tooltip = PAU_undead_pressure_tt
-        }
     }
 }
 

@@ -1,28 +1,18 @@
 #PAU 系统效果总表：本文件定义资源结算、动态修正刷新、剧情推进与旧存档变量兜底等 scripted_effects。
 #=====================================================================
-#PAU_form_white_night_alliance：组建白夜同盟：建立阵营/政治架构并刷新状态
-PAU_form_white_night_alliance = {
-    #此时阵营已在接走雪伊时从莉兰迪亚公社继承下来，只改名和确立领导权，不再新建阵营。
-    if = {
-        limit = { is_in_faction = yes }
-        set_faction_leader = yes
-        set_faction_name = PAU_white_night_alliance
-    }
-}
-
 #PAU_arrive_grail：抵达圣杯流亡营地：初始化营地资源与旗标
 PAU_arrive_grail = {
     set_country_flag = PAU_grail_camp #军团在圣杯地块上落脚
-    PAU_ml_add_PAU_grail_refuge = yes #圣杯流亡营开始运转
+    # 国家变量池：流亡营 + 圣杯营地网络（合计值与旧计数器版本一致）
+    add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.10 }
+    add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.10 }
+    add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
+    add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.10 }
     299 = {
         set_state_flag = PAU_grail_camp #圣杯流亡营固定在 state 299
-        PAU_ml_add_PAU_grail_camp_state = yes #码头、营地和死气同时挤进这里
-    }
-    if = {
-        limit = { NOT = { check_variable = { PAU_ml_count_PAU_grail_camp_network > 0 } } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        hidden_effect = { PAU_ml_add_PAU_grail_camp_network = yes }
     }
 }
+
 
 #PAU_grail_robbed：圣杯营地被洗劫：处理物资损失与后续选择
 PAU_grail_robbed = {
@@ -42,20 +32,14 @@ PAU_grail_robbed = {
 PAU_return_from_grail = {
     set_country_flag = PAU_return_south_america #调头回南美的命令已经下达
     clr_country_flag = PAU_grail_camp #圣杯流亡营阶段结束
-    PAU_ml_remove_PAU_grail_refuge = yes #流亡营状态结束
+    # 只撤销流亡营部分，保留营地与营地网络的永久加成
+    subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
+    subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
+    subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
 }
 
-#PAU_start_undead_war：开启亡灵战争：设置战争旗标并挂上亡灵压力修正
-PAU_start_undead_war = {
-    set_country_flag = PAU_undead_war #亡灵战争正式开始
-    # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
-}
 
-#PAU_finish_undead_war：结束亡灵战争：设置胜利旗标并移除压力修正
-PAU_finish_undead_war = {
-    set_country_flag = PAU_undead_defeated #亡灵战争已经结束
-    PAU_ml_remove_PAU_undead_pressure = yes #死气从南美退去
-}
+
 
 #PAU_unlock_safe_harbor：解锁避风港机制：设置旗标并刷新避风港辐射
 PAU_unlock_safe_harbor = {
@@ -66,9 +50,13 @@ PAU_unlock_safe_harbor = {
 #PAU_barrow_death：巴罗阵亡：设置阵亡旗标、添加遗产修正并播放角色曲
 PAU_barrow_death = {
     set_country_flag = PAU_barrow_dead #巴罗的名字已经写进阵亡名册
-    PAU_ml_add_PAU_barrow_legacy = yes #二连的规矩留在前线
+    # 全流程只触发一次，直接写入国家 PAU 变量池
+    add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }
+    add_to_variable = { PAU_ml_raw_attrition = -0.05 }
+    add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }
     scoped_play_song = "连长" #巴罗的曲子
 }
+
 
 #PAU_news_south_america：触发南美统一新闻 PAU_news.1
 PAU_news_south_america = {
@@ -133,52 +121,52 @@ PAU_refresh_mil_reform_tiers = {
     if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked } #晓枫雪伊系经济改革点：国策+10，改革决议-10
     if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked } #小遥系经济改革点：国策+10，改革决议-10
     set_variable = { PAU_mil_reform_org = PAU_mil_reform_progress } #军事改革结算值：陆军组织度（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_org = 0.006 } #军事改革结算值：陆军组织度（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_org = 0.005 } #军事改革结算值：陆军组织度（进度+购买加成）
     add_to_variable = { PAU_mil_reform_org = PAU_mil_reform_bonus_org } #军事改革结算值：陆军组织度（进度+购买加成）
     set_variable = { PAU_mil_reform_planning = PAU_mil_reform_progress } #军事改革结算值：计划速度（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_planning = 0.006 } #军事改革结算值：计划速度（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_planning = 0.005 } #军事改革结算值：计划速度（进度+购买加成）
     add_to_variable = { PAU_mil_reform_planning = PAU_mil_reform_bonus_planning } #军事改革结算值：计划速度（进度+购买加成）
     set_variable = { PAU_mil_reform_breakthrough = PAU_mil_reform_progress } #军事改革结算值：突破（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_breakthrough = 0.006 } #军事改革结算值：突破（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_breakthrough = 0.005 } #军事改革结算值：突破（进度+购买加成）
     add_to_variable = { PAU_mil_reform_breakthrough = PAU_mil_reform_bonus_breakthrough } #军事改革结算值：突破（进度+购买加成）
     set_variable = { PAU_mil_reform_coordination = PAU_mil_reform_progress } #军事改革结算值：协调（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_coordination = 0.006 } #军事改革结算值：协调（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_coordination = 0.005 } #军事改革结算值：协调（进度+购买加成）
     add_to_variable = { PAU_mil_reform_coordination = PAU_mil_reform_bonus_coordination } #军事改革结算值：协调（进度+购买加成）
     set_variable = { PAU_mil_reform_initiative = PAU_mil_reform_progress } #军事改革结算值：主动性（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_initiative = 0.006 } #军事改革结算值：主动性（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_initiative = 0.005 } #军事改革结算值：主动性（进度+购买加成）
     add_to_variable = { PAU_mil_reform_initiative = PAU_mil_reform_bonus_initiative } #军事改革结算值：主动性（进度+购买加成）
     set_variable = { PAU_mil_reform_recon = PAU_mil_reform_progress } #军事改革结算值：侦察（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_recon = 0.006 } #军事改革结算值：侦察（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_recon = 0.005 } #军事改革结算值：侦察（进度+购买加成）
     add_to_variable = { PAU_mil_reform_recon = PAU_mil_reform_bonus_recon } #军事改革结算值：侦察（进度+购买加成）
     set_variable = { PAU_mil_reform_morale = PAU_mil_reform_progress } #军事改革结算值：士气（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_morale = 0.006 } #军事改革结算值：士气（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_morale = 0.005 } #军事改革结算值：士气（进度+购买加成）
     add_to_variable = { PAU_mil_reform_morale = PAU_mil_reform_bonus_morale } #军事改革结算值：士气（进度+购买加成）
     set_variable = { PAU_mil_reform_speed = PAU_mil_reform_progress } #军事改革结算值：速度（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_speed = 0.006 } #军事改革结算值：速度（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_speed = 0.005 } #军事改革结算值：速度（进度+购买加成）
     add_to_variable = { PAU_mil_reform_speed = PAU_mil_reform_bonus_speed } #军事改革结算值：速度（进度+购买加成）
     set_variable = { PAU_mil_reform_naval_coordination = PAU_mil_reform_progress } #军事改革结算值：海军协同（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_naval_coordination = 0.006 } #军事改革结算值：海军协同（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_naval_coordination = 0.005 } #军事改革结算值：海军协同（进度+购买加成）
     add_to_variable = { PAU_mil_reform_naval_coordination = PAU_mil_reform_bonus_naval_coordination } #军事改革结算值：海军协同（进度+购买加成）
     set_variable = { PAU_mil_reform_ship_recovery = PAU_mil_reform_progress } #军事改革结算值：舰船修复（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_ship_recovery = 0.006 } #军事改革结算值：舰船修复（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_ship_recovery = 0.005 } #军事改革结算值：舰船修复（进度+购买加成）
     add_to_variable = { PAU_mil_reform_ship_recovery = PAU_mil_reform_bonus_ship_recovery } #军事改革结算值：舰船修复（进度+购买加成）
     set_variable = { PAU_mil_reform_supply = PAU_mil_reform_progress } #军事改革结算值：补给消耗（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_supply = -0.006 } #军事改革结算值：补给消耗（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_supply = -0.005 } #军事改革结算值：补给消耗（进度+购买加成）
     add_to_variable = { PAU_mil_reform_supply = PAU_mil_reform_bonus_supply } #军事改革结算值：补给消耗（进度+购买加成）
     set_variable = { PAU_mil_reform_out_of_supply = PAU_mil_reform_progress } #军事改革结算值：断补惩罚（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_out_of_supply = -0.006 } #军事改革结算值：断补惩罚（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_out_of_supply = -0.005 } #军事改革结算值：断补惩罚（进度+购买加成）
     add_to_variable = { PAU_mil_reform_out_of_supply = PAU_mil_reform_bonus_out_of_supply } #军事改革结算值：断补惩罚（进度+购买加成）
     set_variable = { PAU_mil_reform_attrition = PAU_mil_reform_progress } #军事改革结算值：损耗（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_attrition = -0.006 } #军事改革结算值：损耗（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_attrition = -0.005 } #军事改革结算值：损耗（进度+购买加成）
     add_to_variable = { PAU_mil_reform_attrition = PAU_mil_reform_bonus_attrition } #军事改革结算值：损耗（进度+购买加成）
     set_variable = { PAU_mil_reform_training = PAU_mil_reform_progress } #军事改革结算值：训练时间（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_training = -0.006 } #军事改革结算值：训练时间（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_training = -0.005 } #军事改革结算值：训练时间（进度+购买加成）
     add_to_variable = { PAU_mil_reform_training = PAU_mil_reform_bonus_training } #军事改革结算值：训练时间（进度+购买加成）
     set_variable = { PAU_mil_reform_naval_penalty = PAU_mil_reform_progress } #军事改革结算值：登陆惩罚（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_naval_penalty = -0.006 } #军事改革结算值：登陆惩罚（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_naval_penalty = -0.005 } #军事改革结算值：登陆惩罚（进度+购买加成）
     add_to_variable = { PAU_mil_reform_naval_penalty = PAU_mil_reform_bonus_naval_penalty } #军事改革结算值：登陆惩罚（进度+购买加成）
     set_variable = { PAU_mil_reform_invasion_prep = PAU_mil_reform_progress } #军事改革结算值：登陆准备（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_invasion_prep = -0.006 } #军事改革结算值：登陆准备（进度+购买加成）
+    multiply_variable = { PAU_mil_reform_invasion_prep = -0.005 } #军事改革结算值：登陆准备（进度+购买加成）
     add_to_variable = { PAU_mil_reform_invasion_prep = PAU_mil_reform_bonus_invasion_prep } #军事改革结算值：登陆准备（进度+购买加成）
     set_variable = { PAU_mil_reform_attack = PAU_mil_reform_bonus_attack } #军事改革结算值：攻击（进度+购买加成）
     clamp_variable = { var = PAU_mil_reform_org min = 0 max = 0.15 } #军事改革结算值：陆军组织度（进度+购买加成）
@@ -198,57 +186,6 @@ PAU_refresh_mil_reform_tiers = {
     clamp_variable = { var = PAU_mil_reform_naval_penalty min = -0.15 max = 0 } #军事改革结算值：登陆惩罚（进度+购买加成）
     clamp_variable = { var = PAU_mil_reform_invasion_prep min = -0.2 max = 0 } #军事改革结算值：登陆准备（进度+购买加成）
     clamp_variable = { var = PAU_mil_reform_attack min = 0 max = 0.1 } #军事改革结算值：攻击（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_org = 20 } #军事改革结算值：陆军组织度（进度+购买加成）
-    round_variable = PAU_mil_reform_org #军事改革结算值：陆军组织度（进度+购买加成）
-    divide_variable = { PAU_mil_reform_org = 20 } #军事改革结算值：陆军组织度（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_planning = 20 } #军事改革结算值：计划速度（进度+购买加成）
-    round_variable = PAU_mil_reform_planning #军事改革结算值：计划速度（进度+购买加成）
-    divide_variable = { PAU_mil_reform_planning = 20 } #军事改革结算值：计划速度（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_breakthrough = 20 } #军事改革结算值：突破（进度+购买加成）
-    round_variable = PAU_mil_reform_breakthrough #军事改革结算值：突破（进度+购买加成）
-    divide_variable = { PAU_mil_reform_breakthrough = 20 } #军事改革结算值：突破（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_coordination = 20 } #军事改革结算值：协调（进度+购买加成）
-    round_variable = PAU_mil_reform_coordination #军事改革结算值：协调（进度+购买加成）
-    divide_variable = { PAU_mil_reform_coordination = 20 } #军事改革结算值：协调（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_initiative = 20 } #军事改革结算值：主动性（进度+购买加成）
-    round_variable = PAU_mil_reform_initiative #军事改革结算值：主动性（进度+购买加成）
-    divide_variable = { PAU_mil_reform_initiative = 20 } #军事改革结算值：主动性（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_recon = 20 } #军事改革结算值：侦察（进度+购买加成）
-    round_variable = PAU_mil_reform_recon #军事改革结算值：侦察（进度+购买加成）
-    divide_variable = { PAU_mil_reform_recon = 20 } #军事改革结算值：侦察（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_morale = 20 } #军事改革结算值：士气（进度+购买加成）
-    round_variable = PAU_mil_reform_morale #军事改革结算值：士气（进度+购买加成）
-    divide_variable = { PAU_mil_reform_morale = 20 } #军事改革结算值：士气（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_speed = 20 } #军事改革结算值：速度（进度+购买加成）
-    round_variable = PAU_mil_reform_speed #军事改革结算值：速度（进度+购买加成）
-    divide_variable = { PAU_mil_reform_speed = 20 } #军事改革结算值：速度（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_naval_coordination = 20 } #军事改革结算值：海军协同（进度+购买加成）
-    round_variable = PAU_mil_reform_naval_coordination #军事改革结算值：海军协同（进度+购买加成）
-    divide_variable = { PAU_mil_reform_naval_coordination = 20 } #军事改革结算值：海军协同（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_ship_recovery = 20 } #军事改革结算值：舰船修复（进度+购买加成）
-    round_variable = PAU_mil_reform_ship_recovery #军事改革结算值：舰船修复（进度+购买加成）
-    divide_variable = { PAU_mil_reform_ship_recovery = 20 } #军事改革结算值：舰船修复（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_supply = 20 } #军事改革结算值：补给消耗（进度+购买加成）
-    round_variable = PAU_mil_reform_supply #军事改革结算值：补给消耗（进度+购买加成）
-    divide_variable = { PAU_mil_reform_supply = 20 } #军事改革结算值：补给消耗（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_out_of_supply = 20 } #军事改革结算值：断补惩罚（进度+购买加成）
-    round_variable = PAU_mil_reform_out_of_supply #军事改革结算值：断补惩罚（进度+购买加成）
-    divide_variable = { PAU_mil_reform_out_of_supply = 20 } #军事改革结算值：断补惩罚（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_attrition = 20 } #军事改革结算值：损耗（进度+购买加成）
-    round_variable = PAU_mil_reform_attrition #军事改革结算值：损耗（进度+购买加成）
-    divide_variable = { PAU_mil_reform_attrition = 20 } #军事改革结算值：损耗（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_training = 20 } #军事改革结算值：训练时间（进度+购买加成）
-    round_variable = PAU_mil_reform_training #军事改革结算值：训练时间（进度+购买加成）
-    divide_variable = { PAU_mil_reform_training = 20 } #军事改革结算值：训练时间（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_naval_penalty = 20 } #军事改革结算值：登陆惩罚（进度+购买加成）
-    round_variable = PAU_mil_reform_naval_penalty #军事改革结算值：登陆惩罚（进度+购买加成）
-    divide_variable = { PAU_mil_reform_naval_penalty = 20 } #军事改革结算值：登陆惩罚（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_invasion_prep = 20 } #军事改革结算值：登陆准备（进度+购买加成）
-    round_variable = PAU_mil_reform_invasion_prep #军事改革结算值：登陆准备（进度+购买加成）
-    divide_variable = { PAU_mil_reform_invasion_prep = 20 } #军事改革结算值：登陆准备（进度+购买加成）
-    multiply_variable = { PAU_mil_reform_attack = 20 } #军事改革结算值：攻击（进度+购买加成）
-    round_variable = PAU_mil_reform_attack #军事改革结算值：攻击（进度+购买加成）
-    divide_variable = { PAU_mil_reform_attack = 20 } #军事改革结算值：攻击（进度+购买加成）
 }
 
 #PAU_refresh_eco_reform_tiers：刷新经济改革：按总进度重算动态修正层级与派系解锁旗标
@@ -261,46 +198,46 @@ PAU_refresh_eco_reform_tiers = {
     if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked } #晓枫雪伊系经济改革点：国策+10，改革决议-10
     if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked } #小遥系经济改革点：国策+10，改革决议-10
     set_variable = { PAU_eco_reform_industry = PAU_eco_reform_progress } #经济改革结算值：工业产出（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_industry = 0.006 } #经济改革结算值：工业产出（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_industry = 0.005 } #经济改革结算值：工业产出（进度+购买加成）
     add_to_variable = { PAU_eco_reform_industry = PAU_eco_reform_bonus_industry } #经济改革结算值：工业产出（进度+购买加成）
     set_variable = { PAU_eco_reform_construction = PAU_eco_reform_progress } #经济改革结算值：建造速度（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_construction = 0.006 } #经济改革结算值：建造速度（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_construction = 0.005 } #经济改革结算值：建造速度（进度+购买加成）
     add_to_variable = { PAU_eco_reform_construction = PAU_eco_reform_bonus_construction } #经济改革结算值：建造速度（进度+购买加成）
     set_variable = { PAU_eco_reform_arms = PAU_eco_reform_progress } #经济改革结算值：军工厂建造（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_arms = 0.006 } #经济改革结算值：军工厂建造（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_arms = 0.005 } #经济改革结算值：军工厂建造（进度+购买加成）
     add_to_variable = { PAU_eco_reform_arms = PAU_eco_reform_bonus_arms } #经济改革结算值：军工厂建造（进度+购买加成）
     set_variable = { PAU_eco_reform_buildings = PAU_eco_reform_progress } #经济改革结算值：建筑建造（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_buildings = 0.006 } #经济改革结算值：建筑建造（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_buildings = 0.005 } #经济改革结算值：建筑建造（进度+购买加成）
     add_to_variable = { PAU_eco_reform_buildings = PAU_eco_reform_bonus_buildings } #经济改革结算值：建筑建造（进度+购买加成）
     set_variable = { PAU_eco_reform_dockyard = PAU_eco_reform_progress } #经济改革结算值：船坞建造（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_dockyard = 0.006 } #经济改革结算值：船坞建造（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_dockyard = 0.005 } #经济改革结算值：船坞建造（进度+购买加成）
     add_to_variable = { PAU_eco_reform_dockyard = PAU_eco_reform_bonus_dockyard } #经济改革结算值：船坞建造（进度+购买加成）
     set_variable = { PAU_eco_reform_shipyard = PAU_eco_reform_progress } #经济改革结算值：船厂产出（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_shipyard = 0.006 } #经济改革结算值：船厂产出（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_shipyard = 0.005 } #经济改革结算值：船厂产出（进度+购买加成）
     add_to_variable = { PAU_eco_reform_shipyard = PAU_eco_reform_bonus_shipyard } #经济改革结算值：船厂产出（进度+购买加成）
     set_variable = { PAU_eco_reform_political = PAU_eco_reform_progress } #经济改革结算值：政治点获取（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_political = 0.006 } #经济改革结算值：政治点获取（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_political = 0.005 } #经济改革结算值：政治点获取（进度+购买加成）
     add_to_variable = { PAU_eco_reform_political = PAU_eco_reform_bonus_political } #经济改革结算值：政治点获取（进度+购买加成）
     set_variable = { PAU_eco_reform_research = PAU_eco_reform_progress } #经济改革结算值：科研速度（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_research = 0.006 } #经济改革结算值：科研速度（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_research = 0.005 } #经济改革结算值：科研速度（进度+购买加成）
     add_to_variable = { PAU_eco_reform_research = PAU_eco_reform_bonus_research } #经济改革结算值：科研速度（进度+购买加成）
     set_variable = { PAU_eco_reform_fuel = PAU_eco_reform_progress } #经济改革结算值：燃料获取（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_fuel = 0.006 } #经济改革结算值：燃料获取（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_fuel = 0.005 } #经济改革结算值：燃料获取（进度+购买加成）
     add_to_variable = { PAU_eco_reform_fuel = PAU_eco_reform_bonus_fuel } #经济改革结算值：燃料获取（进度+购买加成）
     set_variable = { PAU_eco_reform_efficiency = PAU_eco_reform_progress } #经济改革结算值：生产效率（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_efficiency = 0.006 } #经济改革结算值：生产效率（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_efficiency = 0.005 } #经济改革结算值：生产效率（进度+购买加成）
     add_to_variable = { PAU_eco_reform_efficiency = PAU_eco_reform_bonus_efficiency } #经济改革结算值：生产效率（进度+购买加成）
     set_variable = { PAU_eco_reform_trade = PAU_eco_reform_progress } #经济改革结算值：贸易好感（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_trade = 0.006 } #经济改革结算值：贸易好感（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_trade = 0.005 } #经济改革结算值：贸易好感（进度+购买加成）
     add_to_variable = { PAU_eco_reform_trade = PAU_eco_reform_bonus_trade } #经济改革结算值：贸易好感（进度+购买加成）
     set_variable = { PAU_eco_reform_morale = PAU_eco_reform_progress } #经济改革结算值：陆军士气（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_morale = 0.006 } #经济改革结算值：陆军士气（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_morale = 0.005 } #经济改革结算值：陆军士气（进度+购买加成）
     add_to_variable = { PAU_eco_reform_morale = PAU_eco_reform_bonus_morale } #经济改革结算值：陆军士气（进度+购买加成）
     set_variable = { PAU_eco_reform_consumer = PAU_eco_reform_progress } #经济改革结算值：消费品工厂（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_consumer = -0.006 } #经济改革结算值：消费品工厂（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_consumer = -0.005 } #经济改革结算值：消费品工厂（进度+购买加成）
     add_to_variable = { PAU_eco_reform_consumer = PAU_eco_reform_bonus_consumer } #经济改革结算值：消费品工厂（进度+购买加成）
     set_variable = { PAU_eco_reform_supply = PAU_eco_reform_progress } #经济改革结算值：补给消耗（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_supply = -0.006 } #经济改革结算值：补给消耗（进度+购买加成）
+    multiply_variable = { PAU_eco_reform_supply = -0.005 } #经济改革结算值：补给消耗（进度+购买加成）
     add_to_variable = { PAU_eco_reform_supply = PAU_eco_reform_bonus_supply } #经济改革结算值：补给消耗（进度+购买加成）
     clamp_variable = { var = PAU_eco_reform_industry min = 0 max = 0.15 } #经济改革结算值：工业产出（进度+购买加成）
     clamp_variable = { var = PAU_eco_reform_construction min = 0 max = 0.15 } #经济改革结算值：建造速度（进度+购买加成）
@@ -316,48 +253,6 @@ PAU_refresh_eco_reform_tiers = {
     clamp_variable = { var = PAU_eco_reform_morale min = 0 max = 0.10 } #经济改革结算值：陆军士气（进度+购买加成）
     clamp_variable = { var = PAU_eco_reform_consumer min = -0.15 max = 0 } #经济改革结算值：消费品工厂（进度+购买加成）
     clamp_variable = { var = PAU_eco_reform_supply min = -0.15 max = 0 } #经济改革结算值：补给消耗（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_industry = 20 } #经济改革结算值：工业产出（进度+购买加成）
-    round_variable = PAU_eco_reform_industry #经济改革结算值：工业产出（进度+购买加成）
-    divide_variable = { PAU_eco_reform_industry = 20 } #经济改革结算值：工业产出（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_construction = 20 } #经济改革结算值：建造速度（进度+购买加成）
-    round_variable = PAU_eco_reform_construction #经济改革结算值：建造速度（进度+购买加成）
-    divide_variable = { PAU_eco_reform_construction = 20 } #经济改革结算值：建造速度（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_arms = 20 } #经济改革结算值：军工厂建造（进度+购买加成）
-    round_variable = PAU_eco_reform_arms #经济改革结算值：军工厂建造（进度+购买加成）
-    divide_variable = { PAU_eco_reform_arms = 20 } #经济改革结算值：军工厂建造（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_buildings = 20 } #经济改革结算值：建筑建造（进度+购买加成）
-    round_variable = PAU_eco_reform_buildings #经济改革结算值：建筑建造（进度+购买加成）
-    divide_variable = { PAU_eco_reform_buildings = 20 } #经济改革结算值：建筑建造（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_dockyard = 20 } #经济改革结算值：船坞建造（进度+购买加成）
-    round_variable = PAU_eco_reform_dockyard #经济改革结算值：船坞建造（进度+购买加成）
-    divide_variable = { PAU_eco_reform_dockyard = 20 } #经济改革结算值：船坞建造（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_shipyard = 20 } #经济改革结算值：船厂产出（进度+购买加成）
-    round_variable = PAU_eco_reform_shipyard #经济改革结算值：船厂产出（进度+购买加成）
-    divide_variable = { PAU_eco_reform_shipyard = 20 } #经济改革结算值：船厂产出（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_political = 20 } #经济改革结算值：政治点获取（进度+购买加成）
-    round_variable = PAU_eco_reform_political #经济改革结算值：政治点获取（进度+购买加成）
-    divide_variable = { PAU_eco_reform_political = 20 } #经济改革结算值：政治点获取（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_research = 20 } #经济改革结算值：科研速度（进度+购买加成）
-    round_variable = PAU_eco_reform_research #经济改革结算值：科研速度（进度+购买加成）
-    divide_variable = { PAU_eco_reform_research = 20 } #经济改革结算值：科研速度（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_fuel = 20 } #经济改革结算值：燃料获取（进度+购买加成）
-    round_variable = PAU_eco_reform_fuel #经济改革结算值：燃料获取（进度+购买加成）
-    divide_variable = { PAU_eco_reform_fuel = 20 } #经济改革结算值：燃料获取（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_efficiency = 20 } #经济改革结算值：生产效率（进度+购买加成）
-    round_variable = PAU_eco_reform_efficiency #经济改革结算值：生产效率（进度+购买加成）
-    divide_variable = { PAU_eco_reform_efficiency = 20 } #经济改革结算值：生产效率（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_trade = 20 } #经济改革结算值：贸易好感（进度+购买加成）
-    round_variable = PAU_eco_reform_trade #经济改革结算值：贸易好感（进度+购买加成）
-    divide_variable = { PAU_eco_reform_trade = 20 } #经济改革结算值：贸易好感（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_morale = 20 } #经济改革结算值：陆军士气（进度+购买加成）
-    round_variable = PAU_eco_reform_morale #经济改革结算值：陆军士气（进度+购买加成）
-    divide_variable = { PAU_eco_reform_morale = 20 } #经济改革结算值：陆军士气（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_consumer = 20 } #经济改革结算值：消费品工厂（进度+购买加成）
-    round_variable = PAU_eco_reform_consumer #经济改革结算值：消费品工厂（进度+购买加成）
-    divide_variable = { PAU_eco_reform_consumer = 20 } #经济改革结算值：消费品工厂（进度+购买加成）
-    multiply_variable = { PAU_eco_reform_supply = 20 } #经济改革结算值：补给消耗（进度+购买加成）
-    round_variable = PAU_eco_reform_supply #经济改革结算值：补给消耗（进度+购买加成）
-    divide_variable = { PAU_eco_reform_supply = 20 } #经济改革结算值：补给消耗（进度+购买加成）
 }
 
 #PAU_refresh_harbor_spillover_states：刷新避风港辐射：按避风港数量切换外围州增益层级
@@ -367,32 +262,26 @@ PAU_refresh_harbor_spillover_states = {
         set_variable = { PAU_harbor_dev = 0 } #避风港发展度：扩建避风港积累值
     }
     every_controlled_state = {
-        limit = {
-            NOT = { has_state_flag = PAU_safe_harbor }
-        }
+        limit = { NOT = { has_state_flag = PAU_safe_harbor } }
+        remove_dynamic_modifier = { modifier = PAU_harbor_spillover_1 }
+        remove_dynamic_modifier = { modifier = PAU_harbor_spillover_2 }
+        remove_dynamic_modifier = { modifier = PAU_harbor_spillover_3 }
+        remove_dynamic_modifier = { modifier = PAU_harbor_spillover_4 }
         if = {
-            limit = {
-                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_1 } }
-            }
-            add_dynamic_modifier = { modifier = PAU_harbor_spillover_1 }
+            limit = { check_variable = { PAU_harbor_dev > 5 } } # 6级：全境辐射
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_4 }
         }
-        if = {
-            limit = {
-                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_2 } }
-            }
-            add_dynamic_modifier = { modifier = PAU_harbor_spillover_2 }
-        }
-        if = {
-            limit = {
-                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_3 } }
-            }
+        else_if = {
+            limit = { check_variable = { PAU_harbor_dev > 3 } } # 4-5级：沿线工坊
             add_dynamic_modifier = { modifier = PAU_harbor_spillover_3 }
         }
-        if = {
-            limit = {
-                NOT = { has_dynamic_modifier = { modifier = PAU_harbor_spillover_4 } }
-            }
-            add_dynamic_modifier = { modifier = PAU_harbor_spillover_4 }
+        else_if = {
+            limit = { check_variable = { PAU_harbor_dev > 1 } } # 2-3级：内陆交通
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_2 }
+        }
+        else_if = {
+            limit = { check_variable = { PAU_harbor_dev > 0 } } # 1级：港区初具规模
+            add_dynamic_modifier = { modifier = PAU_harbor_spillover_1 }
         }
     }
 }
@@ -402,102 +291,86 @@ PAU_expand_safe_harbor = {
     add_extra_state_shared_building_slots = 1
 }
 
-#PAU_refresh_undead_pressure：亡灵压力月结：每月+3压力，每2个月触发一次反扑事件
-PAU_refresh_undead_pressure = {
-    if = {
-        limit = {
-            has_country_flag = PAU_undead_war
-            NOT = { has_country_flag = PAU_undead_defeated }
-        }
-        add_to_variable = { PAU_undead_pressure = 3 } #亡灵每月反扑
-        if = {
-            limit = { has_country_flag = PAU_undead_fuel_denied }
-            add_to_variable = { PAU_undead_pressure = -1 } #燃料已焚毁，尸潮失去补给
-        }
-        if = {
-            limit = { has_country_flag = PAU_undead_scorched_earth }
-            add_to_variable = { PAU_undead_pressure = -1 } #隔离带阻滞尸潮
-        }
-        if = {
-            limit = { any_controlled_state = { has_state_flag = PAU_xiaoyao_state_flag } }
-            add_to_variable = { PAU_undead_pressure = -1 } #白夜庇护稳住防线
-        }
-        if = {
-            limit = { check_variable = { PAU_undead_pressure > 0 } } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-            if = {
-                limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-                hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes }
-            }
-        }
-        else = {
-            # 压力归零：撤掉亡灵压迫带来的损耗/士气/政治点debuff
-            hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes }
-        }
-        #每两个月触发一次可见的亡灵反扑事件
-        if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } } #亡灵反扑计时：每2个月触发一次反扑事件
-        add_to_variable = { PAU_undead_surge_timer = 1 } #亡灵反扑计时：每2个月触发一次反扑事件
-        if = {
-            limit = { check_variable = { PAU_undead_surge_timer > 1 } } #亡灵反扑计时：每2个月触发一次反扑事件
-            set_variable = { PAU_undead_surge_timer = 0 } #亡灵反扑计时：每2个月触发一次反扑事件
-            country_event = { id = PAU.7010 hours = 6 }
-        }
-    }
-    else = {
-        hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes }
-    }
-}
 
 #PAU_pull_into_white_night_faction：把目标国拉入白夜同盟阵营
 PAU_pull_into_white_night_faction = {
-    #白夜同盟此时应已存在，不再新建阵营；仅把愿意入伙的一方拉进已有阵营。
-    if = {
-        limit = { PAU = { is_in_faction = yes is_faction_leader = yes } }
+    #确保白夜同盟存在；目标国若已有阵营，则把其整个阵营一并带入白夜同盟
+    PAU = {
         if = {
-            limit = { ROOT = { is_faction_leader = yes } }
+            limit = { NOT = { is_in_faction = yes } }
+            create_faction_from_template = faction_template_nmgr
+            set_faction_leader = yes
+            set_faction_name = PAU_white_night_alliance
+            set_faction_manifest = PAU_faction_manifest_white_night
+        }
+    }
+    if = {
+        limit = {
+            PAU = { is_in_faction = yes }
+            ROOT = { NOT = { is_in_faction_with = PAU } }
+        }
+        if = {
+            limit = { ROOT = { is_in_faction = yes } }
             ROOT = {
                 every_faction_member = {
                     display_individual_scopes = yes
                     leave_faction = yes
-                    PAU = { add_to_faction = PREV }
+                    PAU = {
+                        faction_leader = {
+                            #PREV 是 PAU，PREV.PREV 是当前阵营成员
+                            add_to_faction = PREV.PREV
+                        }
+                    }
                 }
             }
         }
         else = {
-            if = {
-                limit = { ROOT = { is_in_faction = yes } }
-                ROOT = { leave_faction = yes }
-            }
-            PAU = { add_to_faction = ROOT }
+            PAU = { faction_leader = { add_to_faction = ROOT } }
         }
     }
 }
 
 #PAU_join_soviet_faction：加入苏联阵营
 PAU_join_soviet_faction = {
+    #无论苏联是否已有阵营、是否为阵营领袖，都保证 PAU 能完成阵营合并。
     if = {
-        limit = {
-            PAU = { is_in_faction = yes is_faction_leader = yes }
-            SOV = { is_in_faction = yes is_faction_leader = yes }
-            NOT = { PAU = { is_in_faction_with = SOV } }
-        }
-        PAU = {
-            every_faction_member = {
-                display_individual_scopes = yes
-                leave_faction = yes
-                ROOT = { add_to_faction = PREV }
+        limit = { SOV = { is_in_faction = yes } }
+        if = {
+            limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
+            if = {
+                limit = { PAU = { is_in_faction = yes } }
+                PAU = {
+                    every_faction_member = {
+                        limit = { NOT = { tag = PAU } }
+                        display_individual_scopes = yes
+                        leave_faction = yes
+                        SOV = {
+                            faction_leader = {
+                                add_to_faction = PREV.PREV
+                            }
+                        }
+                    }
+                    leave_faction = yes
+                }
             }
+            SOV = { faction_leader = { add_to_faction = PAU } }
         }
     }
-    else_if = {
-        limit = {
-            SOV = { is_in_faction = yes is_faction_leader = yes }
-            PAU = { NOT = { is_in_faction_with = SOV } }
-        }
+    else = {
+        #苏联没有阵营时，不新建一个空壳苏维埃阵营，而是让苏联加入白夜同盟。
         if = {
             limit = { PAU = { is_in_faction = yes } }
-            PAU = { leave_faction = yes }
+            PAU = { faction_leader = { add_to_faction = SOV } }
         }
-        SOV = { add_to_faction = PAU }
+        else = {
+            PAU = {
+                create_faction_from_template = faction_template_nmgr
+                set_faction_leader = yes
+                set_faction_name = PAU_white_night_alliance
+                set_faction_manifest = PAU_faction_manifest_white_night
+                add_to_faction = SOV
+            }
+        }
     }
 }
 
@@ -753,276 +626,16 @@ PAU_refresh_state_council = {
     }
 }
 
-#PAU_init_diplomacy_vars：变量兜底：每月检查PAU变量，缺失的按默认值补上（旧存档兼容）
-PAU_init_diplomacy_vars = {
-    if = { limit = { NOT = { has_variable = PAU_china_agreements } } set_variable = { PAU_china_agreements = 0 } } #对华外交网络：达成协议次数
-    if = { limit = { NOT = { has_variable = PAU_china_refusals } } set_variable = { PAU_china_refusals = 0 } } #对华外交网络：被拒绝次数
-    if = { limit = { NOT = { has_variable = PAU_north_america_agreements } } set_variable = { PAU_north_america_agreements = 0 } } #对北美外交网络：达成协议次数
-    if = { limit = { NOT = { has_variable = PAU_north_america_refusals } } set_variable = { PAU_north_america_refusals = 0 } } #对北美外交网络：被拒绝次数
-    if = { limit = { NOT = { has_variable = PAU_export_successes } } set_variable = { PAU_export_successes = 0 } } #革命输出成果：决定革命网络等级与接受率
-    if = { limit = { NOT = { has_variable = PAU_trade_partners } } set_variable = { PAU_trade_partners = 0 } } #贸易伙伴数：决定和平贸易网络等级
-    if = { limit = { NOT = { has_variable = PAU_coastal_defenses } } set_variable = { PAU_coastal_defenses = 0 } } #岸防建设值：决定武装中立岸防网络等级
-    if = { limit = { NOT = { has_variable = PAU_south_america_members } } set_variable = { PAU_south_america_members = 0 } } #南美联合成员数：阵营内南美成员数量
-    if = { limit = { NOT = { has_variable = PAU_south_america_development } } set_variable = { PAU_south_america_development = 0 } } #南美联合发展度：联合发展计划推进值
-    if = { limit = { NOT = { has_variable = PAU_sa_college_armor } } set_variable = { PAU_sa_college_armor = 0 } } #联合参谋学院装甲课程人数
-    if = { limit = { NOT = { has_variable = PAU_sa_college_infantry } } set_variable = { PAU_sa_college_infantry = 0 } } #联合参谋学院步兵课程人数
-    if = { limit = { NOT = { has_variable = PAU_sa_college_operations } } set_variable = { PAU_sa_college_operations = 0 } } #联合参谋学院联合作战课程人数
-    if = { limit = { NOT = { has_variable = PAU_sa_study_points } } set_variable = { PAU_sa_study_points = 0 } } #联合参谋学院积分：召开学说研讨会消耗3
-    if = { limit = { NOT = { has_variable = PAU_sa_college_tier } } set_variable = { PAU_sa_college_tier = 0 } } #联合参谋学院等级：课程人数达标后升级
-    if = { limit = { NOT = { has_variable = PAU_sa_state_industry } } set_variable = { PAU_sa_state_industry = 0 } } #国务委员会工业发展值
-    if = { limit = { NOT = { has_variable = PAU_sa_state_infrastructure } } set_variable = { PAU_sa_state_infrastructure = 0 } } #国务委员会基建发展值
-    if = { limit = { NOT = { has_variable = PAU_sa_state_trade } } set_variable = { PAU_sa_state_trade = 0 } } #国务委员会贸易发展值
-    if = { limit = { NOT = { has_variable = PAU_sa_state_diplomacy } } set_variable = { PAU_sa_state_diplomacy = 0 } } #国务委员会外交发展值
-    if = { limit = { NOT = { has_variable = PAU_sa_state_welfare } } set_variable = { PAU_sa_state_welfare = 0 } } #国务委员会民生发展值
-    if = { limit = { NOT = { has_variable = PAU_sa_state_mobilization } } set_variable = { PAU_sa_state_mobilization = 0 } } #国务委员会动员发展值
-    if = { limit = { NOT = { has_variable = PAU_sa_state_points } } set_variable = { PAU_sa_state_points = 0 } } #联合国务委员会积分：启动发展计划消耗3
-    if = { limit = { NOT = { has_variable = PAU_sa_state_tier } } set_variable = { PAU_sa_state_tier = 0 } } #联合国务委员会等级
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_org } } set_variable = { PAU_mil_reform_org = 0 } } #军事改革结算值：陆军组织度（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_org } } set_variable = { PAU_mil_reform_bonus_org = 0 } } #军事改革购买加成：陆军组织度
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_planning } } set_variable = { PAU_mil_reform_planning = 0 } } #军事改革结算值：计划速度（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_planning } } set_variable = { PAU_mil_reform_bonus_planning = 0 } } #军事改革购买加成：计划速度
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_attack } } set_variable = { PAU_mil_reform_attack = 0 } } #军事改革结算值：攻击（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_attack } } set_variable = { PAU_mil_reform_bonus_attack = 0 } } #军事改革购买加成：攻击
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_breakthrough } } set_variable = { PAU_mil_reform_breakthrough = 0 } } #军事改革结算值：突破（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_breakthrough } } set_variable = { PAU_mil_reform_bonus_breakthrough = 0 } } #军事改革购买加成：突破
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_coordination } } set_variable = { PAU_mil_reform_coordination = 0 } } #军事改革结算值：协调（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_coordination } } set_variable = { PAU_mil_reform_bonus_coordination = 0 } } #军事改革购买加成：协调
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_initiative } } set_variable = { PAU_mil_reform_initiative = 0 } } #军事改革结算值：主动性（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_initiative } } set_variable = { PAU_mil_reform_bonus_initiative = 0 } } #军事改革购买加成：主动性
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_recon } } set_variable = { PAU_mil_reform_recon = 0 } } #军事改革结算值：侦察（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_recon } } set_variable = { PAU_mil_reform_bonus_recon = 0 } } #军事改革购买加成：侦察
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_supply } } set_variable = { PAU_mil_reform_supply = 0 } } #军事改革结算值：补给消耗（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_supply } } set_variable = { PAU_mil_reform_bonus_supply = 0 } } #军事改革购买加成：补给消耗
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_out_of_supply } } set_variable = { PAU_mil_reform_out_of_supply = 0 } } #军事改革结算值：断补惩罚（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_out_of_supply } } set_variable = { PAU_mil_reform_bonus_out_of_supply = 0 } } #军事改革购买加成：断补惩罚
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_attrition } } set_variable = { PAU_mil_reform_attrition = 0 } } #军事改革结算值：损耗（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_attrition } } set_variable = { PAU_mil_reform_bonus_attrition = 0 } } #军事改革购买加成：损耗
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_training } } set_variable = { PAU_mil_reform_training = 0 } } #军事改革结算值：训练时间（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_training } } set_variable = { PAU_mil_reform_bonus_training = 0 } } #军事改革购买加成：训练时间
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_morale } } set_variable = { PAU_mil_reform_morale = 0 } } #军事改革结算值：士气（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_morale } } set_variable = { PAU_mil_reform_bonus_morale = 0 } } #军事改革购买加成：士气
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_speed } } set_variable = { PAU_mil_reform_speed = 0 } } #军事改革结算值：速度（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_speed } } set_variable = { PAU_mil_reform_bonus_speed = 0 } } #军事改革购买加成：速度
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_naval_coordination } } set_variable = { PAU_mil_reform_naval_coordination = 0 } } #军事改革结算值：海军协同（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_naval_coordination } } set_variable = { PAU_mil_reform_bonus_naval_coordination = 0 } } #军事改革购买加成：海军协同
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_ship_recovery } } set_variable = { PAU_mil_reform_ship_recovery = 0 } } #军事改革结算值：舰船修复（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_ship_recovery } } set_variable = { PAU_mil_reform_bonus_ship_recovery = 0 } } #军事改革购买加成：舰船修复
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_invasion_prep } } set_variable = { PAU_mil_reform_invasion_prep = 0 } } #军事改革结算值：登陆准备（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_invasion_prep } } set_variable = { PAU_mil_reform_bonus_invasion_prep = 0 } } #军事改革购买加成：登陆准备
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_naval_penalty } } set_variable = { PAU_mil_reform_naval_penalty = 0 } } #军事改革结算值：登陆惩罚（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_bonus_naval_penalty } } set_variable = { PAU_mil_reform_bonus_naval_penalty = 0 } } #军事改革购买加成：登陆惩罚
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_industry } } set_variable = { PAU_eco_reform_industry = 0 } } #经济改革结算值：工业产出（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_industry } } set_variable = { PAU_eco_reform_bonus_industry = 0 } } #经济改革购买加成：工业产出
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_construction } } set_variable = { PAU_eco_reform_construction = 0 } } #经济改革结算值：建造速度（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_construction } } set_variable = { PAU_eco_reform_bonus_construction = 0 } } #经济改革购买加成：建造速度
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_arms } } set_variable = { PAU_eco_reform_arms = 0 } } #经济改革结算值：军工厂建造（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_arms } } set_variable = { PAU_eco_reform_bonus_arms = 0 } } #经济改革购买加成：军工厂建造
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_buildings } } set_variable = { PAU_eco_reform_buildings = 0 } } #经济改革结算值：建筑建造（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_buildings } } set_variable = { PAU_eco_reform_bonus_buildings = 0 } } #经济改革购买加成：建筑建造
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_dockyard } } set_variable = { PAU_eco_reform_dockyard = 0 } } #经济改革结算值：船坞建造（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_dockyard } } set_variable = { PAU_eco_reform_bonus_dockyard = 0 } } #经济改革购买加成：船坞建造
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_shipyard } } set_variable = { PAU_eco_reform_shipyard = 0 } } #经济改革结算值：船厂产出（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_shipyard } } set_variable = { PAU_eco_reform_bonus_shipyard = 0 } } #经济改革购买加成：船厂产出
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_consumer } } set_variable = { PAU_eco_reform_consumer = 0 } } #经济改革结算值：消费品工厂（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_consumer } } set_variable = { PAU_eco_reform_bonus_consumer = 0 } } #经济改革购买加成：消费品工厂
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_political } } set_variable = { PAU_eco_reform_political = 0 } } #经济改革结算值：政治点获取（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_political } } set_variable = { PAU_eco_reform_bonus_political = 0 } } #经济改革购买加成：政治点获取
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_research } } set_variable = { PAU_eco_reform_research = 0 } } #经济改革结算值：科研速度（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_research } } set_variable = { PAU_eco_reform_bonus_research = 0 } } #经济改革购买加成：科研速度
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_fuel } } set_variable = { PAU_eco_reform_fuel = 0 } } #经济改革结算值：燃料获取（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_fuel } } set_variable = { PAU_eco_reform_bonus_fuel = 0 } } #经济改革购买加成：燃料获取
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_efficiency } } set_variable = { PAU_eco_reform_efficiency = 0 } } #经济改革结算值：生产效率（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_efficiency } } set_variable = { PAU_eco_reform_bonus_efficiency = 0 } } #经济改革购买加成：生产效率
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_trade } } set_variable = { PAU_eco_reform_trade = 0 } } #经济改革结算值：贸易好感（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_trade } } set_variable = { PAU_eco_reform_bonus_trade = 0 } } #经济改革购买加成：贸易好感
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_morale } } set_variable = { PAU_eco_reform_morale = 0 } } #经济改革结算值：陆军士气（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_morale } } set_variable = { PAU_eco_reform_bonus_morale = 0 } } #经济改革购买加成：陆军士气
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_supply } } set_variable = { PAU_eco_reform_supply = 0 } } #经济改革结算值：补给消耗（进度+购买加成）
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_bonus_supply } } set_variable = { PAU_eco_reform_bonus_supply = 0 } } #经济改革购买加成：补给消耗
 
-    if = { limit = { NOT = { has_variable = PAU_axia_mil } } set_variable = { PAU_axia_mil = 0 } } #阿夏系军事改革点：国策+10，改革决议-10
-    if = { limit = { NOT = { has_variable = PAU_xfxy_mil } } set_variable = { PAU_xfxy_mil = 0 } } #晓枫雪伊系军事改革点：国策+10，改革决议-10
-    if = { limit = { NOT = { has_variable = PAU_xiaoyao_mil } } set_variable = { PAU_xiaoyao_mil = 0 } } #小遥系军事改革点：国策+10，改革决议-10
-    if = { limit = { NOT = { has_variable = PAU_axia_eco } } set_variable = { PAU_axia_eco = 0 } } #阿夏系经济改革点：国策+10，改革决议-10
-    if = { limit = { NOT = { has_variable = PAU_xfxy_eco } } set_variable = { PAU_xfxy_eco = 0 } } #晓枫雪伊系经济改革点：国策+10，改革决议-10
-    if = { limit = { NOT = { has_variable = PAU_xiaoyao_eco } } set_variable = { PAU_xiaoyao_eco = 0 } } #小遥系经济改革点：国策+10，改革决议-10
-    if = { limit = { NOT = { has_variable = PAU_debt } } set_variable = { PAU_debt = 0 } } #王室欠饷债务：偿还/勾销后移除王室欠饷
-    if = { limit = { NOT = { has_variable = PAU_mercenary_reputation } } set_variable = { PAU_mercenary_reputation = 50 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
-    if = { limit = { NOT = { has_variable = PAU_baiye_story_stage } } set_variable = { PAU_baiye_story_stage = 0 } } #白夜巡游剧情阶段：1-4依次推进小事件
-    if = { limit = { NOT = { has_variable = PAU_baiye_patrol_count } } set_variable = { PAU_baiye_patrol_count = 0 } } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
-    if = { limit = { NOT = { has_variable = PAU_lhs_integration } } set_variable = { PAU_lhs_integration = 0 } } #野火旧部整编度（0-100）：达到30可完成整编
-    if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } } #圣杯流亡营口粮：分粮、贸易与换零件消耗
-    if = { limit = { NOT = { has_variable = PAU_grail_parts } } set_variable = { PAU_grail_parts = 100 } } #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-    if = { limit = { NOT = { has_variable = PAU_undead_pressure } } set_variable = { PAU_undead_pressure = 0 } } #亡灵压迫：亡灵战争核心压力，归零可压制死气
-    if = { limit = { NOT = { has_variable = PAU_harbor_count } } set_variable = { PAU_harbor_count = 0 } } #避风港数量：已指定为避风港的州数
-    if = { limit = { NOT = { has_variable = PAU_harbor_dev } } set_variable = { PAU_harbor_dev = 0 } } #避风港发展度：扩建避风港积累值
-    if = { limit = { NOT = { has_variable = PAU_mil_reform_progress } } set_variable = { PAU_mil_reform_progress = 0 } } #军事改革总进度：决定 PAU_mil_reform 动态修正层级
-    if = { limit = { NOT = { has_variable = PAU_eco_reform_progress } } set_variable = { PAU_eco_reform_progress = 0 } } #经济改革总进度：决定 PAU_eco_reform 动态修正层级
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_political_power_factor } } set_variable = { PAU_ml_raw_political_power_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_fuel_gain_factor } } set_variable = { PAU_ml_raw_fuel_gain_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_research_speed_factor } } set_variable = { PAU_ml_raw_research_speed_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_army_org_factor } } set_variable = { PAU_ml_raw_army_org_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_buildings_factor } } set_variable = { PAU_ml_raw_production_speed_buildings_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_improve_relations_maintain_cost_factor } } set_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_attrition } } set_variable = { PAU_ml_raw_attrition = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_coordination_bonus } } set_variable = { PAU_ml_raw_coordination_bonus = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_recon_factor } } set_variable = { PAU_ml_raw_recon_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_initiative_factor } } set_variable = { PAU_ml_raw_initiative_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_coordination } } set_variable = { PAU_ml_raw_naval_coordination = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_dockyard_factor } } set_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_ship_recovery_chance_factor } } set_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_consumer_goods_factor } } set_variable = { PAU_ml_raw_consumer_goods_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_defense_factor } } set_variable = { PAU_ml_raw_naval_defense_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_army_morale_factor } } set_variable = { PAU_ml_raw_army_morale_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_trade_opinion_factor } } set_variable = { PAU_ml_raw_trade_opinion_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_breakthrough_factor } } set_variable = { PAU_ml_raw_breakthrough_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_industrial_complex_factor } } set_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_industrial_capacity_factory } } set_variable = { PAU_ml_raw_industrial_capacity_factory = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_planning_speed } } set_variable = { PAU_ml_raw_planning_speed = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_training_time_factor } } set_variable = { PAU_ml_raw_training_time_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_out_of_supply_factor } } set_variable = { PAU_ml_raw_out_of_supply_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_barrow_legacy } } set_variable = { PAU_ml_count_PAU_barrow_legacy = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network } } set_variable = { PAU_ml_count_PAU_coastal_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_2 } } set_variable = { PAU_ml_count_PAU_coastal_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_3 } } set_variable = { PAU_ml_count_PAU_coastal_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_camp_network } } set_variable = { PAU_ml_count_PAU_grail_camp_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_camp_state } } set_variable = { PAU_ml_count_PAU_grail_camp_state = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_refuge } } set_variable = { PAU_ml_count_PAU_grail_refuge = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_lhs_remnants } } set_variable = { PAU_ml_count_PAU_lhs_remnants = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network } } set_variable = { PAU_ml_count_PAU_revolution_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_2 } } set_variable = { PAU_ml_count_PAU_revolution_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_3 } } set_variable = { PAU_ml_count_PAU_revolution_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network } } set_variable = { PAU_ml_count_PAU_trade_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_2 } } set_variable = { PAU_ml_count_PAU_trade_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_3 } } set_variable = { PAU_ml_count_PAU_trade_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_pressure } } set_variable = { PAU_ml_count_PAU_undead_pressure = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } } #亡灵反扑计时：每2个月触发一次反扑事件
-}
 
-#PAU_ml_ensure_vars：确保主线修正的 PAU_ml_raw_* 原始变量存在
-PAU_ml_ensure_vars = {
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_political_power_factor } } set_variable = { PAU_ml_raw_political_power_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_fuel_gain_factor } } set_variable = { PAU_ml_raw_fuel_gain_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_research_speed_factor } } set_variable = { PAU_ml_raw_research_speed_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_army_org_factor } } set_variable = { PAU_ml_raw_army_org_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_buildings_factor } } set_variable = { PAU_ml_raw_production_speed_buildings_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_improve_relations_maintain_cost_factor } } set_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_attrition } } set_variable = { PAU_ml_raw_attrition = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_coordination_bonus } } set_variable = { PAU_ml_raw_coordination_bonus = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_recon_factor } } set_variable = { PAU_ml_raw_recon_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_initiative_factor } } set_variable = { PAU_ml_raw_initiative_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_coordination } } set_variable = { PAU_ml_raw_naval_coordination = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_dockyard_factor } } set_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_ship_recovery_chance_factor } } set_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_consumer_goods_factor } } set_variable = { PAU_ml_raw_consumer_goods_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_naval_defense_factor } } set_variable = { PAU_ml_raw_naval_defense_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_army_morale_factor } } set_variable = { PAU_ml_raw_army_morale_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_trade_opinion_factor } } set_variable = { PAU_ml_raw_trade_opinion_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_breakthrough_factor } } set_variable = { PAU_ml_raw_breakthrough_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_production_speed_industrial_complex_factor } } set_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_industrial_capacity_factory } } set_variable = { PAU_ml_raw_industrial_capacity_factory = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_planning_speed } } set_variable = { PAU_ml_raw_planning_speed = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_training_time_factor } } set_variable = { PAU_ml_raw_training_time_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_raw_out_of_supply_factor } } set_variable = { PAU_ml_raw_out_of_supply_factor = 0 } } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_barrow_legacy } } set_variable = { PAU_ml_count_PAU_barrow_legacy = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network } } set_variable = { PAU_ml_count_PAU_coastal_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_2 } } set_variable = { PAU_ml_count_PAU_coastal_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_coastal_network_3 } } set_variable = { PAU_ml_count_PAU_coastal_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_camp_network } } set_variable = { PAU_ml_count_PAU_grail_camp_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_camp_state } } set_variable = { PAU_ml_count_PAU_grail_camp_state = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_grail_refuge } } set_variable = { PAU_ml_count_PAU_grail_refuge = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_lhs_remnants } } set_variable = { PAU_ml_count_PAU_lhs_remnants = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network } } set_variable = { PAU_ml_count_PAU_revolution_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_2 } } set_variable = { PAU_ml_count_PAU_revolution_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_revolution_network_3 } } set_variable = { PAU_ml_count_PAU_revolution_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network } } set_variable = { PAU_ml_count_PAU_trade_network = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_2 } } set_variable = { PAU_ml_count_PAU_trade_network_2 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_trade_network_3 } } set_variable = { PAU_ml_count_PAU_trade_network_3 = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-    if = { limit = { NOT = { has_variable = PAU_ml_count_PAU_undead_pressure } } set_variable = { PAU_ml_count_PAU_undead_pressure = 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-}
 
-#PAU_ml_add_PAU_barrow_legacy：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_barrow_legacy = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_barrow_legacy < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_barrow_legacy = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_attrition = -0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
 
-#PAU_ml_add_PAU_grail_camp_state：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_grail_camp_state = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_grail_camp_state < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_grail_camp_state = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
 
-#PAU_ml_add_PAU_grail_refuge：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_grail_refuge = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_grail_refuge < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_grail_refuge = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
-#PAU_ml_remove_PAU_grail_refuge：主线修正计数-1：移除对应修正
-PAU_ml_remove_PAU_grail_refuge = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_grail_refuge > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_count_PAU_grail_refuge = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
 
-#PAU_ml_add_PAU_lhs_remnants：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_lhs_remnants = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_remnants < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_lhs_remnants = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
-#PAU_ml_remove_PAU_lhs_remnants：主线修正计数-1：移除对应修正
-PAU_ml_remove_PAU_lhs_remnants = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_lhs_remnants > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_count_PAU_lhs_remnants = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 } #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取 #需修改
-}
-}
 
-#PAU_ml_add_PAU_undead_pressure：主线修正计数+1：添加对应修正并避免重复
-PAU_ml_add_PAU_undead_pressure = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure < 1 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_count_PAU_undead_pressure = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        add_to_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5% #需修改
-        add_to_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点-5% #需修改
-        add_to_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5% #需修改
-}
-}
-#PAU_ml_remove_PAU_undead_pressure：主线修正计数-1：移除对应修正
-PAU_ml_remove_PAU_undead_pressure = {
-    PAU_ml_ensure_vars = yes
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_count_PAU_undead_pressure = 1 } #主线动态修正计数：控制对应修正启停，避免重复叠加
-        subtract_from_variable = { PAU_ml_raw_attrition = 0.05 } # 移除亡灵压迫：损耗-5%
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 移除亡灵压迫：政治点+5%
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 移除亡灵压迫：陆军士气+5%
-}
-}
+
+
+
 
 #PAU_raise_white_night_militia：在白夜庇护州创建白夜民兵
 PAU_raise_white_night_militia = {
@@ -1045,15 +658,22 @@ PAU_raise_white_night_militia = {
     }
 }
 
-#PAU_advance_baiye_story：白夜巡游推进：计数+1，在1/3/6/10触发剧情事件
+#PAU_advance_baiye_story：白夜巡游推进：计数+1，在1/2/3/4触发剧情事件
 PAU_advance_baiye_story = {
-    #每巡游一个地块计数一次；在第 1、3、6、10 个地块后依次触发白夜小事件
-    if = { limit = { NOT = { has_variable = PAU_baiye_patrol_count } } set_variable = { PAU_baiye_patrol_count = 0 } } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
+    #每巡游一个地块计数一次；在第 1、2、3、4 个地块后依次触发白夜小事件
+    if = { limit = { NOT = { has_variable = PAU_baiye_patrol_count } } set_variable = { PAU_baiye_patrol_count = 0 } } #白夜巡游计数：每巡游1州+1，1/2/3/4触发剧情
     if = { limit = { NOT = { has_variable = PAU_baiye_story_stage } } set_variable = { PAU_baiye_story_stage = 0 } } #白夜巡游剧情阶段：1-4依次推进小事件
-    add_to_variable = { PAU_baiye_patrol_count = 1 } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
     if = {
         limit = {
-            check_variable = { PAU_baiye_patrol_count > 0 } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
+            has_country_flag = PAU_undead_defeated #亡灵战争已经结束
+            NOT = { check_variable = { PAU_baiye_story_stage > 4 } } #白夜巡游剧情阶段：1-4依次推进小事件
+        }
+        set_variable = { PAU_baiye_story_stage = 5 } #白夜巡游剧情阶段：5=战后直接收束，不再补播旧事件
+    }
+    add_to_variable = { PAU_baiye_patrol_count = 1 } #白夜巡游计数：每巡游1州+1，1/2/3/4触发剧情
+    if = {
+        limit = {
+            check_variable = { PAU_baiye_patrol_count > 0 } #白夜巡游计数：每巡游1州+1，1/2/3/4触发剧情
             NOT = { check_variable = { PAU_baiye_story_stage > 0 } } #白夜巡游剧情阶段：1-4依次推进小事件
         }
         set_variable = { PAU_baiye_story_stage = 1 } #白夜巡游剧情阶段：1-4依次推进小事件
@@ -1061,7 +681,7 @@ PAU_advance_baiye_story = {
     }
     if = {
         limit = {
-            check_variable = { PAU_baiye_patrol_count > 2 } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
+            check_variable = { PAU_baiye_patrol_count > 1 } #白夜巡游计数：每巡游1州+1，1/2/3/4触发剧情
             NOT = { check_variable = { PAU_baiye_story_stage > 1 } } #白夜巡游剧情阶段：1-4依次推进小事件
         }
         set_variable = { PAU_baiye_story_stage = 2 } #白夜巡游剧情阶段：1-4依次推进小事件
@@ -1069,7 +689,7 @@ PAU_advance_baiye_story = {
     }
     if = {
         limit = {
-            check_variable = { PAU_baiye_patrol_count > 5 } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
+            check_variable = { PAU_baiye_patrol_count > 2 } #白夜巡游计数：每巡游1州+1，1/2/3/4触发剧情
             NOT = { check_variable = { PAU_baiye_story_stage > 2 } } #白夜巡游剧情阶段：1-4依次推进小事件
         }
         set_variable = { PAU_baiye_story_stage = 3 } #白夜巡游剧情阶段：1-4依次推进小事件
@@ -1077,10 +697,204 @@ PAU_advance_baiye_story = {
     }
     if = {
         limit = {
-            check_variable = { PAU_baiye_patrol_count > 9 } #白夜巡游计数：每巡游1州+1，1/3/6/10触发剧情
+            check_variable = { PAU_baiye_patrol_count > 3 } #白夜巡游计数：每巡游1州+1，1/2/3/4触发剧情
             NOT = { check_variable = { PAU_baiye_story_stage > 3 } } #白夜巡游剧情阶段：1-4依次推进小事件
         }
         set_variable = { PAU_baiye_story_stage = 4 } #白夜巡游剧情阶段：1-4依次推进小事件
         country_event = { id = PAU.7004 hours = 6 }
     }
+}
+
+# PAU_ml_add_PAU_revolution_network：革命网络第一级：建立联络点（计数+1，避免重复叠加）
+PAU_ml_add_PAU_revolution_network = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_revolution_network = 1 }
+        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+        add_to_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 } # 革命网络：改善关系维持成本-5%
+    }
+}
+# PAU_ml_remove_PAU_revolution_network：革命网络第一级：建立联络点（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_revolution_network = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_revolution_network = 1 }
+        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 } # 革命网络：政治点获取+5%
+        subtract_from_variable = { PAU_ml_raw_improve_relations_maintain_cost_factor = -0.05 } # 革命网络：改善关系维持成本-5%
+    }
+}
+# PAU_ml_add_PAU_revolution_network_2：革命网络第二级：军械与技术人员流通（计数+1，避免重复叠加）
+PAU_ml_add_PAU_revolution_network_2 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_2 < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_revolution_network_2 = 1 }
+        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 } # 革命网络：科研速度+5%
+        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+    }
+}
+# PAU_ml_remove_PAU_revolution_network_2：革命网络第二级：军械与技术人员流通（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_revolution_network_2 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_2 > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_revolution_network_2 = 1 }
+        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 } # 革命网络：科研速度+5%
+        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 } # 革命网络：建筑建造速度+5%
+    }
+}
+# PAU_ml_add_PAU_revolution_network_3：革命网络第三级：国际志愿兵与联合参谋（计数+1，避免重复叠加）
+PAU_ml_add_PAU_revolution_network_3 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_3 < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_revolution_network_3 = 1 }
+        add_to_variable = { PAU_ml_raw_army_org_factor = 0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+        add_to_variable = { PAU_ml_raw_coordination_bonus = 0.05 } # 革命网络：协调加成+5%
+        add_to_variable = { PAU_ml_raw_planning_speed = 0.05 } # 革命网络：计划速度+5%
+    }
+}
+# PAU_ml_remove_PAU_revolution_network_3：革命网络第三级：国际志愿兵与联合参谋（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_revolution_network_3 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_revolution_network_3 > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_revolution_network_3 = 1 }
+        subtract_from_variable = { PAU_ml_raw_army_org_factor = 0.05 } # 革命网络：陆军组织度+5%
+        subtract_from_variable = { PAU_ml_raw_coordination_bonus = 0.05 } # 革命网络：协调加成+5%
+        subtract_from_variable = { PAU_ml_raw_planning_speed = 0.05 } # 革命网络：计划速度+5%
+    }
+}
+# PAU_ml_add_PAU_trade_network：贸易网络第一级：固定航线（计数+1，避免重复叠加）
+PAU_ml_add_PAU_trade_network = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_trade_network = 1 }
+        add_to_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 } # 贸易网络：贸易好感+5%
+        add_to_variable = { PAU_ml_raw_political_power_factor = 0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+    }
+}
+# PAU_ml_remove_PAU_trade_network：贸易网络第一级：固定航线（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_trade_network = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_trade_network = 1 }
+        subtract_from_variable = { PAU_ml_raw_trade_opinion_factor = 0.05 } # 贸易网络：贸易好感+5%
+        subtract_from_variable = { PAU_ml_raw_political_power_factor = 0.05 } # 贸易网络：政治点获取+5%
+    }
+}
+# PAU_ml_add_PAU_trade_network_2：贸易网络第二级：港口与商船队（计数+1，避免重复叠加）
+PAU_ml_add_PAU_trade_network_2 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_2 < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_trade_network_2 = 1 }
+        add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+        add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+    }
+}
+# PAU_ml_remove_PAU_trade_network_2：贸易网络第二级：港口与商船队（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_trade_network_2 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_2 > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_trade_network_2 = 1 }
+        subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 } # 贸易网络：消费品工厂-5%
+        subtract_from_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.05 } # 贸易网络：建筑建造速度+5%
+    }
+}
+# PAU_ml_add_PAU_trade_network_3：贸易网络第三级：跨洋贸易体系（计数+1，避免重复叠加）
+PAU_ml_add_PAU_trade_network_3 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_3 < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_trade_network_3 = 1 }
+        add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }#主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+        add_to_variable = { PAU_ml_raw_research_speed_factor = 0.05 } # 贸易网络：科研速度+5%
+    }
+}
+# PAU_ml_remove_PAU_trade_network_3：贸易网络第三级：跨洋贸易体系（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_trade_network_3 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_trade_network_3 > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_trade_network_3 = 1 }
+        subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 } # 贸易网络：工厂产出+5%
+        subtract_from_variable = { PAU_ml_raw_research_speed_factor = 0.05 } # 贸易网络：科研速度+5%
+    }
+}
+# PAU_ml_add_PAU_coastal_network：岸防网络第一级：岸炮与观察哨（计数+1，避免重复叠加）
+PAU_ml_add_PAU_coastal_network = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_coastal_network = 1 }
+        add_to_variable = { PAU_ml_raw_naval_defense_factor = 0.05 } # 岸防网络：海军防御+5%
+        add_to_variable = { PAU_ml_raw_naval_coordination = 0.05 } # 岸防网络：海军协同+5%
+    }
+}
+# PAU_ml_remove_PAU_coastal_network：岸防网络第一级：岸炮与观察哨（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_coastal_network = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_coastal_network = 1 }
+        subtract_from_variable = { PAU_ml_raw_naval_defense_factor = 0.05 } # 岸防网络：海军防御+5%
+        subtract_from_variable = { PAU_ml_raw_naval_coordination = 0.05 } # 岸防网络：海军协同+5%
+    }
+}
+# PAU_ml_add_PAU_coastal_network_2：岸防网络第二级：修船坞与补给点（计数+1，避免重复叠加）
+PAU_ml_add_PAU_coastal_network_2 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_2 < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_coastal_network_2 = 1 }
+        add_to_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.05 } # 岸防网络：船坞建造速度+5%
+        add_to_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 } # 岸防网络：舰船修复概率+5%
+    }
+}
+# PAU_ml_remove_PAU_coastal_network_2：岸防网络第二级：修船坞与补给点（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_coastal_network_2 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_2 > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_coastal_network_2 = 1 }
+        subtract_from_variable = { PAU_ml_raw_production_speed_dockyard_factor = 0.05 } # 岸防网络：船坞建造速度+5%
+        subtract_from_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 } # 岸防网络：舰船修复概率+5%
+    }
+}
+# PAU_ml_add_PAU_coastal_network_3：岸防网络第三级：联合岸防体系（计数+1，避免重复叠加）
+PAU_ml_add_PAU_coastal_network_3 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_3 < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_coastal_network_3 = 1 }
+        add_to_variable = { PAU_ml_raw_naval_defense_factor = 0.05 } # 岸防网络：海军防御+5%
+        add_to_variable = { PAU_ml_raw_naval_coordination = 0.05 } # 岸防网络：海军协同+5%
+        add_to_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 } # 岸防网络：舰船修复概率+5%
+    }
+}
+# PAU_ml_remove_PAU_coastal_network_3：岸防网络第三级：联合岸防体系（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_coastal_network_3 = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_coastal_network_3 > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_coastal_network_3 = 1 }
+        subtract_from_variable = { PAU_ml_raw_naval_defense_factor = 0.05 } # 岸防网络：海军防御+5%
+        subtract_from_variable = { PAU_ml_raw_naval_coordination = 0.05 } # 岸防网络：海军协同+5%
+        subtract_from_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor = 0.05 } # 岸防网络：舰船修复概率+5%
+    }
+}
+
+
+
+
+# PAU_ml_add_PAU_undead_pressure：亡灵压迫：死气缠着军团（计数+1，避免重复叠加）
+PAU_ml_add_PAU_undead_pressure = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure < 1 } }
+        add_to_variable = { PAU_ml_count_PAU_undead_pressure = 1 }
+        add_to_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5%
+        add_to_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点获取-5%
+        add_to_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5%
+    }
+}
+# PAU_ml_remove_PAU_undead_pressure：亡灵压迫：死气缠着军团（计数-1，撤销对应修正）
+PAU_ml_remove_PAU_undead_pressure = {
+    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } }
+        subtract_from_variable = { PAU_ml_count_PAU_undead_pressure = 1 }
+        subtract_from_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5%
+        subtract_from_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点获取-5%
+        subtract_from_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5%
+    }
+}
+# PAU_refresh_undead_pressure：亡灵战争每月结算压迫、减压旗标与反扑事件
+PAU_refresh_undead_pressure = {
+    if = {
+        limit = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+        }
+        add_to_variable = { PAU_undead_pressure = 3 } # 亡灵每月反扑
+        if = { limit = { has_country_flag = PAU_undead_fuel_denied } add_to_variable = { PAU_undead_pressure = -1 } }
+        if = { limit = { has_country_flag = PAU_undead_scorched_earth } add_to_variable = { PAU_undead_pressure = -1 } }
+        if = { limit = { any_controlled_state = { has_state_flag = PAU_xiaoyao_state_flag } } add_to_variable = { PAU_undead_pressure = -1 } }
+        clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
+        if = {
+            limit = { check_variable = { PAU_undead_pressure > 0 } }
+            if = { limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes } }
+        }
+        else = { hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes } }
+        if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } }
+        add_to_variable = { PAU_undead_surge_timer = 1 }
+        if = { limit = { check_variable = { PAU_undead_surge_timer > 1 } } set_variable = { PAU_undead_surge_timer = 0 } country_event = { id = PAU.7010 hours = 6 } }
+    }
+    else = { hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes } }
 }
