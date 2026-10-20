@@ -294,7 +294,7 @@ PAU_expand_safe_harbor = {
 
 #PAU_pull_into_white_night_faction：把目标国拉入白夜同盟阵营
 PAU_pull_into_white_night_faction = {
-    #确保白夜同盟存在；目标国若已有阵营，则把其整个阵营一并带入白夜同盟
+    #确保白夜同盟存在；普通阵营可整块带入，轴心/魔导/圣杯/苏联主导阵营只接收直接目标国
     PAU = {
         if = {
             limit = { NOT = { is_in_faction = yes } }
@@ -311,14 +311,32 @@ PAU_pull_into_white_night_faction = {
         }
         if = {
             limit = { ROOT = { is_in_faction = yes } }
-            ROOT = {
-                every_faction_member = {
-                    display_individual_scopes = yes
-                    leave_faction = yes
-                    PAU = {
-                        faction_leader = {
-                            #PREV 是 PAU，PREV.PREV 是当前阵营成员
-                            add_to_faction = PREV.PREV
+            if = {
+                limit = {
+                    ROOT = {
+                        NOT = { has_country_flag = PAU_allow_major_faction_pull }
+                        OR = {
+                            faction_leader = { OR = { tag = GER tag = DVL tag = ENG tag = SOV } }
+                            has_faction_template = faction_template_axis
+                            has_faction_template = faction_template_allies
+                            has_faction_template = faction_template_comintern
+                        }
+                    }
+                }
+                #轴心国/魔导国/圣杯/苏联的主导阵营只接收被直接点名的目标国，不整块拖拽
+                ROOT = { leave_faction = yes }
+                PAU = { faction_leader = { add_to_faction = ROOT } }
+            }
+            else = {
+                ROOT = {
+                    every_faction_member = {
+                        display_individual_scopes = yes
+                        leave_faction = yes
+                        PAU = {
+                            faction_leader = {
+                                #PREV 是 PAU，PREV.PREV 是当前阵营成员
+                                add_to_faction = PREV.PREV
+                            }
                         }
                     }
                 }
@@ -328,6 +346,7 @@ PAU_pull_into_white_night_faction = {
             PAU = { faction_leader = { add_to_faction = ROOT } }
         }
     }
+    ROOT = { clr_country_flag = PAU_allow_major_faction_pull }
 }
 
 #PAU_join_soviet_faction：加入苏联阵营
@@ -527,12 +546,20 @@ PAU_refresh_late_networks = {
 
 #PAU_call_joint_staff_college：联合参谋学院课程结算：按课程刷新等级与奖励
 PAU_call_joint_staff_college = {
+    PAU_refresh_south_america_members = yes
     every_faction_member = {
         limit = {
             NOT = { tag = PAU }
             capital_scope = { is_on_continent = south_america }
         }
         country_event = { id = PAU.580 days = 1 }
+    }
+    if = {
+        limit = { check_variable = { PAU_south_america_members < 2 } }
+        if = { limit = { check_variable = { PAU_sa_college_armor < 3 } } add_to_variable = { PAU_sa_college_armor = 1 } }
+        if = { limit = { check_variable = { PAU_sa_college_infantry < 3 } } add_to_variable = { PAU_sa_college_infantry = 1 } }
+        if = { limit = { check_variable = { PAU_sa_college_operations < 3 } } add_to_variable = { PAU_sa_college_operations = 1 } }
+        hidden_effect = { PAU_refresh_joint_staff_college = yes }
     }
 }
 
@@ -573,12 +600,23 @@ PAU_refresh_joint_staff_college = {
 
 #PAU_call_state_council_missions：国务委员会任务结算：按领域任务刷新委员会加成
 PAU_call_state_council_missions = {
+    PAU_refresh_south_america_members = yes
     every_faction_member = {
         limit = {
             NOT = { tag = PAU }
             capital_scope = { is_on_continent = south_america }
         }
         country_event = { id = PAU.610 days = 1 }
+    }
+    if = {
+        limit = { check_variable = { PAU_south_america_members < 2 } }
+        if = { limit = { check_variable = { PAU_sa_state_industry < 3 } } add_to_variable = { PAU_sa_state_industry = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_infrastructure < 3 } } add_to_variable = { PAU_sa_state_infrastructure = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_trade < 3 } } add_to_variable = { PAU_sa_state_trade = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_diplomacy < 3 } } add_to_variable = { PAU_sa_state_diplomacy = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_welfare < 3 } } add_to_variable = { PAU_sa_state_welfare = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_mobilization < 3 } } add_to_variable = { PAU_sa_state_mobilization = 1 } }
+        hidden_effect = { PAU_refresh_state_council = yes }
     }
 }
 
@@ -702,6 +740,14 @@ PAU_advance_baiye_story = {
         }
         set_variable = { PAU_baiye_story_stage = 4 } #白夜巡游剧情阶段：1-4依次推进小事件
         country_event = { id = PAU.7004 hours = 6 }
+    }
+    if = {
+        limit = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+        }
+        add_to_variable = { PAU_undead_pressure = -5 }
+        clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
     }
 }
 
@@ -887,6 +933,36 @@ PAU_refresh_undead_pressure = {
         if = { limit = { has_country_flag = PAU_undead_scorched_earth } add_to_variable = { PAU_undead_pressure = -1 } }
         if = { limit = { any_controlled_state = { has_state_flag = PAU_xiaoyao_state_flag } } add_to_variable = { PAU_undead_pressure = -1 } }
         clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
+        if = {
+            limit = { check_variable = { PAU_undead_pressure > 49 } }
+            if = {
+                limit = {
+                    any_controlled_state = {
+                        is_owned_by = ROOT
+                        is_capital = no
+                        any_neighbor_state = { is_controlled_by = ZDW }
+                    }
+                }
+                random_controlled_state = {
+                    limit = {
+                        is_owned_by = ROOT
+                        is_capital = no
+                        any_neighbor_state = { is_controlled_by = ZDW }
+                    }
+                    transfer_state_to = ZDW
+                }
+            }
+            else = {
+                random_controlled_state = {
+                    limit = {
+                        is_owned_by = ROOT
+                        is_capital = no
+                    }
+                    transfer_state_to = ZDW
+                }
+            }
+            subtract_from_variable = { PAU_undead_pressure = 20 }
+        }
         if = {
             limit = { check_variable = { PAU_undead_pressure > 0 } }
             if = { limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes } }
