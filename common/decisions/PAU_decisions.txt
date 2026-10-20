@@ -476,14 +476,14 @@ PAU_LHS_weiji = {
         activation = { always = no }
         selectable_mission = no
         is_good = yes
-        days_mission_timeout = 30
+        days_mission_timeout = 15
         cancel_trigger = { not = { has_country_flag = PAU_auto_baiye } }
         timeout_effect = {
             custom_effect_tooltip = PAU_baiye_auto_task_tt
             if = {
                 limit = {
                     has_political_power > 9
-                    any_controlled_state = {
+                    any_state = {
                         has_state_flag = is_lldy_state_flag
                         not = {
                             has_state_flag = PAU_xiaoyao_state_flag
@@ -493,13 +493,19 @@ PAU_LHS_weiji = {
                 add_political_power = -10
                 random_controlled_state = {
                     limit = { 
+                        or = {
+                            any_neighbor_state = {
+                                has_state_flag = PAU_xiaoyao_state_flag
+                            }
+                            is_controlled_by = PAU
+                        }
                         not = { has_state_flag = PAU_xiaoyao_state_flag } 
                         has_state_flag = is_lldy_state_flag
                     }
                     set_state_flag = PAU_xiaoyao_state_flag
                     add_dynamic_modifier = { modifier = PAU_baiye_state }
-                    ROOT = { PAU_advance_baiye_story = yes }
                 }
+                    ROOT = { PAU_advance_baiye_story = yes }
             }
             activate_mission = PAU_baiye_auto_task
         }
@@ -595,7 +601,7 @@ PAU_LHS_weiji = {
         timeout_effect = {
             random_owned_state = {
                 limit = {
-                    is_controlled_by = ROOT
+                    is_controlled_by = ZDW
                     has_state_flag = PAU_xiaoyao_state_flag
                 }
                 clr_state_flag = PAU_xiaoyao_state_flag
@@ -609,6 +615,41 @@ PAU_LHS_weiji = {
         }
         cancel_trigger = {
             has_country_flag = PAU_undead_defeated
+        }
+        cancel_effect = {
+        }
+    }
+    #亡灵反制
+    #决议名：亡灵的反扑
+    PAU_wl_anti1 = {
+        name = PAU_wl_anti
+        allowed = {
+            original_tag = PAU
+        }
+        icon = GFX_mobilize_undead_looters
+
+        available = {
+            has_completed_focus = PAU_zmxx
+        }
+        activation = {
+            always = no
+        }
+        selectable_mission = no
+        #如果设置，会将任务转换为玩家必须选择按钮的任务。
+        is_good = no
+        days_mission_timeout = 30
+
+        timeout_effect = {
+            ZDW = {
+				modify_timed_idea = {
+					idea = LHS_zdwl
+					days = 20
+				}
+            }
+        }
+        complete_effect = {
+        }
+        cancel_trigger = {
         }
         cancel_effect = {
         }
@@ -678,20 +719,17 @@ PAU_undead_containment = { #
                 }
                 add_days_mission_timeout  = {
                     mission = PAU_wl_attack_dec
-                    days = 10
+                    days = 3
                 }
             }
             else = {
                 ZDW = {
                     add_timed_idea = {
                         idea = PAU_undead_counterattack
-                        days = 14
+                        days = 3
                     }
                 }
             }
-            army_experience = 15
-            add_to_variable = { PAU_undead_pressure = -5 }
-            clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
         }
         remove_effect = {
 		    set_country_flag = {
@@ -711,7 +749,7 @@ PAU_undead_containment = { #
             NOT = { has_country_flag = PAU_undead_defeated }
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_fuel_gt499_tt
-                has_fuel > 499
+                has_fuel > 4999
             }
             any_controlled_state = {
                 any_neighbor_state = {
@@ -722,7 +760,7 @@ PAU_undead_containment = { #
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            add_fuel = -500
+            add_fuel = -5000
             if = {
                 limit = {
                     has_country_flag = control_dec
@@ -736,11 +774,10 @@ PAU_undead_containment = { #
                 ZDW = {
                     add_timed_idea = {
                         idea = PAU_undead_burn_depot
-                        days = 30
+                        days = 10
                     }
                 }
             }
-            set_country_flag = PAU_undead_fuel_denied #已焚毁亡灵油料补给
         }
         ai_will_do = { factor = 10 }
     }
@@ -751,7 +788,7 @@ PAU_undead_containment = { #
         visible = { has_country_flag = PAU_undead_war }
         available = {
             NOT = { has_country_flag = PAU_undead_defeated }
-            has_fuel > 999
+            has_fuel > 9999
             any_controlled_state = {
                 any_neighbor_state = {
                     is_controlled_by = ZDW
@@ -760,9 +797,8 @@ PAU_undead_containment = { #
         }
         cost = 25
         fire_only_once = no
-        days_re_enable = 30
         complete_effect = {
-            add_fuel = -1000
+            add_fuel = -10000
                 random_state = {
                     limit = {
                         or = {
@@ -775,15 +811,13 @@ PAU_undead_containment = { #
                         }
                     }
                     transfer_state_to = WRQ
-                    set_state_flag = scorched_state
+                    set_state_flag = {
+                        flag = scorched_state
+                        days = 15
+                        value = 1
+                    }
                 }
                 hidden_effect = {
-                    ZDW = {
-                        country_event = {
-                            id = PAU.66
-                            days = 15
-                        }
-                    }
                 }
             custom_effect_tooltip = PAU_undead_scorched_earth_tt
             set_country_flag = PAU_undead_scorched_earth #已烧出亡灵隔离带
@@ -791,7 +825,45 @@ PAU_undead_containment = { #
         ai_will_do = { factor = 10 }
     }
 }
-
+ZDW_endwar = {
+    wl_gld = { #亡灵获得隔离带
+        allowed = {
+            original_tag = ZDW
+        }
+        icon = GFX_decision_generic_shovels
+        available = {
+            FROM = {
+                is_controlled_by = WRQ
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+        visible = {
+        }
+        on_map_mode = map_and_decisions_view
+        state_target = yes
+        target_trigger = {
+            FROM = {
+                is_controlled_by = WRQ
+                not = {
+                    has_state_flag = scorched_state
+                }
+            }
+        }
+        cancel_trigger = {
+        }
+        fire_only_once = no
+        #target_array = controlled_states
+        cost = 0
+        days_remove = 1
+        remove_effect = {
+            FROM = {
+                transfer_state_to = ZDW
+            }
+        }
+    }
+}
 
 #剧情定位：雇佣兵合同期：接单、准备、开战、撤退或投降结算
 PAU_hetong = {
@@ -1226,7 +1298,7 @@ PAU_hetong = {
                     else_if = {
                         limit = { check_variable = { PAU_mercenary_reputation > 39 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
                         add_manpower = 5000
-                        command_power = 35
+                        add_command_power = 35
                         add_equipment_to_stockpile = {
                             type = infantry_equipment
                             amount = 3000
@@ -1239,7 +1311,7 @@ PAU_hetong = {
                     }
                     else = {
                         add_manpower = 2500
-                        command_power = 20
+                        add_command_power = 20
                         add_equipment_to_stockpile = {
                             type = infantry_equipment
                             amount = 1500
@@ -1378,49 +1450,31 @@ PAU_lhs_integration = {
             }
         }
         cost = 25
-        fire_only_once = yes
-        days_remove = 20
+        fire_only_once = no
+        days_remove = 30
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
-                value = 20
+                value = 10
                 tooltip = PAU_lhs_integration_tt
             }
             set_country_flag = PAU_lhs_kept_cadres
-            army_experience = 50
-            custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = {
-                var = PAU_ml_raw_coordination_bonus
-                value = 0.05
-                tooltip = coordination_bonus_tt
-            }
+            add_manpower = -4000
             division_template = {
                 name = "野火山地游击队"
                 is_locked = no
                 regiments = {
-                    infantry = { x = 0 y = 0 }
-                    infantry = { x = 0 y = 1 }
-                    infantry = { x = 0 y = 2 }
-                    infantry = { x = 0 y = 3 }
-                    infantry = { x = 1 y = 0 }
+                    youjibudui = { x = 0 y = 0 }
+                    youjibudui = { x = 0 y = 1 }
+                    youjibudui = { x = 1 y = 0 }
+                    youjibudui = { x = 1 y = 1 }
                 }
             }
             capital_scope = {
                 create_unit = {
-                    division = "name = \"野火山地游击队\" division_template = \"野火山地游击队\" start_experience_factor = 1.0 start_equipment_factor = 1.0"
-                    count = 2
+                    division = "name = \"野火山地游击队\" division_template = \"野火山地游击队\" start_experience_factor = 0 start_equipment_factor = 0.1"
+                    count = 1
                     owner = PAU
-                }
-            }
-            if = {
-                limit = {
-                    has_completed_focus = PAU_tyzz
-                    has_power_balance = { id = PAU_bop }
-                }
-                add_power_balance_value = {
-                    id = PAU_bop
-                    value = 0.45
-                    tooltip_side = PAU_bop_left_side
                 }
             }
         }
@@ -1439,37 +1493,20 @@ PAU_lhs_integration = {
             }
         }
         cost = 25
-        fire_only_once = yes
-        days_remove = 20
+        fire_only_once = no
+        days_remove = 30
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
-                value = 20
+                value = 10
                 tooltip = PAU_lhs_integration_tt
             }
             set_country_flag = PAU_lhs_dissolved
-            add_manpower = 6000
+            add_manpower = 4000
             add_equipment_to_stockpile = {
                 type = infantry_equipment
-                amount = 1500
+                amount = 1000
                 producer = PAU
-            }
-            custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = {
-                var = PAU_ml_raw_army_org_factor
-                value = 0.05
-                tooltip = army_org_factor_tt
-            }
-            if = {
-                limit = {
-                    has_completed_focus = PAU_tyzz
-                    has_power_balance = { id = PAU_bop }
-                }
-                add_power_balance_value = {
-                    id = PAU_bop
-                    value = -0.15
-                    tooltip_side = PAU_bop_right_side
-                }
             }
         }
         ai_will_do = { factor = 10 }
@@ -1488,7 +1525,7 @@ PAU_lhs_integration = {
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 20
+        days_remove = 30
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
@@ -1496,8 +1533,7 @@ PAU_lhs_integration = {
                 tooltip = PAU_lhs_integration_tt
             }
             army_experience = 50
-            command_power = 30
-            set_country_flag = PAU_lhs_joint_drill_done
+            add_command_power = 30
         }
         ai_will_do = { factor = 10 }
     }
@@ -1508,40 +1544,45 @@ PAU_lhs_integration = {
         visible = { always = yes }
         available = {
             custom_trigger_tooltip = {
-                tooltip = PAU_lhs_finish_available_tt
-                check_variable = { PAU_lhs_integration > 14 } #野火旧部整编度（0-100）
+                tooltip = PAU_cond_lhs_integration_lt100_tt
+                check_variable = { PAU_lhs_integration < 100 } #野火旧部整编度（0-100）
             }
         }
         cost = 25
-        fire_only_once = yes
-        days_remove = 25
+        fire_only_once = no
+        days_remove = 60
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration #野火旧部整编度（0-100）
                 value = 15
                 tooltip = PAU_lhs_integration_tt
             }
-            add_manpower = -1000
+            add_manpower = -6000
             division_template = {
                 name = "莉兰迪亚红军"
                 is_locked = no
                 regiments = {
-                    infantry = { x = 0 y = 0 }
-                    infantry = { x = 0 y = 1 }
-                    infantry = { x = 0 y = 2 }
-                    infantry = { x = 0 y = 3 }
+                    youjibudui = { x = 0 y = 0 }
+                    youjibudui = { x = 0 y = 1 }
+                    youjibudui = { x = 0 y = 2 }
                     infantry = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                    infantry = { x = 1 y = 2 }
                 }
             }
             random_controlled_state = {
                 create_unit = {
-                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.4 start_equipment_factor = 1.0"
-                    count = 2
+                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
+                    count = 1
                     owner = PAU
                 }
             }
-            add_doctrine_cost_reduction = { name = PAU_lhs_officer_exchange_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine }
-            set_country_flag = PAU_lhs_officer_exchange_done
+            add_doctrine_cost_reduction = { 
+                name = PAU_lhs_officer_exchange_doctrine 
+                cost_reduction = 0.5 
+                uses = 1 
+                category = land_doctrine 
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -1553,20 +1594,12 @@ PAU_lhs_integration = {
         available = {
             custom_trigger_tooltip = {
                 tooltip = PAU_lhs_finish_available_tt
-                check_variable = { PAU_lhs_integration > 29 } #野火旧部整编度（0-100）
-            }
-            OR = {
-                AND = {
-                    has_country_flag = PAU_lhs_joint_drill_done
-                    has_country_flag = PAU_lhs_officer_exchange_done
-                }
-                #旧存档兜底：两项优质决议都做完时整合度通常已达到60
-                check_variable = { PAU_lhs_integration > 49 }
+                check_variable = { PAU_lhs_integration > 99 } #野火旧部整编度（0-100）
             }
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 20
+        days_remove = 30
         remove_effect = {
             set_country_flag = PAU_lhs_integrated
             custom_effect_tooltip = PAU_mainline_append_tt
@@ -1590,7 +1623,80 @@ PAU_lhs_integration = {
 }
 
 #剧情定位：圣杯流亡营地：口粮、零件、贸易、修船与去留选择
-PAU_grail_camp = { #存疑
+PAU_grail_camp = {
+    #生存物资
+    PAU_grail_camp_live = {
+        allowed = {
+            original_tag = PAU
+        }
+        icon = GFX_mobilize_undead_looters
+
+        available = {
+            has_completed_focus = PAU_zhyk
+        }
+        activation = {
+            always = no
+        }
+        selectable_mission = no
+        #如果设置，会将任务转换为玩家必须选择按钮的任务。
+        is_good = no
+        days_mission_timeout = 30
+
+        timeout_effect = {
+            add_to_variable = {
+                var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
+                value = -10
+                tooltip = PAU_grail_rations_tt
+            }
+            activate_mission = PAU_grail_camp_live
+
+        }
+        complete_effect = {
+        }
+        cancel_trigger = {
+        }
+        cancel_effect = {
+        }
+    }
+    #耗尽物资
+    PAU_grail_camp_die = {
+        allowed = {
+            original_tag = PAU
+        }
+        icon = GFX_mobilize_undead_looters
+
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_grail_rations_gt0_tt
+                check_variable = { PAU_grail_rations > 0 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
+            }
+        }
+        activation = {
+            tag = PAU
+            has_country_flag = PAU_grail_camp
+            not = {
+                has_completed_focus = PAU_zhyk
+            }
+            check_variable = { PAU_grail_rations < 1 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
+        }
+        selectable_mission = no
+        #如果设置，会将任务转换为玩家必须选择按钮的任务。
+        is_good = no
+        days_mission_timeout = 30
+
+        timeout_effect = {
+            ENG = {
+                transfer_state = 299
+            }
+
+        }
+        complete_effect = {
+        }
+        cancel_trigger = {
+        }
+        cancel_effect = {
+        }
+    }
     #决议名：把口粮分成三份
     PAU_grail_split_rations = {
         icon = GFX_mission_feed_the_mad_dog
@@ -1598,22 +1704,20 @@ PAU_grail_camp = { #存疑
         visible = { has_country_flag = PAU_grail_camp }
         available = {
             custom_trigger_tooltip = {
-                tooltip = PAU_cond_grail_rations_gt49_tt
-                check_variable = { PAU_grail_rations > 49 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
+                tooltip = PAU_cond_grail_rations_gt9_tt
+                check_variable = { PAU_grail_rations > 9 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
             }
         }
         cost = 25
-        fire_only_once = yes
-        days_remove = 10
-        remove_effect = {
+        fire_only_once = no
+        complete_effect = {
             add_to_variable = {
                 var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
-                value = -50
+                value = -10
                 tooltip = PAU_grail_rations_tt
             }
-            add_manpower = 10000
-            add_stability = 0.05
-            set_country_flag = PAU_grail_rations_shared
+            add_stability = 0.025
+            add_war_support = 0.025
         }
         ai_will_do = { factor = 10 }
         # TODO(待确认): 圣杯流亡营实际有4个决议且原本已是days_remove=15，按提速目标统一改为10。
@@ -1624,22 +1728,27 @@ PAU_grail_camp = { #存疑
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_grail_camp }
         available = {
-            has_country_flag = PAU_grail_rations_shared
+            has_equipment = { infantry_equipment > 999  }
         }
         cost = 25
-        fire_only_once = yes
+        fire_only_once = no
         days_remove = 10
-        remove_effect = {
-            add_to_variable = {
-                var = PAU_grail_parts #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-                value = 80
-                tooltip = PAU_grail_parts_tt
-            }
-            add_manpower = 3000
-            set_country_flag = PAU_grail_arms_traded
+        complete_effect = {
             add_equipment_to_stockpile = {
                 type = infantry_equipment
-                amount = -500
+                amount = -1000
+            }
+        }
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
+                value = 30
+                tooltip = PAU_grail_rations_tt
+            }
+            add_to_variable = {
+                var = ubs_save
+                value = 15
+                tooltip = ubs_save_tt
             }
         }
         ai_will_do = { factor = 10 }
@@ -1650,65 +1759,38 @@ PAU_grail_camp = { #存疑
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_grail_camp }
         available = {
-            has_country_flag = PAU_grail_arms_traded
-            NOT = { has_country_flag = PAU_grail_stay }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_grail_parts_gt49_tt
-                check_variable = { PAU_grail_parts > 49 } #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
+            custom_trigger_tooltip = {PAU_cond_grail_rations_gt49_tt
+                tooltip = PAU_cond_grail_rations_gt49_tt
+                check_variable = { PAU_grail_rations > 49 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
             }
         }
         cost = 25
-        fire_only_once = yes
-        days_remove = 10
+        fire_only_once = no
+        days_remove = 30
         remove_effect = {
-            set_country_flag = PAU_grail_leave #选择离开圣杯营地
             add_to_variable = {
-                var = PAU_grail_parts #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
+                var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
                 value = -50
-                tooltip = PAU_grail_parts_tt
-            }
-            navy_experience = 75
-            add_to_variable = {
-                var = PAU_ml_raw_naval_ship_recovery_chance_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #TODO 统一默认5%，请按需修改
-                tooltip = naval_ship_recovery_chance_factor_tt
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：把圣杯码头加固
-    PAU_grail_fortify_docks = {
-        icon = GFX_EMI_ship_undead_keel
-        allowed = { original_tag = PAU }
-        visible = { always = yes }
-        available = {
-            has_country_flag = PAU_grail_arms_traded
-            NOT = { has_country_flag = PAU_grail_leave }
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_grail_parts_gt9_tt
-                check_variable = { PAU_grail_parts > 9 } #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-            }
-        }
-        cost = 25
-        fire_only_once = yes
-        days_remove = 10
-        remove_effect = {
-            set_country_flag = PAU_grail_stay #选择留在圣杯营地
-            add_to_variable = {
-                var = PAU_grail_parts #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-                value = -10
-                tooltip = PAU_grail_parts_tt
+                tooltip = PAU_grail_rations_tt
             }
             add_to_variable = {
-                var = PAU_ml_raw_naval_defense_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #TODO 统一默认5%，请按需修改
-                tooltip = naval_defense_factor_tt
+                var = ubs_save
+                value = 100
+                tooltip = ubs_save_tt
             }
-            add_to_variable = {
-                var = PAU_ml_raw_naval_coordination #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #TODO 统一默认5%，请按需修改
-                tooltip = naval_coordination_tt
+            add_equipment_to_stockpile = {
+                type = convoy_1
+                amount = 50
+                producer = PAU
             }
+            ENG = {
+                add_equipment_to_stockpile = {
+                    type = convoy_1
+                    amount = 50
+                    producer = PAU
+                }
+            }
+            navy_experience = 15
         }
         ai_will_do = { factor = 10 }
     }
@@ -2003,22 +2085,6 @@ PAU_safe_harbor = { #奇怪的修正
                 value = 1
                 tooltip = PAU_harbor_dev_tt
             }
-            if = {
-                limit = {
-                    has_country_flag = PAU_grail_camp
-                    check_variable = { PAU_grail_parts > 49 } #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-                }
-                subtract_from_variable = {
-                    var = PAU_grail_parts #圣杯流亡营剩余零件：修船、修船坞与扩建港口消耗
-                    value = 50
-                    tooltip = PAU_grail_parts_tt
-                }
-                add_to_variable = {
-                    var = PAU_harbor_dev #避风港发展度：扩建避风港积累值
-                    value = 1
-                    tooltip = PAU_harbor_dev_tt
-                }
-            }
             clamp_variable = { var = PAU_harbor_dev min = 0 max = 6 } #避风港发展度上限6
             hidden_effect = { PAU_refresh_harbor_spillover_states = yes }
         }
@@ -2133,7 +2199,7 @@ PAU_barrow_memorial = {
         cost = 25
         fire_only_once = yes
         complete_effect = {
-            command_power = 50
+            add_command_power = 50
             add_to_variable = {
                 var = PAU_ml_raw_army_org_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
                 value = 0.05  #TODO 统一默认5%，请按需修改
@@ -4333,7 +4399,7 @@ PAU_late_doctrine = {
             create_wargoal = { target = FROM type = annex_everything }
             add_timed_idea = { idea = PAU_ultimatum_resolve days = 90 }
             subtract_from_variable = { PAU_export_successes = 3 tooltip = PAU_export_successes_tt } #革命输出成果：决定革命网络等级与接受率
-            command_power = 50
+            add_command_power = 50
             add_war_support = 0.08
         }
         ai_will_do = { factor = 10 }
