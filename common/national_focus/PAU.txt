@@ -421,19 +421,18 @@ focus_tree = {
 
         completion_reward = {
             activate_mission = PAU_wl_anti
+            custom_effect_tooltip = PAU_mainline_append_tt
             country_event = {
                 id = PAU.13
                 hours = 6
             }
-
-            set_country_flag = PAU_grail_camp #军团在圣杯地块上落脚
-            # 国家变量池：流亡营 + 圣杯营地网络（合计值与旧计数器版本一致）
-            299 = {
-                set_state_flag = PAU_grail_camp #圣杯流亡营固定在 state 299
-            }
-
+            PAU_arrive_grail = yes
             unlock_decision_category_tooltip = PAU_grail_camp
-            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_naval_ship_recovery_chance_factor
+                value = 0.05
+                tooltip = naval_ship_recovery_chance_factor_tt
+            }
             add_to_variable = {
                 var = PAU_ml_raw_repair_speed_factor
                 value = 0.10
@@ -488,7 +487,11 @@ focus_tree = {
         y = 8
         cost = 5
         available = {
-            always = yes
+            OR = {
+                NOT = { has_country_flag = PAU_grail_camp }
+                has_country_flag = PAU_grail_leave
+                has_country_flag = PAU_grail_stay
+            }
         }
         bypass = {
         }
@@ -510,32 +513,6 @@ focus_tree = {
             }
         }
         completion_reward = {
-            add_equipment_to_stockpile = {
-                type = convoy
-                amount = 1000
-                producer = PAU
-            }
-            division_template = {
-                name = "白夜民兵"
-                regiments = {
-                    militia = { x = 0 y = 0 }
-                    militia = { x = 0 y = 1 }
-                    militia = { x = 1 y = 0 }
-                }
-                support = {
-                    recon = { x = 0 y = 0 }
-                }
-            }
-            custom_effect_tooltip = PAU_dsyq_tt
-            every_state = {
-                limit = { has_state_flag = PAU_xiaoyao_state_flag }
-                create_unit = {
-                    division = "name = \"白夜民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
-                    count = 1
-                    allow_spawning_on_enemy_provs = yes
-                    owner = PAU
-                }
-            }
             country_event = {
                 id = PAU.18
                 hours = 6
@@ -543,7 +520,7 @@ focus_tree = {
             set_country_flag = has_PAU_xiaoyao3 #主线阶段3：亡灵战争后
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
-
+            PAU_return_from_grail = yes
             # 选择封锁蚕食分支时此前未与 ZDW 交战；返航后自动汇合到亡灵决战
             if = {
                 limit = {
@@ -553,6 +530,14 @@ focus_tree = {
                 declare_war_on = { target = ZDW type = annex_everything }
             }
             custom_effect_tooltip = PAU_mainline_append_tt
+            capital_scope = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = arms_factory
+                    level = 1
+                    instant_build = yes
+                }
+            }
             add_to_variable = {
                 var = PAU_ml_raw_army_attack_factor
                 value = 0.05
@@ -600,12 +585,6 @@ focus_tree = {
         }
         bypass = {
         }
-        select_effect = {
-            country_event = {
-                id = PAU.19
-                hours = 6
-            }
-        }
         prerequisite = {
             focus = PAU_dsyq
         }
@@ -617,11 +596,13 @@ focus_tree = {
         }
 
         completion_reward = {
-            set_variable = { PAU_grail_rations = 100 }
-            clr_country_flag = PAU_grail_camp #圣杯流亡营阶段结束
             country_event = {
                 id = PAU.20
                 days = 3
+            }
+            country_event = {
+                id = PAU.19
+                hours = 6
             }
             set_country_flag = PAU_undead_defeated #亡灵战争已经结束
             add_manpower = 10000
@@ -939,7 +920,7 @@ focus_tree = {
                 }
             }
             add_tech_bonus = { name = PAU_mfsn_magic_bonus bonus = 0.5 uses = 1 category = magic_army_tech }
-            add_command_power = 25
+            command_power = 25
         }
     }
 
@@ -1510,11 +1491,6 @@ focus_tree = {
                 var = PAU_ml_raw_amphibious_invasion
                 value = 0.10
                 tooltip = amphibious_invasion_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_navy_max_range_factor
-                value = 0.5
-                tooltip = navy_max_range_factor_tt
             }
         }
     }
@@ -2847,7 +2823,7 @@ focus_tree = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            add_command_power = 50
+            command_power = 50
         }
     }
 
@@ -2923,7 +2899,7 @@ focus_tree = {
             hidden_effect = {
                 PAU_refresh_mil_reform_tiers = yes
             }
-            add_command_power = 50
+            command_power = 50
         }
     }
 
@@ -2966,7 +2942,7 @@ focus_tree = {
                 amount = 1000
                 producer = PAU
             }
-            add_command_power = 50
+            command_power = 50
         }
     }
 
@@ -3005,7 +2981,7 @@ focus_tree = {
                 PAU_refresh_mil_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_axia_veteran_school
-            add_command_power = 50
+            command_power = 50
         }
     }
 
@@ -3123,7 +3099,7 @@ focus_tree = {
                 PAU_refresh_mil_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_axia_armor
-            add_command_power = 50
+            command_power = 50
             unlock_decision_tooltip = PAU_accel_axia_mil_2
         }
     }
@@ -3281,7 +3257,7 @@ focus_tree = {
             unlock_decision_category_tooltip = PAU_army_reform_xfxy
             unlock_decision_tooltip = PAU_xfxy_command
             set_country_flag = PAU_army_reform_xfxy_unlocked
-            add_command_power = 50
+            command_power = 50
             unlock_decision_tooltip = PAU_accel_xfxy_mil_1
         }
         allow_branch = {
@@ -3400,7 +3376,7 @@ focus_tree = {
                 PAU_refresh_mil_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_xfxy_radio_net
-            add_command_power = 50
+            command_power = 50
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -3439,7 +3415,7 @@ focus_tree = {
                 PAU_refresh_mil_reform_tiers = yes
             }
             unlock_decision_tooltip = PAU_xfxy_signal_drill
-            add_command_power = 75
+            command_power = 75
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
