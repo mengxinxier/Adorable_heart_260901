@@ -512,7 +512,7 @@ focus_tree = {
         completion_reward = {
             add_equipment_to_stockpile = {
                 type = convoy
-                amount = 1000
+                amount = 200
                 producer = PAU
             }
             division_template = {
@@ -618,16 +618,36 @@ focus_tree = {
 
         completion_reward = {
             set_variable = { PAU_grail_rations = 100 }
+            add_to_variable = {
+                var = ubs_save #王室欠饷债务
+                value = var:PAU_debt
+                tooltip = ubs_save_tt
+            }
+            custom_effect_tooltip = PAU_zhyk_tt
             clr_country_flag = PAU_grail_camp #圣杯流亡营阶段结束
             country_event = {
                 id = PAU.20
                 days = 3
             }
             set_country_flag = PAU_undead_defeated #亡灵战争已经结束
-            add_manpower = 10000
             every_state = {
-                limit = { has_state_flag = is_lldy_state_flag }
+                limit = { 
+                    has_state_flag = is_lldy_state_flag
+                    not = {
+                        has_state_flag = PAM_orgin_controlled_state
+                    }
+                }
                 add_core_of = PAU
+            }
+            every_state = {
+                limit = { 
+                    has_state_flag = PAM_orgin_controlled_state
+                }
+				add_claim_by_ROOT_if_has_no_core = yes
+				enable_state_integration_50_compliance = yes
+            }
+            ENG = {
+                transfer_state = 299
             }
         }
     }
@@ -756,14 +776,7 @@ focus_tree = {
 
         completion_reward = {
             set_country_flag = has_PAU_xiaoyao4 #主线阶段4：南美经营期
-            set_country_flag = PAU_nightingale_ended # 夜莺之国事件已处理
 
-            custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = {
-                var = PAU_ml_raw_army_morale_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
-                value = 0.05  #需修改
-                tooltip = army_morale_factor_tt
-            }
 
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
@@ -772,8 +785,14 @@ focus_tree = {
                 id = PAU.22
                 hours = 6
             }
-
             add_political_power = 50
+
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_army_morale_factor #主线动态修正原始值：由国策/决议累加，PAU_mainline 读取
+                value = 0.05  #需修改
+                tooltip = army_morale_factor_tt
+            }
             add_to_variable = {
                 var = PAU_ml_raw_stability_factor
                 value = 0.05
