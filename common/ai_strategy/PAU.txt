@@ -1,0 +1,1020 @@
+PAU_start_base = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        always = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = force_defend_ally_borders
+        id = "WRQ"
+        value = -1000
+    }
+    ai_strategy = {
+        type = force_build_armies
+        value = 100
+    }
+    #屏蔽冷门特种装备浪费产能
+    ai_strategy = {
+        type = equipment_production_min_factories_archetype
+        id = super_heavy_artillery_equipment
+        value = -99
+    }
+    ai_strategy = {
+        type = equipment_variant_production_factor
+        id = super_heavy_artillery_equipment
+        value = -99
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories_archetype
+        id = self_propelled_super_heavy_artillery_equipment
+        value = -99
+    }
+    ai_strategy = {
+        type = equipment_variant_production_factor
+        id = self_propelled_super_heavy_artillery_equipment
+        value = -99
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories_archetype
+        id = armored_support_vehicle
+        value = -99
+    }
+    ai_strategy = {
+        type = equipment_variant_production_factor
+        id = armored_support_vehicle
+        value = -99
+    }
+    #基础科研倾向
+    ai_strategy = {
+        type = research_tech
+        id = infantry_weapons1
+        value = 2000
+    }
+    ai_strategy = {
+        type = research_tech
+        id = concentrated_industry
+        value = 200
+    }
+    ai_strategy = {
+        type = research_tech
+        id = electronic_mechanical_engineering
+        value = 200
+    }
+    #减少无意义后方驻军
+    ai_strategy = {
+        type = garrison
+        value = -150
+    }
+    #陆军经验优先改编制，其次点学说
+    ai_strategy = {
+        type = land_xp_spend_priority
+        id = division_template
+        value = 200
+    }
+    ai_strategy = {
+        type = land_xp_spend_priority
+        id = upgrade_xp_cutoff
+        value = 100
+    }
+}
+
+#扩军期保持陆军规模期望
+PAU_stop_disbanding_your_army = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        num_divisions < 600
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 800
+    }
+}
+
+#情报局建设
+PAU_intelligence_agency_focus = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        num_of_civilian_factories > 25
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = become_spymaster
+        value = 30
+    }
+    ai_strategy = {
+        type = intelligence_agency_usable_factories
+        value = 500
+    }
+    ai_strategy = {
+        type = intelligence_agency_branch_desire_factor
+        id = branch_crypto
+        value = 2000
+    }
+    ai_strategy = {
+        type = intelligence_agency_branch_desire_factor
+        id = branch_defense
+        value = 1500
+    }
+    ai_strategy = {
+        type = operation_equipment_priority
+        value = 100
+    }
+}
+
+#若玩家是LHS或PAM,PAU优先防御
+PAU_defensive_when_player_is_LHS_or_PAM = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        date < 1937.3.1
+        OR = {
+            LHS = { is_ai = no }
+            PAM = { is_ai = no }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        tag = LHS
+        priority = 80000
+        ordertype = front
+        manual_attack = yes
+        execution_type = careful
+        execute_order = no
+    }
+}
+
+#若PAU走小遥主线且LHS是AI,集中装甲力量快速打穿卡卡罗姆
+PAU_offensive_against_ai_LHS = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_country_flag = has_PAU_xiaoyao
+        LHS = { is_ai = yes }
+        country_exists = LHS
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = prepare_for_war
+        id = "LHS"
+        value = 500
+    }
+    ai_strategy = {
+        type = front_unit_request
+        tag = LHS
+        value = 200
+    }
+    ai_strategy = {
+        type = front_armor_score
+        id = LHS
+        value = 200
+    }
+    ai_strategy = {
+        type = front_control
+        tag = LHS
+        priority = 50000
+        ordertype = front
+        manual_attack = yes
+        execution_type = rush_weak
+        execute_order = yes
+    }
+}
+
+
+#登船圣杯岛前
+PAU_delaying_defense_against_ZDW = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_war_with = ZDW
+        NOT = { has_completed_focus = PAU_dsyq }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        tag = ZDW
+        priority = 60000
+        ordertype = front
+        manual_attack = yes
+        execution_type = careful
+        execute_order = no
+    }
+    ai_strategy = {
+        type = front_unit_request
+        tag = ZDW
+        value = 150
+    }
+}
+
+#从圣杯岛向南美大陆发起登陆与反攻
+PAU_counterattack_ZDW = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_completed_focus = PAU_dsyq
+        country_exists = ZDW
+        NOT = { has_country_flag = PAU_undead_defeated }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = invade
+        id = "ZDW"
+        value = 500
+    }
+    ai_strategy = {
+        type = conquer
+        id = "ZDW"
+        value = 500
+    }
+    #优先抢滩莉兰迪亚核心海岸与首都
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 278
+        value = 200
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            is_controlled_by = ZDW
+            is_coastal = yes
+            has_state_flag = is_lldy_state_flag
+        }
+        value = 100
+    }
+    ai_strategy = {
+        type = front_control
+        tag = ZDW
+        priority = 55000
+        ordertype = front
+        manual_attack = yes
+        execution_type = rush_weak
+        execute_order = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        tag = ZDW
+        value = 300
+    }
+}
+
+
+#交好魔法少女联盟与远征军
+PAU_befriend_MGU_and_LFC = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_country_flag = has_PAU_xiaoyao4
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = befriend
+        id = "MGU"
+        value = 200
+    }
+    ai_strategy = {
+        type = alliance
+        id = "MGU"
+        value = 200
+    }
+    ai_strategy = {
+        type = befriend
+        id = "LFC"
+        value = 200
+    }
+    ai_strategy = {
+        type = alliance
+        id = "LFC"
+        value = 200
+    }
+}
+
+#准备并围剿阿德莱希
+PAU_prepare_and_crush_PAQ = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_completed_focus = PAU_bzwtp
+        country_exists = PAQ
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = prepare_for_war
+        id = "PAQ"
+        value = 200
+    }
+    ai_strategy = {
+        type = conquer
+        id = "PAQ"
+        value = 200
+    }
+    ai_strategy = {
+        type = front_unit_request
+        tag = PAQ
+        value = 200
+    }
+    ai_strategy = {
+        type = front_armor_score
+        id = PAQ
+        value = 100
+    }
+    ai_strategy = {
+        type = front_control
+        tag = PAQ
+        priority = 25000
+        ordertype = front
+        manual_attack = yes
+        execution_type = balanced
+        execute_order = yes
+    }
+}
+
+#对所有与PAU交战的南美国家积极进攻
+PAU_unify_south_america_war = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_completed_focus = PAU_sztytz
+        NOT = { has_country_flag = PAU_south_america_super_fired }
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = PAU
+                capital_scope = { is_on_continent = south_america }
+            }
+        }
+        priority = 30000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+}
+
+PAU_prepare_and_invade_JAP = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_country_flag = has_PAU_xiaoyao7
+        country_exists = JAP
+        NOT = { has_country_flag = PAU_sakura_super_fired }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = prepare_for_war
+        id = "JAP"
+        value = 300
+    }
+    ai_strategy = {
+        type = invade
+        id = "JAP"
+        value = 500
+    }
+    ai_strategy = {
+        type = conquer
+        id = "JAP"
+        value = 300
+    }
+    #重点登陆日本本土核心港口与东京
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 282
+        value = 200
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            is_controlled_by = JAP
+            is_core_of = JAP
+            is_coastal = yes
+        }
+        value = 120
+    }
+    ai_strategy = {
+        type = front_control
+        tag = JAP
+        priority = 40000
+        ordertype = front
+        manual_attack = yes
+        execution_type = rush
+        execute_order = yes
+    }
+    ai_strategy = {
+        type = front_armor_score
+        id = JAP
+        value = 100
+    }
+    #研发两栖登陆科技
+    ai_strategy = {
+        type = research_tech
+        id = mtg_transport
+        value = 1000
+    }
+    ai_strategy = {
+        type = research_tech
+        id = mtg_landing_craft
+        value = 1000
+    }
+    ai_strategy = {
+        type = research_tech
+        id = amphibious_mechanized_infantry
+        value = 500
+    }
+}
+
+
+#讨伐魔导国
+PAU_war_with_DVL = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        OR = {
+            focus_progress = { focus = PAU_mdg progress > 0 }
+            has_completed_focus = PAU_mdg
+            has_war_with = DVL
+        }
+        country_exists = DVL
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = prepare_for_war
+        id = "DVL"
+        value = 200
+    }
+    ai_strategy = {
+        type = invade
+        id = "DVL"
+        value = 300
+    }
+    ai_strategy = {
+        type = conquer
+        id = "DVL"
+        value = 200
+    }
+    ai_strategy = {
+        type = front_control
+        tag = DVL
+        priority = 35000
+        ordertype = front
+        manual_attack = yes
+        execution_type = careful
+        execute_order = yes
+    }
+    ai_strategy = {
+        type = front_armor_score
+        id = DVL
+        value = 150
+    }
+}
+
+#对苏友好
+PAU_befriend_SOV = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_completed_focus = PAU_els
+        SOV = {
+            exists = yes
+            NOT = { has_war_with = PAU }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = befriend
+        id = "SOV"
+        value = 200
+    }
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "SOV"
+        value = 500
+    }
+    ai_strategy = {
+        type = send_lend_lease_desire
+        id = "SOV"
+        value = 200
+    }
+}
+
+#对华友好
+PAU_befriend_China = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_completed_focus = PAU_zg
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = befriend
+        id = "PRC"
+        value = 200
+    }
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "PRC"
+        value = 500
+    }
+    ai_strategy = {
+        type = befriend
+        id = "CHI"
+        value = 150
+    }
+}
+
+#世界革命（积极派志愿军与租借法案）
+PAU_endgame_world_revolution = {
+    reversed = yes
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        PAU = {
+            has_country_flag = PAU_world_revolution
+        }
+        has_government = communism
+        NOT = { has_war_with = PAU }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "PAU"
+        value = 200
+    }
+    ai_strategy = {
+        type = send_lend_lease_desire
+        id = "PAU"
+        value = 150
+    }
+}
+
+#通用战术
+PAU_avoid_thin_lines = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = PAU
+            check_variable = {
+                num_enemy_neighbor_states > 2
+            }
+        }
+        value = 100
+    }
+}
+
+PAU_concentrate_troops = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.20
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = force_concentration_factor
+        value = 15
+    }
+}
+
+PAU_target_enemy_supply_hubs = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_war = yes
+        num_of_military_factories > 35
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = { has_war_with = PAU }
+            any_neighbor_state = { is_controlled_by = PAU }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        priority = 32000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            controller = { has_war_with = PAU }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = { is_controlled_by = PAU }
+        }
+        value = 45
+    }
+}
+
+PAU_end_pocket = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_war = yes
+        num_divisions > 50
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_controlled_by = FROM.FROM
+                    NOT = { is_fully_controlled_by = FROM.FROM }
+                }
+                controller = { has_war_with = FROM.FROM }
+            }
+            all_neighbor_state = {
+                is_controlled_by = FROM.FROM
+            }
+        }
+        priority = 80000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_controlled_by = FROM.FROM
+                    NOT = { is_fully_controlled_by = FROM.FROM }
+                }
+                controller = { has_war_with = FROM.FROM }
+            }
+            all_neighbor_state = {
+                is_controlled_by = FROM.FROM
+            }
+        }
+        value = 25
+    }
+}
+
+PAU_push_enemy_capital = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.15
+        any_enemy_country = { surrender_progress > 0.10 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            owner = { has_war_with = PAU }
+            is_capital = yes
+            any_neighbor_state = { is_controlled_by = PAU }
+        }
+        priority = 55000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            owner = { has_war_with = PAU }
+            is_capital = yes
+            any_neighbor_state = { is_controlled_by = PAU }
+        }
+        value = 180
+    }
+}
+
+PAU_crisis_iron_wall = {
+    allowed = { original_tag = PAU }
+    enable = {
+        surrender_progress > 0.25
+        has_war = yes
+    }
+    abort = {
+        OR = {
+            surrender_progress < 0.15
+            has_capitulated = yes
+        }
+    }
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_controlled_by = PAU
+        }
+        priority = 90000
+        ordertype = front
+        execution_type = careful
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = infantry
+        value = 250
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = artillery
+        value = 150
+    }
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 1200
+    }
+}
+
+
+#1938年前民工与军工
+PAU_early_game_builder = {
+    allowed = { original_tag = PAU }
+    enable = {
+        NOT = { has_country_flag = has_PAU_xiaoyao4 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = building_target
+        id = dockyard
+        value = -5000
+    }
+    ai_strategy = {
+        type = building_target
+        id = industrial_complex
+        value = 2000
+    }
+    ai_strategy = {
+        type = building_target
+        id = arms_factory
+        value = 1500
+    }
+}
+
+#平衡民工与军工
+PAU_mid_game_industrial_buildup = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_country_flag = has_PAU_xiaoyao4
+        NOT = { has_country_flag = has_PAU_xiaoyao7 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = building_target
+        id = industrial_complex
+        value = 1500
+    }
+    ai_strategy = {
+        type = building_target
+        id = arms_factory
+        value = 2500
+    }
+    ai_strategy = {
+        type = building_target
+        id = dockyard
+        value = 300
+    }
+}
+
+#远征樱花与后期大力扩建船坞与军工
+PAU_expedition_naval_buildup = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_country_flag = has_PAU_xiaoyao6
+        num_of_naval_factories < 80
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = building_target
+        id = dockyard
+        value = 3000
+    }
+    ai_strategy = {
+        type = building_target
+        id = arms_factory
+        value = 2000
+    }
+}
+
+#缺运输船时优先造运输船
+PAU_convoy_production = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_equipment = { convoy < 400 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = convoy
+        value = 8
+    }
+    ai_strategy = {
+        type = equipment_market_buying_threshold
+        id = convoy
+        value = 50
+    }
+}
+
+# 步枪保底产能
+PAU_production_tier1_infantry = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_equipment = { infantry_equipment < 10000 }
+        num_of_military_factories > 15
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_factor
+        id = infantry
+        value = 200
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = infantry
+        value = 12
+    }
+}
+
+#支援装备、火炮、卡车与坦克产能
+PAU_production_support_and_armor = {
+    allowed = { original_tag = PAU }
+    enable = {
+        num_of_military_factories > 25
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = support
+        value = 4
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = artillery
+        value = 5
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = motorized
+        value = 4
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = armor
+        value = 6
+    }
+}
+
+#1938年后研发中坦与步坦炮升级
+PAU_mid_late_research = {
+    allowed = { original_tag = PAU }
+    enable = {
+        date > 1938.1.1
+    }
+    abort = { always = no }
+
+    ai_strategy = {
+        type = research_tech
+        id = improved_infantry_weapons
+        value = 2000
+    }
+    ai_strategy = {
+        type = research_tech
+        id = basic_medium_tank_chassis
+        value = 800
+    }
+    ai_strategy = {
+        type = research_tech
+        id = interwar_artillery
+        value = 400
+    }
+    ai_strategy = {
+        type = research_tech
+        id = artillery1
+        value = 400
+    }
+    ai_strategy = {
+        type = research_tech
+        id = tech_logistics_company2
+        value = 400
+    }
+    ai_strategy = {
+        type = research_tech
+        id = tech_maintenance_company2
+        value = 400
+    }
+    ai_strategy = {
+        type = research_tech
+        id = computing_machine
+        value = 400
+    }
+}
+
+#兵种比例倾向
+PAU_unit_role_ratios = {
+    allowed = { original_tag = PAU }
+    enable = {
+        num_divisions < 800
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = role_ratio
+        id = garrison
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = paratroopers
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = cavalry
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = PAU_infantry
+        value = 80
+    }
+    ai_strategy = {
+        type = template_prio
+        id = PAU_infantry
+        value = 100
+    }
+    ai_strategy = {
+        type = build_army
+        id = PAU_infantry
+        value = 100
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 25
+    }
+    ai_strategy = {
+        type = template_prio
+        id = armor
+        value = 100
+    }
+    ai_strategy = {
+        type = build_army
+        id = armor
+        value = 50
+    }
+}
