@@ -1,44 +1,5 @@
 #PAU 系统效果总表：本文件定义资源结算、动态修正刷新、剧情推进与旧存档变量兜底等 scripted_effects。
 #=====================================================================
-#PAU_arrive_grail：抵达圣杯流亡营地：初始化营地资源与旗标
-PAU_arrive_grail = {
-    set_country_flag = PAU_grail_camp #军团在圣杯地块上落脚
-    # 国家变量池：流亡营 + 圣杯营地网络（合计值与旧计数器版本一致）
-    add_to_variable = { PAU_ml_raw_industrial_capacity_factory = 0.10 }
-    add_to_variable = { PAU_ml_raw_consumer_goods_factor = -0.10 }
-    add_to_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
-    add_to_variable = { PAU_ml_raw_production_speed_buildings_factor = 0.10 }
-    299 = {
-        set_state_flag = PAU_grail_camp #圣杯流亡营固定在 state 299
-    }
-}
-
-
-#PAU_grail_robbed：圣杯营地被洗劫：处理物资损失与后续选择
-PAU_grail_robbed = {
-    add_equipment_to_stockpile = {
-        type = infantry_equipment
-        amount = -500
-    } #圣杯扣下了军团一半的口粮
-    add_to_variable = {
-        var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
-        value = -50
-        tooltip = PAU_grail_rations_tt
-    } #流亡营地的口粮储备被削掉
-    set_country_flag = PAU_grail_took_supplies #流亡路上记住了这笔账
-}
-
-#PAU_return_from_grail：离开圣杯营地：清除营地状态并返回南美
-PAU_return_from_grail = {
-    set_country_flag = PAU_return_south_america #调头回南美的命令已经下达
-    clr_country_flag = PAU_grail_camp #圣杯流亡营阶段结束
-    # 只撤销流亡营部分，保留营地与营地网络的永久加成
-    subtract_from_variable = { PAU_ml_raw_industrial_capacity_factory = 0.05 }
-    subtract_from_variable = { PAU_ml_raw_consumer_goods_factor = -0.05 }
-    subtract_from_variable = { PAU_ml_raw_production_speed_industrial_complex_factor = 0.05 }
-}
-
-
 
 
 #PAU_unlock_safe_harbor：解锁避风港机制：设置旗标并刷新避风港辐射
@@ -294,7 +255,7 @@ PAU_expand_safe_harbor = {
 
 #PAU_pull_into_white_night_faction：把目标国拉入白夜同盟阵营
 PAU_pull_into_white_night_faction = {
-    #确保白夜同盟存在；目标国若已有阵营，则把其整个阵营一并带入白夜同盟
+    #确保白夜同盟存在；普通阵营可整块带入，轴心/魔导/圣杯/苏联主导阵营只接收直接目标国
     PAU = {
         if = {
             limit = { NOT = { is_in_faction = yes } }
@@ -311,14 +272,32 @@ PAU_pull_into_white_night_faction = {
         }
         if = {
             limit = { ROOT = { is_in_faction = yes } }
-            ROOT = {
-                every_faction_member = {
-                    display_individual_scopes = yes
-                    leave_faction = yes
-                    PAU = {
-                        faction_leader = {
-                            #PREV 是 PAU，PREV.PREV 是当前阵营成员
-                            add_to_faction = PREV.PREV
+            if = {
+                limit = {
+                    ROOT = {
+                        NOT = { has_country_flag = PAU_allow_major_faction_pull }
+                        OR = {
+                            faction_leader = { OR = { tag = GER tag = DVL tag = ENG tag = SOV } }
+                            has_faction_template = faction_template_axis
+                            has_faction_template = faction_template_allies
+                            has_faction_template = faction_template_comintern
+                        }
+                    }
+                }
+                #轴心国/魔导国/圣杯/苏联的主导阵营只接收被直接点名的目标国，不整块拖拽
+                ROOT = { leave_faction = yes }
+                PAU = { faction_leader = { add_to_faction = ROOT } }
+            }
+            else = {
+                ROOT = {
+                    every_faction_member = {
+                        display_individual_scopes = yes
+                        leave_faction = yes
+                        PAU = {
+                            faction_leader = {
+                                #PREV 是 PAU，PREV.PREV 是当前阵营成员
+                                add_to_faction = PREV.PREV
+                            }
                         }
                     }
                 }
@@ -328,6 +307,7 @@ PAU_pull_into_white_night_faction = {
             PAU = { faction_leader = { add_to_faction = ROOT } }
         }
     }
+    ROOT = { clr_country_flag = PAU_allow_major_faction_pull }
 }
 
 #PAU_join_soviet_faction：加入苏联阵营
@@ -527,12 +507,20 @@ PAU_refresh_late_networks = {
 
 #PAU_call_joint_staff_college：联合参谋学院课程结算：按课程刷新等级与奖励
 PAU_call_joint_staff_college = {
+    PAU_refresh_south_america_members = yes
     every_faction_member = {
         limit = {
             NOT = { tag = PAU }
             capital_scope = { is_on_continent = south_america }
         }
         country_event = { id = PAU.580 days = 1 }
+    }
+    if = {
+        limit = { check_variable = { PAU_south_america_members < 2 } }
+        if = { limit = { check_variable = { PAU_sa_college_armor < 3 } } add_to_variable = { PAU_sa_college_armor = 1 } }
+        if = { limit = { check_variable = { PAU_sa_college_infantry < 3 } } add_to_variable = { PAU_sa_college_infantry = 1 } }
+        if = { limit = { check_variable = { PAU_sa_college_operations < 3 } } add_to_variable = { PAU_sa_college_operations = 1 } }
+        hidden_effect = { PAU_refresh_joint_staff_college = yes }
     }
 }
 
@@ -573,12 +561,23 @@ PAU_refresh_joint_staff_college = {
 
 #PAU_call_state_council_missions：国务委员会任务结算：按领域任务刷新委员会加成
 PAU_call_state_council_missions = {
+    PAU_refresh_south_america_members = yes
     every_faction_member = {
         limit = {
             NOT = { tag = PAU }
             capital_scope = { is_on_continent = south_america }
         }
         country_event = { id = PAU.610 days = 1 }
+    }
+    if = {
+        limit = { check_variable = { PAU_south_america_members < 2 } }
+        if = { limit = { check_variable = { PAU_sa_state_industry < 3 } } add_to_variable = { PAU_sa_state_industry = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_infrastructure < 3 } } add_to_variable = { PAU_sa_state_infrastructure = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_trade < 3 } } add_to_variable = { PAU_sa_state_trade = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_diplomacy < 3 } } add_to_variable = { PAU_sa_state_diplomacy = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_welfare < 3 } } add_to_variable = { PAU_sa_state_welfare = 1 } }
+        if = { limit = { check_variable = { PAU_sa_state_mobilization < 3 } } add_to_variable = { PAU_sa_state_mobilization = 1 } }
+        hidden_effect = { PAU_refresh_state_council = yes }
     }
 }
 
@@ -637,26 +636,6 @@ PAU_refresh_state_council = {
 
 
 
-#PAU_raise_white_night_militia：在白夜庇护州创建白夜民兵
-PAU_raise_white_night_militia = {
-    every_controlled_state = {
-        limit = { has_state_flag = PAU_xiaoyao_state_flag }
-        create_unit = {
-            division = "name = \"白夜民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.1"
-            count = 1
-            owner = ROOT
-        }
-    }
-    #避风港同样是民间动员支点，额外组织一支民兵
-    every_controlled_state = {
-        limit = { has_state_flag = PAU_safe_harbor }
-        create_unit = {
-            division = "name = \"避风港民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.1"
-            count = 1
-            owner = ROOT
-        }
-    }
-}
 
 #PAU_advance_baiye_story：白夜巡游推进：计数+1，在1/2/3/4触发剧情事件
 PAU_advance_baiye_story = {
@@ -854,47 +833,3 @@ PAU_ml_remove_PAU_coastal_network_3 = {
     }
 }
 
-
-
-
-# PAU_ml_add_PAU_undead_pressure：亡灵压迫：死气缠着军团（计数+1，避免重复叠加）
-PAU_ml_add_PAU_undead_pressure = {
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure < 1 } }
-        add_to_variable = { PAU_ml_count_PAU_undead_pressure = 1 }
-        add_to_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5%
-        add_to_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点获取-5%
-        add_to_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5%
-    }
-}
-# PAU_ml_remove_PAU_undead_pressure：亡灵压迫：死气缠着军团（计数-1，撤销对应修正）
-PAU_ml_remove_PAU_undead_pressure = {
-    if = { limit = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } }
-        subtract_from_variable = { PAU_ml_count_PAU_undead_pressure = 1 }
-        subtract_from_variable = { PAU_ml_raw_attrition = 0.05 } # 亡灵压迫：损耗+5%
-        subtract_from_variable = { PAU_ml_raw_political_power_factor = -0.05 } # 亡灵压迫：政治点获取-5%
-        subtract_from_variable = { PAU_ml_raw_army_morale_factor = -0.05 } # 亡灵压迫：陆军士气-5%
-    }
-}
-# PAU_refresh_undead_pressure：亡灵战争每月结算压迫、减压旗标与反扑事件
-PAU_refresh_undead_pressure = {
-    if = {
-        limit = {
-            has_country_flag = PAU_undead_war
-            NOT = { has_country_flag = PAU_undead_defeated }
-        }
-        add_to_variable = { PAU_undead_pressure = 3 } # 亡灵每月反扑
-        if = { limit = { has_country_flag = PAU_undead_fuel_denied } add_to_variable = { PAU_undead_pressure = -1 } }
-        if = { limit = { has_country_flag = PAU_undead_scorched_earth } add_to_variable = { PAU_undead_pressure = -1 } }
-        if = { limit = { any_controlled_state = { has_state_flag = PAU_xiaoyao_state_flag } } add_to_variable = { PAU_undead_pressure = -1 } }
-        clamp_variable = { var = PAU_undead_pressure min = 0 max = 999 }
-        if = {
-            limit = { check_variable = { PAU_undead_pressure > 0 } }
-            if = { limit = { NOT = { check_variable = { PAU_ml_count_PAU_undead_pressure > 0 } } } hidden_effect = { PAU_ml_add_PAU_undead_pressure = yes } }
-        }
-        else = { hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes } }
-        if = { limit = { NOT = { has_variable = PAU_undead_surge_timer } } set_variable = { PAU_undead_surge_timer = 0 } }
-        add_to_variable = { PAU_undead_surge_timer = 1 }
-        if = { limit = { check_variable = { PAU_undead_surge_timer > 1 } } set_variable = { PAU_undead_surge_timer = 0 } country_event = { id = PAU.7010 hours = 6 } }
-    }
-    else = { hidden_effect = { PAU_ml_remove_PAU_undead_pressure = yes } }
-}
