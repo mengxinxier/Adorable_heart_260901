@@ -1,0 +1,24 @@
+#!/bin/sh
+# 本地 AI 提交说明钩子。
+# 安装：python .github/scripts/install_hooks.py
+# 关闭：git commit --no-verify，或设置 SKIP_AI_COMMIT_MSG=1。
+
+if [ "${SKIP_AI_COMMIT_MSG:-0}" = "1" ]; then
+  exit 0
+fi
+
+export PYTHONUTF8=1
+export PYTHONIOENCODING=utf-8
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+script="$root/.github/scripts/ai_commit_message.py"
+[ -f "$script" ] || exit 0
+
+if command -v python >/dev/null 2>&1; then
+  python "$script" "$1" "${2:-}" "${3:-}" || true
+elif command -v py >/dev/null 2>&1; then
+  py -3 "$script" "$1" "${2:-}" "${3:-}" || true
+elif command -v python3 >/dev/null 2>&1; then
+  python3 "$script" "$1" "${2:-}" "${3:-}" || true
+fi
+exit 0
