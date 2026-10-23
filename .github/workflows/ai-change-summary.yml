@@ -1,0 +1,62 @@
+name: AI change summary
+
+on:
+  # 使用 pull_request_target 而不是 pull_request，是为了让同仓库分支的 PR
+  # 能拿到 secret 和写权限；工作流始终使用默认分支版本，且不执行 PR 代码。
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: ["**"]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write   # push 事件需要给 commit 写评论
+  issues: write     # 需要更新 PR 描述/评论
+  pull-requests: write
+
+concurrency:
+  group: ai-change-summary-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  describe:
+    # issue_comment 只允许仓库成员/合作者手动触发，评论里需包含 /ai-describe 或 /ai-summary
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.pull_request != null &&
+        (contains(github.event.comment.body, '/ai-describe') || contains(github.event.comment.body, '/ai-summary')) &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted workflow version
+        uses: actions/checkout@v4
+        with:
+          # PR 只 checkout base；push/评论事件使用默认分支上的受信任脚本。
+          # 绝不 checkout/执行 PR 或功能分支里的代码。
+          ref: ${{ github.event.pull_request.base.sha || github.event.repository.default_branch }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Generate and fill change summary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 只从仓库 Secrets/Variables 读取；不要在 YAML 里写任何密钥
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+          LLM_MODEL: ${{ vars.LLM_MODEL }}
+          SUMMARY_LANGUAGE: ${{ vars.SUMMARY_LANGUAGE }}
+          LLM_JSON_MODE: ${{ vars.LLM_JSON_MODE }}
+          LLM_MAX_TOKENS: ${{ vars.LLM_MAX_TOKENS }}
+          LLM_TIMEOUT_SECONDS: ${{ vars.LLM_TIMEOUT_SECONDS }}
+          ALLOW_INSECURE_LLM_URL: ${{ vars.ALLOW_INSECURE_LLM_URL }}
+          MAX_DIFF_CHARS: ${{ vars.MAX_DIFF_CHARS }}
+          MAX_FILE_PATCH_CHARS: ${{ vars.MAX_FILE_PATCH_CHARS }}
+          MAX_FILES: ${{ vars.MAX_FILES }}
+          SKIP_FORK_PRS: ${{ vars.SKIP_FORK_PRS }}
+          SKIP_PUSH_WITH_OPEN_PR: ${{ vars.SKIP_PUSH_WITH_OPEN_PR }}
+          FAIL_ON_ERROR: ${{ vars.FAIL_ON_ERROR }}
+        run: python .github/scripts/ai_change_summary.py
