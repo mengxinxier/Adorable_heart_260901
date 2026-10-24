@@ -91,7 +91,7 @@ NDefines.NDiplomacy.MARKET_ACCESS_ACCEPTANCE_NON_AGGRESSION_PACT = 25           
 -- 消费品
 NDefines.NProduction.MINIMUM_NUMBER_OF_FACTORIES_TAKEN_BY_CONSUMER_GOODS_PERCENT = 0.05	-- The minimum number of factories we have to put on consumer goods, in percent.
 
--- 丝滑的摄像机
+-- 丝滑的摄像机/地图视野
 NDefines_Graphics.NFrontend.CAMERA_MIN_HEIGHT = 30.0
 NDefines_Graphics.NFrontend.CAMERA_MAX_HEIGHT = 3475.0
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED = 50
