@@ -1894,8 +1894,8 @@ PAU_grail_camp = {
     }
 }
 
-#剧情定位：莉兰迪亚避风港：指定州并专精军港/商港/难民港
-PAU_safe_harbor = { #奇怪的修正
+#剧情定位：莉兰迪亚避风港：指定州并专精军港/商港
+PAU_safe_harbor = {
     #决议名：指定 [FROM.GetName] 为避风港
     PAU_designate_safe_harbor = {
         icon = GFX_mission_build_nest_for_seagull
@@ -1908,6 +1908,7 @@ PAU_safe_harbor = { #奇怪的修正
                 tooltip = PAU_cond_harbor_count_lt3_tt
                 check_variable = { PAU_harbor_count < 3 } #避风港数量：已指定为避风港的州数
             }
+            num_of_civilian_factories_available_for_projects > 4
         }
         on_map_mode = map_and_decisions_view
         state_target = yes
@@ -1920,20 +1921,35 @@ PAU_safe_harbor = { #奇怪的修正
         }
         cost = 50
         days_remove = 30
+        modifier = {
+            civilian_factory_use = 5
+        }
         remove_effect = {
             FROM = {
                 set_state_flag = PAU_safe_harbor
-                hidden_effect = {
-                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_1 }
-                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_2 }
-                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_3 }
-                    remove_dynamic_modifier = { modifier = PAU_harbor_spillover_4 }
-                }
                 add_dynamic_modifier = { modifier = PAU_safe_harbor_state }
             }
             if = {
                 limit = { NOT = { has_dynamic_modifier = { modifier = PAU_safe_harbor_network } } }
                 add_dynamic_modifier = { modifier = PAU_safe_harbor_network }
+            }
+            else = {
+                custom_effect_tooltip = PAU_safe_harbor_network_tt
+                add_to_variable = {
+                    var = PAU_safe_harbor_network_repair_speed_factor
+                    value = 0.05
+                    tooltip = repair_speed_factor_tt
+                }
+                add_to_variable = {
+                    var = PAU_safe_harbor_network_production_speed_dockyard_factor
+                    value = 0.05
+                    tooltip = production_speed_dockyard_factor_tt
+                }
+                add_to_variable = {
+                    var = PAU_safe_harbor_network_consumer_goods_factor
+                    value = 0.05
+                    tooltip = consumer_goods_factor_tt
+                }
             }
             add_to_variable = {
                 var = PAU_harbor_count #避风港数量：已指定为避风港的州数
@@ -1952,6 +1968,7 @@ PAU_safe_harbor = { #奇怪的修正
         }
         available = {
             any_controlled_state = { has_state_flag = PAU_safe_harbor }
+            num_of_civilian_factories_available_for_projects > 4
         }
         on_map_mode = map_and_decisions_view
         state_target = yes
@@ -1960,15 +1977,20 @@ PAU_safe_harbor = { #奇怪的修正
                 has_state_flag = PAU_safe_harbor
                 NOT = { has_state_flag = PAU_harbor_type_military }
                 NOT = { has_state_flag = PAU_harbor_type_trade }
-                NOT = { has_state_flag = PAU_harbor_type_refugee }
             }
         }
         cost = 25
         days_remove = 30
+        modifier = {
+            civilian_factory_use = 5
+        }
         remove_effect = {
             FROM = {
                 set_state_flag = PAU_harbor_type_military
-                add_dynamic_modifier = { modifier = PAU_harbor_military_state }
+                add_dynamic_modifier = {
+                    modifier = PAU_harbor_military_state
+                    scope = PAU
+                }
             }
         }
         ai_will_do = { factor = 10 }
@@ -1982,6 +2004,7 @@ PAU_safe_harbor = { #奇怪的修正
         }
         available = {
             any_controlled_state = { has_state_flag = PAU_safe_harbor }
+            num_of_civilian_factories_available_for_projects > 4
         }
         on_map_mode = map_and_decisions_view
         state_target = yes
@@ -1990,76 +2013,19 @@ PAU_safe_harbor = { #奇怪的修正
                 has_state_flag = PAU_safe_harbor
                 NOT = { has_state_flag = PAU_harbor_type_military }
                 NOT = { has_state_flag = PAU_harbor_type_trade }
-                NOT = { has_state_flag = PAU_harbor_type_refugee }
             }
         }
         cost = 25
         days_remove = 30
+        modifier = {
+            civilian_factory_use = 5
+        }
         remove_effect = {
             FROM = {
                 set_state_flag = PAU_harbor_type_trade
-                add_dynamic_modifier = { modifier = PAU_harbor_trade_state }
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：把 [FROM.GetName] 建成难民港
-    PAU_harbor_refugee = {
-        icon = GFX_decision_hol_engelandvaarders
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_safe_harbor_unlocked
-        }
-        available = {
-            any_controlled_state = { has_state_flag = PAU_safe_harbor }
-        }
-        on_map_mode = map_and_decisions_view
-        state_target = yes
-        target_trigger = {
-            FROM = {
-                has_state_flag = PAU_safe_harbor
-                NOT = { has_state_flag = PAU_harbor_type_military }
-                NOT = { has_state_flag = PAU_harbor_type_trade }
-                NOT = { has_state_flag = PAU_harbor_type_refugee }
-            }
-        }
-        cost = 25
-        days_remove = 30
-        remove_effect = {
-            FROM = {
-                set_state_flag = PAU_harbor_type_refugee
-                add_dynamic_modifier = { modifier = PAU_harbor_refugee_state }
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：接收流亡舰队
-    PAU_safe_harbor_refugees = {
-        icon = GFX_PAM_xlb
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_safe_harbor_unlocked
-        }
-
-        available = {
-            any_controlled_state = { has_state_flag = PAU_harbor_type_refugee }
-        }
-        cost = 25
-        days_remove = 30
-        days_re_enable = 60
-        remove_effect = {
-            add_manpower = 8000
-            add_stability = 0.05
-            random_controlled_state = {
-                limit = {
-                    has_state_flag = PAU_harbor_type_refugee
-                    is_controlled_by = ROOT
-                }
-                add_extra_state_shared_building_slots = 1
-                add_building_construction = {
-                    type = industrial_complex
-                    level = 1
-                    instant_build = yes
+                add_dynamic_modifier = {
+                    modifier = PAU_harbor_trade_state
+                    scope = PAU
                 }
             }
         }
@@ -2075,32 +2041,19 @@ PAU_safe_harbor = { #奇怪的修正
 
         available = {
             any_controlled_state = { has_state_flag = PAU_harbor_type_military }
+            num_of_civilian_factories_available_for_projects > 9
         }
         cost = 25
-        days_remove = 30
-        days_re_enable = 60
+        days_remove = 60
+        modifier = {
+            civilian_factory_use = 10
+            repair_speed_factor = 0.25
+            naval_ship_recovery_chance_factor = 0.25
+            production_speed_dockyard_factor = 0.25
+        }
         remove_effect = {
-            navy_experience = 60
-            random_controlled_state = {
-                limit = {
-                    has_state_flag = PAU_harbor_type_military
-                    is_controlled_by = ROOT
-                }
-                add_extra_state_shared_building_slots = 1
-                add_building_construction = {
-                    type = dockyard
-                    level = 1
-                    instant_build = yes
-                }
-            }
-            if = {
-                limit = { check_variable = { PAU_ml_raw_naval_ship_recovery_chance_factor < 0.15 } }
-                add_to_variable = {
-                    var = PAU_ml_raw_naval_ship_recovery_chance_factor
-                    value = 0.05
-                    tooltip = naval_ship_recovery_chance_factor_tt
-                }
-            }
+            navy_experience = 10
+            add_equipment_to_stockpile = { type = convoy amount = 50 }
         }
         ai_will_do = { factor = 10 }
     }
@@ -2108,48 +2061,65 @@ PAU_safe_harbor = { #奇怪的修正
     PAU_safe_harbor_lane = {
         icon = GFX_decision_hol_inundate_water_lines
         allowed = { original_tag = PAU }
-        visible = {
+        visible = { #
             has_country_flag = PAU_safe_harbor_unlocked
+            or = {
+                and = {
+                    ENG = {
+                        has_completed_focus = ENG_27_tbjsxd
+                        exists = yes
+                        is_subject = no
+                    }
+                    not = {
+                        has_country_flag = has_wto
+                    }
+                }
+                and = {
+                    SOV = {
+                        has_completed_focus = SOV_Establish_Council_for_Mutual_Economic_Assistance
+                        exists = yes
+                        is_subject = no
+                    }
+                    not = {
+                        has_country_flag = has_com
+                    }
+                }
+            }
         }
 
         available = {
-            any_controlled_state = { has_state_flag = PAU_harbor_type_trade }
         }
         cost = 25
         days_remove = 30
         days_re_enable = 60
         remove_effect = {
-            add_fuel = 5000
-            add_equipment_to_stockpile = { type = convoy amount = 30 }
             if = {
-                limit = { check_variable = { PAU_ml_raw_trade_opinion_factor < 0.15 } }
-                add_to_variable = {
-                    var = PAU_ml_raw_trade_opinion_factor
-                    value = 0.05
-                    tooltip = trade_opinion_factor_tt
+                limit = {
+                    not = {
+                        has_country_flag = has_wto
+                    }
+                    ENG = {
+                        has_completed_focus = ENG_27_tbjsxd
+                        exists = yes
+                        is_subject = no
+                    }
                 }
+			    add_ideas = pau_wto_observer_state
+                set_country_flag = has_wto
             }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：从避风港走一趟私货
-    PAU_safe_harbor_smuggle = {
-        icon = GFX_decision_generic_secret_service
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_safe_harbor_unlocked
-        }
-        available = {
-            any_controlled_state = { has_state_flag = PAU_safe_harbor }
-        }
-        cost = 25
-        fire_only_once = yes
-        complete_effect = {
-            add_manpower = 8000
-            add_equipment_to_stockpile = {
-                type = support_equipment
-                amount = 2500
-                producer = PAU
+            else_if = {
+                limit = {
+                    not = {
+                        has_country_flag = has_com
+                    }
+                    SOV = {
+                        has_completed_focus = SOV_Establish_Council_for_Mutual_Economic_Assistance
+                        exists = yes
+                        is_subject = no
+                    }
+                }
+			    add_ideas = pau_comecon_observer_state
+                set_country_flag = has_com
             }
         }
         ai_will_do = { factor = 10 }
@@ -2176,7 +2146,7 @@ PAU_safe_harbor = { #奇怪的修正
         remove_effect = {
             random_controlled_state = {
                 limit = { has_state_flag = PAU_safe_harbor is_controlled_by = ROOT }
-                PAU_expand_safe_harbor = yes
+                    add_extra_state_shared_building_slots = 1
             }
             add_to_variable = {
                 var = PAU_harbor_dev #避风港发展度：扩建避风港积累值
@@ -2187,72 +2157,6 @@ PAU_safe_harbor = { #奇怪的修正
             hidden_effect = { PAU_refresh_harbor_spillover_states = yes }
         }
         ai_will_do = { factor = 10 }
-    }
-    #决议名：自动扩建避风港
-    PAU_safe_harbor_auto = {
-        icon = GFX_decision_CHL_mapuche_reorganize_the_mexican_government
-        allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_safe_harbor_unlocked NOT = { has_country_flag = PAU_auto_harbor } }
-        cost = 0
-        fire_only_once = no
-        complete_effect = {
-            set_country_flag = PAU_auto_harbor #自动避风港任务已开启
-            activate_mission = PAU_safe_harbor_auto_task
-        }
-        ai_will_do = { factor = 0 }
-    }
-
-    #决议名：避风港扩建循环任务
-    PAU_safe_harbor_auto_task = {
-        icon = GFX_PAU_bifenggang0
-        allowed = { original_tag = PAU }
-        available = { always = no }
-        # 与 PAU_baiye_auto_task 保持一致：只允许手动 activate_mission 启动
-        activation = { always = no }
-        selectable_mission = no
-        is_good = yes
-        days_mission_timeout = 30
-        cancel_trigger = { NOT = { has_country_flag = PAU_auto_harbor } }
-        timeout_effect = {
-            if = {
-                limit = {
-                    has_country_flag = PAU_auto_harbor
-                    check_variable = { PAU_harbor_dev < 6 } #避风港发展度：扩建避风港积累值
-                    has_political_power > 24
-                    any_controlled_state = { has_state_flag = PAU_safe_harbor }
-                }
-                add_political_power = -25
-                random_controlled_state = {
-                    limit = { has_state_flag = PAU_safe_harbor is_controlled_by = ROOT }
-                    add_extra_state_shared_building_slots = 1
-                }
-                add_to_variable = { var = PAU_harbor_dev value = 1 tooltip = PAU_harbor_dev_tt }#避风港发展度：扩建避风港积累值
-                hidden_effect = { PAU_refresh_harbor_spillover_states = yes }
-            }
-            if = {
-                limit = {
-                    has_country_flag = PAU_auto_harbor
-                    check_variable = { PAU_harbor_dev < 6 }
-                }
-                activate_mission = PAU_safe_harbor_auto_task
-            }
-        }
-        cancel_effect = {
-            clr_country_flag = PAU_auto_harbor
-        }
-    }
-
-    #决议名：取消自动避风港任务
-    PAU_safe_harbor_auto_cancel = {
-        icon = GFX_PA1_event_button_minimize
-        allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_safe_harbor_unlocked has_country_flag = PAU_auto_harbor }
-        cost = 0
-        fire_only_once = no
-        complete_effect = {
-            clr_country_flag = PAU_auto_harbor
-        }
-        ai_will_do = { factor = 0 }
     }
 }
 
