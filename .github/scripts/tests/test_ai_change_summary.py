@@ -293,7 +293,7 @@ class MainFlowTests(unittest.TestCase):
         self.assertIn("更新应用逻辑", body)
 
 
-    def test_push_without_pr_posts_commit_comment(self) -> None:
+    def test_push_without_pr_writes_step_summary(self) -> None:
         event = {
             "before": "abc123",
             "after": "def456",
@@ -315,8 +315,6 @@ class MainFlowTests(unittest.TestCase):
                 }
             ],
         }
-        captured_comment = {}
-
         def fake_urlopen(request, timeout=0):
             url = request.full_url
             method = request.get_method()
@@ -324,11 +322,6 @@ class MainFlowTests(unittest.TestCase):
                 return FakeHttpResponse([])
             if url.startswith("https://api.github.com/repos/acme/repo/compare/abc123...def456"):
                 return FakeHttpResponse(compare)
-            if url.startswith("https://api.github.com/repos/acme/repo/commits/def456/comments"):
-                if method == "POST":
-                    captured_comment.update(json.loads(request.data.decode("utf-8")))
-                    return FakeHttpResponse({"id": 1})
-                return FakeHttpResponse([])
             if url == "https://llm.example/v1/chat/completions":
                 content = json.dumps(
                     {
@@ -348,6 +341,7 @@ class MainFlowTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             event_path = Path(tmp) / "event.json"
+            summary_path = Path(tmp) / "summary.md"
             event_path.write_text(json.dumps(event), encoding="utf-8")
             with patch.dict(
                 os.environ,
@@ -356,6 +350,7 @@ class MainFlowTests(unittest.TestCase):
                     "GITHUB_REPOSITORY": "acme/repo",
                     "GITHUB_EVENT_NAME": "push",
                     "GITHUB_EVENT_PATH": str(event_path),
+                    "GITHUB_STEP_SUMMARY": str(summary_path),
                     "LLM_API_KEY": "test-key",
                     "LLM_BASE_URL": "https://llm.example/v1",
                     "LLM_MODEL": "test-model",
@@ -363,11 +358,11 @@ class MainFlowTests(unittest.TestCase):
                 clear=False,
             ), patch("urllib.request.urlopen", side_effect=fake_urlopen):
                 exit_code = ai.main()
+            summary_text = summary_path.read_text(encoding="utf-8")
 
         self.assertEqual(exit_code, 0)
-        body = captured_comment.get("body", "")
-        self.assertIn(ai.SUMMARY_START, body)
-        self.assertIn("演示推送", body)
+        self.assertIn(ai.SUMMARY_START, summary_text)
+        self.assertIn("演示推送", summary_text)
 
 
 class EndpointTests(unittest.TestCase):
