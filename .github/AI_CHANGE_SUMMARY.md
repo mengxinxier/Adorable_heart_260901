@@ -50,7 +50,31 @@ git commit -m "111"
 
 如果提交信息本身是正常的中文/英文说明，本地不会调用 API，原样保留。
 
-### 环境变量
+### 团队共用一个 API Key（推荐）
+
+每台电脑只需要安装一次。合作者先 `git pull`，然后双击：
+
+```text
+.github\scripts\setup_windows.cmd
+```
+
+或在 PowerShell 中运行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_windows.ps1
+```
+
+脚本会：
+
+- 自动执行 `git config core.hooksPath .githooks`
+- 检查 Python 和钩子文件
+- 提示粘贴团队共用的 `LLM_API_KEY`（输入不回显）
+- 把 `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL` 写入当前 Windows 用户环境变量
+- 测试模型接口是否可用
+
+密钥只存在合作者本机的用户环境变量里，不会进入 Git 仓库。需要注意：共用 Key 意味着所有使用者的调用额度和费用都算在同一个 Key 上，任何能登录那台电脑的人也可能读到该环境变量；如果 Key 外泄，应在服务商后台轮换。
+
+### 手动配置环境变量
 
 钩子只从环境变量读取密钥，不会读取仓库里的文件：
 
