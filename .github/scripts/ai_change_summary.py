@@ -695,12 +695,23 @@ def collect_issue_comment_change(payload: dict[str, Any]) -> ChangeSet:
 
 
 def _chat_completions_url() -> str:
-    base = env("LLM_BASE_URL", "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1").rstrip("/")
-    if base.endswith("/chat/completions"):
+    """兼容常见的 OpenAI 风格 base URL 写法。
+
+    - https://api.openai.com            -> /v1/chat/completions
+    - https://api.openai.com/v1         -> /v1/chat/completions
+    - https://open.bigmodel.cn/api/paas/v4 -> /api/paas/v4/chat/completions
+    - 已经是完整的 /chat/completions URL（可带查询参数）则原样使用
+    """
+    base = env(
+        "LLM_BASE_URL",
+        "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1",
+    ).rstrip("/")
+    parsed = urllib.parse.urlparse(base)
+    if "/chat/completions" in parsed.path:
         return base
-    if not base.endswith("/v1"):
-        base += "/v1"
-    return base + "/chat/completions"
+    if parsed.path and parsed.path != "/":
+        return base + "/chat/completions"
+    return base + "/v1/chat/completions"
 
 
 def _response_content(response: dict[str, Any]) -> str:

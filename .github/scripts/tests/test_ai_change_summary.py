@@ -384,6 +384,27 @@ class EndpointTests(unittest.TestCase):
                 ai._chat_completions_url(),
                 "https://example.com/custom/chat/completions",
             )
+        with patch.dict(
+            os.environ, {"LLM_BASE_URL": "https://open.bigmodel.cn/api/paas/v4"}
+        ):
+            self.assertEqual(
+                ai._chat_completions_url(),
+                "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+            )
+        with patch.dict(
+            os.environ,
+            {
+                "LLM_BASE_URL": (
+                    "https://example.openai.azure.com/openai/deployments/demo/"
+                    "chat/completions?api-version=2024-06-01"
+                )
+            },
+        ):
+            self.assertEqual(
+                ai._chat_completions_url(),
+                "https://example.openai.azure.com/openai/deployments/demo/"
+                "chat/completions?api-version=2024-06-01",
+            )
 
     def test_call_llm_parses_model_json(self) -> None:
         change = ai.ChangeSet(
