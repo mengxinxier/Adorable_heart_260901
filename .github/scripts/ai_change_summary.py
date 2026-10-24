@@ -200,9 +200,8 @@ class ChangeSet:
 
 @dataclass
 class UpdateTarget:
-    kind: str  # "pr" 或 "commit_comment"
+    kind: str  # "pr" 或 "step_summary"
     pr_number: int | None = None
-    commit_sha: str | None = None
 
 
 def env(name: str, default: str = "") -> str:
@@ -1040,35 +1039,19 @@ def update_pr_body(pr_number: int, block: str, replace_body: bool = False) -> No
     log(f"已更新 PR #{pr_number} 的改动说明")
 
 
-def update_commit_comment(sha: str, block: str) -> None:
-    comments = github_pages(
-        f"/repos/{repo_slug()}/commits/{sha}/comments",
-        max_pages=3,
-        max_items=300,
-    )
-    existing = next(
-        (
-            item
-            for item in comments
-            if SUMMARY_START in str(item.get("body") or "")
-            and SUMMARY_END in str(item.get("body") or "")
-        ),
-        None,
-    )
-    if existing and existing.get("id"):
-        github_request(
-            "PATCH",
-            f"/repos/{repo_slug()}/comments/{int(existing['id'])}",
-            payload={"body": block},
-        )
-        log(f"已更新提交 {sha[:12]} 的改动说明 comment")
+def write_step_summary(block: str) -> None:
+    """写入 GitHub Actions 运行摘要，不在 commit/PR 下发评论，避免通知邮件。"""
+    summary_path = env("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        # 本地调试没有 GITHUB_STEP_SUMMARY 时输出到日志，不调用任何写 API。
+        log(block)
         return
-    github_request(
-        "POST",
-        f"/repos/{repo_slug()}/commits/{sha}/comments",
-        payload={"body": block},
-    )
-    log(f"已为提交 {sha[:12]} 创建改动说明 comment")
+    try:
+        with open(summary_path, "a", encoding="utf-8") as handle:
+            handle.write(block.rstrip() + "\n")
+    except OSError as exc:
+        raise SummaryError(f"写入 Actions summary 失败：{exc}") from exc
+    log("已将改动说明写入本次 Actions 运行摘要")
 
 
 def apply_target(
@@ -1077,8 +1060,8 @@ def apply_target(
     if target.kind == "pr" and target.pr_number:
         update_pr_body(target.pr_number, block, replace_body=replace_pr_body)
         return
-    if target.kind == "commit_comment" and target.commit_sha:
-        update_commit_comment(target.commit_sha, block)
+    if target.kind == "step_summary":
+        write_step_summary(block)
         return
     raise SummaryError("没有可写入的目标")
 
@@ -1120,7 +1103,7 @@ def main() -> int:
             if linked_pr and linked_pr.get("number"):
                 target = UpdateTarget(kind="pr", pr_number=int(linked_pr["number"]))
             else:
-                target = UpdateTarget(kind="commit_comment", commit_sha=after)
+                target = UpdateTarget(kind="step_summary")
 
         elif event_name == "issue_comment":
             change = collect_issue_comment_change(payload)

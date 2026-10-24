@@ -3,9 +3,9 @@
 这个仓库现在有两层自动化：
 
 1. **本地提交前**：`prepare-commit-msg` 钩子发现提交信息是空的或类似 `1`、`111`、`test`、`update` 时，先让 AI 判断，确认是占位符后再根据暂存区 diff 改写成中文提交说明。
-2. **上传到 GitHub 后**：GitHub Actions 分析 push / PR 的 diff，自动填写 PR 描述；没有 PR 时写 commit 评论。PR 原描述如果是 `111` 这种占位符，也会被 AI 判定后替换。
+2. **上传到 GitHub 后**：GitHub Actions 分析 PR 的 diff，直接更新 PR 描述；直接 push 没有 PR 时只写 GitHub Actions 运行摘要，不创建 commit 评论、不额外发通知邮件。PR 原描述如果是 `111` 这种占位符，也会被 AI 判定后替换。
 
-> Git 的 commit message 一旦推送就无法安全改写，所以 Action 负责 PR 描述/commit 评论，本地钩子负责提交前的中文提交信息。
+> Git 的 commit message 一旦推送就无法安全改写；要改提交记录本身，必须在推送前由本地钩子写入。Action 只负责更新 PR 描述或 Actions 运行摘要，不通过评论/邮件来“补记录”。
 
 ## 当前仓库已配置
 
@@ -83,11 +83,13 @@ git commit -m "111"
 | 事件 | 行为 |
 | --- | --- |
 | 新建/更新 PR | 分析 PR diff，更新 PR 描述里的 AI 区块 |
-| push 且没有 PR | 分析 push 前后 diff，在 commit 下写评论 |
-| push 且已有 PR | 默认交给 `pull_request_target` 的 synchronize 处理，避免重复调用 API |
+| push 且没有 PR | 分析 push 前后 diff，写入 GitHub Actions 运行摘要（不评论） |
+| push 且已有 PR | 默认交给 `pull_request_target` 的 synchronize 处理，直接更新 PR 描述 |
 | PR 评论 `/ai-describe` 或 `/ai-summary` | 仓库成员/合作者可手动重新生成 |
 
 PR 的 AI 区块使用标记保存，重复执行原地替换，人工写在区块外的正常内容会保留。只有 AI 明确判定原描述是 `111`、空白、`test` 之类占位符，并且内容确实很短时，才会整体替换，避免误删真正的背景说明。
+
+直接 push 的摘要显示在：GitHub → Actions → 对应运行记录 → Summary。它不会像 commit comment 那样触发额外邮件通知。
 
 ## 安全设计
 
