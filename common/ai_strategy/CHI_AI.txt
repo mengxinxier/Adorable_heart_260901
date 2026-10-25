@@ -1,0 +1,1073 @@
+CHI_generic_combat_base_setup = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+        }
+    }
+    enable = {
+        always = yes
+    }
+    abort_when_not_enabled = yes
+
+    #防止有枪有人却不下兵
+    ai_strategy = {
+        type = force_build_armies
+        value = 100
+    }
+    #减少无意义的驻军
+    ai_strategy = {
+        type = garrison
+        value = -50
+    }
+    #陆军经验优先修改编制，其次点学说
+    ai_strategy = {
+        type = land_xp_spend_priority
+        id = division_template
+        value = 200
+    }
+    ai_strategy = {
+        type = land_xp_spend_priority
+        id = upgrade_xp_cutoff
+        value = 100
+    }
+    ai_strategy = {
+        type = intelligence_agency_branch_desire_factor
+        id = branch_defense
+        value = 1500
+    }
+    ai_strategy = {
+        type = intelligence_agency_branch_desire_factor
+        id = branch_crypto
+        value = 2000
+    }
+}
+
+#海岸防线
+CHI_generic_coastal_buffer_defense = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+        }
+    }
+    enable = {
+        or = {
+            has_war_with = JAP
+            JAP = {
+                exists = no
+            }
+            JAP = {
+                is_subject = yes
+            }
+        }
+        num_divisions > 50
+        any_controlled_state = {
+            is_coastal = yes
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = put_unit_buffers
+        ratio = 0.15
+        area = asia
+        subtract_invasions_from_need = no
+        subtract_fronts_from_need = yes
+    }
+}
+
+CHI_generic_stop_disbanding_army = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        num_divisions < 400
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 500
+    }
+}
+CHI_generic_crisis_iron_wall = { #退无可退
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress > 0.25
+    }
+    abort = {
+        OR = {
+            has_war = no
+            surrender_progress < 0.15
+            has_capitulated = yes
+        }
+    }
+
+    #谨慎防守
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+        }
+        priority = 90000
+        ordertype = front
+        execution_type = careful
+        manual_attack = yes
+    }
+    #核心区大幅增加兵力
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = {
+                controller = { has_war_with = FROM.FROM }
+            }
+        }
+        value = 160
+    }
+    #放弃无补给的非核心边缘烂地
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+        }
+        value = -100
+    }
+    #战时紧急爆步枪与火炮填线
+    ai_strategy = {
+        type = equipment_production_factor
+        id = infantry
+        value = 250
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = artillery
+        value = 150
+    }
+    ai_strategy = {
+        type = garrison
+        value = 60
+    }
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 1000
+    }
+}
+
+CHI_generic_capital_shield = { #首都保卫战
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.25
+        NOT = {
+            any_enemy_country = { surrender_progress > 0.35 }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    #首都及紧邻首都的己方省份
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_capital = yes
+                    is_controlled_by = FROM.FROM
+                }
+                AND = {
+                    any_neighbor_state = {
+                        is_capital = yes
+                        is_controlled_by = FROM.FROM
+                    }
+                    is_controlled_by = FROM.FROM
+                }
+            }
+        }
+        value = 80
+    }
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            OR = {
+                is_capital = yes
+                any_neighbor_state = {
+                    is_capital = yes
+                    is_controlled_by = FROM.FROM
+                }
+            }
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = {
+                controller = { has_war_with = FROM.FROM }
+            }
+        }
+        priority = 70000
+        ordertype = front
+        execution_type = careful
+        manual_attack = yes
+    }
+}
+
+#微操
+CHI_generic_end_pocket = { #确认包围圈后：全速吃掉饺子
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_controlled_by = FROM.FROM
+                    NOT = { is_fully_controlled_by = FROM.FROM }
+                }
+                controller = {
+                    has_war_with = FROM.FROM
+                }
+            }
+            all_neighbor_state = {
+                is_controlled_by = FROM.FROM
+            }
+        }
+        priority = 80000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            OR = {
+                AND = {
+                    is_controlled_by = FROM.FROM
+                    NOT = { is_fully_controlled_by = FROM.FROM }
+                }
+                controller = {
+                    has_war_with = FROM.FROM
+                }
+            }
+            all_neighbor_state = {
+                is_controlled_by = FROM.FROM
+            }
+        }
+        value = 35
+    }
+}
+
+CHI_generic_encirclement_hunter = { #敌方突出部
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        num_divisions > 40
+        surrender_progress < 0.20
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            NOT = { is_coastal = yes }
+            NOT = { is_capital = yes }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+            check_variable = { num_enemy_neighbor_states < 2 }
+        }
+        priority = 40000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            NOT = { is_coastal = yes }
+            NOT = { is_capital = yes }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+            check_variable = { num_enemy_neighbor_states < 2 }
+        }
+        value = 45
+    }
+}
+
+CHI_generic_avoid_thin_lines = { #防被包饺子
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            check_variable = {
+                num_enemy_neighbor_states > 2
+            }
+        }
+        value = 80
+    }
+}
+
+#以空间换时间
+CHI_generic_strategic_withdrawal = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress > 0.05
+        surrender_progress < 0.25
+        #敌军若也在崩溃则不退，免得与进攻阶段抢兵
+        NOT = {
+            any_enemy_country = {
+                surrender_progress > 0.10
+            }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    #从非核心、无补给站、非首都的边缘交战州撤军
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = { is_capital = yes }
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
+        }
+        value = -100
+    }
+    #兵力向核心区集结
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
+        }
+        value = 100
+    }
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
+        }
+        priority = 40000
+        ordertype = front
+        execution_type = careful
+        manual_attack = yes
+    }
+}
+
+CHI_generic_target_enemy_supply_hubs = { #强攻敌方相邻补给站
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.20
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        priority = 32000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        value = 50
+    }
+    ai_strategy = {
+        type = force_concentration_target_weight
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        value = 60
+    }
+}
+
+CHI_generic_protect_own_supply_lines = { #死守己方补给站
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = {
+                controller = { has_war_with = FROM.FROM }
+            }
+        }
+        priority = 16000
+        ordertype = front
+        execution_type = careful
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = {
+                controller = { has_war_with = FROM.FROM }
+            }
+        }
+        value = 40
+    }
+}
+
+CHI_generic_avoid_unsupplied_wasteland = { #不待烂地
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    #无补给站且非首都的地块
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = { is_capital = yes }
+        }
+        priority = 100
+        ordertype = front
+        execution_type = careful
+    }
+    #把部队从没有补给站的垃圾地块抽走
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = { is_capital = yes }
+        }
+        value = -50
+    }
+    #降低在烂地集中兵力的权重
+    ai_strategy = {
+        type = force_concentration_front_factor
+        state_trigger = {
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = { is_capital = yes }
+        }
+        value = -60
+    }
+}
+
+#踩空地
+CHI_generic_frontline_opportunism = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.15
+    }
+    abort_when_not_enabled = yes
+
+    #0师踩地
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            FROM = { has_war_with = FROM.FROM }
+            FROM = {
+                divisions_in_state = { state = PREV size = 0 }
+            }
+        }
+        priority = 18000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    #优先抢占沿海省份
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_coastal = yes
+            controller = { has_war_with = FROM.FROM }
+        }
+        ratio = 0.15
+        priority = 14000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    #敌方州少于3个师时
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            FROM = { has_war_with = FROM.FROM }
+            FROM = {
+                divisions_in_state = { state = PREV size < 3 }
+            }
+        }
+        ratio = 0.4
+        priority = 11000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+}
+
+
+CHI_generic_push_enemy_capital = { #兵临城下
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.15
+        any_enemy_country = { surrender_progress > 0.05 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            owner = { has_war_with = FROM.FROM }
+            is_capital = yes
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+        }
+        priority = 55000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            owner = { has_war_with = FROM.FROM }
+            is_capital = yes
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+        }
+        value = 150
+    }
+    ai_strategy = {
+        type = force_concentration_target_weight
+        state_trigger = {
+            owner = { has_war_with = FROM.FROM }
+            is_capital = yes
+        }
+        value = 100
+    }
+}
+
+CHI_generic_victory_phase1_crack = { 
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        NOT = { surrender_progress > 0.15 }
+        any_enemy_country = {
+            surrender_progress > 0.05
+            surrender_progress < 0.20
+        }
+        NOT = {
+            any_enemy_country = { surrender_progress > 0.20 }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+        }
+        priority = 26000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = spare_unit_factor
+        value = -10
+    }
+}
+
+CHI_generic_victory_phase2_exploit = { 
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        NOT = { surrender_progress > 0.15 }
+        any_enemy_country = {
+            surrender_progress > 0.20
+            surrender_progress < 0.45
+        }
+        NOT = {
+            any_enemy_country = { surrender_progress > 0.45 }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            owner = {
+                has_war_with = FROM.FROM
+                surrender_progress > 0.20
+            }
+            is_capital = yes
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+        }
+        priority = 45000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = FROM.FROM
+                surrender_progress > 0.20
+            }
+        }
+        priority = 30000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = spare_unit_factor
+        value = -25
+    }
+    ai_strategy = {
+        type = garrison
+        value = -100
+    }
+}
+
+CHI_generic_victory_phase3_annihilate = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        NOT = { surrender_progress > 0.15 }
+        any_enemy_country = { surrender_progress > 0.45 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = FROM.FROM
+                surrender_progress > 0.45
+            }
+        }
+        priority = 60000
+        ratio = 0.85
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+    ai_strategy = {
+        type = spare_unit_factor
+        value = -80
+    }
+    ai_strategy = {
+        type = garrison
+        value = -150
+    }
+}
+
+#集中突破倾向与装甲调配
+CHI_generic_concentrate_troops = {
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+        surrender_progress < 0.20
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = force_concentration_factor
+        value = 15
+    }
+}
+
+
+CHI_generic_smart_naval_invasions = { 
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    #拒绝登陆没有补给站的
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+        }
+        value = -30
+    }
+    #优先登陆补给站
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            is_coastal = yes
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        value = 35
+    }
+}
+
+CHI_generic_infantry_equipment_emergency = { #缺枪时全力搓步枪
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_equipment = { infantry_equipment < 5000 }
+        num_of_military_factories > 10
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_factor
+        id = infantry
+        value = 200
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = infantry
+        value = 8
+    }
+}
+
+CHI_generic_support_and_artillery_production = { #步枪够了之后补支援装备与火炮
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_equipment = { infantry_equipment > 2000 }
+        OR = {
+            has_equipment = { support_equipment < 500 }
+            has_equipment = { artillery_equipment < 300 }
+        }
+        num_of_military_factories > 20
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_factor
+        id = support
+        value = 120
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = support
+        value = 3
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = artillery
+        value = 120
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = artillery
+        value = 4
+    }
+}
+
+CHI_generic_logistics_trains_and_trucks = { #缺火车与卡车时强制排产
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        num_of_military_factories > 25
+        OR = {
+            has_equipment = { train_equipment < 40 }
+            has_equipment = { motorized_equipment < 500 }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = train
+        value = 3
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = motorized
+        value = 3
+    }
+}
+
+CHI_generic_wartime_market_lock = { #战时禁止向国际市场乱卖急需军火
+    allowed = {
+        OR = {
+            original_tag = CHI
+            original_tag = PRC
+            original_tag = ROC
+
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = infantry
+        value = 50000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = support
+        value = 5000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = artillery
+        value = 3000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = motorized
+        value = 2000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = train
+        value = 200
+    }
+}
