@@ -6,6 +6,12 @@ TAM_foreign_ministry = {
 			name = TAM_decision_end_game
 			icon = GFX_decision_generic_prepare_civil_war
 			visible = {
+				DVL = {
+					OR = {
+						is_ally_of_ROOT = yes
+						exists = no
+					}
+				}
 				GER = {
 					OR = {
 						is_ally_of_ROOT = yes
@@ -30,79 +36,7 @@ TAM_foreign_ministry = {
 						exists = no
 					}
 				}
-				JAP = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				ITA = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				USA = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				ALS = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
 				POL = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				DEN = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				PAQ = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				MGU = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				LHS = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				NFA = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				CHI = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				PRC = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				PAW = {
 					OR = {
 						is_ally_of_ROOT = yes
 						exists = no
@@ -110,6 +44,7 @@ TAM_foreign_ministry = {
 				}
 			}
 			cost = 0
+			fire_only_once = yes
 			complete_effect = { 
 				hidden_effect = {
 					set_variable = {
@@ -398,7 +333,12 @@ TAM_foreign_ministry = {
 							is_ally_with = ROOT
 						}
 					}
-					is_neighbor_of = ROOT
+					OR = {
+						is_neighbor_of = ROOT
+						any_neighbor_country = {
+							is_ally_of_ROOT = yes
+						}
+					}
 				}
 				is_in_faction = no
 			}
@@ -841,7 +781,7 @@ TAM_foreign_ministry = {
 				has_war_with_major = yes
 			}
 			available = {
-				surrender_progress > 0.10
+				surrender_progress > 0.05
 				not = {
 					focus_progress = {
 						focus = TAM_focus_Mortal_Hero_1
@@ -856,18 +796,23 @@ TAM_foreign_ministry = {
 			}
 			complete_effect = {
 				hidden_effect = {
-					every_country = {
+					every_enemy_country = {
 						limit = {
-							has_war_with = TAM
 							is_ai = no
 						}
 						set_country_flag = TAM_flag_will_transfer_characters
+						limit = {
+							OR = {
+								tag = GER
+								tag = DVL
+								tag = ENG
+								tag = FRA
+							}
+						}
+						set_country_flag = TAM_flag_will_join_to_faction
 					}
 				}
-				every_country = {
-					limit = {
-						has_war_with = TAM
-					}
+				every_enemy_country = {
 					white_peace = TAM
 				}
 				add_stability = -0.5
@@ -913,45 +858,6 @@ TAM_foreign_ministry = {
 			}
 			fire_only_once = yes
 			complete_effect = {
-				#if = {
-				#	limit = {
-				#		TAM = {
-				#			NOT = {
-				#				has_government = DVL
-				#			}
-				#		}
-				#	}
-				#	hidden_effect = {
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government_0
-            	#		remove_ideas = TAM_Symboli_Rudolf_head_of_government
-            	#		remove_ideas = TAM_Nishino_Flower_head_of_government
-            	#		remove_ideas = TAM_Silence_Suzuka_head_of_government
-            	#		remove_ideas = TAM_Air_Groove_head_of_government
-            	#		remove_ideas = TAM_Neo_Universe_head_of_government
-            	#		set_politics = {
-            	#		    ruling_party = fascism
-            	#		    elections_allowed = no
-            	#		}
-            	#		add_popularity = {
-            	#		    ideology = fascism
-            	#		    popularity = 0.60
-            	#		}
-            	#		add_country_leader_role = {
-            	#		    character = TAM_Manhattan_Cafe
-            	#		    promote_leader = yes
-            	#		    country_leader = { 
-            	#		        ideology = militarism_subtype
-            	#		        expire = "9999.1.1"
-            	#		        traits = {
-            	#		            GER_oberster_kriegsherr_trait
-            	#		            PRC_head_of_the_personality_cult
-            	#		        }
-            	#		    }
-            	#		}
-            	#		add_ideas = TAM_Neo_Universe_head_of_government
-				#	}
-				#}
 				GER = {
 					add_to_faction = TAM
 					set_technology = {
@@ -964,13 +870,6 @@ TAM_foreign_ministry = {
 			}
 			ai_will_do = {
 				base = 50
-				modifier = {
-					any_country = {
-						is_ally_with = GER
-						is_ai = no
-					}
-					add = 1111
-				}
 			}
 		}
 	# 苏联解体之后 加入魔导国
@@ -1009,45 +908,6 @@ TAM_foreign_ministry = {
 			}
 			fire_only_once = yes
 			complete_effect = {
-				#if = {
-				#	limit = {
-				#		TAM = {
-				#			NOT = {
-				#				has_government = DVL
-				#			}
-				#		}
-				#	}
-				#	hidden_effect = {
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government_0
-            	#		remove_ideas = TAM_Symboli_Rudolf_head_of_government
-            	#		remove_ideas = TAM_Nishino_Flower_head_of_government
-            	#		remove_ideas = TAM_Silence_Suzuka_head_of_government
-            	#		remove_ideas = TAM_Air_Groove_head_of_government
-            	#		remove_ideas = TAM_Neo_Universe_head_of_government
-            	#		set_politics = {
-            	#		    ruling_party = fascism
-            	#		    elections_allowed = no
-            	#		}
-            	#		add_popularity = {
-            	#		    ideology = fascism
-            	#		    popularity = 0.60
-            	#		}
-            	#		add_country_leader_role = {
-            	#		    character = TAM_Manhattan_Cafe
-            	#		    promote_leader = yes
-            	#		    country_leader = { 
-            	#		        ideology = militarism_subtype
-            	#		        expire = "9999.1.1"
-            	#		        traits = {
-            	#		            GER_oberster_kriegsherr_trait
-            	#		            PRC_head_of_the_personality_cult
-            	#		        }
-            	#		    }
-            	#		}
-            	#		add_ideas = TAM_Neo_Universe_head_of_government
-				#	}
-				#}
 				DVL = {
 					add_to_faction = TAM
 					set_technology = {
@@ -1060,13 +920,6 @@ TAM_foreign_ministry = {
 			}
 			ai_will_do = {
 				base = 50
-				modifier = {
-					any_country = {
-						is_ally_with = DVL
-						is_ai = no
-					}
-					add = 1111
-				}
 			}
 		}
 	# 苏联解体之后 加入圣杯同萌
@@ -1108,45 +961,6 @@ TAM_foreign_ministry = {
 			}
 			fire_only_once = yes
 			complete_effect = {
-				#if = {
-				#	limit = {
-				#		TAM = {
-				#			NOT = {
-				#				has_government = ENG
-				#			}
-				#		}
-				#	}
-				#	hidden_effect = {
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government_0
-            	#		remove_ideas = TAM_Symboli_Rudolf_head_of_government
-            	#		remove_ideas = TAM_Nishino_Flower_head_of_government
-            	#		remove_ideas = TAM_Silence_Suzuka_head_of_government
-            	#		remove_ideas = TAM_Air_Groove_head_of_government
-            	#		remove_ideas = TAM_Neo_Universe_head_of_government
-            	#		set_politics = {
-            	#		    ruling_party = democratic
-            	#		    elections_allowed = no
-            	#		}
-            	#		add_popularity = {
-            	#		    ideology = democratic
-            	#		    popularity = 0.60
-            	#		}
-            	#		add_country_leader_role = {
-            	#		    character = TAM_Almond_Eye
-            	#		    promote_leader = yes
-            	#		    country_leader = { 
-            	#		        ideology = conservatism
-            	#		        expire = "9999.1.1"
-            	#		        traits = {
-            	#		            GER_staunch_social_democrat
-            	#		            JUNO_president_of_the_senate_2
-            	#		        }
-            	#		    }
-            	#		}
-            	#		add_ideas = TAM_Nishino_Flower_head_of_government
-				#	}
-				#}
 				ENG = {
 					add_to_faction = TAM
 					set_technology = {
@@ -1159,13 +973,6 @@ TAM_foreign_ministry = {
 			}
 			ai_will_do = {
 				base = 50
-				modifier = {
-					any_country = {
-						is_ally_with = ENG
-						is_ai = no
-					}
-					add = 1111
-				}
 			}
 		}
 	
