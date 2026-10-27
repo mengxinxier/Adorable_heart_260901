@@ -6,6 +6,12 @@ TAM_foreign_ministry = {
 			name = TAM_decision_end_game
 			icon = GFX_decision_generic_prepare_civil_war
 			visible = {
+				DVL = {
+					OR = {
+						is_ally_of_ROOT = yes
+						exists = no
+					}
+				}
 				GER = {
 					OR = {
 						is_ally_of_ROOT = yes
@@ -30,79 +36,7 @@ TAM_foreign_ministry = {
 						exists = no
 					}
 				}
-				JAP = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				ITA = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				USA = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				ALS = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
 				POL = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				DEN = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				PAQ = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				MGU = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				LHS = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				NFA = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				CHI = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				PRC = {
-					OR = {
-						is_ally_of_ROOT = yes
-						exists = no
-					}
-				}
-				PAW = {
 					OR = {
 						is_ally_of_ROOT = yes
 						exists = no
@@ -110,6 +44,7 @@ TAM_foreign_ministry = {
 				}
 			}
 			cost = 0
+			fire_only_once = yes
 			complete_effect = { 
 				hidden_effect = {
 					set_variable = {
@@ -398,7 +333,12 @@ TAM_foreign_ministry = {
 							is_ally_with = ROOT
 						}
 					}
-					is_neighbor_of = ROOT
+					OR = {
+						is_neighbor_of = ROOT
+						any_neighbor_country = {
+							is_ally_of_ROOT = yes
+						}
+					}
 				}
 				is_in_faction = no
 			}
@@ -829,7 +769,7 @@ TAM_foreign_ministry = {
 			}
 		}
 
-	# 苏联解体之后 请求和平
+	# 苏联解体，或者苏联即将投降 请求和平
 		TAM_decision_beg_for_peace = {
 			name = TAM_decision_beg_for_peace
 			icon = GFX_decision_infiltrate_state
@@ -837,37 +777,73 @@ TAM_foreign_ministry = {
 				original_tag = TAM
 			}
 			visible = {
-				has_global_flag = Collapse_of_the_Soviet_Union
+				OR = {
+					AND = {
+						SOV = {
+							surrender_progress > 0.95
+						}
+						is_ally_with = SOV
+					}
+					has_global_flag = Collapse_of_the_Soviet_Union
+				}
 				has_war_with_major = yes
+				NOT = {
+					has_war_with = SOV
+				}
 			}
 			available = {
-				surrender_progress > 0.10
-				not = {
-					focus_progress = {
-						focus = TAM_focus_Mortal_Hero_1
-						progress = 0
+				surrender_progress > 0.05
+				hidden_trigger = {
+					NOT = {
+						focus_progress = {
+							focus = TAM_focus_Mortal_Hero_1
+							progress > 0
+						}
 					}
 				}
-				is_in_faction = no
+				OR = {
+					is_in_faction = no
+					is_in_faction_with = SOV
+				}
 			}
 			fire_only_once = yes
 			ai_will_do = {
 				base = 2000
 			}
 			complete_effect = {
+				if = {
+					limit = {
+						is_in_faction_with = SOV
+					}
+					leave_faction = yes
+				}
 				hidden_effect = {
-					every_country = {
-						limit = {
-							has_war_with = TAM
-							is_ai = no
+					every_enemy_country = {
+						if = {
+							limit = {
+								is_ai = no
+							}
+							set_country_flag = TAM_flag_will_transfer_characters
 						}
-						set_country_flag = TAM_flag_will_transfer_characters
+						if = {
+							limit = {
+								OR = {
+									tag = GER
+									tag = DVL
+									tag = ENG
+									tag = FRA
+									tag = JAP
+								}
+							}
+							set_country_flag = TAM_flag_will_join_to_faction
+						}
+					}
+					country_event = {
+						id = TAM.120
+						days = 10
 					}
 				}
-				every_country = {
-					limit = {
-						has_war_with = TAM
-					}
+				every_enemy_country = {
 					white_peace = TAM
 				}
 				add_stability = -0.5
@@ -876,7 +852,7 @@ TAM_foreign_ministry = {
 				mark_focus_tree_layout_dirty = yes
 			}
 		}
-	# 苏联解体之后 加入轴心国
+	# 求和之后 加入轴心国
 		TAM_decision_join_GER = {
 			icon = GFX_decision_category_generic_foreign_policy
 			name = TAM_decision_join_GER
@@ -884,7 +860,6 @@ TAM_foreign_ministry = {
 				original_tag = TAM
 			}
 			visible = {
-				has_global_flag = Collapse_of_the_Soviet_Union
 				is_in_faction = no
 				GER = { is_faction_leader = yes }
 				has_country_flag = TAM_flag_beg_for_peace
@@ -913,45 +888,6 @@ TAM_foreign_ministry = {
 			}
 			fire_only_once = yes
 			complete_effect = {
-				#if = {
-				#	limit = {
-				#		TAM = {
-				#			NOT = {
-				#				has_government = DVL
-				#			}
-				#		}
-				#	}
-				#	hidden_effect = {
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government_0
-            	#		remove_ideas = TAM_Symboli_Rudolf_head_of_government
-            	#		remove_ideas = TAM_Nishino_Flower_head_of_government
-            	#		remove_ideas = TAM_Silence_Suzuka_head_of_government
-            	#		remove_ideas = TAM_Air_Groove_head_of_government
-            	#		remove_ideas = TAM_Neo_Universe_head_of_government
-            	#		set_politics = {
-            	#		    ruling_party = fascism
-            	#		    elections_allowed = no
-            	#		}
-            	#		add_popularity = {
-            	#		    ideology = fascism
-            	#		    popularity = 0.60
-            	#		}
-            	#		add_country_leader_role = {
-            	#		    character = TAM_Manhattan_Cafe
-            	#		    promote_leader = yes
-            	#		    country_leader = { 
-            	#		        ideology = militarism_subtype
-            	#		        expire = "9999.1.1"
-            	#		        traits = {
-            	#		            GER_oberster_kriegsherr_trait
-            	#		            PRC_head_of_the_personality_cult
-            	#		        }
-            	#		    }
-            	#		}
-            	#		add_ideas = TAM_Neo_Universe_head_of_government
-				#	}
-				#}
 				GER = {
 					add_to_faction = TAM
 					set_technology = {
@@ -964,16 +900,9 @@ TAM_foreign_ministry = {
 			}
 			ai_will_do = {
 				base = 50
-				modifier = {
-					any_country = {
-						is_ally_with = GER
-						is_ai = no
-					}
-					add = 1111
-				}
 			}
 		}
-	# 苏联解体之后 加入魔导国
+	# 求和之后 加入魔导国
 		TAM_decision_join_DVL = {
 			icon = GFX_decision_category_generic_foreign_policy
 			name = TAM_decision_join_DVL
@@ -981,7 +910,6 @@ TAM_foreign_ministry = {
 				original_tag = TAM
 			}
 			visible = {
-				has_global_flag = Collapse_of_the_Soviet_Union
 				is_in_faction = no
 				DVL = { is_faction_leader = yes }
 				has_country_flag = TAM_flag_beg_for_peace
@@ -1009,45 +937,6 @@ TAM_foreign_ministry = {
 			}
 			fire_only_once = yes
 			complete_effect = {
-				#if = {
-				#	limit = {
-				#		TAM = {
-				#			NOT = {
-				#				has_government = DVL
-				#			}
-				#		}
-				#	}
-				#	hidden_effect = {
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government_0
-            	#		remove_ideas = TAM_Symboli_Rudolf_head_of_government
-            	#		remove_ideas = TAM_Nishino_Flower_head_of_government
-            	#		remove_ideas = TAM_Silence_Suzuka_head_of_government
-            	#		remove_ideas = TAM_Air_Groove_head_of_government
-            	#		remove_ideas = TAM_Neo_Universe_head_of_government
-            	#		set_politics = {
-            	#		    ruling_party = fascism
-            	#		    elections_allowed = no
-            	#		}
-            	#		add_popularity = {
-            	#		    ideology = fascism
-            	#		    popularity = 0.60
-            	#		}
-            	#		add_country_leader_role = {
-            	#		    character = TAM_Manhattan_Cafe
-            	#		    promote_leader = yes
-            	#		    country_leader = { 
-            	#		        ideology = militarism_subtype
-            	#		        expire = "9999.1.1"
-            	#		        traits = {
-            	#		            GER_oberster_kriegsherr_trait
-            	#		            PRC_head_of_the_personality_cult
-            	#		        }
-            	#		    }
-            	#		}
-            	#		add_ideas = TAM_Neo_Universe_head_of_government
-				#	}
-				#}
 				DVL = {
 					add_to_faction = TAM
 					set_technology = {
@@ -1060,16 +949,9 @@ TAM_foreign_ministry = {
 			}
 			ai_will_do = {
 				base = 50
-				modifier = {
-					any_country = {
-						is_ally_with = DVL
-						is_ai = no
-					}
-					add = 1111
-				}
 			}
 		}
-	# 苏联解体之后 加入圣杯同萌
+	# 求和之后 加入圣杯同萌
 		TAM_decision_join_ENG = {
 			icon = GFX_decision_category_generic_foreign_policy
 			name = TAM_decision_join_ENG
@@ -1077,7 +959,6 @@ TAM_foreign_ministry = {
 				original_tag = TAM
 			}
 			visible = {
-				has_global_flag = Collapse_of_the_Soviet_Union
 				is_in_faction = no
 				ENG = { is_faction_leader = yes }
 				has_country_flag = TAM_flag_beg_for_peace
@@ -1108,64 +989,122 @@ TAM_foreign_ministry = {
 			}
 			fire_only_once = yes
 			complete_effect = {
-				#if = {
-				#	limit = {
-				#		TAM = {
-				#			NOT = {
-				#				has_government = ENG
-				#			}
-				#		}
-				#	}
-				#	hidden_effect = {
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government
-            	#		remove_ideas = TAM_Nice_Nature_head_of_government_0
-            	#		remove_ideas = TAM_Symboli_Rudolf_head_of_government
-            	#		remove_ideas = TAM_Nishino_Flower_head_of_government
-            	#		remove_ideas = TAM_Silence_Suzuka_head_of_government
-            	#		remove_ideas = TAM_Air_Groove_head_of_government
-            	#		remove_ideas = TAM_Neo_Universe_head_of_government
-            	#		set_politics = {
-            	#		    ruling_party = democratic
-            	#		    elections_allowed = no
-            	#		}
-            	#		add_popularity = {
-            	#		    ideology = democratic
-            	#		    popularity = 0.60
-            	#		}
-            	#		add_country_leader_role = {
-            	#		    character = TAM_Almond_Eye
-            	#		    promote_leader = yes
-            	#		    country_leader = { 
-            	#		        ideology = conservatism
-            	#		        expire = "9999.1.1"
-            	#		        traits = {
-            	#		            GER_staunch_social_democrat
-            	#		            JUNO_president_of_the_senate_2
-            	#		        }
-            	#		    }
-            	#		}
-            	#		add_ideas = TAM_Nishino_Flower_head_of_government
-				#	}
-				#}
 				ENG = {
 					add_to_faction = TAM
 					set_technology = {
 						TAM_umamusume_tech_0 = 1
 					}
 				}
-				TAM_Durandal = {
+				TAM_Red_Desire = {
 					set_nationality = ENG
 				}
 			}
 			ai_will_do = {
 				base = 50
-				modifier = {
-					any_country = {
-						is_ally_with = ENG
-						is_ai = no
+			}
+		}
+	# 求和之后 加入樱花国
+		TAM_decision_join_JAP = {
+			icon = GFX_decision_category_generic_foreign_policy
+			name = TAM_decision_join_JAP
+			allowed = {
+				original_tag = TAM
+			}
+			visible = {
+				is_in_faction = no
+				JAP = { is_faction_leader = yes }
+				has_country_flag = TAM_flag_beg_for_peace
+			}
+			available = {
+				is_in_faction = no
+				is_subject = no
+				OR = {
+					AND = {
+						JAP = {
+							exists = yes
+							is_faction_leader = yes
+							has_government = ROOT
+						}
 					}
-					add = 1111
+					AND = {
+						any_country = {
+							not = {
+								tag = TAM
+							}
+							is_ally_with = JAP
+							is_ai = no
+						}
+					}
 				}
+				has_country_flag = Reunit_Tresen_country
+				has_country_flag = TAM_flag_beg_for_peace
+			}
+			fire_only_once = yes
+			complete_effect = {
+				JAP = {
+					add_to_faction = TAM
+					set_technology = {
+						TAM_umamusume_tech_0 = 1
+					}
+				}
+				TAM_Tosen_Jordan = {
+					set_nationality = JAP
+				}
+			}
+			ai_will_do = {
+				base = 50
+			}
+		}
+	# 求和之后 加入幻想乡
+		TAM_decision_join_FRA = {
+			icon = GFX_decision_category_generic_foreign_policy
+			name = TAM_decision_join_FRA
+			allowed = {
+				original_tag = TAM
+			}
+			visible = {
+				is_in_faction = no
+				FRA = { is_faction_leader = yes }
+				has_country_flag = TAM_flag_beg_for_peace
+			}
+			available = {
+				is_in_faction = no
+				is_subject = no
+				OR = {
+					AND = {
+						FRA = {
+							exists = yes
+							is_faction_leader = yes
+							has_government = ROOT
+						}
+					}
+					AND = {
+						any_country = {
+							not = {
+								tag = TAM
+							}
+							is_ally_with = FRA
+							is_ai = no
+						}
+					}
+				}
+				has_country_flag = Reunit_Tresen_country
+				has_country_flag = TAM_flag_beg_for_peace
+			}
+			fire_only_once = yes
+			complete_effect = {
+				FRA = {
+					add_to_faction = TAM
+					set_technology = {
+						TAM_umamusume_tech_0 = 1
+					}
+				}
+				TAM_Win_Variation = {
+					set_nationality = FRA
+				}
+			}
+			ai_will_do = {
+				base = 50
 			}
 		}
 	
@@ -4081,7 +4020,7 @@ TAM_foreign_ministry = {
 			cost = 75
 			modifier = {
 				army_org_factor = 0.10
-				army_org_regain = 0.10
+				army_morale_factor = 0.10
 				supply_node_range = 0.10
 				training_time_factor = -0.10
 			}
