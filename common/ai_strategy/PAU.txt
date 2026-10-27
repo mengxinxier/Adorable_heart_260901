@@ -1,3 +1,4 @@
+
 PAU_start_base = {
     allowed = {
         original_tag = PAU
@@ -63,10 +64,10 @@ PAU_start_base = {
         id = electronic_mechanical_engineering
         value = 200
     }
-    #减少无意义后方驻军
+    #适度减少无意义后方驻军，但保留港口海防权重
     ai_strategy = {
         type = garrison
-        value = -150
+        value = -80
     }
     #陆军经验优先改编制，其次点学说
     ai_strategy = {
@@ -80,14 +81,13 @@ PAU_start_base = {
         value = 100
     }
 }
+
 #与共同敌人的交战国正常申请军通
 PAU_ask_for_access = {
     reversed = yes
-
     allowed = {
         original_tag = PAU
     }
-
     enable = {
         NOT = {
             OR = {
@@ -118,6 +118,7 @@ PAU_ask_for_access = {
         value = 1000
     }
 }
+
 #扩军期保持陆军规模期望
 PAU_stop_disbanding_your_army = {
     allowed = {
@@ -201,6 +202,7 @@ PAU_offensive_against_ai_LHS = {
     enable = {
         has_country_flag = has_PAU_xiaoyao
         LHS = { is_ai = yes }
+        PAM = { is_ai = yes }
         country_exists = LHS
     }
     abort_when_not_enabled = yes
@@ -230,7 +232,6 @@ PAU_offensive_against_ai_LHS = {
         execute_order = yes
     }
 }
-
 
 #登船圣杯岛前
 PAU_delaying_defense_against_ZDW = {
@@ -312,6 +313,159 @@ PAU_counterattack_ZDW = {
     }
 }
 
+#部队逻辑
+PAU_check_omega_lul = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = {
+                        has_war_with = FROM.FROM
+                        divisions_in_state = { state = PREV size < 3 }
+                    }
+                }
+            }
+        }
+        priority = 10
+        ordertype = front
+        execution_type = careful
+    }
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = { has_war_with = FROM.FROM }
+                    any_province_building_level = {
+                        province = { all_provinces = yes }
+                        building = supply_node
+                        level > 0
+                    }
+                }
+            }
+        }
+        value = -20
+    }
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_capital = yes
+            owner = { tag = FROM.FROM }
+        }
+        value = 50
+    }
+
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            check_variable = { state_strategic_value < 3 }
+        }
+        value = -5
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            NOT = { is_core_of = FROM.FROM }
+            check_variable = { state_strategic_value < 8 }
+        }
+        value = -3
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            NOT = { is_core_of = FROM.FROM }
+        }
+        value = -3
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+        }
+        value = -15
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            OR = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+        }
+        value = 15
+    }
+}
 
 #交好魔法少女联盟与远征军
 PAU_befriend_MGU_and_LFC = {
@@ -403,7 +557,7 @@ PAU_unify_south_america_war = {
         type = front_control
         state_trigger = {
             controller = {
-                has_war_with = PAU
+                has_war_with = FROM.FROM
                 capital_scope = { is_on_continent = south_america }
             }
         }
@@ -488,7 +642,6 @@ PAU_prepare_and_invade_JAP = {
     }
 }
 
-
 #讨伐魔导国
 PAU_war_with_DVL = {
     allowed = {
@@ -522,10 +675,10 @@ PAU_war_with_DVL = {
     ai_strategy = {
         type = front_control
         tag = DVL
-        priority = 35000
+        priority = 28000
         ordertype = front
         manual_attack = yes
-        execution_type = careful
+        execution_type = balanced
         execute_order = yes
     }
     ai_strategy = {
@@ -631,7 +784,7 @@ PAU_avoid_thin_lines = {
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_controlled_by = PAU
+            is_controlled_by = FROM.FROM
             check_variable = {
                 num_enemy_neighbor_states > 2
             }
@@ -654,6 +807,7 @@ PAU_concentrate_troops = {
     }
 }
 
+#断补给与踩空地
 PAU_target_enemy_supply_hubs = {
     allowed = { original_tag = PAU }
     enable = {
@@ -665,30 +819,71 @@ PAU_target_enemy_supply_hubs = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            controller = { has_war_with = PAU }
-            any_neighbor_state = { is_controlled_by = PAU }
+            controller = {
+                has_war_with = FROM.FROM
+                divisions_in_state = { state = PREV size = 0 }
+            }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
+        }
+        priority = 65000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = FROM.FROM
+                divisions_in_state = { state = PREV size < 6 }
+            }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
             any_province_building_level = {
                 province = { all_provinces = yes }
                 building = supply_node
                 level > 0
             }
         }
-        priority = 32000
+        priority = 62000
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
+
     ai_strategy = {
-        type = front_unit_request
+        type = front_control
         state_trigger = {
-            controller = { has_war_with = PAU }
+            controller = {
+                has_war_with = FROM.FROM
+                divisions_in_state = { state = PREV size > 5 }
+            }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
             any_province_building_level = {
                 province = { all_provinces = yes }
                 building = supply_node
                 level > 0
             }
-            any_neighbor_state = { is_controlled_by = PAU }
+        }
+        priority = 15000
+        ordertype = front
+        execution_type = balanced
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            controller = { has_war_with = FROM.FROM }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
         value = 45
     }
@@ -751,9 +946,9 @@ PAU_push_enemy_capital = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            owner = { has_war_with = PAU }
+            owner = { has_war_with = FROM.FROM }
             is_capital = yes
-            any_neighbor_state = { is_controlled_by = PAU }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
         priority = 55000
         ordertype = front
@@ -764,9 +959,9 @@ PAU_push_enemy_capital = {
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            owner = { has_war_with = PAU }
+            owner = { has_war_with = FROM.FROM }
             is_capital = yes
-            any_neighbor_state = { is_controlled_by = PAU }
+            any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
         value = 180
     }
@@ -780,6 +975,7 @@ PAU_crisis_iron_wall = {
     }
     abort = {
         OR = {
+            has_war = no
             surrender_progress < 0.15
             has_capitulated = yes
         }
@@ -788,7 +984,7 @@ PAU_crisis_iron_wall = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            is_controlled_by = PAU
+            is_controlled_by = FROM.FROM
         }
         priority = 90000
         ordertype = front
@@ -810,7 +1006,6 @@ PAU_crisis_iron_wall = {
         value = 1200
     }
 }
-
 
 #1938年前民工与军工
 PAU_early_game_builder = {
@@ -904,7 +1099,7 @@ PAU_convoy_production = {
     }
 }
 
-# 步枪保底产能
+#步枪保底产能
 PAU_production_tier1_infantry = {
     allowed = { original_tag = PAU }
     enable = {
@@ -925,11 +1120,11 @@ PAU_production_tier1_infantry = {
     }
 }
 
-#支援装备、火炮、卡车与坦克产能
+#支援装备、火炮与坦克产能
 PAU_production_support_and_armor = {
     allowed = { original_tag = PAU }
     enable = {
-        num_of_military_factories > 25
+        num_of_military_factories > 35
     }
     abort_when_not_enabled = yes
 
@@ -945,13 +1140,38 @@ PAU_production_support_and_armor = {
     }
     ai_strategy = {
         type = equipment_production_min_factories
+        id = armor
+        value = 6
+    }
+}
+
+#卡车
+PAU_motorized_production_control = {
+    allowed = { original_tag = PAU }
+    enable = {
+        num_of_military_factories > 25
+        has_equipment = { motorized_equipment < 1500 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_min_factories
         id = motorized
         value = 4
     }
+}
+
+PAU_stop_overproducing_motorized = {
+    allowed = { original_tag = PAU }
+    enable = {
+        has_equipment = { motorized_equipment > 3500 }
+    }
+    abort_when_not_enabled = yes
+
     ai_strategy = {
-        type = equipment_production_min_factories
-        id = armor
-        value = 6
+        type = equipment_variant_production_factor
+        id = motorized_equipment
+        value = -90
     }
 }
 
@@ -1024,6 +1244,21 @@ PAU_unit_role_ratios = {
         value = 0
     }
     ai_strategy = {
+        type = build_army
+        id = infantry
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = infantry
+        value = 0
+    }
+    ai_strategy = {
+        type = template_prio
+        id = infantry
+        value = 0
+    }
+    ai_strategy = {
         type = role_ratio
         id = PAU_infantry
         value = 80
@@ -1052,5 +1287,70 @@ PAU_unit_role_ratios = {
         type = build_army
         id = armor
         value = 50
+    }
+}
+
+#中后期争夺制空权
+PAU_wartime_air_superiority = {
+    allowed = { original_tag = PAU }
+    enable = {
+        num_of_military_factories > 45
+        has_tech = basic_small_airframe
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = unit_ratio
+        id = fighter
+        value = 40
+    }
+    ai_strategy = {
+        type = unit_ratio
+        id = cas
+        value = 20
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = fighter
+        value = 120
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = fighter
+        value = 8
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = cas
+        value = 80
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = cas
+        value = 5
+    }
+    ai_strategy = {
+        type = air_factory_balance
+        value = 15
+    }
+}
+
+#中后期沿海防背刺
+PAU_coastal_defense_buffer = {
+    allowed = { original_tag = PAU }
+    enable = {
+        num_divisions > 80
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = put_unit_buffers
+        ratio = 0.08
+        area = south_america
+        area = north_america
+        area = asia
+        area = europe
+        subtract_invasions_from_need = no
+        subtract_fronts_from_need = yes
     }
 }

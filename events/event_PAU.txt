@@ -1,9 +1,4 @@
-﻿#PAU 事件总表：PAU.x 为剧情事件，PAU_news.x 为新闻事件；触发者见事件效果中的 country_event/news_event。
-#事件分段：PAU.1-19 开局与军团初创；PAU.21-24 公社内部政治；PAU.28-34 南美外交与庭审；
-#PAU.35-54 战后政治外交；PAU.172-179 雇佣兵合同链；PAU.520-550 战后网络与樱花核心；
-#PAU.7001-7010 白夜巡游与亡灵反扑；PAU_news.1-2 南美统一/樱花覆灭新闻。
-#=====================================================================
-add_namespace = PAU
+﻿add_namespace = PAU
 add_namespace = PAU_news
 
 country_event = {
@@ -18,8 +13,14 @@ country_event = {
     option = {
         name = PAU.11111.a
         
-        
-
+            PAU = {
+                diplomatic_relation = {
+                    country = ENG
+                    relation = docking_rights
+                    active = yes
+                }
+            }
+    
     }
 }
 country_event = {
@@ -33,10 +34,6 @@ country_event = {
 
     option = {
         name = PAU.1.a
-        multiply_variable = {
-            var = PAU_debt #王室欠饷债务
-            value = -1
-        }
         country_event = {
             id = PAU.1000
         }
@@ -193,7 +190,7 @@ country_event = {
             add_ideas = subsidized_contracts_army_spirit
         }
         else = {
-            add_add_command_power = 25
+            army_experience = 50
         }
     }
 }
@@ -211,6 +208,10 @@ country_event = {
         name = PAU.6.a
         ai_chance = {
             base = 100
+        }
+        swap_ideas = {
+            remove_idea = PAU_borderless_army2
+            add_idea = PAU_borderless_army3
         }
         set_country_flag = has_PAU_xfzb #亡灵战争支线：迎战亡灵
         mark_focus_tree_layout_dirty = yes
@@ -352,12 +353,10 @@ country_event = {
             declare_war_on = { target = CHL type = annex_everything}
         }
 
-            set_country_flag = PAU_undead_war #亡灵战争正式开始
-            # 亡灵压迫修正由每月 PAU_refresh_undead_pressure 按当前压力挂载，不在开战瞬间强行挂上
             unlock_decision_tooltip = PAU_undead_counterattack
             unlock_decision_tooltip = PAU_undead_burn_depot
             unlock_decision_tooltip = PAU_undead_scorched_earth
-
+            set_country_flag = PAU_undead_war
         hidden_effect = {
             every_state = {
                 limit = {
@@ -377,6 +376,10 @@ country_event = {
         name = PAU.6.b
         ai_chance = {
             base = 0
+        }
+        swap_ideas = {
+            remove_idea = PAU_borderless_army2
+            add_idea = PAU_borderless_army3
         }
         set_country_flag = control_dec
         activate_mission = PAU_wl_attack_dec
@@ -464,7 +467,9 @@ country_event = {
             base = 100
         }
         add_political_power = 50
-
+        set_country_flag = PAU_xiaoyaoxian
+        mark_focus_tree_layout_dirty = yes
+        custom_effect_tooltip = jiesuoguoce
 
     }
 
@@ -870,9 +875,16 @@ country_event = {
     desc = PAU.22.d
     major = no
     picture = GFX_event_PAU_sln
-    is_triggered_only = yes
     fire_only_once = yes
-
+    trigger = {
+        TAG = PAU
+        PAO = {
+            or = {
+                exists = no
+                is_subject_of = PAU
+            }
+        }
+    }
     option = {
         name = PAU.22.a
 
@@ -1132,8 +1144,14 @@ country_event = {
         PAU_pull_into_white_night_faction = yes
             add_dynamic_modifier = { modifier = PAU_south_america_unity }
         hidden_effect = {
-            PAU = {
-
+            if = {
+                limit = {
+                    tag = AHM
+                }
+                annex_country = {
+                    target = ATA
+                    transfer_troops = no
+                }
             }
         }
 
@@ -1173,7 +1191,10 @@ country_event = {
             }
             modifier = {
                 factor = 0
-                tag = PGM
+                or = {
+                    tag = PGM
+                    tag = AHM
+                }
             }
         }
         PAU = {
@@ -1198,7 +1219,7 @@ country_event = {
             id = PAU.29
             hours = 6
         }
-        add_stability = 0.05
+        add_stability = -0.05
     }
 }
 
@@ -1233,31 +1254,53 @@ country_event = {
         name = PAU.299.a
         PAU = {
             set_cosmetic_tag = PAU_white_night
-            if = {
-                limit = { is_in_faction = yes }
-                every_faction_member = {
-                    limit = { NOT = { tag = PAU } }
-                    set_country_flag = PAU_bytm_faction_transfer
-                }
-                leave_faction = yes
+
+            effect_tooltip = {
+                set_faction_name = PAU_white_night_alliance
+                set_faction_manifest = PAU_faction_manifest_white_night
             }
-            clr_country_flag = PAU_white_night_goal_installed
-            create_faction_from_template = faction_template_bytm
-            set_faction_leader = yes
-            set_faction_name = PAU_white_night_alliance
-            set_faction_manifest = PAU_faction_manifest_white_night
-            every_country = {
-                limit = { has_country_flag = PAU_bytm_faction_transfer }
+
+            hidden_effect = {
                 if = {
-                    limit = { is_in_faction = yes }
+                    limit = { 
+                        is_in_faction = yes 
+                        is_faction_leader = yes
+                    }
+                    every_faction_member = {
+                        limit = { NOT = { tag = PAU } }
+                        set_country_flag = PAU_bytm_faction_transfer
+                    }
                     leave_faction = yes
+
+                    create_faction_from_template = faction_template_bytm
+                    set_faction_name = PAU_white_night_alliance
+                    set_faction_manifest = PAU_faction_manifest_white_night
+
                 }
-                PAU = { add_to_faction = PREV }
-                clr_country_flag = PAU_bytm_faction_transfer
+                every_country = {
+                    limit = { has_country_flag = PAU_bytm_faction_transfer }
+                    if = {
+                        limit = { is_in_faction = yes }
+                        leave_faction = yes
+                    }
+                    PAU = { add_to_faction = PREV }
+                    clr_country_flag = PAU_bytm_faction_transfer
+                }
+                    every_country = {
+                        limit = {
+                            is_in_faction_with = ROOT
+                        }
+                        ROOT = {
+                            remove_opinion_modifier = {
+                                target = PREV
+                                modifier = faction_traitor
+                            }
+                        }
+                    }
             }
+                add_faction_initiative = 3
                 add_faction_goal_slot = { category = long_term value = 1 }
                 add_faction_goal = PAU_faction_goal_white_night
-                set_country_flag = PAU_white_night_goal_installed
         }
         add_political_power = 50
     }
@@ -1291,6 +1334,7 @@ country_event = {
     option = {
         name = PAU.300.a
         add_political_power = 50
+        activate_mission = PAU_byq_hb
     }
 }
 
@@ -1362,9 +1406,36 @@ country_event = {
     option = {
         name = PAU.333.a
         add_political_power = 50
-        add_stability = 0.05
-        add_war_support = 0.05
-        remove_ideas =  PAU_borderless_army3
+        add_stability = 0.1
+        add_war_support = 0.1
+        swap_ideas = {
+            remove_idea = PAU_borderless_army3
+            add_idea = PAU_borderless_army4
+        }
+		PAU_Nymph = {
+			demote_leader = yes
+		}
+		LHS_Nymph = {
+			demote_leader = yes
+		}
+
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_stability_factor
+                value = 0.05
+                tooltip = stability_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_war_support_factor
+                value = 0.05
+                tooltip = war_support_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_army_org_factor
+                value = 0.05
+                tooltip = army_org_factor_tt
+            }
+
     }
 }
 
@@ -1381,16 +1452,11 @@ country_event = {
         name = PAU.34.a
 
         add_stability = 0.05
-        every_state = {
-            limit = {
-                has_state_flag = PAU_xiaoyao_state_flag
-            }
-            remove_dynamic_modifier = {
-                modifier = PAU_baiye_state
-            }
-            add_dynamic_modifier = {
-                modifier = PAU_baiye_state1
-            }
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_consumer_goods_factor
+            value = 0.05
+            tooltip = consumer_goods_factor_tt
         }
 
     }
@@ -1414,8 +1480,6 @@ country_event = {
         ai_chance = {
             base = 70
         }
-
-
     }
     option = {
         name = PAU.35.b
@@ -1428,7 +1492,7 @@ country_event = {
         }
         add_war_support = 0.05
         ai_chance = {
-            base = 30
+            base = 0
         }
 
 
@@ -1446,12 +1510,8 @@ country_event = {
 
     option = {
         name = PAU.36.a
-
-        add_stability = 0.05
-        add_war_support = 0.05
         navy_experience = 25
-
-
+        set_country_flag = eng_anger
     }
 }
 
@@ -1487,7 +1547,13 @@ country_event = {
     option = {
         name = PAU.38.a
 
-        army_experience = 50
+        navy_experience = 50
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.15
+                tooltip = consumer_goods_factor_tt
+            }
 
 
     }
@@ -1505,7 +1571,17 @@ country_event = {
     option = {
         name = PAU.39.a
 
-        add_war_support = 0.05
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_political_power_gain
+                value = 0.1
+                tooltip = political_power_gain_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_stability_factor
+                value = 0.1
+                tooltip = stability_factor_tt
+            }
 
 
     }
@@ -2201,14 +2277,6 @@ country_event = {
             modifier = {
                 has_war = no
                 factor = 0
-            }
-            modifier = {
-                FROM = { check_variable = { PAU_mercenary_reputation > 59 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
-                factor = 2
-            }
-            modifier = {
-                FROM = { check_variable = { PAU_mercenary_reputation < 30 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
-                factor = 0.5
             }
         }
         set_country_flag = PAU_bop_loan_active #同意的flag
@@ -3166,61 +3234,6 @@ country_event = {
             hidden_effect = {
                 PAU_refresh_state_council = yes
             }
-        }
-    }
-}
-
-country_event = {
-    id = PAU.620
-    title = PAU.620.t
-    desc = PAU.620.d
-    major = no
-    picture = GFX_event_PAU_xy6
-    is_triggered_only = yes
-    fire_only_once = no
-
-    option = {
-        name = PAU.620.a
-        ai_chance = { base = 100 }
-        add_dynamic_modifier = { modifier = PAU_state_project_industry days = 120 }
-        add_tech_bonus = {
-            name = PAU_state_project_industry_bonus
-            bonus = 0.5
-            uses = 1
-            category = construction_tech
-        }
-        every_faction_member = {
-            limit = {
-                NOT = { tag = PAU }
-                capital_scope = { is_on_continent = south_america }
-            }
-            add_dynamic_modifier = { modifier = PAU_state_project_industry days = 120 }
-        }
-    }
-    option = {
-        name = PAU.620.b
-        ai_chance = { base = 100 }
-        add_dynamic_modifier = { modifier = PAU_state_project_welfare days = 120 }
-        add_political_power = 100
-        every_faction_member = {
-            limit = {
-                NOT = { tag = PAU }
-                capital_scope = { is_on_continent = south_america }
-            }
-            add_dynamic_modifier = { modifier = PAU_state_project_welfare days = 120 }
-        }
-    }
-    option = {
-        name = PAU.620.c
-        ai_chance = { base = 100 }
-        add_dynamic_modifier = { modifier = PAU_state_project_diplomacy days = 120 }
-        add_political_power = 100
-        every_faction_member = {
-            limit = {
-                NOT = { tag = PAU }
-                capital_scope = { is_on_continent = south_america }
-            }
-            add_dynamic_modifier = { modifier = PAU_state_project_diplomacy days = 120 }
         }
     }
 }

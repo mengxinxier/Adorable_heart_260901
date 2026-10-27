@@ -20,27 +20,15 @@ FRA_state_is_zhanlue = {#老爷爷，我给你踩地来咯
     }
     enable = {
         any_enemy_country = {
-            strength_ratio = {
-                tag = FRA
-                ratio < 1.4
+                strength_ratio = {
+                    tag = FRA
+                    ratio < 1.4
+                }
             }
-        }
         has_country_flag = KNM_ai
         is_in_faction_with = KNM
     }
-    abort = {
-        and = {
-            or = {
-                any_enemy_country = {
-                    strength_ratio = {
-                        tag = FRA
-                        ratio > 1.4
-                    }
-                }
-            }
-        }
-
-    }
+    abort_when_not_enabled = yes
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -60,7 +48,7 @@ FRA_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         state_trigger = {
             FROM = { has_war_with = FROM.FROM }
             FROM = {
-                divisions_in_state = { state = FROM size = 0 }
+                divisions_in_state = { state = PREV size = 0 }
             }
         }
         priority = 90000
@@ -75,7 +63,7 @@ FRA_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         state_trigger = {
             FROM = { has_war_with = FROM.FROM }
             FROM = {
-                divisions_in_state = { state = FROM size < 3 }
+                divisions_in_state = { state = PREV size < 3 }
             }
         }
 
@@ -644,11 +632,12 @@ FRA_strategic_withdrawal = {#主动收缩
     }
     abort_when_not_enabled = yes
 
-    ai_strategy = {
+   ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_controlled_by = FRA
-            NOT = { is_core_of = FRA }
+            is_controlled_by = FROM.FROM
+            NOT = { is_core_of = FROM.FROM }
+            NOT = { is_capital = yes }
             NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -656,32 +645,38 @@ FRA_strategic_withdrawal = {#主动收缩
                     level > 0
                 }
             }
-            NOT = { is_capital = yes }
-            any_neighbor_state = { controller = { has_war_with = FRA } }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        value = -150
+        value = -40
     }
 
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_core_of = FRA
-            is_controlled_by = FRA
-            any_neighbor_state = { controller = { has_war_with = FRA } }
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        value = 150
+        value = 100
     }
 
     ai_strategy = {
         type = front_control
         state_trigger = {
-            is_core_of = FRA
-            is_controlled_by = FRA
-            any_neighbor_state = { controller = { has_war_with = FRA } }
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        priority = 10000
+        priority = 40000
         ordertype = front
         execution_type = careful
-        manual_attack = no
+        manual_attack = yes
     }
 }

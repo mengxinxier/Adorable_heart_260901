@@ -17,6 +17,7 @@ PAU_Debug = {
             set_country_flag =  has_PAU_xfzb2 #亡灵战争支线：紧急靠岸
             set_country_flag =  has_PAU_xfzb3 #亡灵战争支线：反攻深渊
             set_country_flag = PAU_zkdh_unlocked
+            set_country_flag = PAU_xiaoyaoxian
             mark_focus_tree_layout_dirty = yes
         }
     }
@@ -667,7 +668,7 @@ PAU_LHS_weiji = {
 #剧情定位：亡灵清剿：疏散、反冲击、焚库与焦土隔离
     #决议名：先把活人撤出来
     PAU_undead_evacuate = {
-        icon = GFX_KNM_KFL_transfer1
+        icon = GFX_decision_category_generic_propaganda
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
@@ -707,7 +708,7 @@ PAU_LHS_weiji = {
     }
     #决议名：组织反冲击
     PAU_undead_counterattack = {
-        icon = GFX_cash_in_undead_arrows
+        icon = GFX_decision_category_CHL_nacista_decisions
         allowed = { original_tag = PAU }
         visible = { 
             has_country_flag = PAU_undead_war
@@ -774,7 +775,7 @@ PAU_LHS_weiji = {
     }
     #决议名：烧掉带不走的油库
     PAU_undead_burn_depot = {
-        icon = GFX_EMI_Kivotos_flamethrower
+        icon = GFX_decision_category_border_conflicts
         allowed = { original_tag = PAU }
         visible = { 
             has_country_flag = PAU_undead_war
@@ -831,7 +832,7 @@ PAU_LHS_weiji = {
     }
     #决议名：烧出一条隔离带
     PAU_undead_scorched_earth = {
-        icon = GFX_refine_undead_essence
+        icon = GFX_decision_category_border_war
         allowed = { original_tag = PAU }
         visible = { 
             has_country_flag = PAU_undead_war
@@ -1141,6 +1142,9 @@ PAU_hetong = {
             }
         }
         visible = {
+            not = {
+                has_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
+            }
             FROM = {
                 has_war = yes
             }
@@ -1818,7 +1822,6 @@ PAU_grail_camp = {
             add_war_support = 0.025
         }
         ai_will_do = { factor = 10 }
-        # TODO(待确认): 圣杯流亡营实际有4个决议且原本已是days_remove=15，按提速目标统一改为10。
     }
     #决议名：用军械换淡水
     PAU_grail_trade_arms = {
@@ -1857,7 +1860,7 @@ PAU_grail_camp = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_grail_camp }
         available = {
-            custom_trigger_tooltip = {PAU_cond_grail_rations_gt49_tt
+            custom_trigger_tooltip = {
                 tooltip = PAU_cond_grail_rations_gt49_tt
                 check_variable = { PAU_grail_rations > 49 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
             }
@@ -1896,9 +1899,114 @@ PAU_grail_camp = {
 
 #剧情定位：莉兰迪亚避风港：指定州并专精军港/商港
 PAU_safe_harbor = {
+    #决议名：获得军通
+    PAU_get_military_access = {
+        icon = GFX_decision_eng_blackshirt_march
+        allowed = { original_tag = PAU }
+        visible = {
+            has_completed_focus = PAU_zgjd
+            JAP = {
+                exists = yes
+            }
+        }
+        available = {
+            or = {
+                custom_trigger_tooltip = {
+                    tooltip = PAU_mercenary_reputation79_tt
+                    check_variable = { PAU_mercenary_reputation > 79 }
+                }
+                FROM = { has_opinion = { target = PAU value > 29 } }
+            }
+        }
+        target_trigger = {
+            FROM = {
+                or = {
+                    and = {
+                        is_chinese_country = yes
+				        has_global_flag = The_Great_War_Against_Sakura
+                    }
+                    and = {
+                        tag = ENG
+                        PAU = {
+                            not = {
+                                has_country_flag = eng_anger
+                            }
+                        }
+                    }
+                    has_war_with = JAP
+                }
+                not = {
+                    has_war_with = PAU
+                }
+            }
+        }
+        cost = 5
+        complete_effect = {
+                diplomatic_relation = {
+                    country = FROM
+                    relation = military_access
+                    active = yes
+                }
+                diplomatic_relation = {
+                    country = FROM
+                    relation = docking_rights
+                    active = yes
+                }
+        }
+        ai_will_do = { factor = 0 }
+    }
+    PAU_byq_hb = {
+        allowed = {
+            original_tag = PAU
+        }
+        icon = GFX_mobilize_undead_looters
+
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        selectable_mission = no
+        #如果设置，会将任务转换为玩家必须选择按钮的任务。
+        is_good = no
+        days_mission_timeout = 360
+
+        timeout_effect = {
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_industrial_capacity_factory
+                value = 0.05
+                tooltip = industrial_capacity_factory_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_production_speed_buildings_factor
+                value = 0.05
+                tooltip = production_speed_buildings_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_hcp_income_factor_monthly
+                value = 0.2
+                tooltip = hcp_income_factor_monthly_tooltip
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.2
+                tooltip = consumer_goods_factor_tt
+            }
+
+        }
+        complete_effect = {
+        }
+        cancel_trigger = {
+            has_country_flag = PAU_undead_defeated
+        }
+        cancel_effect = {
+        }
+    }
     #决议名：指定 [FROM.GetName] 为避风港
     PAU_designate_safe_harbor = {
-        icon = GFX_mission_build_nest_for_seagull
+        icon = GFX_decision_generic_coastal_fortification
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
@@ -2281,7 +2389,7 @@ PAU_army_reform_axia = {
     }
     #决议名：把担架队从后方拽回来
     PAU_axia_medics = {
-        icon = GFX_decision_poland_sanitation_left
+        icon = GFX_decision_generic_independence
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2316,7 +2424,7 @@ PAU_army_reform_axia = {
     }
     #决议名：野战炊事班
     PAU_axia_field_kitchen = {
-        icon = GFX_feed_the_struggling_wolves
+        icon = GFX_decision_generic_motorized
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2356,7 +2464,7 @@ PAU_army_reform_axia = {
     }
     #决议名：夜间行军演练
     PAU_axia_night_march = {
-        icon = GFX_Moon_Shield
+        icon = GFX_decision_generic_disband_irregulars
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2459,7 +2567,7 @@ PAU_army_reform_axia = {
 
     #决议名：阿夏军改：全军整训提速
     PAU_accel_axia_mil_2 = {
-        icon = GFX_decision_All_Star
+        icon = GFX_decision_generic_police_action
         allowed = { original_tag = PAU }
         visible = {
             NOT = { has_completed_focus = PAM_ax_sjjs }
@@ -2522,7 +2630,7 @@ PAU_army_reform_xfxy = {
     }
     #决议名：电台咳嗽，传令兵就得跑断腿
     PAU_xfxy_signal = {
-        icon = GFX_EMI_Kivotos_hand_signal
+        icon = GFX_decision_CHL_mapuche_liberate_isthmo_amerindia
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2557,7 +2665,7 @@ PAU_army_reform_xfxy = {
     }
     #决议名：自己的门自己守，也要替邻居看一眼
     PAU_xfxy_joint_defense = {
-        icon = GFX_ENG_defense_small
+        icon = GFX_decision_generic_assassination
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2597,7 +2705,7 @@ PAU_army_reform_xfxy = {
     }
     #决议名：无线电网络
     PAU_xfxy_radio_net = {
-        icon = GFX_decision_category_ROC_spy
+        icon = GFX_decision_generic_electricity
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2804,7 +2912,7 @@ PAU_army_reform_xiaoyao = {
     }
     #决议名：别等潮水退了才想起来装船
     PAU_xiaoyao_expedition = {
-        icon = GFX_KNM_buy_military_vehicles
+        icon = GFX_decision_generic_human_torpedo
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -2924,7 +3032,7 @@ PAU_army_reform_xiaoyao = {
     }
     #决议名：抢滩动作再练一遍
     PAU_xiaoyao_shore_drill = {
-        icon = GFX_KNM_xj_de
+        icon = GFX_decisions_generic_sabotage
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -3286,7 +3394,7 @@ PAU_economy_reform_axia = {
     }
     #决议名：旧工具回收
     PAU_axia_tool_recovery = {
-        icon = GFX_EMI_Kivotos_tool_kit
+        icon = GFX_decision_generic_merge_plant_materiel
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -3408,7 +3516,7 @@ PAU_economy_reform_xfxy = {
     }
     #决议名：采购得按合同，不是按心情
     PAU_xfxy_procurement = {
-        icon = GFX_Customs_Union_decision
+        icon = GFX_decision_generic_political_discourse
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -3523,7 +3631,7 @@ PAU_economy_reform_xfxy = {
     }
     #决议名：把备用零件拨下去
     PAU_xfxy_spare_parts = {
-        icon = GFX_FRA_Renault_state_modifier
+        icon = GFX_decision_generic_brainwash
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -3653,7 +3761,7 @@ PAU_economy_reform_xfxy = {
 PAU_economy_reform_xiaoyao = {
     #决议名：集市得先开起来
     PAU_xiaoyao_market = {
-        icon = GFX_generic_economy_faction_decision
+        icon = GFX_decision_generic_consumer_goods
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -3763,7 +3871,7 @@ PAU_economy_reform_xiaoyao = {
     }
     #决议名：公开集市与配给站
     PAU_xiaoyao_public_market = {
-        icon = GFX_gudong
+        icon = GFX_decision_generic_fundraising
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -3803,7 +3911,7 @@ PAU_economy_reform_xiaoyao = {
     }
     #决议名：再筹一批过冬的粮
     PAU_xiaoyao_food_drive = {
-        icon = GFX_KNM_buy_better
+        icon = GFX_decision_RAJ_famine
         allowed = { original_tag = PAU }
         visible = { always = yes }
         available = {
@@ -4473,7 +4581,7 @@ PAU_national_unification = {
         }
         ai_will_do = { factor = 10 }
     }
-    #决议名：宣告樱花统一
+    #决议名：宣告樱花战败
     PAU_sakura_super_event = {
         icon = GFX_decision_category_MTK_sun_rising
         allowed = { original_tag = PAU }
@@ -4850,9 +4958,28 @@ PAU_joint_institutions = {
         cost = 0
         days_remove = 180
         complete_effect = {
+            if = {
+                limit = {
+                    not = {
+                        has_country_flag = pau_development_program_leader
+                    }
+                }
+                set_country_flag = pau_development_program_leader
+                every_faction_member = {
+                    limit = {
+                        not = {
+                            tag = PAU
+                        }
+                        capital_scope = { is_on_continent = south_america }
+                    }
+                    add_ideas = PAU_south_america_development_program_ideaPAU
+                }
+            }
+        }
+        remove_effect = {
             add_to_variable = {
                 var = PAU_south_america_development #南美联合发展度：联合发展计划推进值
-                value = 3
+                value = 1
                 tooltip = PAU_south_america_development_tt
             }
             if = {
@@ -4883,6 +5010,7 @@ PAU_joint_institutions = {
                         is_in_faction_with = PAU
                     }
                 }
+                custom_effect_tooltip = PAU_next_leader
                 random_country = {
                     limit = {
                         capital_scope = { is_on_continent = south_america }
@@ -4905,6 +5033,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                         every_faction_member = {
@@ -4922,6 +5051,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                     }
@@ -4938,6 +5068,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                         every_faction_member = {
@@ -4955,6 +5086,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                     }
@@ -4971,6 +5103,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                         every_faction_member = {
@@ -4988,6 +5121,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                     }
@@ -5004,6 +5138,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaPAQ
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                         every_faction_member = {
@@ -5021,6 +5156,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaPAQ
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                     }
@@ -5037,6 +5173,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaPAQ
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                         every_faction_member = {
@@ -5054,6 +5191,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaPAQ
                                 remove_ideas = PAU_south_america_development_program_ideaPGM
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                     }
@@ -5070,6 +5208,7 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPAQ
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
                             }
                         }
                         every_faction_member = {
@@ -5079,7 +5218,7 @@ PAU_joint_institutions = {
                                 }
                                 capital_scope = { is_on_continent = south_america }
                             }
-                            add_ideas = PAU_south_america_development_program_ideaPAQ
+                            add_ideas = PAU_south_america_development_program_ideaPGM
                             hidden_effect = {
                                 remove_ideas = PAU_south_america_development_program_ideaPAU
                                 remove_ideas = PAU_south_america_development_program_ideaPA1
@@ -5087,6 +5226,42 @@ PAU_joint_institutions = {
                                 remove_ideas = PAU_south_america_development_program_ideaLFC
                                 remove_ideas = PAU_south_america_development_program_ideaMGU
                                 remove_ideas = PAU_south_america_development_program_ideaPAQ
+                                remove_ideas = PAU_south_america_development_program_ideaAHM
+                            }
+                        }
+                    }
+                    else_if = {
+                        limit = {
+                            tag = AHM
+                        }
+                        AHM = {
+                            set_country_flag = pau_development_program_leader
+                            hidden_effect = {
+                                remove_ideas = PAU_south_america_development_program_ideaPAU
+                                remove_ideas = PAU_south_america_development_program_ideaPA1
+                                remove_ideas = PAU_south_america_development_program_ideaELF
+                                remove_ideas = PAU_south_america_development_program_ideaLFC
+                                remove_ideas = PAU_south_america_development_program_ideaMGU
+                                remove_ideas = PAU_south_america_development_program_ideaPAQ
+                                remove_ideas = PAU_south_america_development_program_ideaPGM
+                            }
+                        }
+                        every_faction_member = {
+                            limit = {
+                                not = {
+                                    tag = AHM
+                                }
+                                capital_scope = { is_on_continent = south_america }
+                            }
+                            add_ideas = PAU_south_america_development_program_ideaAHM
+                            hidden_effect = {
+                                remove_ideas = PAU_south_america_development_program_ideaPAU
+                                remove_ideas = PAU_south_america_development_program_ideaPA1
+                                remove_ideas = PAU_south_america_development_program_ideaELF
+                                remove_ideas = PAU_south_america_development_program_ideaLFC
+                                remove_ideas = PAU_south_america_development_program_ideaMGU
+                                remove_ideas = PAU_south_america_development_program_ideaPAQ
+                                remove_ideas = PAU_south_america_development_program_ideaPGM
                             }
                         }
                     }
@@ -5094,6 +5269,7 @@ PAU_joint_institutions = {
                 
             }
             else = {
+                custom_effect_tooltip = PAU_next_leader
                 
                 every_faction_member = {
                     limit = {
@@ -5111,6 +5287,7 @@ PAU_joint_institutions = {
                         remove_ideas = PAU_south_america_development_program_ideaLFC
                         remove_ideas = PAU_south_america_development_program_ideaMGU
                         remove_ideas = PAU_south_america_development_program_ideaPGM
+                        remove_ideas = PAU_south_america_development_program_ideaAHM
                     }
                 }
                     hidden_effect = {
@@ -5120,13 +5297,11 @@ PAU_joint_institutions = {
                         remove_ideas = PAU_south_america_development_program_ideaLFC
                         remove_ideas = PAU_south_america_development_program_ideaMGU
                         remove_ideas = PAU_south_america_development_program_ideaPGM
+                        remove_ideas = PAU_south_america_development_program_ideaAHM
                     }
             }
             hidden_effect = { PAU_refresh_south_america_development = yes }
-            country_event = { id = PAU.620 hours = 6 }
 
-        }
-        remove_effect = {
             activate_decision = PAU_south_america_development_program
         }
         ai_will_do = { factor = 10 }

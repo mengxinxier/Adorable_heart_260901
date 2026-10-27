@@ -153,11 +153,14 @@ KFL_target_enemy_supply_hubs = {
     }
     abort_when_not_enabled = yes
 
-    ai_strategy = {
+   ai_strategy = {
         type = front_control
         state_trigger = {
-            controller = { has_war_with = KFL }
-            any_neighbor_state = { is_controlled_by = KFL }
+            controller = {
+                has_war_with = LHS
+                divisions_in_state = { state = PREV size < 6 }
+            }
+            any_neighbor_state = { is_controlled_by = LHS }
             any_province_building_level = {
                 province = { all_provinces = yes }
                 building = supply_node
@@ -165,24 +168,46 @@ KFL_target_enemy_supply_hubs = {
             }
         }
         priority = 32000
-        ratio = 0.05
         ordertype = front
         execution_type = rush
         execute_order = yes
         manual_attack = yes
     }
+
     ai_strategy = {
-        type = front_unit_request
+        type = front_control
         state_trigger = {
-            controller = { has_war_with = KFL }
-            any_neighbor_state = { is_controlled_by = KFL }
+            controller = {
+                has_war_with = LHS
+                divisions_in_state = { state = PREV size > 5 }
+            }
+            any_neighbor_state = { is_controlled_by = LHS }
             any_province_building_level = {
                 province = { all_provinces = yes }
                 building = supply_node
                 level > 0
             }
         }
-        value = 55
+        priority = 15000
+        ordertype = front
+        execution_type = balanced
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    #相邻补给点增加集结需求
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            controller = { has_war_with = LHS }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = { is_controlled_by = LHS }
+        }
+        value = 45
     }
 }
 
@@ -642,11 +667,11 @@ KFL_strategic_withdrawal = {
     }
     abort_when_not_enabled = yes
 
-    ai_strategy = {
+  ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_controlled_by = KFL
-            NOT = { is_core_of = KFL }
+            is_controlled_by = FROM.FROM
+            NOT = { is_core_of = FROM.FROM }
             NOT = { is_capital = yes }
             NOT = {
                 any_province_building_level = {
@@ -655,31 +680,38 @@ KFL_strategic_withdrawal = {
                     level > 0
                 }
             }
-            any_neighbor_state = { controller = { has_war_with = KFL } }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        value = -100
+        value = -40
     }
+
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_core_of = KFL
-            is_controlled_by = KFL
-            any_neighbor_state = { controller = { has_war_with = KFL } }
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        value = 120
+        value = 100
     }
+
     ai_strategy = {
         type = front_control
         state_trigger = {
-            is_core_of = KFL
-            is_controlled_by = KFL
-            any_neighbor_state = { controller = { has_war_with = KFL } }
+            is_core_of = FROM.FROM
+            is_controlled_by = FROM.FROM
+            any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        priority = 18000
-        ratio = 0.10
+        priority = 40000
         ordertype = front
         execution_type = careful
-        execute_order = yes
         manual_attack = yes
     }
 }
@@ -692,9 +724,9 @@ KFL_check_omega_lul = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            is_controlled_by = KFL
-            NOT = { is_core_of = KFL }
+            is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
             NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -702,20 +734,33 @@ KFL_check_omega_lul = {
                     level > 0
                 }
             }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = {
+                        has_war_with = FROM.FROM
+                        divisions_in_state = { state = PREV size < 3 }
+                    }
+                }
+            }
         }
-        priority = 5
+        priority = 10
         ordertype = front
         execution_type = careful
-        execute_order = yes
-        manual_attack = no
     }
 
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_controlled_by = KFL
-            NOT = { is_core_of = KFL }
+            is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
             NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -723,10 +768,37 @@ KFL_check_omega_lul = {
                     level > 0
                 }
             }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = { has_war_with = FROM.FROM }
+                    any_province_building_level = {
+                        province = { all_provinces = yes }
+                        building = supply_node
+                        level > 0
+                    }
+                }
+            }
         }
-        value = -25
+        value = -20
     }
+
     ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_capital = yes
+            owner = { tag = FROM.FROM }
+        }
+        value = 50
+    }
+
+    ai_strategy = { #登陆更有价值的地块
         type = invasion_unit_request
         state_trigger = {
             NOT = { has_state_flag = recent_naval_invasion_flag }
@@ -747,10 +819,47 @@ KFL_check_omega_lul = {
         type = invasion_unit_request
         state_trigger = {
             NOT = { has_state_flag = recent_naval_invasion_flag }
-            any_province_building_level = {
-                province = { all_provinces = yes }
-                building = supply_node
-                level > 0
+            NOT = { is_core_of = FROM.FROM }
+        }
+        value = -3
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+        }
+        value = -15
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state_trigger = {
+            NOT = { has_state_flag = recent_naval_invasion_flag }
+            OR = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
             }
         }
         value = 15
