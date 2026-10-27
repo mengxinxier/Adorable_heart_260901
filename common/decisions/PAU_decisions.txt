@@ -17,6 +17,7 @@ PAU_Debug = {
             set_country_flag =  has_PAU_xfzb2 #亡灵战争支线：紧急靠岸
             set_country_flag =  has_PAU_xfzb3 #亡灵战争支线：反攻深渊
             set_country_flag = PAU_zkdh_unlocked
+            set_country_flag = PAU_xiaoyaoxian
             mark_focus_tree_layout_dirty = yes
         }
     }
@@ -667,7 +668,7 @@ PAU_LHS_weiji = {
 #剧情定位：亡灵清剿：疏散、反冲击、焚库与焦土隔离
     #决议名：先把活人撤出来
     PAU_undead_evacuate = {
-        icon = GFX_KNM_KFL_transfer1
+        icon = GFX_decision_category_generic_propaganda
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
@@ -707,7 +708,7 @@ PAU_LHS_weiji = {
     }
     #决议名：组织反冲击
     PAU_undead_counterattack = {
-        icon = GFX_cash_in_undead_arrows
+        icon = GFX_decision_category_CHL_nacista_decisions
         allowed = { original_tag = PAU }
         visible = { 
             has_country_flag = PAU_undead_war
@@ -774,7 +775,7 @@ PAU_LHS_weiji = {
     }
     #决议名：烧掉带不走的油库
     PAU_undead_burn_depot = {
-        icon = GFX_EMI_Kivotos_flamethrower
+        icon = GFX_decision_category_border_conflicts
         allowed = { original_tag = PAU }
         visible = { 
             has_country_flag = PAU_undead_war
@@ -831,7 +832,7 @@ PAU_LHS_weiji = {
     }
     #决议名：烧出一条隔离带
     PAU_undead_scorched_earth = {
-        icon = GFX_refine_undead_essence
+        icon = GFX_decision_category_border_war
         allowed = { original_tag = PAU }
         visible = { 
             has_country_flag = PAU_undead_war
@@ -1821,7 +1822,6 @@ PAU_grail_camp = {
             add_war_support = 0.025
         }
         ai_will_do = { factor = 10 }
-        # TODO(待确认): 圣杯流亡营实际有4个决议且原本已是days_remove=15，按提速目标统一改为10。
     }
     #决议名：用军械换淡水
     PAU_grail_trade_arms = {
@@ -1860,7 +1860,7 @@ PAU_grail_camp = {
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_grail_camp }
         available = {
-            custom_trigger_tooltip = {PAU_cond_grail_rations_gt49_tt
+            custom_trigger_tooltip = {
                 tooltip = PAU_cond_grail_rations_gt49_tt
                 check_variable = { PAU_grail_rations > 49 } #圣杯流亡营口粮：分粮、贸易与换零件消耗
             }
@@ -1899,6 +1899,62 @@ PAU_grail_camp = {
 
 #剧情定位：莉兰迪亚避风港：指定州并专精军港/商港
 PAU_safe_harbor = {
+    #决议名：获得军通
+    PAU_get_military_access = {
+        icon = GFX_decision_eng_blackshirt_march
+        allowed = { original_tag = PAU }
+        visible = {
+            has_completed_focus = PAU_zgjd
+            JAP = {
+                exists = yes
+            }
+        }
+        available = {
+            or = {
+                custom_trigger_tooltip = {
+                    tooltip = PAU_mercenary_reputation79_tt
+                    check_variable = { PAU_mercenary_reputation > 79 }
+                }
+                FROM = { has_opinion = { target = PAU value > 29 } }
+            }
+        }
+        target_trigger = {
+            FROM = {
+                or = {
+                    and = {
+                        is_chinese_country = yes
+				        has_global_flag = The_Great_War_Against_Sakura
+                    }
+                    and = {
+                        tag = ENG
+                        PAU = {
+                            not = {
+                                has_country_flag = eng_anger
+                            }
+                        }
+                    }
+                    has_war_with = JAP
+                }
+                not = {
+                    has_war_with = PAU
+                }
+            }
+        }
+        cost = 5
+        complete_effect = {
+                diplomatic_relation = {
+                    country = FROM
+                    relation = military_access
+                    active = yes
+                }
+                diplomatic_relation = {
+                    country = FROM
+                    relation = docking_rights
+                    active = yes
+                }
+        }
+        ai_will_do = { factor = 0 }
+    }
     PAU_byq_hb = {
         allowed = {
             original_tag = PAU
@@ -4902,9 +4958,28 @@ PAU_joint_institutions = {
         cost = 0
         days_remove = 180
         complete_effect = {
+            if = {
+                limit = {
+                    not = {
+                        has_country_flag = pau_development_program_leader
+                    }
+                }
+                set_country_flag = pau_development_program_leader
+                every_faction_member = {
+                    limit = {
+                        not = {
+                            tag = PAU
+                        }
+                        capital_scope = { is_on_continent = south_america }
+                    }
+                    add_ideas = PAU_south_america_development_program_ideaPAU
+                }
+            }
+        }
+        remove_effect = {
             add_to_variable = {
                 var = PAU_south_america_development #南美联合发展度：联合发展计划推进值
-                value = 3
+                value = 1
                 tooltip = PAU_south_america_development_tt
             }
             if = {
@@ -4925,7 +5000,6 @@ PAU_joint_institutions = {
                 }
             }
             else_if = {
-                custom_effect_tooltip = PAU_next_leader
                 limit = {
                     any_country = {
                         capital_scope = { is_on_continent = south_america }
@@ -4936,6 +5010,7 @@ PAU_joint_institutions = {
                         is_in_faction_with = PAU
                     }
                 }
+                custom_effect_tooltip = PAU_next_leader
                 random_country = {
                     limit = {
                         capital_scope = { is_on_continent = south_america }
@@ -5194,6 +5269,7 @@ PAU_joint_institutions = {
                 
             }
             else = {
+                custom_effect_tooltip = PAU_next_leader
                 
                 every_faction_member = {
                     limit = {
@@ -5225,10 +5301,7 @@ PAU_joint_institutions = {
                     }
             }
             hidden_effect = { PAU_refresh_south_america_development = yes }
-            country_event = { id = PAU.620 hours = 6 }
 
-        }
-        remove_effect = {
             activate_decision = PAU_south_america_development_program
         }
         ai_will_do = { factor = 10 }
