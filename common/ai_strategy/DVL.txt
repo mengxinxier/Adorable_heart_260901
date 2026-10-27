@@ -1088,36 +1088,27 @@ DVL_blitz_france = {
 	}		
 
 
-	#====================AI优先级层级====================
-#90000+：生存/危机防御
-#80000：确认包围圈后的歼灭
-#60000~70000：决定性战役（终局/首都）
-#40000~55000：局部战役目标（包围/战略收缩/敌首都）
-#26000~32000：补给点与胜利推进
-#11000~18000：战线微调
-#10000 以下：旧有国家/战争场景规则与兜底
+
 DVL_state_is_zhanlue = {#老爷爷，我给你踩地来咯
     allowed = { original_tag = DVL }
     enable = {
         has_war = yes
         surrender_progress < 0.2
-        OR = {
-            any_enemy_country = {
-                strength_ratio = {
-                    tag = DVL
-                    ratio < 1.4
-                }
+        any_enemy_country = {
+            strength_ratio = {
+                tag = DVL
+                ratio < 1.4
             }
         }
     }
     abort_when_not_enabled = yes
 
-    #普通优势/均势阶段：优先打开可推进的海岸线
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_coastal = yes
             controller = { has_war_with = DVL }
+            any_neighbor_state = { is_controlled_by = DVL }
         }
         ratio = 0.15
         priority = 14000
@@ -1127,33 +1118,34 @@ DVL_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         manual_attack = yes
     }
 
-    #空州/薄弱节点：保留高优先级
     ai_strategy = {
         type = front_control
         state_trigger = {
-            FROM = { has_war_with = FROM.FROM }
-            FROM = {
+            controller = {
+                has_war_with = DVL
                 divisions_in_state = { state = PREV size = 0 }
             }
+            any_neighbor_state = { is_controlled_by = DVL }
         }
-        priority = 18000
+        priority = 65000
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
         manual_attack = yes
     }
 
-    #敌军少于3师时发动局部突破，但降低兵力集中度
+    #敌军少于3师时发动局部突破
     ai_strategy = {
         type = front_control
         state_trigger = {
-            FROM = { has_war_with = FROM.FROM }
-            FROM = {
+            controller = {
+                has_war_with = DVL
                 divisions_in_state = { state = PREV size < 3 }
             }
+            any_neighbor_state = { is_controlled_by = DVL }
         }
         ratio = 0.5
-        priority = 11000
+        priority = 18000
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1165,6 +1157,7 @@ DVL_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         type = front_control
         state_trigger = {
             controller = { has_war_with = DVL }
+            any_neighbor_state = { is_controlled_by = DVL }
             OR = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -1182,17 +1175,79 @@ DVL_state_is_zhanlue = {#老爷爷，我给你踩地来咯
     }
 }
 
+DVL_target_enemy_supply_hubs = {#断补给
+    allowed = { original_tag = DVL }
+    enable = {
+        has_war = yes
+        num_of_military_factories > 50
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = DVL
+                divisions_in_state = { state = PREV size < 6 }
+            }
+            any_neighbor_state = { is_controlled_by = DVL }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        priority = 32000
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    ai_strategy = {
+        type = front_control
+        state_trigger = {
+            controller = {
+                has_war_with = DVL
+                divisions_in_state = { state = PREV size > 5 }
+            }
+            any_neighbor_state = { is_controlled_by = DVL }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+        }
+        priority = 15000
+        ordertype = front
+        execution_type = balanced
+        execute_order = yes
+        manual_attack = yes
+    }
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            controller = { has_war_with = DVL }
+            any_province_building_level = {
+                province = { all_provinces = yes }
+                building = supply_node
+                level > 0
+            }
+            any_neighbor_state = { is_controlled_by = DVL }
+        }
+        value = 45
+    }
+}
+
 DVL_wartime_air_superiority = {#全力争夺制空权
     allowed = { original_tag = DVL }
     enable = {
         num_of_military_factories > 50
-        OR = {
-            has_tech = basic_small_airframe
-        }
+        has_tech = basic_small_airframe
     }
     abort_when_not_enabled = yes
 
-    #大幅提升战斗机产能
     ai_strategy = {
         type = equipment_production_factor
         id = fighter
@@ -1203,7 +1258,6 @@ DVL_wartime_air_superiority = {#全力争夺制空权
         id = fighter
         value = 12
     }
-    #CAS配合地面攻势
     ai_strategy = {
         type = equipment_production_factor
         id = cas
@@ -1214,16 +1268,11 @@ DVL_wartime_air_superiority = {#全力争夺制空权
         id = cas
         value = 8
     }
-    #提升空军工厂分配
     ai_strategy = {
         type = air_factory_balance
         value = 15
     }
-
 }
-
-
-
 
 DVL_crisis_iron_wall = {#身后就是柏林
     allowed = { original_tag = DVL }
@@ -1233,6 +1282,7 @@ DVL_crisis_iron_wall = {#身后就是柏林
     }
     abort = {
         OR = {
+            has_war = no
             surrender_progress < 0.13
             has_capitulated = yes
         }
@@ -1263,7 +1313,9 @@ DVL_crisis_iron_wall = {#身后就是柏林
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
+            is_controlled_by = DVL
             NOT = { is_core_of = DVL }
+            NOT = { is_capital = yes }
             NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -1271,8 +1323,15 @@ DVL_crisis_iron_wall = {#身后就是柏林
                     level > 0
                 }
             }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
         }
-        value = -75
+        value = -60
     }
     ai_strategy = {
         type = ai_wanted_divisions_factor
@@ -1293,14 +1352,19 @@ DVL_capital_shield = {#身后就是大坟墓
     }
     abort_when_not_enabled = yes
 
-    #首都防线是防御预备队，不在和平期持续占兵
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             OR = {
-                is_capital = yes
                 AND = {
-                    any_neighbor_state = { is_capital = yes }
+                    is_capital = yes
+                    is_controlled_by = DVL
+                }
+                AND = {
+                    any_neighbor_state = {
+                        is_capital = yes
+                        is_controlled_by = DVL
+                    }
                     is_controlled_by = DVL
                 }
             }
@@ -1310,7 +1374,10 @@ DVL_capital_shield = {#身后就是大坟墓
     ai_strategy = {
         type = front_control
         state_trigger = {
-            any_neighbor_state = { is_capital = yes }
+            any_neighbor_state = {
+                is_capital = yes
+                is_controlled_by = DVL
+            }
             is_controlled_by = DVL
             any_neighbor_state = {
                 controller = { has_war_with = DVL }
@@ -1322,6 +1389,7 @@ DVL_capital_shield = {#身后就是大坟墓
         manual_attack = yes
     }
 }
+
 DVL_encirclement_hunter = {
     allowed = { original_tag = DVL }
     enable = {
@@ -1359,6 +1427,7 @@ DVL_encirclement_hunter = {
         value = 45
     }
 }
+
 DVL_end_pocket = {#包围快速歼灭
     allowed = { original_tag = DVL }
     enable = {
@@ -1412,6 +1481,7 @@ DVL_end_pocket = {#包围快速歼灭
         value = 25
     }
 }
+
 DVL_concentrate_troops = {#集中突破
     allowed = {
         original_tag = DVL
@@ -1420,15 +1490,15 @@ DVL_concentrate_troops = {#集中突破
         has_war = yes
         surrender_progress < 0.20
     }
-
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = force_concentration_factor
         value = 12
     }
-
 }
+
+#胜利阶段
 DVL_victory_phase1_crack = {
     allowed = { original_tag = DVL }
     enable = {
@@ -1461,10 +1531,6 @@ DVL_victory_phase1_crack = {
         execution_type = rush
         execute_order = yes
         manual_attack = yes
-    }
-    ai_strategy = {
-        type = garrison
-        value = -100
     }
     ai_strategy = {
         type = spare_unit_factor
@@ -1523,10 +1589,6 @@ DVL_victory_phase2_exploit = {
         type = spare_unit_factor
         value = -25
     }
-    ai_strategy = {
-        type = garrison
-        value = -120
-    }
 }
 
 DVL_victory_phase3_annihilate = {
@@ -1553,28 +1615,22 @@ DVL_victory_phase3_annihilate = {
         execute_order = yes
         manual_attack = yes
     }
-
-    #全军压上，但保留少量后方机动空间
     ai_strategy = {
         type = spare_unit_factor
-        value = -80
-    }
-    ai_strategy = {
-        type = garrison
-        value = -200
+        value = -60
     }
     ai_strategy = {
         type = ai_wanted_divisions_factor
         value = 200
     }
 }
+
 DVL_strategic_withdrawal = {#主动收缩
     allowed = { original_tag = DVL }
     enable = {
         has_war = yes
-        surrender_progress > 0.1
+        surrender_progress > 0.10
         surrender_progress < 0.20
-        #敌军正在崩溃时不要撤，避免与胜利阶段抢同一批兵
         NOT = {
             any_enemy_country = {
                 surrender_progress > 0.05
@@ -1588,6 +1644,7 @@ DVL_strategic_withdrawal = {#主动收缩
         state_trigger = {
             is_controlled_by = DVL
             NOT = { is_core_of = DVL }
+            NOT = { is_capital = yes }
             NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -1595,10 +1652,16 @@ DVL_strategic_withdrawal = {#主动收缩
                     level > 0
                 }
             }
-            NOT = { is_capital = yes }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
             any_neighbor_state = { controller = { has_war_with = DVL } }
         }
-        value = -100
+        value = -40
     }
 
     ai_strategy = {
@@ -1625,20 +1688,21 @@ DVL_strategic_withdrawal = {#主动收缩
     }
 }
 
-DVL_check_omega_lul = { #部队逻辑
+DVL_check_omega_lul = { #部队逻辑（智能避开纯烂地，但不影响东线跳板推进与沿海港口）
     allowed = {
         original_tag = DVL
     }
     enable = {
         has_war = yes
     }
-    abort = {
-        always = no
-    }
-    ai_strategy = {#不待烂地
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
         type = front_control
         state_trigger = {
-            is_controlled_by = DVL
+            is_controlled_by = FROM.FROM
+            NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
             NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
@@ -1646,29 +1710,61 @@ DVL_check_omega_lul = { #部队逻辑
                     level > 0
                 }
             }
-            NOT = { is_capital = yes }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = {
+                        has_war_with = FROM.FROM
+                        divisions_in_state = { state = PREV size < 3 }
+                    }
+                }
+            }
         }
         priority = 10
         ordertype = front
         execution_type = careful
     }
 
-    #告诉AI从这些垃圾地块把兵抽走
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            is_controlled_by = DVL
-            NOT = { #没有补给站
+            is_controlled_by = FROM.FROM
+            NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
                 any_province_building_level = {
                     province = { all_provinces = yes }
                     building = supply_node
                     level > 0
                 }
             }
-            NOT = { is_capital = yes }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = { has_war_with = FROM.FROM }
+                    any_province_building_level = {
+                        province = { all_provinces = yes }
+                        building = supply_node
+                        level > 0
+                    }
+                }
+            }
         }
-        value = -50
+        value = -20
     }
+
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1677,7 +1773,6 @@ DVL_check_omega_lul = { #部队逻辑
         }
         value = 50
     }
-
 
     ai_strategy = { #登陆更有价值的地块
         type = invasion_unit_request
@@ -1711,10 +1806,15 @@ DVL_check_omega_lul = { #部队逻辑
             NOT = { is_core_of = FROM.FROM }
             NOT = {
                 any_province_building_level = {
-                    province = {
-                        all_provinces = yes
-                    }
+                    province = { all_provinces = yes }
                     building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
                     level > 0
                 }
             }
@@ -1725,15 +1825,18 @@ DVL_check_omega_lul = { #部队逻辑
         type = invasion_unit_request
         state_trigger = {
             NOT = { has_state_flag = recent_naval_invasion_flag }
-
-            any_province_building_level = {
-                province = {
-                    all_provinces = yes
+            OR = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
                 }
-                building = supply_node
-                level > 0
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
             }
-
         }
         value = 15
     }
