@@ -1391,52 +1391,78 @@ PAO_check_omega_lul = { #部队逻辑
     allowed = {
         original_tag = PAO
     }
-    enable = {
-        always = yes
+     enable = {
+        has_war = yes
     }
-    abort = {
-        always = no
-    }
-    ai_strategy = {#不待没补给的地方
-        type = front_unit_request
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
-            any_province_building_level = {
-                province = {
-                    all_provinces = yes
-                }
-                building = supply_node
-                level > 0
-            }
-        }
-        value = 15
-    }
-    ai_strategy = {
-        type = front_unit_request
-        state_trigger = {
-            is_controlled_by = FROM
+            NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
             NOT = {
                 any_province_building_level = {
-                    province = {
-                        all_provinces = yes
-                    }
+                    province = { all_provinces = yes }
                     building = supply_node
                     level > 0
                 }
             }
-        }
-        value = -15
-    }
-    ai_strategy = {#保护首都
-        type = front_unit_request
-        state_trigger = {
-            OR = {
-                is_capital = yes
-                any_neighbor_state = { is_capital = yes }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = {
+                        has_war_with = FROM.FROM
+                        divisions_in_state = { state = PREV size < 3 }
+                    }
+                }
             }
         }
-        value = 15
+        priority = 10
+        ordertype = front
+        execution_type = careful
     }
+
+    ai_strategy = {
+        type = front_unit_request
+        state_trigger = {
+            is_controlled_by = FROM.FROM
+            NOT = { is_capital = yes }
+            NOT = { is_core_of = FROM.FROM }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
+            }
+            NOT = {
+                any_neighbor_state = {
+                    controller = { has_war_with = FROM.FROM }
+                    any_province_building_level = {
+                        province = { all_provinces = yes }
+                        building = supply_node
+                        level > 0
+                    }
+                }
+            }
+        }
+        value = -20
+    }
+
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1445,7 +1471,6 @@ PAO_check_omega_lul = { #部队逻辑
         }
         value = 50
     }
-
 
     ai_strategy = { #登陆更有价值的地块
         type = invasion_unit_request
@@ -1479,10 +1504,15 @@ PAO_check_omega_lul = { #部队逻辑
             NOT = { is_core_of = FROM.FROM }
             NOT = {
                 any_province_building_level = {
-                    province = {
-                        all_provinces = yes
-                    }
+                    province = { all_provinces = yes }
                     building = supply_node
+                    level > 0
+                }
+            }
+            NOT = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
                     level > 0
                 }
             }
@@ -1493,15 +1523,18 @@ PAO_check_omega_lul = { #部队逻辑
         type = invasion_unit_request
         state_trigger = {
             NOT = { has_state_flag = recent_naval_invasion_flag }
-
-            any_province_building_level = {
-                province = {
-                    all_provinces = yes
+            OR = {
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = supply_node
+                    level > 0
                 }
-                building = supply_node
-                level > 0
+                any_province_building_level = {
+                    province = { all_provinces = yes }
+                    building = naval_base
+                    level > 0
+                }
             }
-
         }
         value = 15
     }
