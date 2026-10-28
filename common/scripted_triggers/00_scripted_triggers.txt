@@ -424,10 +424,6 @@ should_USA_invade_europe_or_africa = {
             exists = yes
             has_war_with = USA
         }
-        SPR = {
-            exists = yes
-            has_war_with = USA
-        }
         USA = {
             OR = {
                 AND = {
@@ -449,9 +445,6 @@ should_USA_invade_europe_or_africa = {
                 }
                 is_in_array = {
                     potential_and_current_enemies = ITA
-                }
-                is_in_array = {
-                    potential_and_current_enemies = SPR
                 }
             }
         }
@@ -1168,6 +1161,7 @@ is_zzjd_country = {
         has_idea = PAO_zzjd
         has_idea = PAM_zzjd
         has_idea = pam_ahm_bj
+        has_idea = ONM_fqsp
     }
 }
 is_lwny2_country = {
@@ -1259,3 +1253,71 @@ can_unlock_fourth_track_of_sf_doctrine = {
 	}
 }
 
+# Sets the badge flag the signatory panel reads, bumping the refresh counter only when the state actually flips.
+MTG_naval_treaty_mark_over_allowance_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = MTG_over_treaty_allowance }
+			}
+			set_country_flag = MTG_over_treaty_allowance
+			add_to_variable = { global.MTG_naval_treaty_ui_version = 1 }
+		}
+	}
+}
+
+MTG_naval_treaty_clear_over_allowance_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				has_country_flag = MTG_over_treaty_allowance
+			}
+			clr_country_flag = MTG_over_treaty_allowance
+			add_to_variable = { global.MTG_naval_treaty_ui_version = 1 }
+		}
+	}
+}
+
+# Daily compliance check for one signatory, the benchmark selection mirrors the treaty missions rather than inventing a second rule.
+MTG_naval_treaty_sync_ui_compliance_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				has_naval_treaty_over_allowance_trigger = yes
+			}
+			MTG_naval_treaty_mark_over_allowance_effect = yes
+		}
+		else = {
+			MTG_naval_treaty_clear_over_allowance_effect = yes
+		}
+	}
+}
+
+# Keeps the signatory list behind MTG_naval_treaties_ui in step with the treaty ideas, safe to call from anywhere.
+MTG_naval_treaty_sync_ui_membership_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				exists = yes
+				has_naval_treaty_trigger = yes
+				NOT = { is_in_array = { array = global.MTG_naval_treaty_members value = THIS } }
+			}
+			add_to_array = { global.MTG_naval_treaty_members = THIS }
+			add_to_variable = { global.MTG_naval_treaty_ui_version = 1 }
+		}
+		else_if = {
+			limit = {
+				is_in_array = { array = global.MTG_naval_treaty_members value = THIS }
+				# Annexed signatories keep their idea, so existence has to be checked separately or dead tags pile up.
+				OR = {
+					NOT = { exists = yes }
+					NOT = { has_naval_treaty_trigger = yes }
+				}
+			}
+			remove_from_array = { global.MTG_naval_treaty_members = THIS }
+			add_to_variable = { global.MTG_naval_treaty_ui_version = 1 }
+			# Leaving the treaty clears the treaty-derived badge, otherwise a rejoining country shows a stale one
+			MTG_naval_treaty_clear_over_allowance_effect = yes
+		}
+	}
+}
