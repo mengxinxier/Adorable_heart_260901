@@ -557,6 +557,54 @@ ONM_navy = {
 			}
 		}
 	}
+
+	ONM_navy_start_auto_on = {
+		priority = 97
+		available = {
+			NOT = { has_country_flag = ONM_navy_start_auto_on }
+			custom_trigger_tooltip = {
+                tooltip = ONM_navy_4_tt
+                check_variable = { ONM.onm_navy_ui_phase_end_event_num = 22 }
+            }
+		}
+		complete_effect = {
+			set_country_flag = ONM_navy_start_auto_on
+			activate_mission = ONM_navy_start_auto
+		}
+	}
+	ONM_navy_start_auto_off = {
+		priority = 96
+		available = {
+			has_country_flag = ONM_navy_start_auto_on
+		}
+		complete_effect = {
+			remove_mission = ONM_navy_start_auto
+			clr_country_flag = ONM_navy_start_auto_on
+		}
+	}
+	ONM_navy_start_auto = {
+		priority = 95
+		activation = {
+        	always = no
+    	}
+		available = {
+			not = { has_active_mission = ONM_navy_on_going }
+		}
+		cancel_trigger = {
+        	hidden_trigger = { always = no }
+    	}
+		is_good = yes
+		days_mission_timeout = 99999
+		timeout_effect = {
+			activate_mission = ONM_navy_start_auto
+		}
+		complete_effect = {
+			set_variable = { ONM.ONM_navy_ui_phase = 1 }
+			set_variable = { ONM.ONM_navy_ui_weather = 0 }
+			activate_mission = ONM_navy_on_going
+			activate_mission = ONM_navy_start_auto  
+		}
+	}
 }
 
 ONM_society_category = {
@@ -1263,6 +1311,8 @@ onm_final_judgment = {#终焉审判
 			}
 		}
 		available = {
+			NOT = { has_idea = onm_final_judgment }
+			NOT = { has_country_flag = onm_final_judgment_2_on_going }
 			NOT = { has_non_aggression_pact_with = FROM }
 			FROM = {
 				not = {
@@ -1275,6 +1325,7 @@ onm_final_judgment = {#终焉审判
 		}
 		war_with_target_on_remove = yes
 		complete_effect = {
+			set_country_flag = onm_final_judgment_2_on_going
 			FROM_country_is_defender_and_ROOT_is_accacker = yes
 			set_variable = { ONM.onm_temp_decisions_target = FROM.id}
 			hidden_effect = {
@@ -1304,6 +1355,7 @@ onm_final_judgment = {#终焉审判
 		days_remove = 14
 		fire_only_once = yes
 		remove_effect = {
+			clr_country_flag = onm_final_judgment_2_on_going
 			hidden_effect = {
 				FROM = {
 					add_ideas = ONM_fqsp		
@@ -1313,6 +1365,15 @@ onm_final_judgment = {#终焉审判
 				target = FROM
 				type = annex_everything
 			}
+			custom_effect_tooltip = generic_skip_one_line_tt
+			hidden_effect = {
+				add_timed_idea = {
+					idea = onm_final_judgment
+					days = 60
+				}
+			}
+			custom_effect_tooltip = onm_add_timed_idea_final_judgment_tt
+			custom_effect_tooltip = generic_skip_one_line_tt
 			custom_effect_tooltip = onm_final_judgment_2_tt
 		}
 	}
