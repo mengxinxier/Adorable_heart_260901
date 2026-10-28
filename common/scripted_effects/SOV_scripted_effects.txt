@@ -571,24 +571,46 @@ SOV_disintegration_of_the_Soviet_Union = {
 
 #中亚
 
-	if = {
+	if = {	#如果特雷森存在，就移交领土
 		limit = { country_exists = TAM }
-		TAM = {
-			transfer_state = 404
-			transfer_state = 810
-			transfer_state = 590
-			transfer_state = 402
-			transfer_state = 406
-			transfer_state = 1171
-		}
-	}
-	else = {
 		every_state = {
-			limit = { has_state_flag = TAMZDQ }
+			limit = { 
+				has_state_flag = TAMZDQ
+				is_owned_by = SOV
+			}
 			transfer_state_to = TAM
 			remove_core_of = SOV
 		}
-		release = EAM
+		TAM = {
+			if = {
+				limit = {
+					is_in_faction_with = SOV
+				}
+				leave_faction = yes
+				if = {
+					limit = { 
+						is_ai = no
+						NOT = {
+							has_country_flag = TAM_For_the_Mortal
+						}
+					}
+					set_country_flag = TAM_For_the_Mortal
+					mark_focus_tree_layout_dirty = yes
+				}
+			}
+			
+		}
+	}
+	else = {	#特雷森不存在，创建特雷森
+		every_state = {
+			limit = { 
+				has_state_flag = TAMZDQ
+				is_owned_by = SOV
+			}
+			transfer_state_to = TAM
+			remove_core_of = SOV
+		}
+		release = TAM
 		every_state = {
 			limit = { has_state_flag = TAMZDQ }
 			add_core_of = TAM
@@ -607,29 +629,12 @@ SOV_disintegration_of_the_Soviet_Union = {
 		}
 		inherit_technology = SOV
 		set_research_slots = 2
-		TAM = { 
+		TAM = { #这里白和没问题
 			every_enemy_country = {
 				white_peace = PREV
 			}
 		}
 	}
-	TAM = {
-		if = {
-			limit = {
-				is_in_faction_with = SOV
-			}
-			leave_faction = yes
-			country_event = TAM.120
-		}
-		if = {
-			limit = { 
-				is_ai = no
-			}
-			set_country_flag = TAM_For_the_Mortal
-			mark_focus_tree_layout_dirty = yes
-		}
-	}
-
 }
 
 SOV_exile_characters_to_SIB = {
