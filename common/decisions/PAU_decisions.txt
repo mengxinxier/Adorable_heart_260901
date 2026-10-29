@@ -1,6 +1,25 @@
 #PAU 决议总表：按剧情阶段分为19组；每组上方有“剧情定位”注释，变量/旗标行尾有中文说明。
 #=====================================================================
 PAU_Debug = {
+    xiaoyao_annex = {
+        complete_effect = {
+                        every_country = {
+                            limit = {
+                                not = {
+                                    tag = ROOT
+                                }
+                                capital_scope = { is_on_continent = south_america }
+                            }
+                            ROOT = {
+                                annex_country = {
+                                    target = PREV
+                                    transfer_troops = no
+                                }
+
+                            }
+                        }
+        }
+    }
     #决议名：解锁全部小遥路线（调试）
     xiaoyao_luxian = {
         complete_effect = {
@@ -990,7 +1009,7 @@ PAU_hetong = {
         allowed = { tag = PAU }
 
         available = {
-            FROM = {
+            var:PAU_loan_provider = {
                 has_war = yes
             }
         }
@@ -999,19 +1018,13 @@ PAU_hetong = {
         }
         visible = {
         }
+
         selectable_mission = yes
         #如果设置，会将任务转换为玩家必须选择按钮的任务。
-        target_trigger = {
-            FROM = {
-                has_country_flag = PAU_bop_loan_active  #同意的flag
-                has_country_flag = yaobuyaoguyong  #要不要
-            }
-        }
-
         days_mission_timeout = 30
         cancel_trigger = {
             or = {
-                FROM = {
+                var:PAU_loan_provider = {
                     or = {
                         has_war_with  = ROOT
                         has_war = no
@@ -1023,9 +1036,11 @@ PAU_hetong = {
         }
         cancel_effect = {
             clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
-            FROM = {
+            var:PAU_loan_provider = {
+                clr_country_flag = yaobuyaoguyong  #要不要
                 clr_country_flag = PAU_bop_loan_active
             }
+            clear_variable = PAU_loan_provider
         }
 
         complete_effect = {
@@ -1041,7 +1056,7 @@ PAU_hetong = {
                 }
             }
 
-            FROM = {
+            var:PAU_loan_provider = {
                 clr_country_flag = yaobuyaoguyong  #要不要
             }
 
@@ -1049,13 +1064,13 @@ PAU_hetong = {
 
             if = {
                 limit = {
-                    FROM = { #对方控制省份数量大于1
+                    var:PAU_loan_provider = { #对方控制省份数量大于1
                         check_variable = {
                             num_controlled_states > 1
                         }
                     }
                 }
-                FROM = {
+                var:PAU_loan_provider = {
                     random_owned_controlled_state = {
                         limit = {
                             is_coastal = yes
@@ -1088,7 +1103,7 @@ PAU_hetong = {
         timeout_effect = {
             add_ideas = PAU_annex_debuff
 
-            FROM = {
+            var:PAU_loan_provider = {
                 clr_country_flag = yaobuyaoguyong  #要不要
             }
 
@@ -1096,13 +1111,13 @@ PAU_hetong = {
 
             if = {
                 limit = {
-                    FROM = { #对方控制省份数量大于1
+                    var:PAU_loan_provider = { #对方控制省份数量大于1
                         check_variable = {
                             num_controlled_states > 1
                         }
                     }
                 }
-                FROM = {
+                var:PAU_loan_provider = {
                     random_owned_controlled_state = {
                         limit = {
                             is_coastal = yes
@@ -1452,8 +1467,23 @@ PAU_hetong = {
                     days = 30
                     value = 1
                 }
-                AHM = {
-                    country_event = { id = PAU.180 days = 30 }
+                if = {
+                    limit = {
+                        AHM = {
+                            exists = yes
+                        }
+                    }
+                    AHM = {
+                        country_event = { id = PAU.180 days = 30 }
+                    }
+                }
+                else = {
+                    random_country = {
+                        limit = {
+                            is_ai = yes
+                        }
+                        country_event = { id = PAU.180 days = 30 }
+                    }
                 }
             }
         }
@@ -1487,6 +1517,7 @@ PAU_hetong = {
             clr_country_flag = PAU_guyonged_flag  #没有同时给其他人雇佣
             #超时失败
             country_event = { id = PAU.177 hours = 6 }
+            clear_variable = PAU_loan_provider
         }
     }
     #决议名：终止合同并投降
@@ -4585,7 +4616,7 @@ PAU_national_unification = {
     PAU_sakura_super_event = {
         icon = GFX_decision_POL_organize_strike_two
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = has_PAU_xiaoyao7 has_country_flag = PAU_yhzb }
+        visible = { has_country_flag = has_PAU_xiaoyao8 has_country_flag = PAU_yhzb }
         available = {
             OR = {
                 NOT = { country_exists = JAP }
@@ -4596,12 +4627,19 @@ PAU_national_unification = {
                 }
             }
         }
-        cost = 25
+        cost = 0
         fire_only_once = yes
         days_remove = 60
         remove_effect = {
-            PAU_add_sakura_cores = yes
-            hidden_effect = { PAU_news_sakura = yes }
+            set_country_flag = PAU_jap_cap #樱花投降
+            every_state = {
+                limit = { is_core_of = JAP }
+                add_claim_by_ROOT_if_has_no_core = yes
+                enable_state_integration_50_compliance = yes
+            }
+            hidden_effect = { 
+                news_event = { id = PAU_news.2  hours = 6 }
+            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -4609,20 +4647,9 @@ PAU_national_unification = {
     PAU_demand_sakura_cores = {
         icon = GFX_decision_eng_trade_unions_support
         allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = has_PAU_xiaoyao7
-            has_completed_focus = PAU_llbg
-            OR = {
-                NOT = { country_exists = JAP }
-                JAP = { has_capitulated = yes }
-                JAP = {
-                    all_core_state = { NOT = { is_controlled_by = JAP } }
-                }
-            }
-        }
+        visible = { has_country_flag = has_PAU_xiaoyao7 has_completed_focus = PAU_llbg }
         available = {
             has_completed_focus = PAU_llbg
-            hidden_trigger = { NOT = { has_country_flag = PAU_sakura_demand_done } }
             any_country = {
                 exists = yes
                 NOT = { tag = PAU }
@@ -4635,8 +4662,16 @@ PAU_national_unification = {
         fire_only_once = yes
         days_remove = 30
         remove_effect = {
-            set_country_flag = PAU_sakura_demand_done
-            PAU_demand_sakura_cores_effect = yes
+            every_country = {
+                limit = {
+                    exists = yes
+                    NOT = { tag = PAU }
+                    NOT = { is_subject_of = ROOT }
+                    NOT = { has_war_with = ROOT }
+                    any_controlled_state = { is_core_of = JAP }
+                }
+                country_event = { id = PAU.550 hours = 24 }
+            }
         }
         ai_will_do = { factor = 10 }
     }

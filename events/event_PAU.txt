@@ -720,13 +720,13 @@ country_event = {
     fire_only_once = yes
     immediate = {
         hidden_effect = {
+           set_country_flag = PAU_fullscreen
            scoped_play_song = "路标"
         }
     }
     option = {
         name = PAU.18.a
         country_event = PAU.188
-
         hidden_effect = {
             add_to_variable = {
                 var = PAU_grail_rations #圣杯流亡营口粮：分粮、贸易与换零件消耗
@@ -752,6 +752,7 @@ country_event = {
         hidden_effect = {
            scoped_play_song = "声"
         }
+        set_country_flag = PAU_fullscreen_rain
         add_equipment_to_stockpile = {
                 type = convoy
                 amount = 200
@@ -788,6 +789,9 @@ country_event = {
                 }
                 declare_war_on = { target = ZDW type = annex_everything }
             }
+    }
+    after = {
+        clr_country_flag = PAU_fullscreen
     }
 }
 
@@ -1635,11 +1639,13 @@ country_event = {
     picture = GFX_event_riji
     is_triggered_only = yes
     fire_only_once = yes
-
     option = {
         name = PAU.42.a
 
-        add_political_power = 15
+        add_manpower = -1
+        JAP = {
+            add_manpower = 1
+        }
         hidden_effect = {
             scoped_sound_effect = "Noise"
         }
@@ -1655,14 +1661,14 @@ country_event = {
     picture = GFX_event_PAU_ax5
     is_triggered_only = yes
     fire_only_once = yes
-
-    option = {
-        name = PAU.43.a
-        country_event = PAU.433
-
+    immediate = {
         hidden_effect = {
             scoped_play_song = "连长"
         }
+    }
+    option = {
+        name = PAU.43.a
+        country_event = PAU.433
 
     }
 }
@@ -1679,10 +1685,13 @@ country_event = {
         name = PAU.433.a
         retire_character = PAU_bl
         add_manpower = -1
-        army_experience = 50
         add_war_support = 0.10
+        complete_national_focus = PAU_byzc
         set_country_flag = PAU_yhzb
         unlock_decision_tooltip = PAU_sakura_super_event
+        set_country_flag = has_PAU_xiaoyao8 #主线阶段8：战后秩序
+        custom_effect_tooltip = jiesuoguoce
+        mark_focus_tree_layout_dirty = yes
     }
 }
 
@@ -1746,6 +1755,12 @@ country_event = {
         }
         add_political_power = 100
         add_stability = 0.05
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_communism_drift
+            value = 0.1
+            tooltip = communism_drift_tt
+        }
     }
     option = {
         name = PAU.4444.b
@@ -1768,6 +1783,12 @@ country_event = {
         }
         add_political_power = 100
         add_stability = 0.05
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_communism_drift
+            value = 0.1
+            tooltip = communism_drift_tt
+        }
     }
     option = {
         name = PAU.4444.c
@@ -1790,6 +1811,12 @@ country_event = {
         }
         add_political_power = 100
         add_stability = 0.05
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_communism_drift
+            value = 0.1
+            tooltip = communism_drift_tt
+        }
     }
 }
 
@@ -2096,7 +2123,24 @@ country_event = {
     }
     option = {
         name = PAU.522.a
+        country_event = PAU.5222
 
+    }
+}
+
+country_event = {
+    id = PAU.5222
+    title = PAU.5222.t
+    desc = PAU.5222.d
+    major = no
+    picture = GFX_event_PAU_xy12
+    is_triggered_only = yes
+    fire_only_once = yes
+    immediate = {
+        
+    }
+    option = {
+        name = PAU.5222.a
         add_stability = 0.05
 
     }
@@ -2309,9 +2353,7 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.173.a
-        #unlock_decision_tooltip = PAU_bop_repay_mission
-        #activate_mission = PAU_guyong_zhunbei
-        unlock_decision_tooltip = PAU_guyong_zhunbei
+        activate_mission = PAU_guyong_zhunbei
         PAU = {
             diplomatic_relation = {
                 country = FROM
@@ -2319,6 +2361,7 @@ country_event = {
                 active = yes
             }
         }
+                set_variable = { var = PAU_loan_provider value = FROM }
         FROM = {
             diplomatic_relation = {
                 country = PAU
@@ -2475,6 +2518,9 @@ country_event = {
                 }
                 clr_country_flag = PAU_bop_loan_active
             }
+            PAU = {
+                clear_variable = PAU_loan_provider
+            }
     }
 }
 
@@ -2538,6 +2584,25 @@ news_event = {
         name = PAU_news.2.a
         hidden_effect = {
             set_variable = { adorable_heart_super_event_var = 8122 }
+            adorable_heart_fire_super_event = yes
+        }
+    }
+}
+
+news_event = {
+    id = PAU_news.3
+    title = PAU_news.3.t
+    desc = PAU_news.3.d
+    picture = GFX_PAU_news_xzyh
+    trigger = {
+        wants_world_news = yes
+    }
+    is_triggered_only = yes
+    major = yes
+    option = {
+        name = PAU_news.3.a
+        hidden_effect = {
+            set_variable = { adorable_heart_super_event_var = 8123 }
             adorable_heart_fire_super_event = yes
         }
     }
@@ -2701,60 +2766,23 @@ country_event = {
         name = PAU.550.a
         ai_chance = {
             base = 50
-            modifier = {
-                factor = 1000
-                is_in_faction_with = FROM
-            }
-            modifier = {
-                factor = 5
-                has_government = communism
-            }
-            modifier = {
-                factor = 1.5
-                has_government = democratic
-            }
-            modifier = {
-                factor = 2
-                has_opinion = { target = FROM value > 20 }
-            }
-            modifier = {
-                factor = 2
-                FROM = { has_army_size = { size > 80 } }
-            }
-            modifier = {
-                factor = 0.5
-                has_government = fascism
-            }
         }
-        FROM = { set_country_flag = PAU_sakura_cores_obtained } #成功索取樱花核心
-        every_controlled_state = {
-            limit = { is_core_of = JAP }
+        every_state = {
+            limit = { 
+                is_core_of = JAP 
+                or = {
+                    is_controlled_by = ROOT
+                    controller = { is_subject_of = ROOT }
+                }
+            }
             transfer_state_to = FROM
         }
-        FROM = { PAU_add_sakura_cores = yes }
     }
     option = {
         name = PAU.550.b
         ai_chance = {
-            base = 40
-            modifier = {
-                factor = 0
-                is_in_faction_with = FROM
-            }
-            modifier = {
-                factor = 0.25
-                has_government = communism
-            }
-            modifier = {
-                factor = 2
-                has_opinion = { target = FROM value < 0 }
-            }
-            modifier = {
-                factor = 2
-                has_government = fascism
-            }
+            base = 0
         }
-        FROM = { set_country_flag = PAU_sakura_cores_refused } #索取樱花核心被拒绝
         FROM = {
             declare_war_on = { target = ROOT type = annex_everything }
         }
