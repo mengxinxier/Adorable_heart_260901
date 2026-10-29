@@ -261,50 +261,6 @@ PAU_pull_into_white_night_faction = {
     ROOT = { clr_country_flag = PAU_allow_major_faction_pull }
 }
 
-#PAU_join_soviet_faction：加入苏联阵营
-PAU_join_soviet_faction = {
-    #无论苏联是否已有阵营、是否为阵营领袖，都保证 PAU 能完成阵营合并。
-    if = {
-        limit = { SOV = { is_in_faction = yes } }
-        if = {
-            limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
-            if = {
-                limit = { PAU = { is_in_faction = yes } }
-                PAU = {
-                    every_faction_member = {
-                        limit = { NOT = { tag = PAU } }
-                        display_individual_scopes = yes
-                        leave_faction = yes
-                        SOV = {
-                            faction_leader = {
-                                add_to_faction = PREV.PREV
-                            }
-                        }
-                    }
-                    leave_faction = yes
-                }
-            }
-            SOV = { faction_leader = { add_to_faction = PAU } }
-        }
-    }
-    else = {
-        #苏联没有阵营时，不新建一个空壳苏维埃阵营，而是让苏联加入白夜同盟。
-        if = {
-            limit = { PAU = { is_in_faction = yes } }
-            PAU = { faction_leader = { add_to_faction = SOV } }
-        }
-        else = {
-            PAU = {
-                create_faction_from_template = faction_template_nmgr
-                set_faction_leader = yes
-                set_faction_name = PAU_white_night_alliance
-                set_faction_manifest = PAU_faction_manifest_white_night
-                add_to_faction = SOV
-            }
-        }
-    }
-}
-
 
 #PAU_refresh_south_america_members：刷新南美联合成员数
 PAU_refresh_south_america_members = {
@@ -452,18 +408,6 @@ PAU_call_state_council_missions = {
 
 #PAU_refresh_state_council：刷新国务委员会：按领域发展值切换等级修正
 PAU_refresh_state_council = {
-    if = {
-        limit = { has_dynamic_modifier = { modifier = PAU_state_council_tier1 } }
-        remove_dynamic_modifier = { modifier = PAU_state_council_tier1 }
-    }
-    if = {
-        limit = { has_dynamic_modifier = { modifier = PAU_state_council_tier2 } }
-        remove_dynamic_modifier = { modifier = PAU_state_council_tier2 }
-    }
-    if = {
-        limit = { has_dynamic_modifier = { modifier = PAU_state_council_tier3 } }
-        remove_dynamic_modifier = { modifier = PAU_state_council_tier3 }
-    }
     set_variable = { PAU_sa_state_tier = 0 } #联合国务委员会等级
     if = {
         limit = {
@@ -473,7 +417,22 @@ PAU_refresh_state_council = {
             check_variable = { PAU_sa_state_welfare > 2 } #国务委员会民生发展值
             check_variable = { PAU_sa_state_mobilization > 2 } #国务委员会动员发展值
         }
-        add_dynamic_modifier = { modifier = PAU_state_council_tier3 }
+        custom_effect_tooltip = PAU_state_council_tier_tt
+        add_to_variable = {
+            var = PAU_eco_reform_buildings
+            value = 0.10
+            tooltip = industrial_capacity_factory_tt
+        }
+        add_to_variable = {
+            var = PAU_eco_reform_consumer
+            value = -0.10
+            tooltip = consumer_goods_factor_tt
+        }
+        add_to_variable = {
+            var = PAU_eco_reform_trade
+            value = 0.10
+            tooltip = research_speed_factor_tt
+        }
         set_variable = { PAU_sa_state_tier = 3 } #联合国务委员会等级
     }
     else_if = {
@@ -484,7 +443,22 @@ PAU_refresh_state_council = {
             check_variable = { PAU_sa_state_welfare > 1 } #国务委员会民生发展值
             check_variable = { PAU_sa_state_mobilization > 1 } #国务委员会动员发展值
         }
-        add_dynamic_modifier = { modifier = PAU_state_council_tier2 }
+        custom_effect_tooltip = PAU_state_council_tier_tt
+        add_to_variable = {
+            var = PAU_eco_reform_industry
+            value = 0.10
+            tooltip = industrial_capacity_factory_tt
+        }
+        add_to_variable = {
+            var = PAU_eco_reform_research
+            value = 0.10
+            tooltip = research_speed_factor_tt
+        }
+        add_to_variable = {
+            var = PAU_eco_reform_consumer
+            value = -0.10
+            tooltip = consumer_goods_factor_tt
+        }
         set_variable = { PAU_sa_state_tier = 2 } #联合国务委员会等级
     }
     else_if = {
@@ -495,7 +469,7 @@ PAU_refresh_state_council = {
             check_variable = { PAU_sa_state_welfare > 0 } #国务委员会民生发展值
             check_variable = { PAU_sa_state_mobilization > 0 } #国务委员会动员发展值
         }
-        add_dynamic_modifier = { modifier = PAU_state_council_tier1 }
+        add_dynamic_modifier = { modifier = PAU_state_council_tier }
         set_variable = { PAU_sa_state_tier = 1 } #联合国务委员会等级
     }
 }

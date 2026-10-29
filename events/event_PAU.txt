@@ -1832,12 +1832,15 @@ country_event = {
     option = {
         name = PAU.45.a
 
-        add_dynamic_modifier = {
-
-            modifier = PAU_restitution_received
-
+        add_timed_idea = {
+            idea = PAU_restitution_received
             days = 360
-
+        }
+        PAU = {
+                add_dynamic_modifier = {
+                    modifier = PAU_restitution_received_debuff
+                    days = var:PAU_restitution_received_time
+                }
         }
 
     }
@@ -1879,7 +1882,17 @@ country_event = {
     }
     option = {
         name = PAU.466.a
-        add_stability = 0.05
+        set_country_flag = PAU_Nymph_theorist
+        PAU_Nymph = {
+            add_trait = {
+                slot = theorist
+                trait = ah_military_theorist
+            }
+            add_trait = {
+                slot = theorist
+                trait = mobile_warfare_expert
+            }
+        }
     }
 }
 
@@ -1915,8 +1928,14 @@ country_event = {
 
     option = {
         name = PAU.477.a
+        custom_effect_tooltip = PAU.477.a_tt
 
-        add_stability = 0.05
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_war_stability_factor
+            value = -0.25
+            tooltip = war_stability_factor_tt
+        }
 
         hidden_effect = {
             scoped_play_song = "雨"
@@ -2071,24 +2090,34 @@ country_event = {
         name = PAU.51.a
         ai_chance = {
             base = 85
-            modifier = { factor = 10 has_government = communism }
         }
         PAU = { set_country_flag = PAU_soviet_ally }
-        PAU_join_soviet_faction = yes
-
-
+        FROM = {
+            diplomatic_relation = {
+                country = ROOT
+                relation = military_access
+                active = yes
+            }
+            diplomatic_relation = {
+                country = ROOT
+                relation = non_aggression_pact
+                active = yes
+            }
+        }
+        ROOT = {
+            diplomatic_relation = {
+                country = FROM
+                relation = military_access
+                active = yes
+            }
+        }
 
     }
     option = {
         name = PAU.51.b
         ai_chance = {
-            base = 10
-            modifier = { factor = 0 has_government = communism NOT = { has_war_with = PAU } }
-            modifier = { factor = 0 NOT = { has_government = fascism } }
+            base = 0
         }
-        PAU = { set_country_flag = PAU_soviet_refused }
-
-
 
     }
 }
@@ -2878,30 +2907,6 @@ country_event = {
 }
 
 country_event = {
-    id = PAU.510
-    title = PAU.510.t
-    desc = PAU.510.d
-    major = no
-    picture =GFX_event_PAU_xy5
-    is_triggered_only = yes
-    fire_only_once = yes
-    option = {
-        name = PAU.510.a
-        ai_chance = { base = 100 }
-        trigger = { has_country_flag = PAU_soviet_ally }
-        add_political_power = -50
-        add_dynamic_modifier = { modifier = PAU_soviet_military_mission days = 360 }
-        army_experience = 75
-        add_doctrine_cost_reduction = { name = PAU_soviet_mission_doctrine cost_reduction = 0.5 uses = 1 category = land_doctrine }
-    }
-    option = {
-        name = PAU.510.b
-        ai_chance = { base = 100 }
-        add_political_power = 75
-    }
-}
-
-country_event = {
     id = PAU.520
     title = PAU.520.t
     desc = PAU.520.d
@@ -3143,12 +3148,12 @@ country_event = {
         custom_effect_tooltip = PAU_south_america_unity_tt
         add_to_variable = {
             var = pau_unity_production_speed_industrial_complex_factor
-            value = 0.1
+            value = 0.05
             tooltip = production_speed_industrial_complex_factor_tt
         }
         add_to_variable = {
             var = pau_unity_production_speed_arms_factory_factor
-            value = 0.1
+            value = 0.05
             tooltip = production_speed_arms_factory_factor_tt
         }
         PAU = {
@@ -3167,22 +3172,22 @@ country_event = {
         custom_effect_tooltip = PAU_south_america_unity_tt
         add_to_variable = {
             var = pau_unity_production_speed_infrastructure_factor
-            value = 0.1
+            value = 0.05
             tooltip = production_speed_infrastructure_factor_tt
         }
         add_to_variable = {
             var = pau_unity_production_speed_rail_way_factor
-            value = 0.1
+            value = 0.05
             tooltip = production_speed_rail_way_factor_tt
         }
         add_to_variable = {
             var = pau_unity_production_speed_supply_node_factor
-            value = 0.1
+            value = 0.05
             tooltip = production_speed_supply_node_factor_tt
         }
         add_to_variable = {
             var = pau_unity_production_speed_naval_base_factor
-            value = 0.1
+            value = 0.05
             tooltip = production_speed_naval_base_factor_tt
         }
         PAU = {
@@ -3201,12 +3206,12 @@ country_event = {
         custom_effect_tooltip = PAU_south_america_unity_tt
         add_to_variable = {
             var = pau_unity_cic_construction_boost
-            value = 0.15
+            value = 0.05
             tooltip = cic_construction_boost_tt
         }
         add_to_variable = {
             var = pau_unity_cic_construction_boost_factor
-            value = 0.15
+            value = 0.05
             tooltip = cic_construction_boost_factor_tt
         }
         PAU = {
@@ -3225,12 +3230,12 @@ country_event = {
         custom_effect_tooltip = PAU_south_america_unity_tt
         add_to_variable = {
             var = pau_unity_experience_loss_factor
-            value = -0.15
+            value = -0.05
             tooltip = experience_loss_factor_tt
         }
         add_to_variable = {
             var = pau_unity_casualty_trickleback
-            value = 0.15
+            value = 0.05
             tooltip = casualty_trickleback_tt
         }
         PAU = {
@@ -3249,12 +3254,12 @@ country_event = {
         custom_effect_tooltip = PAU_south_america_unity_tt
         add_to_variable = {
             var = pau_unity_training_time_factor
-            value = -0.15
+            value = -0.05
             tooltip = training_time_factor_tt
         }
         add_to_variable = {
             var = pau_unity_weekly_manpower
-            value = 2500
+            value = 1000
             tooltip = weekly_manpower_tt
         }
         PAU = {
@@ -3263,6 +3268,189 @@ country_event = {
                 PAU_refresh_state_council = yes
             }
         }
+    }
+}
+
+country_event = {
+    id = PAU.611
+    title = PAU.611.t
+    desc = PAU.611.desc
+    major = no
+    picture = GFX_event_PAU_xy6
+    is_triggered_only = yes
+    fire_only_once = no
+    hidden = yes
+
+    option = {
+        name = PAU.611.a
+        ai_chance = {
+            base = 100
+        }
+            if = {
+                limit = {
+                    has_country_flag = PAU610_a_flag
+                }
+                custom_effect_tooltip = PAU_south_america_unity_tt
+                add_to_variable = {
+                    var = pau_unity_production_speed_industrial_complex_factor
+                    value = -0.05
+                    tooltip = production_speed_industrial_complex_factor_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_production_speed_arms_factory_factor
+                    value = -0.05
+                    tooltip = production_speed_arms_factory_factor_tt
+                }
+                PAU = {
+                    add_to_variable = {
+                        var = pau_unity_production_speed_industrial_complex_factor
+                        value = -0.05
+                        tooltip = production_speed_industrial_complex_factor_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_production_speed_arms_factory_factor
+                        value = -0.05
+                        tooltip = production_speed_arms_factory_factor_tt
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU610_b_flag
+                }
+                custom_effect_tooltip = PAU_south_america_unity_tt
+                add_to_variable = {
+                    var = pau_unity_production_speed_infrastructure_factor
+                    value = -0.05
+                    tooltip = production_speed_infrastructure_factor_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_production_speed_rail_way_factor
+                    value = -0.05
+                    tooltip = production_speed_rail_way_factor_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_production_speed_supply_node_factor
+                    value = -0.05
+                    tooltip = production_speed_supply_node_factor_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_production_speed_naval_base_factor
+                    value = -0.05
+                    tooltip = production_speed_naval_base_factor_tt
+                }
+                PAU = {
+                    add_to_variable = {
+                        var = pau_unity_production_speed_infrastructure_factor
+                        value = -0.05
+                        tooltip = production_speed_infrastructure_factor_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_production_speed_rail_way_factor
+                        value = -0.05
+                        tooltip = production_speed_rail_way_factor_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_production_speed_supply_node_factor
+                        value = -0.05
+                        tooltip = production_speed_supply_node_factor_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_production_speed_naval_base_factor
+                        value = -0.05
+                        tooltip = production_speed_naval_base_factor_tt
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU610_c_flag
+                }
+                custom_effect_tooltip = PAU_south_america_unity_tt
+                add_to_variable = {
+                    var = pau_unity_cic_construction_boost
+                    value = -0.05
+                    tooltip = cic_construction_boost_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_cic_construction_boost_factor
+                    value = -0.05
+                    tooltip = cic_construction_boost_factor_tt
+                }
+                PAU = {
+                    add_to_variable = {
+                        var = pau_unity_cic_construction_boost
+                        value = -0.05
+                        tooltip = cic_construction_boost_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_cic_construction_boost_factor
+                        value = -0.05
+                        tooltip = cic_construction_boost_factor_tt
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU610_e_flag
+                }
+                custom_effect_tooltip = PAU_south_america_unity_tt
+                add_to_variable = {
+                    var = pau_unity_experience_loss_factor
+                    value = 0.05
+                    tooltip = experience_loss_factor_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_casualty_trickleback
+                    value = -0.05
+                    tooltip = casualty_trickleback_tt
+                }
+                PAU = {
+                    add_to_variable = {
+                        var = pau_unity_experience_loss_factor
+                        value = 0.05
+                        tooltip = experience_loss_factor_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_casualty_trickleback
+                        value = -0.05
+                        tooltip = casualty_trickleback_tt
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU610_f_flag
+                }
+                custom_effect_tooltip = PAU_south_america_unity_tt
+                add_to_variable = {
+                    var = pau_unity_training_time_factor
+                    value = 0.05
+                    tooltip = training_time_factor_tt
+                }
+                add_to_variable = {
+                    var = pau_unity_weekly_manpower
+                    value = -1000
+                    tooltip = weekly_manpower_tt
+                }
+                PAU = {
+                    add_to_variable = {
+                        var = pau_unity_training_time_factor
+                        value = 0.05
+                        tooltip = training_time_factor_tt
+                    }
+                    add_to_variable = {
+                        var = pau_unity_weekly_manpower
+                        value = -1000
+                        tooltip = weekly_manpower_tt
+                    }
+                }
+            }
+            clr_country_flag = PAU610_a_flag
+            clr_country_flag = PAU610_b_flag
+            clr_country_flag = PAU610_c_flag
+            clr_country_flag = PAU610_e_flag
+            clr_country_flag = PAU610_f_flag
     }
 }
 
