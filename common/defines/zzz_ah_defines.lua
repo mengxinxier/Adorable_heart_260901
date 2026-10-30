@@ -103,3 +103,18 @@ NDefines.NProject.BREAKTHROUGH_DAILY_TECHNOLOGY_GAIN = 24          -- Vanilla is
 NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 10     -- Vanilla is 5 科学家技能的突破点获取
 NDefines.NProject.BREAKTHROUGH_DAILY_ROCKET_SITE_GAIN = 2          -- Vanilla is 1 火箭基地的突破点获取
 NDefines.NProject.BREAKTHROUGH_DAILY_NUCLEAR_REACTOR_GAIN = 2      -- Vanilla is 1 核反应堆的突破点获取
+
+
+-- 首都补给范围
+-- defines that are used for supply reach for capital
+-- supply flow will start from INITIAL_SUPPLY_FLOW and will be reduced by a penalty on each province it travels (which depends on how far we are from our origin, terrain etc)
+-- a supply reach >= 1.0 considered "perfect" and will be able to fully support units on that particular province (assuming you are not over capacity)
+NDefines.NSupply.CAPITAL_INITIAL_SUPPLY_FLOW = 5.0 -- starting supply from
+NDefines.NSupply.CAPITAL_STARTING_PENALTY_PER_PROVINCE = 0.5 -- starting penalty that will be added as supply moves away from its origin (modified by stuff like terrain)
+NDefines.NSupply.CAPITAL_ADDED_PENALTY_PER_PROVINCE = 1.2 -- added penalty as we move away from origin
+
+-- 补给中心范围
+-- defines that are used for supply reach for built nodes
+NDefines.NSupply.NODE_INITIAL_SUPPLY_FLOW = 2.8
+NDefines.NSupply.NODE_STARTING_PENALTY_PER_PROVINCE = 0.35
+NDefines.NSupply.NODE_ADDED_PENALTY_PER_PROVINCE = 0.40
