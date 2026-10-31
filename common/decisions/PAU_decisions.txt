@@ -3765,6 +3765,11 @@ PAU_economy_reform_xfxy = {
         cost = 25
         fire_only_once = yes
         complete_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
             reduce_focus_completion_cost = { focus = PAM_xfxy_nyjj cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_nykf cost = 12 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_hybd cost = 12 }
@@ -3790,6 +3795,11 @@ PAU_economy_reform_xfxy = {
         cost = 50
         fire_only_once = yes
         complete_effect = {
+            add_to_variable = {
+                var = PAU_xfxy_eco #晓枫雪伊系经济改革点：国策+10，改革决议-10
+                value = -10
+                tooltip = PAU_xfxy_eco_tt
+            }
             reduce_focus_completion_cost = { focus = PAM_xfxy_zsjj cost = 13 }
             reduce_focus_completion_cost = { focus = PAM_xfxy_sjmy cost = 13 }
         }
@@ -4185,67 +4195,101 @@ PAU_late_doctrine = {
     PAU_export_revolution = {
         icon = GFX_yuanzhu
         allowed = { original_tag = PAU }
+        available = { 
+            FROM = {
+                exists = yes
+                has_war = yes
+                NOT = { has_war_with = ROOT }
+                has_government = communism
+            }
+				has_equipment = { infantry_equipment > 2499 }
+				has_equipment = { support_equipment > 499 }
+        }
         visible = { has_country_flag = PAU_world_revolution }
         target_trigger = {
             FROM = {
                 exists = yes
                 has_war = yes
-                is_subject = no
-                is_major = no
-                has_opinion = { target = ROOT value > -20 }
-                any_owned_state = {
-                    is_coastal = yes
-                    is_controlled_by = FROM
-                }
-                NOT = { is_in_faction_with = ROOT }
                 NOT = { has_war_with = ROOT }
-                NOT = { has_government = fascism }
-                NOT = { has_government = neutrality }
-                NOT = { has_country_flag = PAU_received_revolutionary_aid }
-                NOT = { has_country_flag = PAU_refused_revolutionary_aid }
+                has_government = communism
             }
         }
         cost = 25
         fire_only_once = no
-        days_re_enable = 30
         complete_effect = {
-            FROM = { country_event = { id = PAU.520 hours = 1 } }
+            FROM = { country_event = { id = PAU.520 } }
+            if = {
+                limit = {
+                    has_idea = PAU_world_revolution
+                }
+				modify_timed_idea = {
+					idea = PAU_world_revolution
+					days = 30
+				}
+            }
+            else = {
+                add_timed_idea = {
+                    idea = PAU_world_revolution
+                    days = 30
+                }
+            }
+			effect_tooltip = {
+				send_equipment = {
+					amount = 2500
+					type = infantry_equipment
+					target = FROM
+				}
+				send_equipment = {
+					amount = 500
+					target = FROM
+					type = support_equipment
+				}	
+			}
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -2500
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = -500
+				}
+			}
             if = {
                 limit = { check_variable = { PAU_mercenary_reputation > 59 } } #雇佣兵信誉（初始50）：影响合同报酬、撤退惩罚与雇主接受率
                 add_war_support = 0.05
             }
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 1 }
     }
 
     #决议名：向 [FROM.GetName] 派出和平贸易使团
     PAU_peace_trade_mission = {
         icon = GFX_Berlin_Economic_Agreement_decision
         allowed = { original_tag = PAU }
+        available = { 
+            FROM = {
+                exists = yes
+                has_war = no
+                is_subject = no
+                NOT = { has_government = fascism }
+            }
+        }
         visible = { has_country_flag = PAU_peaceful_coexistence }
         target_trigger = {
             FROM = {
                 exists = yes
                 has_war = no
                 is_subject = no
-                has_opinion = { target = ROOT value > 0 }
-                any_owned_state = {
-                    is_coastal = yes
-                    is_controlled_by = FROM
-                }
+                NOT = { has_government = fascism }
                 NOT = { has_country_flag = PAU_received_trade_mission }
                 NOT = { has_country_flag = PAU_refused_trade_mission }
             }
         }
-        cost = 25
+        cost = 5
         fire_only_once = no
-        days_re_enable = 30
         complete_effect = {
             FROM = { country_event = { id = PAU.530 hours = 1 } }
-            if = {
-                limit = { any_controlled_state = { has_state_flag = PAU_harbor_type_trade } }
-                add_political_power = 50
-            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -4261,14 +4305,14 @@ PAU_late_doctrine = {
         target_trigger = {
             FROM = {
                 is_coastal = yes
-                is_controlled_by = ROOT
+                is_core_of = ROOT
                 NOT = { has_state_flag = PAU_coastal_fortified }
             }
         }
-        cost = 25
+        cost = 5
         fire_only_once = no
-        days_re_enable = 30
-        complete_effect = {
+        days_remove = 30
+        remove_effect = {
             FROM = {
                 set_state_flag = PAU_coastal_fortified
                 add_building_construction = {
@@ -4281,252 +4325,13 @@ PAU_late_doctrine = {
                     }
                 }
             }
-            add_to_variable = {
-                var = PAU_coastal_defenses #岸防建设值：决定武装中立岸防网络等级
-                value = 1
-            }
-            hidden_effect = {
-                PAU_refresh_late_networks = yes
-            }
-            navy_experience = 50
-            if = {
-                limit = { any_controlled_state = { has_state_flag = PAU_harbor_type_military } }
-                add_to_variable = {
-                    var = PAU_coastal_defenses #岸防建设值：决定武装中立岸防网络等级
-                    value = 1
-                }
-                navy_experience = 10
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-    #决议名：邀请 [FROM.GetName] 加入革命国际
-    PAU_revolutionary_alliance = {
-        icon = GFX_faction_logo_United_Front_of_Workers_miniature
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_world_revolution
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_export_successes_gt0_tt
-                check_variable = { PAU_export_successes > 0 } #革命输出成果：决定革命网络等级与接受率
-            }
-            is_in_faction = yes
-        }
-        target_trigger = {
-            FROM = {
-                exists = yes
-                is_subject = no
-                has_country_flag = PAU_received_revolutionary_aid
-                has_opinion = { target = ROOT value > 75 }
-                NOT = { has_country_flag = PAU_joined_revolutionary_international }
-                NOT = { has_country_flag = PAU_refused_revolutionary_international }
-                is_major = no
-                is_in_faction = no
-                NOT = { has_war_with = ROOT }
-                NOT = { original_tag = MGU }
-                NOT = { original_tag = DVL }
-                NOT = { original_tag = ALG }
-                NOT = { original_tag = GEU }
-                NOT = { original_tag = ELF }
-            }
-        }
-        cost = 40
-        fire_only_once = no
-        days_re_enable = 90
-        complete_effect = {
-            FROM = { country_event = { id = PAU.630 hours = 1 } }
-            subtract_from_variable = { PAU_export_successes = 1 tooltip = PAU_export_successes_tt } #革命输出成果：决定革命网络等级与接受率
+            army_experience = 1
+            navy_experience = 1
+            air_experience = 1
         }
         ai_will_do = { factor = 10 }
     }
 
-    #决议名：向 [FROM.GetName] 发出革命最后通牒
-    PAU_revolutionary_ultimatum = {
-        icon = GFX_PAM_zhtd
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_world_revolution
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_export_successes_gt4_tt
-                check_variable = { PAU_export_successes > 4 } #革命输出成果：决定革命网络等级与接受率
-            }
-        }
-        target_trigger = {
-            FROM = {
-                exists = yes
-                is_subject = no
-                is_major = no
-                NOT = { is_in_faction_with = ROOT }
-                has_country_flag = PAU_refused_revolutionary_aid
-                NOT = { has_war_with = ROOT }
-                NOT = { has_government = communism }
-                NOT = { original_tag = MGU }
-                NOT = { original_tag = DVL }
-                NOT = { original_tag = ALG }
-                NOT = { original_tag = GEU }
-                NOT = { original_tag = ELF }
-            }
-        }
-        cost = 75
-        fire_only_once = no
-        days_re_enable = 120
-        complete_effect = {
-            create_wargoal = { target = FROM type = annex_everything }
-            add_timed_idea = { idea = PAU_ultimatum_resolve days = 90 }
-            subtract_from_variable = { PAU_export_successes = 3 tooltip = PAU_export_successes_tt } #革命输出成果：决定革命网络等级与接受率
-            add_command_power = 50
-            add_war_support = 0.08
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-
-    #决议名：邀请 [FROM.GetName] 加入和平联盟
-    PAU_peaceful_alliance = {
-        icon = GFX_LHS_qjf
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_peaceful_coexistence
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_trade_partners_gt0_tt
-                check_variable = { PAU_trade_partners > 0 } #贸易伙伴数：决定和平贸易网络等级
-            }
-            is_in_faction = yes
-        }
-        target_trigger = {
-            FROM = {
-                exists = yes
-                is_subject = no
-                has_war = no
-                is_in_faction = no
-                has_country_flag = PAU_received_trade_mission
-                has_opinion = { target = ROOT value > 75 }
-                NOT = { has_country_flag = PAU_joined_peace_league }
-                NOT = { has_country_flag = PAU_refused_peace_league }
-                is_major = no
-                NOT = { has_government = fascism }
-            }
-        }
-        cost = 40
-        fire_only_once = no
-        days_re_enable = 60
-        complete_effect = {
-            FROM = { country_event = { id = PAU.640 hours = 1 } }
-            subtract_from_variable = { PAU_trade_partners = 1 tooltip = PAU_trade_partners_tt } #贸易伙伴数：决定和平贸易网络等级
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：强制 [FROM.GetName] 停战
-    PAU_peace_enforcement = {
-        icon = GFX_PAO_mqjj_target
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_peaceful_coexistence
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_trade_partners_gt4_tt
-                check_variable = { PAU_trade_partners > 4 } #贸易伙伴数：决定和平贸易网络等级
-            }
-        }
-        target_trigger = {
-            FROM = {
-                exists = yes
-                is_subject = no
-                is_major = no
-                has_war = yes
-                NOT = { has_war_with = ROOT }
-            }
-        }
-        cost = 50
-        fire_only_once = no
-        days_re_enable = 120
-        complete_effect = {
-            subtract_from_variable = { PAU_trade_partners = 2 tooltip = PAU_trade_partners_tt } #贸易伙伴数：决定和平贸易网络等级
-            add_timed_idea = { idea = PAU_trade_boom_diplomacy days = 180 }
-            add_political_power = 40
-            every_country = {
-                limit = { has_war_with = FROM }
-                FROM = {
-                    white_peace = { tag = PREV }
-                }
-            }
-            add_stability = 0.03
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：向 [FROM.GetName] 提供中立担保
-    PAU_neutrality_guarantee = {
-        icon = GFX_PAO_rmzj_target
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_armed_neutrality
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_coastal_defenses_gt2_tt
-                check_variable = { PAU_coastal_defenses > 2 } #岸防建设值：决定武装中立岸防网络等级
-            }
-        }
-        target_trigger = {
-            FROM = {
-                exists = yes
-                is_subject = no
-                has_war = no
-                is_in_faction = no
-                has_opinion = { target = ROOT value > 20 }
-                any_owned_state = {
-                    is_coastal = yes
-                }
-                NOT = { has_war_with = ROOT }
-            }
-        }
-        cost = 40
-        fire_only_once = no
-        days_re_enable = 60
-        complete_effect = {
-            give_guarantee = FROM
-            add_timed_idea = { idea = PAU_coastal_security days = 180 }
-            subtract_from_variable = { PAU_coastal_defenses = 1 tooltip = PAU_coastal_defenses_tt } #岸防建设值：决定武装中立岸防网络等级
-            add_political_power = 25
-            navy_experience = 25
-            add_stability = 0.03
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：向 [FROM.GetName] 发出中立最后通牒
-    PAU_neutrality_ultimatum = {
-        icon = GFX_weijiao
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_armed_neutrality
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_coastal_defenses_gt4_tt
-                check_variable = { PAU_coastal_defenses > 4 } #岸防建设值：决定武装中立岸防网络等级
-            }
-        }
-        target_trigger = {
-            FROM = {
-                exists = yes
-                is_subject = no
-                any_owned_state = {
-                    is_coastal = yes
-                }
-                NOT = { has_war_with = ROOT }
-                NOT = { is_in_faction_with = ROOT }
-            }
-        }
-        cost = 75
-        fire_only_once = no
-        days_re_enable = 120
-        complete_effect = {
-            create_wargoal = { target = FROM type = annex_everything }
-            add_timed_idea = { idea = PAU_ultimatum_resolve days = 90 }
-            subtract_from_variable = { PAU_coastal_defenses = 2 tooltip = PAU_coastal_defenses_tt } #岸防建设值：决定武装中立岸防网络等级
-            navy_experience = 50
-            add_war_support = 0.08
-        }
-        ai_will_do = { factor = 10 }
-    }
 }
 
 #剧情定位：南美统一：把南美国家拉入同盟或完成统一
