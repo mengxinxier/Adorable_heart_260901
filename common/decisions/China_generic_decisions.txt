@@ -640,6 +640,65 @@ Build_chinese_united_font = {
 			mark_focus_tree_layout_dirty = yes
 		}
 	}
+	##征召[FROM.Getname]爱国青年
+	CHI_conscript_patriotic_youth = {
+		icon = GFX_decision_generic_reorganize_irregulars
+		visible = {
+			is_subject = no
+			has_country_flag = Participate_in_the_competition_for_China_reunification
+			has_war_with = JAP
+			JAP = {
+				is_subject = no
+				is_major = yes
+			}
+			NOT = { has_global_flag = JAP_Fading_Sun }
+		}
+		on_map_mode = map_only
+		target_array = owned_states
+		state_target = yes
+		available = {
+			FROM = { is_core_of = ROOT }
+		}
+		fire_only_once = yes
+		cost = 10
+		days_remove = 30
+		days_re_enable = 365
+		ai_will_do = {
+			factor = 1000
+		}
+		complete_effect = {
+			if = {
+				limit = { NOT = { has_template = "志愿民兵团" } }
+				division_template = {
+					name = "志愿民兵团"
+					is_locked = yes
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+						irregular_infantry = { x = 1 y = 1 }
+					}
+					support = {
+					}
+				}
+			}
+			set_variable = { num_of_irregular_infantry = 0 }
+			set_variable = { num_of_irregular_infantry_max = FROM.state_population_k }
+			divide_variable = { num_of_irregular_infantry_max = 2000 }
+			while_loop_effect = {
+				limit = { check_variable = { num_of_irregular_infantry < num_of_irregular_infantry_max } }
+				add_to_variable = { num_of_irregular_infantry = 1 }
+				FROM = {
+					create_unit = {
+						division = "name = \"志愿民兵团\" division_template = \"志愿民兵团\" start_experience_factor = 0 start_equipment_factor = 0.3"
+						#amount = 1
+						owner = ROOT
+					}
+				}
+			}
+		}
+	}
 }
 
 CHI_Industrialization_of_China = {
