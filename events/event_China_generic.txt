@@ -875,7 +875,110 @@ add_namespace = china_generic_news
 		}
 	
 
+country_event = {#停止内战的呼声
+	id = china_generic.020
+	title = china_generic.020.t
+	desc = china_generic.020.d
+	is_triggered_only = yes
+	option = {#发出电报！
+		name = china_generic.020.a
+		every_country = {
+			limit = {
+				not = {
+					tag = ROOT
+				}
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+			}
+			country_event = china_generic.021
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {#没这个必要
+		name = china_generic.020.b
+	}
+}
 
+country_event = {#一致对外？
+	id = china_generic.021
+	title = china_generic.021.t
+	desc = china_generic.021.d
+	is_triggered_only = yes
+	option = {#我们同意
+		name = china_generic.021.a
+		clear_array = global.white_peace_transfer_array
+		every_enemy_country = {
+			limit = {
+				or = {
+					tag = FROM
+					is_in_faction_with = FROM
+				}
+				}
+			add_to_array = { global.white_peace_transfer_array = THIS }
+		}
+		every_subject_country = {
+			every_enemy_country = {
+				limit = {
+					or = {
+						tag = FROM
+						is_in_faction_with = FROM
+					}
+				}
+				add_to_array = { global.white_peace_transfer_array = THIS }
+			}
+			add_to_array = { global.white_peace_transfer_array = THIS }
+		}
+		add_to_array = { global.white_peace_transfer_array = THIS }
+		every_state = {
+			limit = {
+				owner = {
+					is_in_array = { global.white_peace_transfer_array = THIS }
+					not = { tag = PREV.controller }
+				}
+				controller = { is_in_array = { global.white_peace_transfer_array = THIS } }
+			}
+			transfer_state_to = controller
+		}
+		clear_array = global.white_peace_transfer_array
+		every_enemy_country = {
+			limit = {
+				is_in_faction_with = FROM
+			}
+			white_peace = {
+				tag = ROOT
+				message = china_manchu_event_whit_peace
+			}
+		}
+		every_subject_country = {
+			every_enemy_country = {
+				limit = {
+					is_in_faction_with = FROM
+				}
+				white_peace = {
+					tag = PREV
+					message = china_manchu_event_whit_peace
+				}
+			}
+		}
+		every_country = {
+			limit = {
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+			}
+			set_truce = {
+				target = ROOT
+				days = 600
+			}
+		}
+
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {#攘外必先安内
+		name = china_generic.021.b
+	}
+}
 
 ###  AI
 
