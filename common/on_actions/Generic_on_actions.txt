@@ -106,4 +106,58 @@ on_actions = {
 			}
 		}
 	}
+	on_before_peace_conference_start = {
+		effect = {
+            FROM = {
+				if = {
+					limit = { not = { has_country_flag = unit_has_been_deleted } }
+					# 删除战败国的所有陆军部队
+					delete_unit = {}
+					set_country_flag = {
+                        name = unit_has_been_deleted
+                        days = 5
+                    }
+				}
+            }
+			IF = {
+				limit = {
+					ROOT = {
+						is_ai = yes
+						# 确保战胜国 ROOT 自身是 AI，且所有与 ROOT 共同对战 FROM 的国家里没有玩家
+						NOT = {
+							any_country = {
+								is_ai = no
+								has_war_together_with = ROOT
+							}
+						}
+					}
+				}
+				FROM = {
+					if = {
+						limit = { not = { has_country_flag = ship_has_been_deleted } }
+						# 彻底清空所有类型的舰船
+						destroy_ships = { type = screen_ship count = all }
+						destroy_ships = { type = capital_ship count = all }
+						destroy_ships = { type = submarine count = all }
+						destroy_ships = { type = carrier count = all }
+						
+						# 清理已编入将领舰队的残留船只
+						every_navy_leader = {
+							every_controlled_ship = {
+								destroy_ship = yes
+							}
+						}
+						if = {
+							limit = {  country_exists = AHM }
+							transfer_navy = { target = AHM }
+						}
+						set_country_flag = {
+							name = ship_has_been_deleted
+							days = 5
+						}
+					}
+				}
+			}
+		}
+	}
 }
