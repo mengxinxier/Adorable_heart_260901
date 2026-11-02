@@ -387,6 +387,7 @@ PAU_LHS_weiji = {
         remove_effect = {
             FROM = {
                 transfer_state_to = PAU
+                set_demilitarized_zone = no
                 add_building_construction = {
                     type = infrastructure
                     level = 1
@@ -425,12 +426,6 @@ PAU_LHS_weiji = {
                 not = {
                     has_state_flag = PAU_xiaoyao_state_flag
                 }
-                or = {
-                    any_neighbor_state = {
-                        has_state_flag = PAU_xiaoyao_state_flag
-                    }
-                    is_controlled_by = PAU
-                }
                 has_state_flag = is_lldy_state_flag
             }
         }
@@ -440,11 +435,23 @@ PAU_LHS_weiji = {
             stability_weekly = 0.001
             war_support_weekly = 0.001
         }
-        complete_effect = {
-            set_country_flag = xiaoyao_plan_flag
+        cancel_trigger = {
+            FROM = {
+                not = {
+                    or = {
+                        any_neighbor_state = {
+                            has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                        }
+                        is_controlled_by = PAU
+                    }
+                }
+            }
         }
         cancel_effect = {
-             clr_country_flag = xiaoyao_plan_flag
+            clr_country_flag = xiaoyao_plan_flag
+        }
+        complete_effect = {
+            set_country_flag = xiaoyao_plan_flag
         }
         remove_effect = {
             clr_country_flag = xiaoyao_plan_flag
@@ -615,7 +622,7 @@ PAU_LHS_weiji = {
         days_mission_timeout = 30
 
         timeout_effect = {
-            random_owned_state = {
+            random_state = {
                 limit = {
                     is_controlled_by = ZDW
                     has_state_flag = PAU_xiaoyao_state_flag
@@ -625,6 +632,7 @@ PAU_LHS_weiji = {
                     modifier = PAU_baiye_state
                 }
             }
+            activate_mission = PAU_wl_anti
 
         }
         complete_effect = {
@@ -659,6 +667,7 @@ PAU_LHS_weiji = {
 					days = 20
 				}
             }
+            activate_mission = PAU_wl_anti1
         }
         complete_effect = {
         }
@@ -698,7 +707,7 @@ PAU_LHS_weiji = {
                     reduce_focus_completion_cost = { focus = PAU_zjwyj cost = 3 }
                 }
                 else = {
-                    reduce_focus_completion_cost = { focus = PAU_zmxx cost = 3 }
+                    reduce_focus_completion_cost = { focus = PAU_zmxx cost = 7 }
                 }
             }
         }
@@ -731,7 +740,7 @@ PAU_LHS_weiji = {
                 tooltip = PAU_undead_counterattack_re_15_days
             }
         }
-        cost = 25
+        cost = 5
         fire_only_once = no
         days_remove = 10
 
@@ -907,6 +916,9 @@ ZDW_endwar = {
         on_map_mode = map_and_decisions_view
         state_target = yes
         target_trigger = {
+            PAU = {
+                has_completed_focus = PAU_sdjt
+            }
             FROM = {
                 is_controlled_by = WRQ
                 not = {
@@ -1029,7 +1041,7 @@ PAU_hetong = {
 
         complete_effect = {
             add_ideas = PAU_annex_debuff
-            add_to_variable = { PAU_mercenary_reputation = 10 tooltip = PAU_mercenary_reputation_tt }
+            add_to_variable = { PAU_mercenary_reputation = 10 tooltip = PAU_guyong_dianshu_tt }
             if = {
                 limit = { check_variable = { PAU_mercenary_reputation > 59 } }
                 add_manpower = 4000
@@ -1260,12 +1272,7 @@ PAU_hetong = {
                         }
                     }
                 clr_country_flag = PAU_guyonged_touxiang_flag
-                add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_mercenary_reputation_tt }
-                add_to_variable = {
-                    var = PAU_guyong_dianshu  #雇佣合同进度点=合同事件增减
-                    value = -1
-                    tooltip = PAU_guyong_dianshu_tt
-                }
+                add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
             }
             else = {
                 if = {
@@ -1290,14 +1297,7 @@ PAU_hetong = {
                         idea = PAU_guyong_debuff
                         days = 90
                     }
-                    add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_mercenary_reputation_tt }
-                    effect_tooltip = {
-                        add_to_variable = {
-                            var = PAU_guyong_dianshu
-                            value = -2
-                            tooltip = PAU_guyong_dianshu_tt
-                        }
-                    }
+                    add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
                     country_event = { id = PAU.175 hours = 6 }
                     random_country = {
                         limit = {
@@ -1331,14 +1331,7 @@ PAU_hetong = {
                         idea = PAU_guyong_debuff
                         days = 180
                     }
-                    add_to_variable = { PAU_mercenary_reputation = -20 tooltip = PAU_mercenary_reputation_tt }
-                    effect_tooltip = {
-                        add_to_variable = {
-                            var = PAU_guyong_dianshu
-                            value = -5
-                            tooltip = PAU_guyong_dianshu_tt
-                        }
-                    }
+                    add_to_variable = { PAU_mercenary_reputation = -20 tooltip = PAU_guyong_dianshu_tt }
                     country_event = { id = PAU.179 hours = 6 }
                     random_country = {
                         limit = {
@@ -1419,7 +1412,7 @@ PAU_hetong = {
                             days = 90
                         }
                     }
-                    add_to_variable = { PAU_mercenary_reputation = 15 tooltip = PAU_mercenary_reputation_tt }
+                    add_to_variable = { PAU_mercenary_reputation = 15 tooltip = PAU_guyong_dianshu_tt }
                     if = {
                         limit = { any_controlled_state = { has_state_flag = PAU_harbor_type_military } }  #避风港类型=军港
                         navy_experience = 50
@@ -1427,13 +1420,6 @@ PAU_hetong = {
                             type = infantry_equipment
                             amount = 1000
                             producer = PAU
-                        }
-                    }
-                    effect_tooltip = {
-                        add_to_variable = {
-                            var = PAU_guyong_dianshu
-                            value = 2
-                            tooltip = PAU_guyong_dianshu_tt
                         }
                     }
                     country_event = { id = PAU.176 hours = 6 }
@@ -1472,14 +1458,7 @@ PAU_hetong = {
         }
 
         timeout_effect = {
-            add_to_variable = { PAU_mercenary_reputation = -5 tooltip = PAU_mercenary_reputation_tt }
-            effect_tooltip = {
-                add_to_variable = {
-                    var = PAU_guyong_dianshu
-                    value = -2
-                    tooltip = PAU_guyong_dianshu_tt
-                }
-            }
+            add_to_variable = { PAU_mercenary_reputation = -5 tooltip = PAU_guyong_dianshu_tt }
             every_country = {
                 limit = {
                     has_country_flag = PAU_bop_loan_active
@@ -1561,13 +1540,15 @@ PAU_lhs_integration = {
         cost = 25
         fire_only_once = no
         days_remove = 30
+        complete_effect = {
+            set_country_flag = PAU_lhs_kept_cadres  #野火旧部骨干保留标记
+        }
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration
                 value = 10
                 tooltip = PAU_lhs_integration_tt
             }
-            set_country_flag = PAU_lhs_kept_cadres  #野火旧部骨干保留标记
             add_manpower = -4000
             division_template = {
                 name = "野火山地游击队"
@@ -1605,13 +1586,15 @@ PAU_lhs_integration = {
         cost = 25
         fire_only_once = no
         days_remove = 30
+        complete_effect = {
+            set_country_flag = PAU_lhs_dissolved  #野火旧部解散标记
+        }
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration
                 value = 10
                 tooltip = PAU_lhs_integration_tt
             }
-            set_country_flag = PAU_lhs_dissolved
             add_manpower = 4000
             add_equipment_to_stockpile = {
                 type = infantry_equipment
@@ -1821,7 +1804,7 @@ PAU_grail_camp = {
                 check_variable = { PAU_grail_rations > 9 }
             }
         }
-        cost = 25
+        cost = 5
         fire_only_once = no
         complete_effect = {
             add_to_variable = {
@@ -4516,7 +4499,7 @@ PAU_economy_reform_xiaoyao = {
     }
 
 }
-```!]
+
 
 PAU_bop_name = {
 
