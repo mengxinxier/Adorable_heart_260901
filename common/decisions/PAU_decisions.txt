@@ -1713,6 +1713,11 @@ PAU_lhs_integration = {
             }
             remove_ideas = PAU_divided_legion2
             set_technology = { youjidui_tech = 1 }
+            set_country_flag = youji_on_me2
+            set_technology = {
+                youji_on_me2 = 1
+            }
+            show_ideas_tooltip = youji_on_me2
             custom_effect_tooltip = PAU_lhs_finish_tt
             LHS = {
                 every_character = {
@@ -1925,7 +1930,10 @@ PAU_safe_harbor = {
             FROM = {
                 or = {
                     and = {
-                        is_chinese_country = yes
+                        or = {
+                            tag = SOV
+                            is_chinese_country = yes
+                        }
 				        has_global_flag = The_Great_War_Against_Sakura
                     }
                     and = {
@@ -1937,6 +1945,9 @@ PAU_safe_harbor = {
                         }
                     }
                     has_war_with = JAP
+                    not = {
+                        is_in_faction_with = ROOT
+                    }
                 }
                 not = {
                     has_war_with = PAU
@@ -1950,11 +1961,11 @@ PAU_safe_harbor = {
                     relation = military_access
                     active = yes
                 }
-                diplomatic_relation = {
-                    country = FROM
-                    relation = docking_rights
-                    active = yes
-                }
+                #diplomatic_relation = {
+                #    country = FROM
+                #    relation = docking_rights
+                #    active = yes
+                #}
         }
         ai_will_do = { factor = 0 }
     }
@@ -3075,7 +3086,7 @@ PAU_army_reform_xiaoyao = {
         }
         cost = 15
         fire_only_once = no
-        days_remove = 60
+        days_remove = 6
         complete_effect = {
             add_to_variable = {
                 var = PAU_xiaoyao_mil
@@ -3088,7 +3099,7 @@ PAU_army_reform_xiaoyao = {
             add_to_variable = {
                 var = PAU_mil_reform_naval_invasion_capacity  #军事改革购买加成：登陆准备=每次购买对应改革决议累加
                 value = 1
-                tooltip = naval_invasion_capacity_tt
+                tooltip = naval_invasion_plan_cap_tt
             }
             add_to_variable = {
                 var = PAU_mil_reform_naval_invasion_division_cap  #军事改革购买加成：登陆惩罚=每次购买对应改革决议累加
@@ -4539,14 +4550,6 @@ PAU_bop_name = {
                 value = -0.1
                 tooltip_side = PAU_bop_left_side
             }
-            if = {
-                limit = { check_variable = { PAU_eco_reform_progress > 3 } }  #经济改革总进度=每个经改国策+1
-                add_power_balance_value = {
-                    id = PAU_bop
-                    value = -0.15
-                    tooltip_side = PAU_bop_left_side
-                }
-            }
         }
         ai_will_do = { factor = 10 }
     }
@@ -4575,14 +4578,6 @@ PAU_bop_name = {
                 id = PAU_bop
                 value = 0.1
                 tooltip_side = PAU_bop_right_side
-            }
-            if = {
-                limit = { check_variable = { PAU_mil_reform_progress > 3 } }  #军事改革总进度=每个军改国策+1
-                add_power_balance_value = {
-                    id = PAU_bop
-                    value = 0.15
-                    tooltip_side = PAU_bop_right_side
-                }
             }
         }
         ai_will_do = { factor = 10 }
@@ -4851,7 +4846,6 @@ PAU_national_unification = {
             unlock_decision_tooltip = PAU_south_america_joint_logistics
             unlock_decision_tooltip = PAU_south_america_development_fund
             unlock_decision_tooltip = PAU_south_america_member_mission
-            unlock_decision_tooltip = PAU_south_america_development_program
             hidden_effect = {
                 if = {
                     limit = { is_in_faction = yes }
@@ -4991,12 +4985,21 @@ PAU_joint_institutions = {
             FROM = {
                 is_in_faction_with = ROOT
                 capital_scope = { is_on_continent = south_america }
+                not = {
+                    or = {
+                        tag = EFC
+                        tag = EWW
+                        tag = ELW
+                        tag = ELG
+                        tag = EDW
+                        tag = EBS
+                    }
+                }
             }
         }
         cost = 25
         days_remove = 90
         remove_effect = {
-            subtract_from_variable = { PAU_sa_study_points = 3 }
             if = {
                 limit = {
                     FROM = {
@@ -5126,9 +5129,11 @@ PAU_joint_institutions = {
         cost = 50
         days_remove = 120
         complete_effect = {
-            country_event = { id = PAU.610 days = 1 }
-            FROM = {
+            effect_tooltip = {
                 country_event = { id = PAU.610 days = 1 }
+            }
+            FROM = {
+                country_event = { id = PAU.610 }
             }
             PAU_call_state_council_missions = yes
             add_to_variable = {
@@ -5136,13 +5141,13 @@ PAU_joint_institutions = {
                 value = 1
                 tooltip = PAU_south_america_development_tt
             }
-        }
-        remove_effect = {
             hidden_effect = {
                 FROM = {
-                    country_event = { id = PAU.611 }
+                    country_event = { id = PAU.611 days = 120 }
                 }
             }
+        }
+        remove_effect = {
 
         }
         ai_will_do = { factor = 10 }
@@ -5152,7 +5157,10 @@ PAU_joint_institutions = {
     PAU_south_america_development_program = {
         icon = GFX_gongyejihua2
         allowed = { original_tag = PAU }
-        visible = { has_country_flag = PAU_south_america_super_fired }
+        visible = { 
+            has_country_flag = PAU_south_america_super_fired
+            has_country_flag = PAU_south_america_super_fired1
+        }
         available = {
             all_country = {
                 OR = {
