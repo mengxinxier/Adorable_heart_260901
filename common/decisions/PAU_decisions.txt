@@ -478,7 +478,7 @@ PAU_LHS_weiji = {
         ai_will_do = { factor = 25 }
     }
 
-    #决议名：自动放白夜出去遛弯
+   #决议名：自动放白夜出去遛弯
     PAU_baiye_auto = {
         icon = GFX_PAU_baiye2
         allowed = { original_tag = PAU }
@@ -510,13 +510,25 @@ PAU_LHS_weiji = {
         selectable_mission = no
         is_good = yes
         days_mission_timeout = 15
-        cancel_trigger = { not = { has_country_flag = PAU_auto_baiye } }
+        cancel_trigger = {
+            OR = {
+                not = { has_country_flag = PAU_auto_baiye }
+                not = {
+                    any_state = {
+                        has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
+                        not = {
+                            has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                        }
+                    }
+                }
+            }
+        }
         timeout_effect = {
             custom_effect_tooltip = PAU_baiye_auto_task_tt
             if = {
                 limit = {
                     has_political_power > 9
-                    any_state = {
+                    any_controlled_state = {
                         has_state_flag = is_lldy_state_flag
                         not = {
                             has_state_flag = PAU_xiaoyao_state_flag
@@ -526,21 +538,42 @@ PAU_LHS_weiji = {
                 add_political_power = -10
                 random_controlled_state = {
                     limit = {
-                        or = {
-                            any_neighbor_state = {
-                                has_state_flag = PAU_xiaoyao_state_flag
-                            }
-                            is_controlled_by = PAU
-                        }
                         not = { has_state_flag = PAU_xiaoyao_state_flag }
                         has_state_flag = is_lldy_state_flag
                     }
                     set_state_flag = PAU_xiaoyao_state_flag
-                    add_dynamic_modifier = { modifier = PAU_baiye_state }
+                    if = {
+                        limit = {
+                            PAU = {
+                                has_completed_focus = PAU_bycx
+                            }
+                        }
+                        add_dynamic_modifier = {
+                            modifier = PAU_baiye_state1
+                        }
+                    }
+                    else = {
+                        add_dynamic_modifier = {
+                            modifier = PAU_baiye_state
+                        }
+                    }
                 }
-                    ROOT = { PAU_advance_baiye_story = yes }
+                ROOT = { PAU_advance_baiye_story = yes }
             }
-            activate_mission = PAU_baiye_auto_task
+            if = {
+                limit = {
+                    any_state = {
+                        has_state_flag = is_lldy_state_flag
+                        not = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                    }
+                }
+                activate_mission = PAU_baiye_auto_task
+            }
+            else = {
+                clr_country_flag = PAU_auto_baiye
+            }
         }
         cancel_effect = {
             clr_country_flag = PAU_auto_baiye
@@ -1477,7 +1510,7 @@ PAU_hetong = {
                         }
                         add_to_variable = {
                             var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                            value = 60
+                            value = 300
                             tooltip = ubs_save_tt
                         }
                         add_timed_idea = {
@@ -1517,7 +1550,7 @@ PAU_hetong = {
                         }
                         add_to_variable = {
                             var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                            value = 35
+                            value = 200
                             tooltip = ubs_save_tt
                         }
                         add_timed_idea = {
@@ -1548,7 +1581,7 @@ PAU_hetong = {
                         }
                         add_to_variable = {
                             var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                            value = 15
+                            value = 100
                             tooltip = ubs_save_tt
                         }
                         add_timed_idea = {
@@ -5024,7 +5057,7 @@ PAU_national_unification = {
         ai_will_do = { factor = 10 }
     }
 
-    #决议名：宣告樱花战败
+   #决议名：宣告樱花战败
     PAU_sakura_super_event = {
         icon = GFX_decision_POL_organize_strike_two
         allowed = { original_tag = PAU }
@@ -5033,8 +5066,15 @@ PAU_national_unification = {
             OR = {
                 NOT = { country_exists = JAP }
                 JAP = {
+                    has_capitulated = yes
+                }
+                JAP = {
                     all_core_state = {
-                        is_controlled_by = ROOT
+                        OR = {
+                            is_controlled_by = ROOT
+                            controller = { is_in_faction_with = ROOT }
+                            controller = { is_subject_of = ROOT }
+                        }
                     }
                 }
             }
@@ -5042,9 +5082,52 @@ PAU_national_unification = {
         cost = 0
         fire_only_once = yes
         days_remove = 60
+        complete_effect = {
+            if = {
+                limit = { country_exists = JAP }
+                JAP = {
+                    transfer_navy = {
+                        target = PAU
+                    }
+                }
+            }
+        }
         remove_effect = {
             clr_country_flag = PAU_fullscreen_rain
             set_country_flag = PAU_jap_cap
+            if = {
+                limit = {
+                    1346 = {
+                        has_state_flag = PAU_leased_aleutian
+                        is_controlled_by = PAU
+                    }
+                }
+                if = {
+                    limit = {
+                        has_variable = PAU_aleutian_original_owner
+                        var:PAU_aleutian_original_owner = {
+                            exists = yes
+                            NOT = { has_war_with = PAU }
+                        }
+                    }
+                    var:PAU_aleutian_original_owner = {
+                        transfer_state = 1346
+                    }
+                }
+                else_if = {
+                    limit = {
+                        country_exists = SOV
+                        NOT = { has_war_with = SOV }
+                    }
+                    SOV = {
+                        transfer_state = 1346
+                    }
+                }
+                1346 = {
+                    clr_state_flag = PAU_leased_aleutian
+                }
+                clear_variable = PAU_aleutian_original_owner
+            }
             every_state = {
                 limit = { is_core_of = JAP }
                 add_claim_by_ROOT_if_has_no_core = yes
