@@ -952,6 +952,16 @@
             has_completed_focus = PAU_bzwtp
         }
         bypass = {
+            MGU = {
+                or = {
+                    is_subject_of = PAU
+                    exists = no
+                    is_in_faction_with = PAU
+                }
+            }
+        }
+        bypass_effect = {
+             add_tech_bonus = { name = PAU_mfsn_magic_bonus bonus = 0.5 uses = 2 category = magic_army_tech }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -960,7 +970,6 @@
             base = 50
         }
         will_lead_to_war_with = MGU
-
         completion_reward = {
             MGU = {
                 country_event = {
@@ -989,6 +998,16 @@
         available = {
         }
         bypass = {
+            LFC = {
+                or = {
+                    is_subject_of = PAU
+                    exists = no
+                    is_in_faction_with = PAU
+                }
+            }
+        }
+        bypass_effect = {
+              add_tech_bonus = { name = PAU_sbtxd bonus = 0.5 uses = 2 category = armor }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -1982,7 +2001,7 @@
     }
 
 
-    #既是同路人，总得打声招呼
+   #既是同路人，总得打声招呼
 
     focus = {
         id = PAU_els
@@ -1995,12 +2014,36 @@
             has_completed_focus = PAU_wdct
         }
         bypass = {
+            has_completed_focus = PAU_wdct
+            OR = {
+                NOT = { country_exists = SOV }
+                has_war_with = SOV
+                SOV = { is_subject = yes }
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
         }
         ai_will_do = {
             base = 50
+        }
+
+        bypass_effect = {
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_political_power_factor
+                value = 0.15
+                tooltip = political_power_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_research_speed_factor
+                value = 0.05
+                tooltip = research_speed_factor_tt
+            }
+            set_country_flag = PAU_soviet_ally  #苏联同盟标记
+            set_country_flag = has_PAU_xiaoyao9  #主线阶段 9：终局路线
+            custom_effect_tooltip = jiesuoguoce
+            mark_focus_tree_layout_dirty = yes
         }
 
         completion_reward = {
@@ -2029,7 +2072,7 @@
     }
 
 
-    #我们以后就是邻居了
+   #我们以后就是邻居了
 
     focus = {
         id = PAU_zg
@@ -2040,12 +2083,38 @@
         cost = 5
         available = {
             any_country = {
+                capital_scope = {
+                    is_on_continent = asia
+                }
                 is_chinese_country = yes
+                is_subject = no
                 NOT = { has_war_with = ROOT }
                 NOT = { has_government = fascism }
             }
         }
         bypass = {
+            NOT = {
+                any_country = {
+                    capital_scope = {
+                        is_on_continent = asia
+                    }
+                    is_chinese_country = yes
+                    is_subject = no
+                    NOT = { has_war_with = ROOT }
+                    NOT = { has_government = fascism }
+                }
+            }
+            NOT = {
+                any_country = {
+                    is_chinese_country = yes
+                    is_subject = no
+                    NOT = { is_in_faction_with = ROOT }
+                    OR = {
+                        has_government = fascism
+                        has_government = neutrality
+                    }
+                }
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
@@ -2058,6 +2127,26 @@
         }
         ai_will_do = {
             base = 50
+        }
+
+        bypass_effect = {
+            set_country_flag = PAU_china_peace
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_improve_relations_maintain_cost_factor  #主线动态修正原始值：改善关系维持成本=国策/决议累加
+                value = -0.05
+                tooltip = improve_relations_maintain_cost_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_trade_opinion_factor  #主线动态修正原始值：贸易好感=国策/决议累加
+                value = 0.05
+                tooltip = trade_opinion_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_political_power_factor  #主线动态修正原始值：政治点获取=国策/决议累加
+                value = 0.05
+                tooltip = political_power_factor_tt
+            }
         }
 
         completion_reward = {
@@ -2111,6 +2200,7 @@
         available = {
             any_country = {
                 is_chinese_country = yes
+                is_subject = no
                 NOT = { is_in_faction_with = ROOT }
                 OR = {
                     has_government = fascism
@@ -2119,6 +2209,28 @@
             }
         }
         bypass = {
+            NOT = {
+                any_country = {
+                    capital_scope = {
+                        is_on_continent = asia
+                    }
+                    is_chinese_country = yes
+                    is_subject = no
+                    NOT = { has_war_with = ROOT }
+                    NOT = { has_government = fascism }
+                }
+            }
+            NOT = {
+                any_country = {
+                    is_chinese_country = yes
+                    is_subject = no
+                    NOT = { is_in_faction_with = ROOT }
+                    OR = {
+                        has_government = fascism
+                        has_government = neutrality
+                    }
+                }
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
@@ -2131,6 +2243,22 @@
         }
         ai_will_do = {
             base = 0
+        }
+
+        bypass_effect = {
+            custom_effect_tooltip = PAU_zg_fd_tt
+            set_country_flag = PAU_china_hardline  #对华路线=强硬索要
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_army_attack_factor  #主线动态修正原始值：陆军攻击=国策/决议累加
+                value = 0.05
+                tooltip = army_attack_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_political_power_factor  #主线动态修正原始值：政治点获取=国策/决议累加
+                value = 0.05
+                tooltip = political_power_factor_tt
+            }
         }
 
         completion_reward = {
@@ -2178,8 +2306,11 @@
         available = {
         }
         bypass = {
-            DVL = {
-                exists = no
+            OR = {
+                DVL = { exists = no }
+                DVL = { is_subject_of = ROOT }
+                DVL = { is_in_faction_with = ROOT }
+                has_war_with = DVL
             }
         }
         allow_branch = {
@@ -2191,6 +2322,26 @@
         }
         ai_will_do = {
             base = 50
+        }
+
+        bypass_effect = {
+            set_country_flag = PAU_defy_death  #无视亡灵威胁标记
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_army_core_attack_factor  #主线动态修正原始值：核心领土攻击=国策/决议累加
+                value = 0.05
+                tooltip = army_core_attack_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_army_morale_factor  #主线动态修正原始值：陆军士气=国策/决议累加
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_attrition  #主线动态修正原始值：损耗=国策/决议累加
+                value = -0.05
+                tooltip = attrition_tt
+            }
         }
 
         completion_reward = {
@@ -2238,8 +2389,10 @@
         available = {
         }
         bypass = {
-            ENG = {
-                exists = no
+            OR = {
+                ENG = { exists = no }
+                ENG = { is_subject_of = ROOT }
+                has_war_with = ENG
             }
         }
         allow_branch = {
@@ -2250,6 +2403,26 @@
         }
         ai_will_do = {
             base = 50
+        }
+
+        bypass_effect = {
+            set_country_flag = PAU_grail_peace  #与圣杯和谈标记
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_improve_relations_maintain_cost_factor  #主线动态修正原始值：改善关系维持成本=国策/决议累加
+                value = -0.05
+                tooltip = improve_relations_maintain_cost_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_naval_coordination  #主线动态修正原始值：海军协同=国策/决议累加
+                value = 0.05
+                tooltip = naval_coordination_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_production_speed_dockyard_factor  #主线动态修正原始值：船坞建造速度=国策/决议累加
+                value = 0.05
+                tooltip = production_speed_dockyard_factor_tt
+            }
         }
 
         completion_reward = {
@@ -2280,7 +2453,7 @@
 
 
 
-    #能握手就别拔枪
+   #能握手就别拔枪
 
     focus = {
         id = PAU_bm_hp
@@ -2303,6 +2476,35 @@
             }
         }
         bypass = {
+            NOT = {
+                any_country = {
+                    capital_scope = {
+                        OR = {
+                            is_on_continent = north_america
+                            is_on_continent = central_america
+                        }
+                    }
+                    is_subject = no
+                    NOT = { has_war_with = ROOT }
+                    NOT = { has_government = fascism }
+                }
+            }
+            NOT = {
+                any_country = {
+                    capital_scope = {
+                        OR = {
+                            is_on_continent = north_america
+                            is_on_continent = central_america
+                        }
+                    }
+                    is_subject = no
+                    NOT = { is_in_faction_with = ROOT }
+                    OR = {
+                        has_government = fascism
+                        has_government = neutrality
+                    }
+                }
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
@@ -2315,6 +2517,26 @@
         }
         ai_will_do = {
             base = 50
+        }
+
+        bypass_effect = {
+            set_country_flag = PAU_north_america_friendly  #对北美路线=和平友好
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_improve_relations_maintain_cost_factor  #主线动态修正原始值：改善关系维持成本=国策/决议累加
+                value = -0.05
+                tooltip = improve_relations_maintain_cost_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor  #主线动态修正原始值：消费品工厂占比=国策/决议累加
+                value = -0.05
+                tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_trade_opinion_factor  #主线动态修正原始值：贸易好感=国策/决议累加
+                value = 0.05
+                tooltip = trade_opinion_factor_tt
+            }
         }
 
         completion_reward = {
@@ -2384,6 +2606,35 @@
             }
         }
         bypass = {
+            NOT = {
+                any_country = {
+                    capital_scope = {
+                        OR = {
+                            is_on_continent = north_america
+                            is_on_continent = central_america
+                        }
+                    }
+                    is_subject = no
+                    NOT = { has_war_with = ROOT }
+                    NOT = { has_government = fascism }
+                }
+            }
+            NOT = {
+                any_country = {
+                    capital_scope = {
+                        OR = {
+                            is_on_continent = north_america
+                            is_on_continent = central_america
+                        }
+                    }
+                    is_subject = no
+                    NOT = { is_in_faction_with = ROOT }
+                    OR = {
+                        has_government = fascism
+                        has_government = neutrality
+                    }
+                }
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
@@ -2392,10 +2643,30 @@
             focus = PAU_sbwg
         }
         mutually_exclusive = {
+            focus = PAU_bm_kz
             focus = PAU_bm_hp
         }
         ai_will_do = {
             base = 0
+        }
+
+        bypass_effect = {
+            custom_effect_tooltip = PAU_bm_kz_tt
+            set_country_flag = PAU_pacific_defense  #对北美路线=武装对抗
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_naval_defense_factor  #主线动态修正原始值：海军防御=国策/决议累加
+                value = 0.05
+                tooltip = naval_defense_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_naval_coordination  #主线动态修正原始值：海军协同=国策/决议累加
+                value = 0.05
+                tooltip = naval_coordination_tt
+            }
+            hidden_effect = {
+                add_to_variable = { PAU_north_america_refusals = 1 }  #对北美外交被拒绝次数=每次拒绝+1
+            }
         }
 
         completion_reward = {

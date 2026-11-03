@@ -2669,6 +2669,41 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.173.a
+        if = {
+            limit = { check_variable = { PAU_mercenary_reputation > 59 } }  #雇佣兵信誉=初始50+合同事件增减
+            add_political_power = 50
+            add_to_variable = {
+                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
+                value = 30
+                tooltip = ubs_save_tt
+            }
+        }
+        else_if = {
+            limit = { check_variable = { PAU_mercenary_reputation < 30 } }
+            add_political_power = 10
+            add_to_variable = {
+                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
+                value = 10
+                tooltip = ubs_save_tt
+            }
+        }
+        else = {
+            add_political_power = 25
+            add_to_variable = {
+                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
+                value = 20
+                tooltip = ubs_save_tt
+            }
+        }
+        if = {
+            limit = { any_controlled_state = { has_state_flag = PAU_harbor_type_trade } }  #避风港类型=商港
+            add_political_power = 15
+            add_to_variable = {
+                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
+                value = 10
+                tooltip = ubs_save_tt
+            }
+        }
         activate_mission = PAU_guyong_zhunbei
         PAU = {
             diplomatic_relation = {
@@ -2725,11 +2760,12 @@ country_event = {
             tooltip = PAU_xfxy_eco_tt
         }
         add_equipment_to_stockpile = {
-            type = infantry_equipment
-            amount = 1500
+            type = convoy
+            amount = 25
             producer = PAU
         }
-        add_fuel = 2000
+        add_fuel = 5000
+        navy_experience = 25
     }
 }
 
@@ -2741,13 +2777,18 @@ country_event = {
     is_triggered_only = yes
     option = {
         name = PAU.177.a
-
+        add_to_variable = {
+            var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
+            value = 15
+            tooltip = ubs_save_tt
+        }
         every_country = {
             limit = {
                 any_country = {
                     has_country_flag = PAU_bop_loan_active
                     has_war_with = PREV
                 }
+                has_war_with = PAU
             }
             white_peace = {
                 tag = PAU
@@ -2770,6 +2811,7 @@ country_event = {
         }
     }
 }
+
 country_event = {
     id = PAU.179
     title = PAU.179.t
