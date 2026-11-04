@@ -476,7 +476,12 @@ Build_chinese_united_font = {
 			has_war = no
 			has_country_flag = CHINA_united_font_leader
 			if = {
-				limit = { any_allied_country = { tag = CHI } }
+				limit = {
+					or = {
+						tag = CHI
+						any_allied_country = { tag = CHI }
+					}
+				}
 				if = {
 					limit = {
 						CHI = {
@@ -696,6 +701,105 @@ Build_chinese_united_font = {
 						owner = ROOT
 					}
 				}
+			}
+		}
+	}
+	##进攻
+	CHI_generic_attck_FROM_after_war = {
+		icon = GFX_decision_generic_ignite_civil_war
+		allowed = {
+		}
+		visible = {
+			has_country_flag = Participate_in_the_competition_for_China_reunification
+			has_global_flag = dismate_Build_chinese_united_font
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				is_chinese_country = yes
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		available = {
+			FROM = {
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			not = {
+				has_country_flag = CHI_war_plan_going_on
+			}
+			FROM_subject_neighbor_with_root = yes
+			not = { has_non_aggression_pact_with = FROM }
+		}
+		cost = 10
+		days_remove = 15
+		war_with_target_on_remove = yes
+		complete_effect = {
+			set_country_flag = { flag = CHI_war_plan_going_on value = 1 days = 17 }
+			FROM_country_is_defender_and_ROOT_is_accacker = yes
+		}
+		cancel_effect  = { clr_country_flag = CHI_war_plan_going_on }
+		remove_effect = {
+			clr_country_flag = CHI_war_plan_going_on
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				NOT = {
+					tag = GXC
+					FROM = { tag = ROC }
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+					if = {
+						limit = { is_subject = yes }
+						overlord = { is_stronger_than_ROOT_and_not_vulnerable = yes }
+					}
+				}
+				not = {
+					tag = GXC
+					has_cosmetic_tag = NanNing_KMT_government
+					FROM = { tag = ROC }
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = { is_subject_of = JAP }
+				factor = 0
+			}
+			modifier = {
+				FROM = { tag = SHH }
+				factor = 0
+			}
+			modifier = {
+				tag = GXC
+				has_cosmetic_tag = NanNing_KMT_government
+				FROM = {
+					tag = ROC
+				}
+				add = 10000
 			}
 		}
 	}
