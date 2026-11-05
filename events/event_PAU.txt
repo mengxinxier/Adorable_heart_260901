@@ -2597,14 +2597,14 @@ country_event = {
 }
 
 country_event = {
-    id = PAU.60
-    title = PAU.60.t
-    desc = PAU.60.d
+    id = PAU.600
+    title = PAU.600.t
+    desc = PAU.600.d
     is_triggered_only = yes
     picture = GFX_event_PAU_ax2
 
     option = {
-        name = PAU.60.a
+        name = PAU.600.a
         add_stability = 0.05
         add_power_balance_value = {
             id = PAU_bop
@@ -2614,19 +2614,19 @@ country_event = {
         set_variable = { pau_left_event_no = 0 }
     }
     option = {
-        name = PAU.60.b
+        name = PAU.600.b
         add_stability = -0.05
         hidden_effect = {
             add_to_variable = { pau_left_event_no = 1 }
             if = { limit = { check_variable = { pau_left_event_no > 2 } }
             country_event = {
-                id = PAU.62
+                id = PAU.622
                 days = 5
             }
         }
         else = {
             country_event = {
-                id = PAU.60
+                id = PAU.600
                 days = 30
             }
         }
@@ -2634,14 +2634,14 @@ country_event = {
 }
 }
 country_event = {
-    id = PAU.61
-    title = PAU.61.t
-    desc = PAU.61.d
+    id = PAU.611
+    title = PAU.611.t
+    desc = PAU.611.d
     is_triggered_only = yes
     picture = GFX_event_PAU_ax2
 
     option = {
-        name = PAU.61.a
+        name = PAU.611.a
         add_power_balance_value = {
             id = PAU_bop
             value = -0.25
@@ -2650,19 +2650,19 @@ country_event = {
         set_variable = { pau_right_event_no = 0 }
     }
     option = {
-        name = PAU.61.b
+        name = PAU.611.b
         add_stability = -0.05
         hidden_effect = {
             add_to_variable = { pau_right_event_no = 1 }
             if = { limit = { check_variable = { pau_right_event_no > 2 } }
             country_event = {
-                id = PAU.62
+                id = PAU.622
                 days = 5
             }
         }
         else = {
             country_event = {
-                id = PAU.61
+                id = PAU.611
                 days = 30
             }
         }
@@ -2670,14 +2670,14 @@ country_event = {
 }
 }
 country_event = {
-    id = PAU.62
-    title = PAU.62.t
-    desc = PAU.62.d
+    id = PAU.622
+    title = PAU.622.t
+    desc = PAU.622.d
     is_triggered_only = yes
     picture = GFX_event_PAU_xy6
 
     option = {
-        name = PAU.62.a
+        name = PAU.622.a
         set_power_balance = {
             id = PAU_bop
             set_value = 0
@@ -2736,56 +2736,70 @@ country_event = {
     option = {
         name = PAU.173.a
         if = {
-            limit = { check_variable = { PAU_mercenary_reputation > 59 } }  #雇佣兵信誉=初始50+合同事件增减
+            limit = { check_variable = { PAU_mercenary_reputation > 59 } }
             add_political_power = 50
-            add_to_variable = {
-                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                value = 30
-                tooltip = ubs_save_tt
-            }
+            add_to_variable = { var = ubs_save value = 30 tooltip = ubs_save_tt }
         }
         else_if = {
             limit = { check_variable = { PAU_mercenary_reputation < 30 } }
             add_political_power = 10
-            add_to_variable = {
-                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                value = 10
-                tooltip = ubs_save_tt
-            }
+            add_to_variable = { var = ubs_save value = 10 tooltip = ubs_save_tt }
         }
         else = {
             add_political_power = 25
-            add_to_variable = {
-                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                value = 20
-                tooltip = ubs_save_tt
-            }
+            add_to_variable = { var = ubs_save value = 20 tooltip = ubs_save_tt }
         }
         if = {
-            limit = { any_controlled_state = { has_state_flag = PAU_harbor_type_trade } }  #避风港类型=商港
+            limit = { any_controlled_state = { has_state_flag = PAU_harbor_type_trade } }
             add_political_power = 15
-            add_to_variable = {
-                var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
-                value = 10
-                tooltip = ubs_save_tt
+            add_to_variable = { var = ubs_save value = 10 tooltip = ubs_save_tt }
+        }
+        set_variable = { var = PAU_loan_provider value = FROM }
+        PAU = {
+            diplomatic_relation = { country = FROM relation = military_access active = yes }
+            diplomatic_relation = { country = FROM relation = docking_rights active = yes }
+        }
+        FROM = {
+            diplomatic_relation = { country = PAU relation = military_access active = yes }
+            diplomatic_relation = { country = PAU relation = docking_rights active = yes }
+            if = {
+                limit = {
+                    check_variable = { num_controlled_states > 1 }
+                    any_owned_State = {
+                        is_controlled_by = PREV
+                        is_coastal = yes
+                        is_capital = no
+                        any_province_building_level = {
+                            province = { all_provinces = yes }
+                            building = naval_base
+                            level > 0
+                        }
+                    }
+                }
+                random_owned_controlled_state = {
+                    limit = {
+                        is_coastal = yes
+                        is_capital = no
+                        any_province_building_level = {
+                            province = { all_provinces = yes }
+                            building = naval_base
+                            level > 0
+                        }
+                    }
+                    transfer_state_to = PAU
+                    set_state_flag = PAU_guyong_state_flag
+                }
+            }
+            else_if = {
+                limit = { check_variable = { num_controlled_states > 1 } }
+                random_owned_controlled_state = {
+                    limit = { is_coastal = yes is_capital = no }
+                    transfer_state_to = PAU
+                    set_state_flag = PAU_guyong_state_flag
+                }
             }
         }
         activate_mission = PAU_guyong_zhunbei
-        PAU = {
-            diplomatic_relation = {
-                country = FROM
-                relation = military_access
-                active = yes
-            }
-        }
-        set_variable = { var = PAU_loan_provider value = FROM }  #雇佣贷款提供国=接受BOP借款时记录
-        FROM = {
-            diplomatic_relation = {
-                country = PAU
-                relation = military_access
-                active = yes
-            }
-        }
     }
 }
 
@@ -3233,19 +3247,19 @@ country_event = {
         name = PAU.57.a
         add_power_balance_value = {
             id = PAU_bop
-            value = -0.2
+            value = -0.15
             tooltip_side = PAU_bop_left_side
         }
         custom_effect_tooltip = PAU_mainline_append_tt
         add_to_variable = {
-            var = PAU_ml_raw_production_factory_efficiency_gain_factor
-            value = -0.1
-            tooltip = production_factory_efficiency_gain_factor_tt
+            var = PAU_ml_raw_production_factory_start_efficiency_factor
+            value = 0.05
+            tooltip = production_factory_start_efficiency_factor_tt
         }
         add_to_variable = {
-            var = PAU_ml_raw_production_factory_start_efficiency_factor
-            value = 0.1
-            tooltip = production_factory_start_efficiency_factor_tt
+            var = PAU_ml_raw_stability_factor
+            value = 0.05
+            tooltip = stability_factor_tt
         }
     }
 }
@@ -3263,31 +3277,20 @@ country_event = {
         name = PAU.58.a
         custom_effect_tooltip = PAU_mainline_append_tt
         add_to_variable = {
-            var = PAU_ml_raw_army_attack_factor
-            value = -0.05
-            tooltip = army_attack_factor_tt
-        }
-        add_to_variable = {
-            var = PAU_ml_raw_army_defence_factor
-            value = -0.05
-            tooltip = army_defence_factor_tt
-        }
-        add_to_variable = {
             var = PAU_ml_raw_army_morale_factor
-            value = 0.1
+            value = 0.05
             tooltip = army_morale_factor_tt
         }
         add_to_variable = {
             var = PAU_ml_raw_army_org_factor
-            value = 0.1
+            value = 0.05
             tooltip = army_org_factor_tt
         }
         add_to_variable = {
             var = PAU_ml_raw_conscription_factor
-            value = 0.2
+            value = 0.10
             tooltip = conscription_factor_tt
         }
-
     }
 }
 
@@ -3304,36 +3307,25 @@ country_event = {
         name = PAU.59.a
         add_power_balance_value = {
             id = PAU_bop
-            value = 0.2
+            value = 0.15
             tooltip_side = PAU_bop_right_side
         }
         custom_effect_tooltip = PAU_mainline_append_tt
         add_to_variable = {
-            var = PAU_ml_raw_army_attack_factor
-            value = -0.05
-            tooltip = army_attack_factor_tt
-        }
-        add_to_variable = {
-            var = PAU_ml_raw_army_defence_factor
-            value = -0.05
-            tooltip = army_defence_factor_tt
-        }
-        add_to_variable = {
             var = PAU_ml_raw_org_damage_multiplier
-            value = -0.2
+            value = -0.10
             tooltip = org_damage_multiplier_tt
         }
         add_to_variable = {
             var = PAU_ml_raw_str_damage_multiplier
-            value = -0.2
+            value = -0.10
             tooltip = str_damage_multiplier_tt
         }
         add_to_variable = {
             var = PAU_ml_raw_conscription_factor
-            value = 0.2
+            value = 0.10
             tooltip = conscription_factor_tt
         }
-
     }
 }
 
