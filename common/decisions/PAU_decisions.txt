@@ -1545,7 +1545,6 @@ PAU_hetong = {
                         infantry = { x = 2 y = 1 }
                         infantry = { x = 3 y = 0 }
                     }
-                    }
                     support = {
                         engineer = { x = 0 y = 0 }
                         artillery = { x = 0 y = 1 }
@@ -3936,7 +3935,96 @@ PAU_late_doctrine = {
 }
 
 PAU_national_unification = {
+    #决议名：重建苏联
+    PAU_rebuild_soviet = {
+        icon = GFX_decision_generic_soviet_politics
+        allowed = { original_tag = PAU }
+        visible = {
+            has_completed_focus = PAU_els
+            OR = {
+                NOT = { country_exists = SOV }
+                SOV = { is_subject = yes NOT = { is_subject_of = ROOT } }
+                SOV = { has_capitulated = yes }
+            }
+        }
+        available = {
+            219 = {
+                OR = {
+                    is_controlled_by = ROOT
+                    controller = { is_in_faction_with = ROOT }
+                    controller = { is_subject_of = ROOT }
+                }
+            }
+            count_triggers = {
+                amount = 10
+                every_state = {
+                    is_core_of = SOV
+                    OR = {
+                        is_controlled_by = ROOT
+                        controller = { is_in_faction_with = ROOT }
+                        controller = { is_subject_of = ROOT }
+                    }
+                }
+            }
+        }
+        cost = 50
+        fire_only_once = yes
+        days_remove = 30
 
+        remove_effect = {
+            every_state = {
+                limit = {
+                    is_core_of = SOV
+                    NOT = { is_core_of = ROOT }
+                    NOT = { is_core_of = PRC }
+                    NOT = { is_claimed_by = PRC }
+                    OR = {
+                        is_controlled_by = ROOT
+                        controller = {
+                            OR = {
+                                is_in_faction_with = ROOT
+                                is_subject_of = ROOT
+                            }
+                            NOT = { tag = PRC }
+                        }
+                    }
+                }
+                transfer_state_to = SOV
+            }
+            SOV = {
+                if = {
+                    limit = { is_subject = yes }
+                    OVERLORD = { end_puppet = SOV }
+                }
+                set_politics = {
+                    ruling_party = communism
+                    elections_allowed = no
+                }
+                add_popularity = {
+                    ideology = communism
+                    popularity = 0.60
+                }
+                add_timed_idea = {
+                    idea = PAU_restitution_received
+                    days = 360
+                }
+            }
+            if = {
+                limit = { is_in_faction = yes }
+                faction_leader = { add_to_faction = SOV }
+            }
+            else = {
+                add_to_faction = SOV
+            }
+            set_country_flag = PAU_soviet_ally
+            add_dynamic_modifier = {
+                modifier = PAU_soviet_military_mission
+                days = 360
+            }
+            country_event = { id = PAU.511 hours = 6 }
+        }
+        ai_will_do = { factor = 100 }
+    }
     #决议名：宣告南美统一
     PAU_south_america_super_event = {
         icon = GFX_pcxs
