@@ -2722,7 +2722,7 @@
     }
 
 
-    #革命的日子还没到头呢
+   #革命的日子还没到头呢
 
     focus = {
         id = PAU_sjgm
@@ -2732,10 +2732,23 @@
         y = 11
         cost = 5
         available = {
-            SOV = {
-                exists = yes
+            OR = {
+                AND = {
+                    SOV = {
+                        exists = yes
+                        is_subject = no
+                        has_capitulated = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                    has_country_flag = PAU_soviet_ally
+                }
+                PRC = {
+                    exists = yes
+                    is_subject = no
+                    has_capitulated = no
+                    NOT = { has_war_with = ROOT }
+                }
             }
-            has_country_flag = PAU_soviet_ally  #苏联同盟标记
         }
         bypass = {
         }
@@ -2755,44 +2768,64 @@
         }
 
         completion_reward = {
-
             if = {
-                limit = { SOV = { is_in_faction = yes } }
+                limit = {
+                    SOV = {
+                        exists = yes
+                        is_subject = no
+                        has_capitulated = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
                 if = {
-                    limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
+                    limit = { SOV = { is_in_faction = yes } }
                     if = {
-                        limit = { PAU = { is_in_faction = yes } }
-                        PAU = {
-                            every_faction_member = {
-                                limit = { NOT = { tag = PAU } }
-                                display_individual_scopes = yes
-                                leave_faction = yes
-                                SOV = {
-                                    faction_leader = {
-                                        add_to_faction = PREV.PREV
+                        limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
+                        if = {
+                            limit = { PAU = { is_in_faction = yes } }
+                            PAU = {
+                                every_faction_member = {
+                                    limit = { NOT = { tag = PAU } }
+                                    display_individual_scopes = yes
+                                    leave_faction = yes
+                                    SOV = {
+                                        faction_leader = {
+                                            add_to_faction = PREV.PREV
+                                        }
                                     }
                                 }
+                                leave_faction = yes
                             }
-                            leave_faction = yes
                         }
+                        SOV = { faction_leader = { add_to_faction = PAU } }
                     }
-                    SOV = { faction_leader = { add_to_faction = PAU } }
-                }
-            }
-            else = {
-                if = {
-                    limit = { PAU = { is_in_faction = yes } }
-                    PAU = { faction_leader = { add_to_faction = SOV } }
                 }
                 else = {
-                    PAU = {
-                        add_to_faction = SOV
+                    if = {
+                        limit = { PAU = { is_in_faction = yes } }
+                        PAU = { faction_leader = { add_to_faction = SOV } }
                     }
+                    else = {
+                        PAU = { add_to_faction = SOV }
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    PRC = {
+                        exists = yes
+                        is_subject = no
+                        has_capitulated = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
+                PRC = {
+                    country_event = { id = PAU.512 hours = 6 }
                 }
             }
             custom_effect_tooltip = PAU_sjgm_tt
-            set_country_flag = PAU_world_revolution  #世界革命路线标记
-            set_country_flag = PAU_revolution_network_active  #革命网络建立标记
+            set_country_flag = PAU_world_revolution
+            set_country_flag = PAU_revolution_network_active
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_export_revolution
