@@ -1611,24 +1611,50 @@ country_event = {
     }
     option = {
         name = PAU.35.a
-
+        ai_chance = {
+            base = 50
+            modifier = {
+                factor = 1.5
+                has_opinion = { target = PAU value > 15 }
+            }
+            modifier = {
+                factor = 2.0
+                has_opinion = { target = PAU value > 35 }
+            }
+            modifier = {
+                factor = 0
+                OR = {
+                    has_war_with = PAU
+                    has_opinion = { target = PAU value < -20 }
+                }
+            }
+        }
         add_stability = 0.05
         add_to_variable = { VAR_ENG_wjcd = -10 }
         custom_effect_tooltip = ENG_tooltip_var_wjcd_jian_10
         FROM = {
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_trade_opinion_factor  #主线动态修正原始值：贸易好感=国策/决议累加
+                var = PAU_ml_raw_trade_opinion_factor
                 value = 0.15
                 tooltip = trade_opinion_factor_tt
             }
         }
-        ai_chance = {
-            base = 70
-        }
     }
     option = {
         name = PAU.35.b
+        ai_chance = {
+            base = 25
+            modifier = {
+                factor = 2.5
+                has_opinion = { target = PAU value < 0 }
+            }
+            modifier = {
+                factor = 0
+                has_opinion = { target = PAU value > 50 }
+                NOT = { has_war_with = PAU }
+            }
+        }
         send_embargo = PAU
         PAU = {
             country_event = {
@@ -1637,11 +1663,6 @@ country_event = {
             }
         }
         add_war_support = 0.05
-        ai_chance = {
-            base = 0
-        }
-
-
     }
 }
 
@@ -2321,19 +2342,34 @@ country_event = {
     option = {
         name = PAU.50.a
         ai_chance = {
-            base = 85
+            base = 60
+            modifier = {
+                factor = 1.5
+                has_opinion = { target = FROM value > 15 }
+            }
+            modifier = {
+                factor = 2.0
+                has_opinion = { target = FROM value > 35 }
+            }
+            modifier = {
+                factor = 0.5
+                FROM = { has_country_flag = eng_anger }
+            }
             modifier = {
                 factor = 0
-                has_war_with = FROM
+                OR = {
+                    has_war_with = FROM
+                    has_opinion = { target = FROM value < -20 }
+                }
             }
         }
         add_political_power = 50
         add_stability = 0.05
-        add_to_variable = { VAR_ENG_syrs = -25  }
+        add_to_variable = { VAR_ENG_syrs = -25 }
         custom_effect_tooltip = ENG_tooltip_var_syrs_jian_25
         diplomatic_relation = {
             country = FROM
-            relation = non_aggression_pact  #互不侵犯
+            relation = non_aggression_pact
             active = yes
         }
         add_opinion_modifier = {
@@ -2341,12 +2377,10 @@ country_event = {
             target = FROM
         }
         FROM = {
-            set_country_flag = PAU_grail_peace  #与圣杯和谈标记
+            set_country_flag = PAU_grail_peace
             if = {
                 limit = {
-                    not = {
-                        has_idea = pau_wto_observer_state
-                    }
+                    not = { has_idea = pau_wto_observer_state }
                 }
                 add_ideas = pau_wto_observer_state
             }
@@ -2355,26 +2389,31 @@ country_event = {
                 target = ROOT
             }
         }
-
-
     }
     option = {
         name = PAU.50.b
         ai_chance = {
-            base = 20
+            base = 25
+            modifier = {
+                factor = 2.0
+                has_opinion = { target = FROM value < 0 }
+            }
+            modifier = {
+                factor = 2.5
+                FROM = { has_country_flag = eng_anger }
+            }
             modifier = {
                 factor = 0
-                has_opinion = { target = PAU value > 50 }
+                has_opinion = { target = FROM value > 50 }
+                NOT = { has_war_with = FROM }
             }
         }
         add_political_power = -50
-        send_embargo = FROM  #实施贸易封锁
+        send_embargo = FROM
         FROM = {
             set_country_flag = PAU_grail_refused
             add_war_support = 0.05
         }
-
-
     }
 }
 
