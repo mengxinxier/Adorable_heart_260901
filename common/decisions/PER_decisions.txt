@@ -801,3 +801,70 @@ PER_power_struggle_decision_category = {
 		}
 	}
 }
+
+political_actions = {
+	PER_arrow_to_overlord_decision = {
+		icon = GFX_decision_generic_break_treaty
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				
+				TAM = {
+					surrender_progress > 0.75
+				}
+			}
+		}
+		visible = {
+			#has_country_flag = PER_arrow_to_overlord_flag
+		}
+		available = {
+			has_government = communism
+			is_subject_of = TAM
+			has_country_flag = PER_arrow_to_overlord_flag
+			surrender_progress < 0.25
+			TAM = {
+				OR = {
+					strength_ratio = {
+						tag = PER
+						ratio < 1
+					}
+					AND = {
+						has_war = yes
+						surrender_progress > 0.75
+					}
+				}
+			}
+		}
+		fire_only_once = yes
+		days_remove = 14
+		cost = 100
+		war_with_on_remove = TAM
+		remove_effect = {
+			TAM_Maruzensky = {
+				set_nationality = TAM
+			}
+			hidden_effect = {
+				PER_remove_deputy = yes
+			}
+			custom_effect_tooltip = AH_change_deputy_tt
+			add_ideas = PER_deputy_La_Folia_Rihavein
+			TAM = {
+				set_autonomy = {
+					target = ROOT
+					autonomous_state = autonomy_free
+				}
+				ROOT = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}
+		}
+		cancel_trigger = {
+			NOT = { is_subject_of = TAM }
+		}
+	}
+	
+}
