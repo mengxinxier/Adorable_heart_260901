@@ -621,7 +621,7 @@ PAU_LHS_weiji = {
         ai_will_do = { factor = 0 }
     }
 
-    #决议名：亡灵在蚕食着我们
+    #亡灵在蚕食着我们
     PAU_wl_attack_dec = {
         allowed = {
             original_tag = PAU
@@ -637,15 +637,14 @@ PAU_LHS_weiji = {
             always = no
         }
         selectable_mission = no
-
         is_good = no
-
         days_mission_timeout = var:wl_attack_day
 
         timeout_effect = {
             activate_mission = PAU_wl_attack_dec
             every_state = {
                 limit = {
+                    NOT = { state = 278 }
                     or = {
                         is_owned_by = PAU
                         is_owned_by = LHS
@@ -659,61 +658,21 @@ PAU_LHS_weiji = {
                 transfer_state_to = ZDW
             }
         }
-        complete_effect = {
-        }
         cancel_trigger = {
-            has_country_flag = PAU_undead_defeated  #亡灵战争结束标记
-        }
-        cancel_effect = {
-        }
-    }
-
-    #决议名：亡灵的反扑
-    PAU_wl_anti = {
-        allowed = {
-            original_tag = PAU
-        }
-        icon = GFX_mobilize_undead_looters
-
-        available = {
-            always = no
-        }
-        activation = {
-            always = no
-        }
-        selectable_mission = no
-        is_good = no
-        days_mission_timeout = 30
-
-        timeout_effect = {
-            random_state = {
-                limit = {
-                    is_controlled_by = ZDW
-                    has_state_flag = PAU_xiaoyao_state_flag
-                }
-                clr_state_flag = PAU_xiaoyao_state_flag
-                remove_dynamic_modifier = {
-                    modifier = PAU_baiye_state
-                }
+            OR = {
+                has_completed_focus = PAU_jjka
+                has_country_flag = PAU_undead_defeated
             }
-            activate_mission = PAU_wl_anti
-
-        }
-        complete_effect = {
-        }
-        cancel_trigger = {
-            has_country_flag = PAU_undead_defeated
-        }
-        cancel_effect = {
         }
     }
+
+    #亡灵的反扑
     PAU_wl_anti1 = {
         name = PAU_wl_anti
         allowed = {
             original_tag = PAU
         }
         icon = GFX_mobilize_undead_looters
-
         available = {
             has_completed_focus = PAU_zmxx
         }
@@ -733,136 +692,69 @@ PAU_LHS_weiji = {
             }
             activate_mission = PAU_wl_anti1
         }
-        complete_effect = {
-        }
         cancel_trigger = {
-        }
-        cancel_effect = {
+            OR = {
+                has_completed_focus = PAU_zmxx
+                has_country_flag = PAU_undead_defeated
+            }
         }
     }
 
-    #决议名：组织人员撤离
+    #组织人员撤离
     PAU_undead_evacuate = {
         icon = GFX_decision_category_generic_propaganda
         allowed = { original_tag = PAU }
         visible = {
-            has_country_flag = PAU_undead_war  #亡灵战争进行中标记
+            has_country_flag = PAU_undead_war
+            NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
             has_completed_focus = PAU_ddjr
         }
         available = {
+            NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
         }
-        cost = 25
+        cost = 20
         days_remove = 15
         fire_only_once = no
+        modifier = {
+            army_core_defence_factor = 0.15
+            max_dig_in = 5
+        }
         complete_effect = {
             if = {
-                limit = {
-                    has_completed_focus = PAU_zmxx
-                }
+                limit = { NOT = { has_completed_focus = PAU_zjwyj } }
+                reduce_focus_completion_cost = { focus = PAU_ddjr cost = 3 }
+                reduce_focus_completion_cost = { focus = PAU_zbgk cost = 3 }
+                reduce_focus_completion_cost = { focus = PAU_jmyx cost = 3 }
+                reduce_focus_completion_cost = { focus = PAU_zjwyj cost = 3 }
             }
             else = {
-                if = {
-                    limit = { NOT = { has_completed_focus = PAU_zjwyj } }
-                    reduce_focus_completion_cost = { focus = PAU_ddjr cost = 3 }
-                    reduce_focus_completion_cost = { focus = PAU_zbgk cost = 3 }
-                    reduce_focus_completion_cost = { focus = PAU_jmyx cost = 3 }
-                    reduce_focus_completion_cost = { focus = PAU_zjwyj cost = 3 }
-                }
-                else = {
-                    reduce_focus_completion_cost = { focus = PAU_zmxx cost = 7 }
-                }
+                reduce_focus_completion_cost = { focus = PAU_zmxx cost = 7 }
             }
         }
         remove_effect = {
             add_manpower = 2000
-            add_stability = 0.01
+            add_stability = 0.02
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 25 }
     }
 
-    #决议名：组织反冲击
-    PAU_undead_counterattack = {
-        icon = GFX_decision_category_CHL_nacista_decisions
-        allowed = { original_tag = PAU }
-        visible = {
-            has_country_flag = PAU_undead_war
-            NOT = { has_country_flag = PAU_undead_defeated }
-        }
-        available = {
-            NOT = { has_country_flag = PAU_undead_defeated }
-            any_controlled_state = {
-                any_neighbor_state = {
-                    is_controlled_by = ZDW
-                }
-            }
-            custom_trigger_tooltip = {
-                not = {
-                    has_country_flag = PAU_undead_counterattack_re  #亡灵反扑进行中标记
-                }
-                tooltip = PAU_undead_counterattack_re_15_days
-            }
-        }
-        cost = 5
-        fire_only_once = no
-        days_remove = 10
-
-        complete_effect = {
-            if = {
-                limit = {
-                    has_completed_focus = PAU_dsyq
-                }
-                ZDW = {
-                    add_timed_idea = {
-                        idea = PAU_undead_counterattack
-                        days = 3
-                    }
-                }
-            }
-            else = {
-                if = {
-                    limit = {
-                        has_country_flag = control_dec
-                    }
-                    add_days_mission_timeout  = {
-                        mission = PAU_wl_attack_dec
-                        days = 3
-                    }
-                }
-                else = {
-                    ZDW = {
-                        add_timed_idea = {
-                            idea = PAU_undead_counterattack
-                            days = 3
-                        }
-                    }
-                }
-            }
-        }
-        remove_effect = {
-            set_country_flag = {
-                flag = PAU_undead_counterattack_re
-                days = 14
-                value = 1
-            }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：烧毁无法转移的物资
+    #烧毁无法转移的物资
     PAU_undead_burn_depot = {
         icon = GFX_decision_category_border_conflicts
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
+            NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
         }
         available = {
+            NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_fuel_gt499_tt
-                has_fuel > 4999
+                has_fuel > 1499
             }
             any_controlled_state = {
                 any_neighbor_state = {
@@ -870,56 +762,42 @@ PAU_LHS_weiji = {
                 }
             }
         }
-        cost = 25
+        cost = 20
         fire_only_once = yes
         complete_effect = {
-            add_fuel = -5000
+            add_fuel = -1500
             if = {
-                limit = {
-                    has_completed_focus = PAU_dsyq
-                }
-                ZDW = {
-                    add_timed_idea = {
-                        idea = PAU_undead_burn_depot
-                        days = 10
-                    }
+                limit = { has_country_flag = control_dec }
+                add_days_mission_timeout = {
+                    mission = PAU_wl_attack_dec
+                    days = 15
                 }
             }
-            else = {
-                if = {
-                    limit = {
-                        has_country_flag = control_dec
-                    }
-                    add_days_mission_timeout  = {
-                        mission = PAU_wl_attack_dec
-                        days = 15
-                    }
-                }
-                else = {
-                    ZDW = {
-                        add_timed_idea = {
-                            idea = PAU_undead_burn_depot
-                            days = 10
-                        }
-                    }
+            ZDW = {
+                add_timed_idea = {
+                    idea = PAU_undead_burn_depot
+                    days = 20
                 }
             }
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 25 }
     }
 
-    #决议名：制造隔离带
+    #制造隔离带
     PAU_undead_scorched_earth = {
         icon = GFX_decision_category_border_war
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
+            NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
         }
         available = {
+            NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
-            has_fuel > 9999
+            has_fuel > 2999
             any_controlled_state = {
+                NOT = { state = 278 }
                 any_neighbor_state = {
                     is_controlled_by = ZDW
                 }
@@ -928,9 +806,10 @@ PAU_LHS_weiji = {
         cost = 25
         fire_only_once = no
         complete_effect = {
-            add_fuel = -10000
+            add_fuel = -3000
             random_state = {
                 limit = {
+                    NOT = { state = 278 }
                     or = {
                         is_controlled_by = PAU
                         is_controlled_by = LHS
@@ -947,15 +826,77 @@ PAU_LHS_weiji = {
                     value = 1
                 }
             }
-            hidden_effect = {
-            }
             custom_effect_tooltip = PAU_undead_scorched_earth_tt
-            set_country_flag = PAU_undead_scorched_earth  #焦土隔离带完成标记
+            set_country_flag = PAU_undead_scorched_earth
         }
         ai_will_do = { factor = 10 }
     }
 
+    #组织反冲击
+    PAU_undead_counterattack = {
+        icon = GFX_decision_category_CHL_nacista_decisions
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+        }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            any_controlled_state = {
+                any_neighbor_state = {
+                    is_controlled_by = ZDW
+                }
+            }
+        }
+        cost = 10
+        fire_only_once = no
+        days_remove = 15
+        days_re_enable = 20
+        modifier = {
+            army_attack_factor = 0.15
+            breakthrough_factor = 0.15
+            army_morale_factor = 0.10
+        }
+        complete_effect = {
+            if = {
+                limit = {
+                    has_country_flag = control_dec
+                    NOT = { has_completed_focus = PAU_jjka }
+                }
+                add_days_mission_timeout = {
+                    mission = PAU_wl_attack_dec
+                    days = 7
+                }
+            }
+            if = {
+                limit = { NOT = { has_completed_focus = PAU_dsyq } }
+                ZDW = {
+                    add_timed_idea = {
+                        idea = PAU_undead_counterattack
+                        days = 12
+                    }
+                }
+            }
+            else = {
+                ZDW = {
+                    add_timed_idea = {
+                        idea = PAU_undead_counterattack
+                        days = 10
+                    }
+                }
+            }
+        }
+        remove_effect = {
+            if = {
+                limit = { has_completed_focus = PAU_dsyq }
+                army_experience = 15
+                add_command_power = 20
+            }
+        }
+        ai_will_do = { factor = 25 }
+    }
 }
+
 ZDW_endwar = {
     wl_gld = {
         allowed = {
@@ -968,7 +909,7 @@ ZDW_endwar = {
             }
         }
         ai_will_do = {
-            factor = 10
+            factor = 100
         }
         visible = {
             PAU = {
@@ -1002,7 +943,6 @@ ZDW_endwar = {
         }
     }
 }
-
 PAU_hetong = {
 
     #决议名：向 [FROM.GetName] 提议出兵
@@ -1036,11 +976,6 @@ PAU_hetong = {
                 not = { tag = ZDW }
                 not = { tag = PAO }
                 not = { tag = PAQ }
-                any_state = {
-                    is_controlled_by = FROM
-                    is_owned_by = FROM
-                    is_coastal = yes
-                }
             }
         }
 
@@ -1053,7 +988,7 @@ PAU_hetong = {
         }
     }
 
-    #决议名：出发的准备
+    #任务：出发的准备
     PAU_guyong_zhunbei = {
         icon = GFX_land_owners_finding_funding
         allowed = { tag = PAU }
@@ -1082,11 +1017,6 @@ PAU_hetong = {
             var:PAU_loan_provider = {
                 clr_country_flag = yaobuyaoguyong
                 clr_country_flag = PAU_bop_loan_active
-                every_state = {
-                    limit = { has_state_flag = PAU_guyong_state_flag }
-                    transfer_state_to = PREV
-                    clr_state_flag = PAU_guyong_state_flag
-                }
             }
             clear_variable = PAU_loan_provider
         }
@@ -1105,6 +1035,9 @@ PAU_hetong = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 every_country = {
                     limit = { has_war_with = PREV }
+                    every_owned_state = {
+                        set_state_flag = PAU_guyong_enemy_state
+                    }
                     PAU = {
                         add_to_war = {
                             targeted_alliance = PREV.PREV
@@ -1130,6 +1063,9 @@ PAU_hetong = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 every_country = {
                     limit = { has_war_with = PREV }
+                    every_owned_state = {
+                        set_state_flag = PAU_guyong_enemy_state
+                    }
                     PAU = {
                         add_to_war = {
                             targeted_alliance = PREV.PREV
@@ -1142,7 +1078,7 @@ PAU_hetong = {
         }
     }
 
-    #决议名：加入雇主的战争
+    #加入雇主的战争
     PAU_guyong_ewai = {
         icon = GFX_jiefa
         allowed = { tag = PAU }
@@ -1167,6 +1103,9 @@ PAU_hetong = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 every_country = {
                     limit = { has_war_with = PREV }
+                    every_owned_state = {
+                        set_state_flag = PAU_guyong_enemy_state
+                    }
                     PAU = {
                         add_to_war = {
                             targeted_alliance = PREV.PREV
@@ -1179,7 +1118,7 @@ PAU_hetong = {
         }
     }
 
-    #决议名：替雇主作战
+    #任务：替雇主作战
     PAU_guyong_attack = {
         icon = GFX_nanmeiziyuan
         allowed = { tag = PAU }
@@ -1215,6 +1154,7 @@ PAU_hetong = {
         cancel_effect = {
             remove_ideas = PAU_annex_debuff
             clr_country_flag = PAU_guyonged_flag
+            #主动提前跑路
             if = {
                 limit = { has_country_flag = PAU_guyonged_touxiang_flag }
                 add_timed_idea = { idea = PAU_guyong_debuff days = 90 }
@@ -1223,33 +1163,15 @@ PAU_hetong = {
                     white_peace = { tag = PAU }
                     clr_country_flag = PAU_will_guyonged_touxiang_flag
                 }
-                random_country = {
-                    limit = {
-                        has_war_with = PAU
-                        any_country = {
-                            has_country_flag = PAU_bop_loan_active
-                            has_war_with = PREV
-                        }
-                    }
-                    every_state = {
-                        limit = { has_state_flag = PAU_guyong_state_flag }
-                        transfer_state_to = PREV
-                        clr_state_flag = PAU_guyong_state_flag
-                    }
-                }
                 every_country = {
                     limit = { has_country_flag = PAU_bop_loan_active }
-                    every_state = {
-                        limit = { has_state_flag = PAU_guyong_state_flag }
-                        transfer_state_to = PREV
-                        clr_state_flag = PAU_guyong_state_flag
-                    }
                     clr_country_flag = PAU_bop_loan_active
                 }
                 clr_country_flag = PAU_guyonged_touxiang_flag
                 add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
             }
             else = {
+                #雇主战败投降
                 if = {
                     limit = {
                         or = {
@@ -1267,22 +1189,6 @@ PAU_hetong = {
                     add_timed_idea = { idea = PAU_guyong_debuff days = 90 }
                     add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
                     country_event = { id = PAU.175 hours = 6 }
-                    random_country = {
-                        limit = {
-                            or = {
-                                has_country_flag = PAU_guzhu_cap
-                                any_country = {
-                                    has_country_flag = PAU_bop_loan_active
-                                    has_war_with = PREV
-                                }
-                            }
-                        }
-                        every_state = {
-                            limit = { has_state_flag = PAU_guyong_state_flag }
-                            transfer_state_to = PREV
-                            clr_state_flag = PAU_guyong_state_flag
-                        }
-                    }
                     every_country = {
                         limit = {
                             or = {
@@ -1304,6 +1210,7 @@ PAU_hetong = {
                         clr_country_flag = PAU_bop_loan_active
                     }
                 }
+                #与雇主翻脸开战
                 else_if = {
                     limit = {
                         any_country = {
@@ -1314,32 +1221,32 @@ PAU_hetong = {
                     add_timed_idea = { idea = PAU_guyong_debuff days = 180 }
                     add_to_variable = { PAU_mercenary_reputation = -20 tooltip = PAU_guyong_dianshu_tt }
                     country_event = { id = PAU.179 hours = 6 }
-                    random_country = {
-                        limit = {
-                            has_war_with = PAU
-                            any_country = {
-                                has_country_flag = PAU_bop_loan_active
-                                has_war_with = PREV
-                            }
-                        }
-                        every_state = {
-                            limit = { has_state_flag = PAU_guyong_state_flag }
-                            transfer_state_to = PREV
-                            clr_state_flag = PAU_guyong_state_flag
-                        }
-                    }
                     every_country = {
                         limit = { has_country_flag = PAU_bop_loan_active }
                         clr_country_flag = PAU_bop_loan_active
                     }
                 }
+                #帮助雇主大获全胜！
                 else = {
                     every_country = {
                         limit = { has_country_flag = PAU_bop_loan_active }
+                        #防偷吃
                         every_state = {
-                            limit = { has_state_flag = PAU_guyong_state_flag }
+                            limit = {
+                                has_state_flag = PAU_guyong_enemy_state
+                                NOT = { is_owned_by = PREV }
+                                owner = {
+                                    OR = {
+                                        tag = PAU
+                                        is_in_faction_with = PAU
+                                    }
+                                    PREV = {
+                                        NOT = { is_core_of = PREV }
+                                        NOT = { is_claimed_by = PREV }
+                                    }
+                                }
+                            }
                             transfer_state_to = PREV
-                            clr_state_flag = PAU_guyong_state_flag
                         }
                         clr_country_flag = PAU_bop_loan_active
                     }
@@ -1485,6 +1392,11 @@ PAU_hetong = {
                     country_event = { id = PAU.176 hours = 6 }
                 }
             }
+            #清除本单合同的敌国地块印记
+            every_state = {
+                limit = { has_state_flag = PAU_guyong_enemy_state }
+                clr_state_flag = PAU_guyong_enemy_state
+            }
             clear_variable = PAU_loan_provider
             hidden_effect = {
                 set_country_flag = {
@@ -1510,12 +1422,11 @@ PAU_hetong = {
             }
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
-                every_state = {
-                    limit = { has_state_flag = PAU_guyong_state_flag }
-                    transfer_state_to = PREV
-                    clr_state_flag = PAU_guyong_state_flag
-                }
                 clr_country_flag = PAU_bop_loan_active
+            }
+            every_state = {
+                limit = { has_state_flag = PAU_guyong_enemy_state }
+                clr_state_flag = PAU_guyong_enemy_state
             }
             remove_ideas = PAU_annex_debuff
             clr_country_flag = PAU_guyonged_flag
@@ -1532,16 +1443,17 @@ PAU_hetong = {
             }
         }
     }
+
     #决议名：向租借港派遣雇佣兵团
     PAU_guyong_deploy = {
         icon = GFX_decision_generic_military
         allowed = { tag = PAU }
         visible = {
             has_country_flag = PAU_guyonged_flag
-            any_controlled_state = { has_state_flag = PAU_guyong_state_flag }
+            any_country = { has_country_flag = PAU_bop_loan_active }
         }
         available = {
-            any_controlled_state = { has_state_flag = PAU_guyong_state_flag }
+            any_country = { has_country_flag = PAU_bop_loan_active }
             has_manpower > 4999
             has_equipment = { infantry_equipment > 499 }
         }
@@ -1576,12 +1488,15 @@ PAU_hetong = {
                     }
                 }
             }
-            random_controlled_state = {
-                limit = { has_state_flag = PAU_guyong_state_flag }
-                create_unit = {
-                    division = "name = \"远征雇佣兵团\" division_template = \"远征雇佣兵团\" start_experience_factor = 0.3 start_equipment_factor = 1.0"
-                    count = 1
-                    owner = PAU
+            random_country = {
+                limit = { has_country_flag = PAU_bop_loan_active }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"远征雇佣兵团\" division_template = \"远征雇佣兵团\" start_experience_factor = 0.3 start_equipment_factor = 1.0"
+                        count = 1
+                        allow_spawning_on_enemy_provs = yes
+                        owner = PAU
+                    }
                 }
             }
         }
@@ -1654,58 +1569,65 @@ PAU_hetong = {
 
 PAU_lhs_integration = {
 
-    #决议名：保留野火的部分编制
+    #保留野火的部分编制
     PAU_lhs_keep_cadres = {
         icon = GFX_youji_on_me3
         allowed = { original_tag = PAU }
         visible = {
+            NOT = { has_country_flag = PAU_lhs_integrated }
+            NOT = { has_country_flag = PAU_lhs_dissolved }
         }
         available = {
-            NOT = { has_country_flag = PAU_lhs_dissolved }  #野火旧部解散标记
+            NOT = { has_country_flag = PAU_lhs_dissolved }
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_lhs_integration_lt100_tt
-                check_variable = { PAU_lhs_integration < 100 }  #野火旧部整编度=0~100，整编事件累加
+                check_variable = { PAU_lhs_integration < 100 }
             }
         }
         cost = 25
-        fire_only_once = no
+        fire_only_once = yes
         days_remove = 30
         complete_effect = {
-            set_country_flag = PAU_lhs_kept_cadres  #野火旧部骨干保留标记
+            set_country_flag = PAU_lhs_kept_cadres
         }
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration
-                value = 10
+                value = 20
                 tooltip = PAU_lhs_integration_tt
             }
-            add_manpower = -4000
-            division_template = {
-                name = "野火山地游击队"
-                is_locked = no
-                regiments = {
-                    youjibudui = { x = 0 y = 0 }
-                    youjibudui = { x = 0 y = 1 }
-                    youjibudui = { x = 1 y = 0 }
-                    youjibudui = { x = 1 y = 1 }
+            if = {
+                limit = { NOT = { has_template = "野火山地游击队" } }
+                division_template = {
+                    name = "野火山地游击队"
+                    is_locked = no
+                    regiments = {
+                        youjibudui = { x = 0 y = 0 }
+                        youjibudui = { x = 0 y = 1 }
+                        youjibudui = { x = 1 y = 0 }
+                        youjibudui = { x = 1 y = 1 }
+                    }
                 }
             }
             capital_scope = {
                 create_unit = {
-                    division = "name = \"野火山地游击队\" division_template = \"野火山地游击队\" start_experience_factor = 0 start_equipment_factor = 0.1"
-                    count = 1
+                    division = "name = \"野火山地游击队\" division_template = \"野火山地游击队\" start_experience_factor = 0.3 start_equipment_factor = 1.0"
+                    count = 2
                     owner = PAU
                 }
             }
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 20 }
     }
 
-    #决议名：将她们的编制解散
+    #将她们的编制解散
     PAU_lhs_dissolve = {
         icon = GFX_land_owners_finding_funding
         allowed = { original_tag = PAU }
-        visible = {  }
+        visible = {
+            NOT = { has_country_flag = PAU_lhs_integrated }
+            NOT = { has_country_flag = PAU_lhs_kept_cadres }
+        }
         available = {
             NOT = { has_country_flag = PAU_lhs_kept_cadres }
             custom_trigger_tooltip = {
@@ -1714,15 +1636,15 @@ PAU_lhs_integration = {
             }
         }
         cost = 25
-        fire_only_once = no
+        fire_only_once = yes
         days_remove = 30
         complete_effect = {
-            set_country_flag = PAU_lhs_dissolved  #野火旧部解散标记
+            set_country_flag = PAU_lhs_dissolved
         }
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration
-                value = 10
+                value = 20
                 tooltip = PAU_lhs_integration_tt
             }
             add_manpower = 4000
@@ -1739,9 +1661,10 @@ PAU_lhs_integration = {
     PAU_lhs_joint_drill = {
         icon = GFX_PAU_lhtp
         allowed = { original_tag = PAU }
-        visible = {  }
+        visible = {
+            NOT = { has_country_flag = PAU_lhs_integrated }
+        }
         available = {
-            has_war = no
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_lhs_integration_lt100_tt
                 check_variable = { PAU_lhs_integration < 100 }
@@ -1749,55 +1672,61 @@ PAU_lhs_integration = {
         }
         cost = 25
         fire_only_once = yes
-        days_remove = 30
+        days_remove = 25
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration
-                value = 15
+                value = 20
                 tooltip = PAU_lhs_integration_tt
             }
             army_experience = 50
             add_command_power = 30
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 25 }
     }
 
     #决议名：让我们的军官去训练她们
     PAU_lhs_officer_exchange = {
         icon = GFX_decision_attache
         allowed = { original_tag = PAU }
-        visible = { always = yes }
+        visible = {
+            NOT = { has_country_flag = PAU_lhs_integrated }
+        }
         available = {
+            has_manpower > 1999
             custom_trigger_tooltip = {
                 tooltip = PAU_cond_lhs_integration_lt100_tt
                 check_variable = { PAU_lhs_integration < 100 }
             }
         }
-        cost = 25
+        cost = 20
         fire_only_once = no
-        days_remove = 60
+        days_remove = 30
         remove_effect = {
             add_to_variable = {
                 var = PAU_lhs_integration
-                value = 15
+                value = 20
                 tooltip = PAU_lhs_integration_tt
             }
-            add_manpower = -6000
-            division_template = {
-                name = "莉兰迪亚红军"
-                is_locked = no
-                regiments = {
-                    youjibudui = { x = 0 y = 0 }
-                    youjibudui = { x = 0 y = 1 }
-                    youjibudui = { x = 0 y = 2 }
-                    infantry = { x = 1 y = 0 }
-                    infantry = { x = 1 y = 1 }
-                    infantry = { x = 1 y = 2 }
+            add_manpower = -2000
+            if = {
+                limit = { NOT = { has_template = "莉兰迪亚红军" } }
+                division_template = {
+                    name = "莉兰迪亚红军"
+                    is_locked = no
+                    regiments = {
+                        youjibudui = { x = 0 y = 0 }
+                        youjibudui = { x = 0 y = 1 }
+                        youjibudui = { x = 0 y = 2 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                    }
                 }
             }
             random_controlled_state = {
                 create_unit = {
-                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
+                    division = "name = \"莉兰迪亚红军\" division_template = \"莉兰迪亚红军\" start_experience_factor = 0.25 start_equipment_factor = 1.0"
                     count = 1
                     owner = PAU
                 }
@@ -1809,37 +1738,37 @@ PAU_lhs_integration = {
                 category = land_doctrine
             }
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 20 }
     }
 
     #决议名：野火归队完毕
     PAU_lhs_finish = {
         icon = GFX_youji_on_me2
         allowed = { original_tag = PAU }
-        visible = {  }
+        visible = {
+            NOT = { has_country_flag = PAU_lhs_integrated }
+        }
         available = {
             custom_trigger_tooltip = {
                 tooltip = PAU_lhs_finish_available_tt
                 check_variable = { PAU_lhs_integration > 99 }
             }
         }
-        cost = 25
+        cost = 15
         fire_only_once = yes
-        days_remove = 30
+        days_remove = 15
         remove_effect = {
-            set_country_flag = PAU_lhs_integrated  #野火旧部整编完成标记
+            set_country_flag = PAU_lhs_integrated
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_unit_youjibudui_design_cost_factor  #主线动态修正原始值：游击部队设计成本=国策/决议累加
+                var = PAU_ml_raw_unit_youjibudui_design_cost_factor
                 value = -0.5
                 tooltip = unit_youjibudui_design_cost_factor_tt
             }
             remove_ideas = PAU_divided_legion2
             set_technology = { youjidui_tech = 1 }
             set_country_flag = youji_on_me2
-            set_technology = {
-                youji_on_me2 = 1
-            }
+            set_technology = { youji_on_me2 = 1 }
             show_ideas_tooltip = youji_on_me2
             custom_effect_tooltip = PAU_lhs_finish_tt
             LHS = {
@@ -1849,7 +1778,7 @@ PAU_lhs_integration = {
                 }
             }
         }
-        ai_will_do = { factor = 10 }
+        ai_will_do = { factor = 100 }
     }
 }
 
@@ -3754,7 +3683,7 @@ PAU_national_unification = {
         }
         cost = 0
         fire_only_once = yes
-        days_remove = 60
+        days_remove = 7
         complete_effect = {
             if = {
                 limit = { country_exists = JAP }
