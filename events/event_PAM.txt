@@ -3000,134 +3000,132 @@ country_event = {
                 }
             }
             302 = {
-                if = {
-                    limit = {
-                        is_core_of = ROOT
-                        is_controlled_by = ROOT
-                        NOT = { is_capital = yes }
+                limit = {
+                    is_core_of = ROOT
+                    is_controlled_by = ROOT
+                    NOT = { is_capital = yes }
+                }
+                ZDW = {
+                    division_template = {
+                        name = "躁动的亡灵"
+                        is_locked = yes
+                        regiments = {
+                            wangling = {
+                                x = 0
+                                y = 0
+                            }
+                            wangling = {
+                                x = 0
+                                y = 1
+                            }
+                            wangling = {
+                                x = 0
+                                y = 2
+                            }
+                            wangling = {
+                                x = 0
+                                y = 3
+                            }
+                            wangling = {
+                                x = 1
+                                y = 0
+                            }
+                            wangling = {
+                                x = 1
+                                y = 1
+                            }
+                            wangling = {
+                                x = 1
+                                y = 2
+                            }
+                            wangling = {
+                                x = 1
+                                y = 3
+                            }
+                            wangling = {
+                                x = 2
+                                y = 0
+                            }
+                            wangling = {
+                                x = 2
+                                y = 1
+                            }
+                            wangling = {
+                                x = 2
+                                y = 2
+                            }
+                            wangling = {
+                                x = 2
+                                y = 3
+                            }
+                            wangling = {
+                                x = 3
+                                y = 0
+                            }
+                            wangling = {
+                                x = 3
+                                y = 1
+                            }
+                            wangling = {
+                                x = 3
+                                y = 2
+                            }
+                            wangling = {
+                                x = 3
+                                y = 3
+                            }
+                            wangling = {
+                                x = 4
+                                y = 0
+                            }
+                            wangling = {
+                                x = 4
+                                y = 1
+                            }
+                            wangling = {
+                                x = 4
+                                y = 2
+                            }
+                            wangling = {
+                                x = 4
+                                y = 3
+                            }
+                        }
+                        support = {
+                            #支援连
+                            engineer = {
+                                x = 0
+                                y = 0
+                            }
+                            recon = {
+                                x = 0
+                                y = 1
+                            }
+                        }
                     }
-                    ZDW = {
-                        division_template = {
-                            name = "躁动的亡灵"
-                            is_locked = yes
-                            regiments = {
-                                wangling = {
-                                    x = 0
-                                    y = 0
-                                }
-                                wangling = {
-                                    x = 0
-                                    y = 1
-                                }
-                                wangling = {
-                                    x = 0
-                                    y = 2
-                                }
-                                wangling = {
-                                    x = 0
-                                    y = 3
-                                }
-                                wangling = {
-                                    x = 1
-                                    y = 0
-                                }
-                                wangling = {
-                                    x = 1
-                                    y = 1
-                                }
-                                wangling = {
-                                    x = 1
-                                    y = 2
-                                }
-                                wangling = {
-                                    x = 1
-                                    y = 3
-                                }
-                                wangling = {
-                                    x = 2
-                                    y = 0
-                                }
-                                wangling = {
-                                    x = 2
-                                    y = 1
-                                }
-                                wangling = {
-                                    x = 2
-                                    y = 2
-                                }
-                                wangling = {
-                                    x = 2
-                                    y = 3
-                                }
-                                wangling = {
-                                    x = 3
-                                    y = 0
-                                }
-                                wangling = {
-                                    x = 3
-                                    y = 1
-                                }
-                                wangling = {
-                                    x = 3
-                                    y = 2
-                                }
-                                wangling = {
-                                    x = 3
-                                    y = 3
-                                }
-                                wangling = {
-                                    x = 4
-                                    y = 0
-                                }
-                                wangling = {
-                                    x = 4
-                                    y = 1
-                                }
-                                wangling = {
-                                    x = 4
-                                    y = 2
-                                }
-                                wangling = {
-                                    x = 4
-                                    y = 3
-                                }
-                            }
-                            support = {
-                                #支援连
-                                engineer = {
-                                    x = 0
-                                    y = 0
-                                }
-                                recon = {
-                                    x = 0
-                                    y = 1
-                                }
+
+                    transfer_state = PREV
+
+                    # 【修正步骤 1】：在 ZDW 作用域内，获取 ROOT 的愤怒等级变量
+                    # 直接读取 ROOT 的持久变量 pam_undead_anger_level
+                    set_temp_variable = { var = local_spawn_count value = ROOT.pam_undead_anger_level }
+
+                    while_loop_effect = {
+                        # 【修正步骤 2】：检查 ZDW 自己的临时变量 local_spawn_count
+                        limit = {
+                            check_variable = { var = local_spawn_count value > 0 }
+                        }
+
+                        # 生成 1 个师
+                        random_owned_controlled_state = {
+                            create_unit = {
+                                division = "name = \"躁动的亡灵\" division_template = \"躁动的亡灵\" start_experience_factor = 1"
+                                owner = ZDW
                             }
                         }
 
-                        transfer_state = PREV
-
-                        # 【修正步骤 1】：在 ZDW 作用域内，获取 ROOT 的愤怒等级变量
-                        # 直接读取 ROOT 的持久变量 pam_undead_anger_level
-                        set_temp_variable = { var = local_spawn_count value = ROOT.pam_undead_anger_level }
-
-                        while_loop_effect = {
-                            # 【修正步骤 2】：检查 ZDW 自己的临时变量 local_spawn_count
-                            limit = {
-                                check_variable = { var = local_spawn_count value > 0 }
-                            }
-
-                            # 生成 1 个师
-                            random_owned_controlled_state = {
-                                create_unit = {
-                                    division = "name = \"躁动的亡灵\" division_template = \"躁动的亡灵\" start_experience_factor = 1"
-                                    owner = ZDW
-                                }
-                            }
-
-                            # 【修正步骤 3】：扣除 ZDW 的临时变量
-                            subtract_from_temp_variable = { var = local_spawn_count value = 1 }
-                        }
+                        # 【修正步骤 3】：扣除 ZDW 的临时变量
+                        subtract_from_temp_variable = { var = local_spawn_count value = 1 }
                     }
                 }
             }
@@ -8928,25 +8926,21 @@ country_event = {
         hidden_effect = {
             scoped_play_song = "邪恶的崛起"
             688 = {
-                if = {
-                    limit = {
-                        arms_factory > 2
-                    }
-                    remove_building = {
-                        type = arms_factory
-                        level = 2
-                    }
+                limit = {
+                    arms_factory > 2
+                }
+                remove_building = {
+                    type = arms_factory
+                    level = 2
                 }
             }
             688 = {
-                if = {
-                    limit = {
-                        industrial_complex > 2
-                    }
-                    remove_building = {
-                        type = industrial_complex
-                        level = 2
-                    }
+                limit = {
+                    industrial_complex > 2
+                }
+                remove_building = {
+                    type = industrial_complex
+                    level = 2
                 }
             }
             301 = {

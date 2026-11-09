@@ -327,6 +327,531 @@ LAN_inland_urbanization_ing = {
 	}
 }
 
+TUR_remove_prime_minister = {
+	if = {
+		limit = { has_idea = TUR_celal_bayar }
+		remove_ideas = TUR_celal_bayar
+	}
+	if = {
+		limit = { has_idea = TUR_sefik_husnu }
+		remove_ideas = TUR_sefik_husnu
+	}
+	if = {
+		limit = { has_idea = TUR_ismet_inonu }
+		remove_ideas = TUR_ismet_inonu
+	}
+	if = {
+		limit = { has_idea = TUR_fevzi_cakmak_prime_minister }
+		remove_ideas = TUR_fevzi_cakmak_prime_minister
+	}
+	if = {
+		limit = { has_idea = TUR_recep_peker }
+		remove_ideas = TUR_recep_peker
+	}
+	if = {
+		limit = { has_idea = TUR_sevket_sureyya_aydemir }
+		remove_ideas = TUR_sevket_sureyya_aydemir
+	}
+	if = {
+		limit = { has_idea = TUR_Veruca }
+		remove_ideas = TUR_Veruca
+	}
+	if = {
+		limit = { has_idea = TUR_sukru_saracoglu_prime_minister }
+		remove_ideas = TUR_sukru_saracoglu_prime_minister
+	}
+}
+
+TUR_economic_crisis_down = {
+	effect_tooltip = {
+		if = {
+			limit = {
+				OR = {
+					has_idea = TUR_economic_crisis
+					has_idea = TUR_economic_crisis_2
+					has_idea = TUR_economic_crisis_3
+				}
+			}
+			swap_ideas = {
+				remove_idea = TUR_economic_crisis_3
+				add_idea = TUR_economic_crisis_4
+			}
+			custom_effect_tooltip = exincome_20_modifier_gain
+		}
+		else_if = {
+			limit = { has_idea = TUR_economic_crisis_4 }
+			remove_ideas = TUR_economic_crisis_4
+			custom_effect_tooltip = exincome_20_modifier_gain
+		}
+		else = { custom_effect_tooltip = economic_crisis_level_down_tt }
+	}
+	hidden_effect = {
+		if = {
+			limit = { has_idea = TUR_economic_crisis_4 }
+			remove_ideas = TUR_economic_crisis_4
+			custom_effect_tooltip = exincome_20_modifier_gain
+		}
+		else_if = {
+			limit = { has_idea = TUR_economic_crisis_3 }
+			swap_ideas = {
+				remove_idea = TUR_economic_crisis_3
+				add_idea = TUR_economic_crisis_4
+			}
+			custom_effect_tooltip = exincome_20_modifier_gain
+		}
+		else_if = {
+			limit = { has_idea = TUR_economic_crisis_2 }
+			swap_ideas = {
+				remove_idea = TUR_economic_crisis_2
+				add_idea = TUR_economic_crisis_3
+			}
+			custom_effect_tooltip = exincome_20_modifier_gain
+		}
+		else_if = {
+			limit = { has_idea = TUR_economic_crisis }
+			swap_ideas = {
+				remove_idea = TUR_economic_crisis
+				add_idea = TUR_economic_crisis_2
+			}
+			custom_effect_tooltip = exincome_20_modifier_gain
+		}
+	}
+}
+
+# Turkish Kemalist Loyalty and Power Check
+TUR_kemalist_loyalty_and_power_update_effect = {
+	custom_effect_tooltip = TUR_kemalist_loyalty_and_power_update_effect_tt
+	hidden_effect = {
+		TUR_kemalist_refresh_effect = yes
+		if = {
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 3 compare = greater_than }
+			}
+			set_variable = { var = TUR_kemalist_officers_loyalty value = 3 }
+		}
+		if = {
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 1 compare = less_than }
+			}
+			set_variable = { var = TUR_kemalist_officers_loyalty value = 1 }
+		}
+		if = { #powerless
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 1 compare = equals }
+				check_variable = { var = TUR_kemalist_power_variable value = 2 compare = less_than_or_equals }
+				NOT = { has_idea = TUR_kemalist_army_officers_minimal_power_disloyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_minimal_power_disloyal
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 2 compare = equals }
+				check_variable = { var = TUR_kemalist_power_variable value = 2 compare = less_than_or_equals }
+				NOT = { has_idea = TUR_kemalist_army_officers_minimal_power_neutral }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_minimal_power_neutral
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 3 compare = equals }
+				check_variable = { var = TUR_kemalist_power_variable value = 2 compare = less_than_or_equals }
+				NOT = { has_idea = TUR_kemalist_army_officers_minimal_power_loyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_minimal_power_loyal
+			}
+		}
+		else_if = { #reduced power
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 1 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 3 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 4 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_decreased_power_disloyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_decreased_power_disloyal
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 2 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 3 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 4 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_decreased_power_neutral }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_decreased_power_neutral
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 3 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 3 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 4 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_decreased_power_loyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_decreased_power_loyal
+			}
+		}
+		else_if = { #limited power
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 1 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 5 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 6 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_limited_power_disloyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_limited_power_disloyal
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 2 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 5 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 6 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_limited_power_neutral }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_limited_power_neutral
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 3 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 5 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 6 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_extended_power_loyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_extended_power_loyal
+			}
+		}
+		else_if = { #extended powers
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 1 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 7 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 8 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_extended_power_disloyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_extended_power_disloyal
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 2 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 7 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 8 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_extended_power_neutral }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_extended_power_neutral
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 3 compare = equals }
+				OR = {
+					check_variable = { var = TUR_kemalist_power_variable value = 7 compare = equals }
+					check_variable = { var = TUR_kemalist_power_variable value = 8 compare = equals }
+				}
+				NOT = { has_idea = TUR_kemalist_army_officers_extended_power_loyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_extended_power_loyal
+			}
+		}
+		else_if = { #unlimited powah!
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 1 compare = equals }
+				check_variable = { var = TUR_kemalist_power_variable value = 8 compare = greater_than_or_equals }
+				NOT = { has_idea = TUR_kemalist_army_officers_powerful_disloyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_powerful_disloyal
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 2 compare = equals }
+				check_variable = { var = TUR_kemalist_power_variable value = 8 compare = greater_than_or_equals }
+				NOT = { has_idea = TUR_kemalist_army_officers_powerful_neutral }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_powerful_neutral
+			}
+		}
+		else_if = { 
+			limit = {
+				check_variable = { var = TUR_kemalist_officers_loyalty value = 3 compare = equals }
+				check_variable = { var = TUR_kemalist_power_variable value = 8 compare = greater_than_or_equals }
+				NOT = { has_idea = TUR_kemalist_army_officers_powerful_loyal }
+			}
+			swap_ideas = {
+				remove_idea = var:current_officer_spirit
+				add_idea = TUR_kemalist_army_officers_powerful_loyal
+			}
+		}
+	}
+}
+
+# Turkish Kemalist Officer Spirit Refresh
+TUR_kemalist_refresh_effect = {
+	hidden_effect = {
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_minimal_power_loyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_minimal_power_loyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_minimal_power_neutral }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_minimal_power_neutral }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_minimal_power_disloyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_minimal_power_disloyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_decreased_power_loyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_decreased_power_loyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_decreased_power_neutral }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_decreased_power_neutral }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_decreased_power_disloyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_decreased_power_disloyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_limited_power_loyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_limited_power_loyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_limited_power_neutral }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_limited_power_neutral }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_limited_power_disloyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_limited_power_disloyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_extended_power_loyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_extended_power_loyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_extended_power_neutral }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_extended_power_neutral }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_extended_power_disloyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_extended_power_disloyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_powerful_loyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_powerful_loyal }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_powerful_neutral }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_powerful_neutral }
+		}
+		if = { 
+			limit = {
+				ROOT = { has_idea = TUR_kemalist_army_officers_powerful_disloyal }
+			}
+			set_temp_variable = { current_officer_spirit = token:TUR_kemalist_army_officers_powerful_disloyal }
+		}
+	}
+}
+
+remove_TUR_all_SL_ideas = {
+	if = {
+		limit = { has_idea = TUR_Mustafa_Kemal_Ataturk_SL_idea }
+		remove_ideas = TUR_Mustafa_Kemal_Ataturk_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Mustafa_Kemal_Ataturk_SL_idea_1 }
+		remove_ideas = TUR_Mustafa_Kemal_Ataturk_SL_idea_1
+	}
+	if = {
+		limit = { has_idea = TUR_Mustafa_Kemal_Ataturk_SL_idea_2 }
+		remove_ideas = TUR_Mustafa_Kemal_Ataturk_SL_idea_2
+	}
+	if = {
+		limit = { has_idea = TUR_Mustafa_Kemal_Ataturk_SL_idea_3 }
+		remove_ideas = TUR_Mustafa_Kemal_Ataturk_SL_idea_3
+	}
+	if = {
+		limit = { has_idea = TUR_Mustafa_Kemal_Ataturk_SL_idea_4 }
+		remove_ideas = TUR_Mustafa_Kemal_Ataturk_SL_idea_4
+	}
+	if = {
+		limit = { has_idea = TUR_Celal_Bayar_SL_idea }
+		remove_ideas = TUR_Celal_Bayar_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Ismet_Inonu_SL_idea }
+		remove_ideas = TUR_Ismet_Inonu_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Adnan_Menderes_SL_idea }
+		remove_ideas = TUR_Adnan_Menderes_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Sefik_Husnu_SL_idea }
+		remove_ideas = TUR_Sefik_Husnu_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Sierra_Kumani_Einstein_SL_idea }
+		remove_ideas = TUR_Sierra_Kumani_Einstein_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Fiona_Beckford_SL_idea }
+		remove_ideas = TUR_Fiona_Beckford_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Veruca_SL_idea }
+		remove_ideas = TUR_Veruca_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Becas_SL_idea }
+		remove_ideas = TUR_Becas_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Slokai_SL_idea }
+		remove_ideas = TUR_Slokai_SL_idea
+	}
+	if = {
+		limit = { has_idea = TUR_Cynthia_SL_idea }
+		remove_ideas = TUR_Cynthia_SL_idea
+	}
+}
+
+TUR_remove_kemalist_army_officers = {
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_minimal_power_loyal }
+		remove_ideas = TUR_kemalist_army_officers_minimal_power_loyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_minimal_power_neutral }
+		remove_ideas = TUR_kemalist_army_officers_minimal_power_neutral
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_minimal_power_disloyal }
+		remove_ideas = TUR_kemalist_army_officers_minimal_power_disloyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_decreased_power_loyal }
+		remove_ideas = TUR_kemalist_army_officers_decreased_power_loyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_decreased_power_neutral }
+		remove_ideas = TUR_kemalist_army_officers_decreased_power_neutral
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_decreased_power_disloyal }
+		remove_ideas = TUR_kemalist_army_officers_decreased_power_disloyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_limited_power_loyal }
+		remove_ideas = TUR_kemalist_army_officers_limited_power_loyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_limited_power_neutral }
+		remove_ideas = TUR_kemalist_army_officers_limited_power_neutral
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_limited_power_disloyal }
+		remove_ideas = TUR_kemalist_army_officers_limited_power_disloyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_extended_power_loyal }
+		remove_ideas = TUR_kemalist_army_officers_extended_power_loyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_extended_power_neutral }
+		remove_ideas = TUR_kemalist_army_officers_extended_power_neutral
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_extended_power_disloyal }
+		remove_ideas = TUR_kemalist_army_officers_extended_power_disloyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_powerful_loyal }
+		remove_ideas = TUR_kemalist_army_officers_powerful_loyal
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_powerful_neutral }
+		remove_ideas = TUR_kemalist_army_officers_powerful_neutral
+	}
+	if = {
+		limit = { has_idea = TUR_kemalist_army_officers_powerful_disloyal }
+		remove_ideas = TUR_kemalist_army_officers_powerful_disloyal
+	}
+}
+
 TUR_modifier_influence_modifier = {
 	TUR_check_influence = yes
 	hidden_effect = {
