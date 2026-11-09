@@ -121,14 +121,45 @@ on_actions = {
 	# 		}
 	# 	}
 	# }
+	#民国纪年：按月份计数，第 13 次（次年 1 月）进一年
+	on_monthly_ROC = {
+		effect = {
+			ROC = {
+				if = {
+					limit = { has_variable = ROC_lunar_months }
+					add_to_variable = { ROC_lunar_months = 1 }
+					if = {
+						limit = { check_variable = { ROC_lunar_months > 12 } }
+						set_variable = { ROC_lunar_months = 1 }
+						add_to_variable = { ROC_lunar_era = 1 }
+						#统一后第 2 个新年：纪年归元
+						if = {
+							limit = { has_variable = ROC_reunit_years }
+							add_to_variable = { ROC_reunit_years = 1 }
+							if = {
+								limit = { check_variable = { ROC_reunit_years = 2 } }
+								set_variable = { ROC_lunar_era = 1 }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	on_daily_ROC = {
 		effect = {
 			ROC = {
+				#农历日推进（赤霄纪年用）
+				if = {
+					limit = { has_variable = ROC_lunar_pos }
+					ROC_lunar_daily_effect = yes
+				}
 				if = {
 					limit = {
 						or = {
 							is_debug = yes
-							complete_national_focus = ROC_focus_unearth_collectibles
+							has_completed_focus = ROC_focus_unearth_collectibles
 						}
 					}
 					ROC_Collection_daily = yes

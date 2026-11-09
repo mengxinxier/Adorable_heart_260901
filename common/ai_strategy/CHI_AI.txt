@@ -1,10 +1,8 @@
-
+#基础作战、基建、科研与情报局设置
 CHI_generic_combat_base_setup = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -17,18 +15,29 @@ CHI_generic_combat_base_setup = {
         type = force_build_armies
         value = 100
     }
+    #忽略陆军无能修正，保持作战积极性
+    ai_strategy = {
+        type = ignore_army_incompetence
+        value = 50
+    }
     #适度减少无意义的内陆驻军，但保留足够权重配合海防缓冲
     ai_strategy = {
         type = garrison
-        value = -40
+        value = -35
     }
-    # 优先修建补给节点
+    #禁止浪费政治点数去改善关系
+    ai_strategy = {
+        type = pp_spend_priority
+        id = relation
+        value = -9999
+    }
+    #优先修建补给节点
     ai_strategy = {
         type = building_target
         id = supply_node
         value = 200
     }
-    #基础科研倾向
+    #基础科研倾向：优先步枪、集中工业、电子工程
     ai_strategy = {
         type = research_tech
         id = infantry_weapons1
@@ -44,7 +53,7 @@ CHI_generic_combat_base_setup = {
         id = electronic_mechanical_engineering
         value = 200
     }
-    #陆军经验优先修改编制，其次点学说
+    #陆军经验优先修改编制，其次点学说与改装
     ai_strategy = {
         type = land_xp_spend_priority
         id = division_template
@@ -72,13 +81,285 @@ CHI_generic_combat_base_setup = {
     }
 }
 
-#陆军基础步坦比例
-CHI_generic_unit_role_ratios = {
+#和平与战时均优先搓军工（军工少于100时）
+CHI_prio_military_even_at_peace = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        arms_factory < 100
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = building_target
+        id = arms_factory
+        value = 10000
+    }
+}
+
+#1941年前优先在湘、川（602、605）等大后方安全省份造工厂
+CHI_some_safer_places_to_build = {
+    allowed = {
+        original_tag = CHI
+    }
+    enable = {
+        date < 1941.1.1
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = factory_build_score_factor
+        target = 602
+        value = 300
+    }
+    ai_strategy = {
+        type = factory_build_score_factor
+        target = 605
+        value = 300
+    }
+}
+
+#统一后科技倾向：补坦克底盘、装甲与维修连
+CHI_ai_research_reunit = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        has_global_flag = CHI_REUNIT
+    }
+    abort_when_not_enabled = yes
+
+    #战间期坦克底盘
+    ai_strategy = {
+        type = research_tech
+        id = gwtank_chassis
+        value = 8000
+    }
+    #维修连 II
+    ai_strategy = {
+        type = research_tech
+        id = tech_maintenance_company2
+        value = 400
+    }
+    #提高装甲装备生产权重
+    ai_strategy = {
+        type = equipment_production_factor
+        id = armor
+        value = 150
+    }
+    #基础装甲保护
+    ai_strategy = {
+        type = research_tech
+        id = armor_tech_1
+        value = 2000
+    }
+}
+
+#陆军编制兵种比例（前期：军工<50，以正规步兵+民兵+少量山地为主）
+CHI_unit_production_early = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories < 50
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = role_ratio
+        id = garrison
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = paratroopers
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = mountaineers
+        value = 10
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = marines
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = infantry
+        value = 60
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = militia
+        value = 30
+    }
+    ai_strategy = {
+        type = template_prio
+        id = infantry
+        value = 100
+    }
+}
+
+#陆军编制兵种比例（中期：军工50~99，淘汰民兵，开始转型步坦协同）
+CHI_unit_production_mid = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 49
+        num_of_military_factories < 100
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = role_ratio
+        id = garrison
+        value = 0
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = mountaineers
+        value = 10
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 15
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = infantry
+        value = 75
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = militia
+        value = 0
+    }
+    ai_strategy = {
+        type = template_prio
+        id = infantry
+        value = 100
+    }
+    ai_strategy = {
+        type = template_prio
+        id = armor
+        value = 80
+    }
+    ai_strategy = {
+        type = build_army
+        id = armor
+        value = 100
+    }
+}
+
+#陆军编制兵种比例（后期：军工>=100，大幅提高装甲师比例）
+CHI_unit_production_late = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 99
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = role_ratio
+        id = mountaineers
+        value = 5
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = armor
+        value = 25
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = infantry
+        value = 70
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = militia
+        value = 0
+    }
+    ai_strategy = {
+        type = template_prio
+        id = medium_armor
+        value = 100
+    }
+    ai_strategy = {
+        type = build_army
+        id = armor
+        value = 200
+    }
+}
+
+#少于200个师时全力暴兵（步兵与山地师）
+CHI_insane_military_expansion = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_divisions < 200
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = build_army
+        id = infantry
+        value = 1000
+    }
+    ai_strategy = {
+        type = build_army
+        id = mountaineers
+        value = 500
+    }
+}
+
+#少于400个师时提高期望师上限，防止AI乱裁军
+CHI_generic_stop_disbanding_army = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_divisions < 400
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = 500
+    }
+}
+
+#常驻基础军工产线分配（保底步枪、火炮、支援装备）
+CHI_base_equipment_production = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -87,60 +368,375 @@ CHI_generic_unit_role_ratios = {
     abort_when_not_enabled = yes
 
     ai_strategy = {
-        type = template_prio
+        type = equipment_production_factor
         id = infantry
         value = 100
     }
     ai_strategy = {
-        type = role_ratio
-        id = infantry
-        value = 85
+        type = equipment_production_factor
+        id = artillery
+        value = 50
     }
     ai_strategy = {
-        type = build_army
+        type = equipment_production_factor
+        id = support
+        value = 40
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
         id = infantry
-        value = 100
+        value = 6
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = artillery
+        value = 2
     }
 }
 
-CHI_generic_late_armor_role = {
+#缺枪时全力搓步枪（库存少于3000时触发，满6000解除）
+CHI_generic_infantry_equipment_emergency = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
-        date > 1939.1.1
-        num_of_military_factories > 45
+        has_equipment = { infantry_equipment < 3000 }
+        num_of_military_factories > 12
+    }
+    abort = {
+        has_equipment = { infantry_equipment > 6000 }
+    }
+
+    ai_strategy = {
+        type = equipment_production_factor
+        id = infantry
+        value = 200
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = infantry
+        value = 10
+    }
+}
+
+#步枪够用后，重点补齐支援装备、火炮、防空炮与反坦克炮
+CHI_generic_support_and_artillery_production = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        has_equipment = { infantry_equipment > 2000 }
+        OR = {
+            has_equipment = { support_equipment < 800 }
+            has_equipment = { artillery_equipment < 600 }
+            has_equipment = { anti_air_equipment < 300 }
+            has_equipment = { anti_tank_equipment < 300 }
+        }
+        num_of_military_factories > 20
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
-        type = build_army
-        id = armor
-        value = 100
+        type = equipment_production_factor
+        id = support
+        value = 120
     }
     ai_strategy = {
-        type = template_prio
-        id = armor
-        value = 100
+        type = equipment_production_min_factories
+        id = support
+        value = 3
     }
     ai_strategy = {
-        type = role_ratio
-        id = armor
-        value = 25
+        type = equipment_production_factor
+        id = artillery
+        value = 120
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = artillery
+        value = 4
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = anti_air
+        value = 1
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = anti_tank
+        value = 1
     }
 }
 
-#海岸防线
+#缺火车时单独强制产火车保障后勤
+CHI_generic_logistics_trains = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 20
+        has_equipment = { train_equipment < 40 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = train
+        value = 2
+    }
+}
+
+#缺卡车时单独强制产卡车保障补给站摩托化与摩步师
+CHI_generic_logistics_trucks = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 25
+        has_equipment = { motorized_equipment < 600 }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = motorized
+        value = 3
+    }
+}
+
+#中期坦克与卡车产线（军工>=50）
+CHI_armor_production_mid = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 49
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_factor
+        id = armor
+        value = 60
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = armor
+        value = 5
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = motorized
+        value = 4
+    }
+}
+
+#后期大规模坦克与机械化产线（军工>=100）
+CHI_armor_production_late = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 99
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_production_factor
+        id = armor
+        value = 120
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = armor
+        value = 15
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = mechanized
+        value = 6
+    }
+}
+
+#中后期空军生产：优先战斗机抢制空，其次近距支援机
+CHI_generic_wartime_air_superiority = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_of_military_factories > 45
+        has_tech = basic_small_airframe
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = unit_ratio
+        id = fighter
+        value = 50
+    }
+    ai_strategy = {
+        type = unit_ratio
+        id = cas
+        value = 30
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = fighter
+        value = 120
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = fighter
+        value = 8
+    }
+    ai_strategy = {
+        type = equipment_production_factor
+        id = cas
+        value = 80
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = cas
+        value = 5
+    }
+    ai_strategy = {
+        type = air_factory_balance
+        value = 15
+    }
+}
+
+#海军基础舰船类型比例
+CHI_navy_production = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        always = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = unit_ratio
+        id = capital_ship
+        value = 20
+    }
+    ai_strategy = {
+        type = unit_ratio
+        id = submarine
+        value = 35
+    }
+    ai_strategy = {
+        type = unit_ratio
+        id = screen_ship
+        value = 35
+    }
+    ai_strategy = {
+        type = unit_ratio
+        id = convoy
+        value = 20
+    }
+}
+
+#炮手就位DLC海军角色比例与运输船保底产线
+CHI_role_ratios_navy_has_mtg = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+        has_dlc = "Man the Guns"
+    }
+    enable = {
+        always = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = role_ratio
+        id = naval_submarine
+        value = 15
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = naval_screen
+        value = 75
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = naval_cruiser_light
+        value = 45
+    }
+    ai_strategy = {
+        type = role_ratio
+        id = naval_capital_bb
+        value = 15
+    }
+    ai_strategy = {
+        type = equipment_production_min_factories
+        id = convoy
+        value = 2
+    }
+}
+
+#战时禁止向国际市场乱卖急需军火
+CHI_generic_wartime_market_lock = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        has_war = yes
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = infantry
+        value = 50000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = support
+        value = 5000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = artillery
+        value = 3000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = motorized
+        value = 2000
+    }
+    ai_strategy = {
+        type = equipment_market_for_sale_threshold
+        id = train
+        value = 200
+    }
+}
+
+#海岸防线缓冲：抽调12%兵力驻防沿海与港口
 CHI_generic_coastal_buffer_defense = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -160,32 +756,11 @@ CHI_generic_coastal_buffer_defense = {
     }
 }
 
-CHI_generic_stop_disbanding_army = {
+#退无可退（投降倾向>25%时进入全面死守核心区状态）
+CHI_generic_crisis_iron_wall = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
-        }
-    }
-    enable = {
-        num_divisions < 400
-    }
-    abort_when_not_enabled = yes
-
-    ai_strategy = {
-        type = ai_wanted_divisions_factor
-        value = 500
-    }
-}
-
-
-CHI_generic_crisis_iron_wall = {#退无可退
-    allowed = {
-        OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -253,12 +828,11 @@ CHI_generic_crisis_iron_wall = {#退无可退
     }
 }
 
-CHI_generic_capital_shield = { #首都保卫战
+#首都保卫战：重兵防御首都及紧邻首都的己方省份
+CHI_generic_capital_shield = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -270,7 +844,6 @@ CHI_generic_capital_shield = { #首都保卫战
     }
     abort_when_not_enabled = yes
 
-    #首都及紧邻首都的己方省份
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -312,14 +885,11 @@ CHI_generic_capital_shield = { #首都保卫战
     }
 }
 
-
-
-CHI_generic_end_pocket = { #全速吃掉饺子
+#全速吃掉饺子：消灭已被四面包围的敌军口袋
+CHI_generic_end_pocket = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -369,12 +939,11 @@ CHI_generic_end_pocket = { #全速吃掉饺子
     }
 }
 
-CHI_generic_encirclement_hunter = { #敌方突出部切割
+#敌方突出部切割：夹击三面受敌的敌方省份
+CHI_generic_encirclement_hunter = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -411,12 +980,11 @@ CHI_generic_encirclement_hunter = { #敌方突出部切割
     }
 }
 
-CHI_generic_avoid_thin_lines = { #防被包饺子
+#防被包饺子：己方多面受敌的突出部增派兵力稳固防线
+CHI_generic_avoid_thin_lines = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -436,13 +1004,11 @@ CHI_generic_avoid_thin_lines = { #防被包饺子
     }
 }
 
-#以空间换时间
+#以空间换时间：投降度在15%~25%之间时收缩边缘兵力退守核心区
 CHI_generic_strategic_withdrawal = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -457,6 +1023,7 @@ CHI_generic_strategic_withdrawal = {
     }
     abort_when_not_enabled = yes
 
+    #减少非核心且无补给无港口地区的兵力
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -481,7 +1048,7 @@ CHI_generic_strategic_withdrawal = {
         }
         value = -40
     }
-
+    #集中兵力防守核心区
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -491,7 +1058,6 @@ CHI_generic_strategic_withdrawal = {
         }
         value = 100
     }
-
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -506,12 +1072,11 @@ CHI_generic_strategic_withdrawal = {
     }
 }
 
-CHI_generic_target_enemy_supply_hubs = { #强攻敌方相邻补给站
+#强攻敌方相邻补给站
+CHI_generic_target_enemy_supply_hubs = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -520,6 +1085,7 @@ CHI_generic_target_enemy_supply_hubs = { #强攻敌方相邻补给站
     }
     abort_when_not_enabled = yes
 
+    #敌方补给站驻军少于6个师时猛攻
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -540,6 +1106,7 @@ CHI_generic_target_enemy_supply_hubs = { #强攻敌方相邻补给站
         execute_order = yes
         manual_attack = yes
     }
+    #敌方补给站驻军较多时均衡进攻
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -560,7 +1127,6 @@ CHI_generic_target_enemy_supply_hubs = { #强攻敌方相邻补给站
         execute_order = yes
         manual_attack = yes
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -576,12 +1142,11 @@ CHI_generic_target_enemy_supply_hubs = { #强攻敌方相邻补给站
     }
 }
 
-CHI_generic_protect_own_supply_lines = { #死守己方补给站
+#死守己方前线补给站
+CHI_generic_protect_own_supply_lines = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -624,12 +1189,11 @@ CHI_generic_protect_own_supply_lines = { #死守己方补给站
     }
 }
 
-CHI_generic_avoid_unsupplied_wasteland = { #不待纯烂地
+#不待纯烂地：减少在无补给、无港口非核心荒漠山地的屯兵
+CHI_generic_avoid_unsupplied_wasteland = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -670,7 +1234,6 @@ CHI_generic_avoid_unsupplied_wasteland = { #不待纯烂地
         ordertype = front
         execution_type = careful
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -704,7 +1267,6 @@ CHI_generic_avoid_unsupplied_wasteland = { #不待纯烂地
         }
         value = -20
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -719,9 +1281,7 @@ CHI_generic_avoid_unsupplied_wasteland = { #不待纯烂地
 CHI_generic_frontline_opportunism = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -729,7 +1289,7 @@ CHI_generic_frontline_opportunism = {
     }
     abort_when_not_enabled = yes
 
-    #紧邻前线的0师空地
+    #紧邻前线的0师空地直接派兵抢占
     ai_strategy = {
         type = front_control
         state_trigger = {
@@ -745,7 +1305,6 @@ CHI_generic_frontline_opportunism = {
         execute_order = yes
         manual_attack = yes
     }
-
     #优先抢占相邻沿海省份
     ai_strategy = {
         type = front_control
@@ -761,7 +1320,6 @@ CHI_generic_frontline_opportunism = {
         execute_order = yes
         manual_attack = yes
     }
-
     #敌方相邻前线州少于3个师时局部突破
     ai_strategy = {
         type = front_control
@@ -781,13 +1339,11 @@ CHI_generic_frontline_opportunism = {
     }
 }
 
-
-CHI_generic_push_enemy_capital = { #兵临城下
+#兵临城下：当逼近敌国首都时集中主力强攻敌首都
+CHI_generic_push_enemy_capital = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -829,12 +1385,11 @@ CHI_generic_push_enemy_capital = { #兵临城下
     }
 }
 
-CHI_generic_victory_phase1_crack = { 
+#胜势第一阶段（敌投降度5%~20%）：破袭敌军补给节点
+CHI_generic_victory_phase1_crack = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -873,12 +1428,11 @@ CHI_generic_victory_phase1_crack = {
     }
 }
 
-CHI_generic_victory_phase2_exploit = { 
+#胜势第二阶段（敌投降度20%~45%）：扩大战果，全面冲击敌薄弱区与首都
+CHI_generic_victory_phase2_exploit = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -930,12 +1484,11 @@ CHI_generic_victory_phase2_exploit = {
     }
 }
 
+#胜势第三阶段（敌投降度>45%）：秋风扫落叶，全线追击歼灭
 CHI_generic_victory_phase3_annihilate = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -966,13 +1519,11 @@ CHI_generic_victory_phase3_annihilate = {
     }
 }
 
-#集中突破倾向
+#集中突破倾向：提高精锐部队集中度
 CHI_generic_concentrate_troops = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -987,13 +1538,11 @@ CHI_generic_concentrate_troops = {
     }
 }
 
-#跨海登陆
-CHI_generic_smart_naval_invasions = { 
+#跨海登陆优化
+CHI_generic_smart_naval_invasions = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
@@ -1001,7 +1550,7 @@ CHI_generic_smart_naval_invasions = {
     }
     abort_when_not_enabled = yes
 
-    #拒绝登陆既没有补给站、也没有港口的
+    #拒绝登陆既没有补给站、也没有港口的荒地
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
@@ -1045,202 +1594,264 @@ CHI_generic_smart_naval_invasions = {
     }
 }
 
-
-CHI_generic_infantry_equipment_emergency = { #缺枪时全力搓步枪
+#对日作战策略：重兵集结日军战线，默认稳健防守，不盲目全线平推
+CHI_has_war_with_JAP = {
     allowed = {
         OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
+            is_chinese_country = yes
         }
     }
     enable = {
-        has_equipment = { infantry_equipment < 5000 }
-        num_of_military_factories > 10
+        has_war_with = JAP
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
-        type = equipment_production_factor
-        id = infantry
+        type = antagonize
+        id = "JAP"
         value = 200
     }
     ai_strategy = {
-        type = equipment_production_min_factories
-        id = infantry
-        value = 8
+        type = front_unit_request
+        tag = JAP
+        value = 200
+    }
+    ai_strategy = {
+        type = front_armor_score
+        id = JAP
+        value = 100
+    }
+    ai_strategy = {
+        type = front_control
+        tag = JAP
+        ratio = 0.5
+        priority = 500
+        ordertype = front
+        execution_type = careful
+        manual_attack = yes
     }
 }
 
-CHI_generic_support_and_artillery_production = { #步枪够了之后补支援装备与火炮
+#CHI对PRC作战策略
+CHI_has_war_with_PRC = {
     allowed = {
-        OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
-        }
+        tag = CHI
     }
     enable = {
-        has_equipment = { infantry_equipment > 2000 }
-        OR = {
-            has_equipment = { support_equipment < 500 }
-            has_equipment = { artillery_equipment < 300 }
-        }
-        num_of_military_factories > 20
+        has_war_with = PRC
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
-        type = equipment_production_factor
-        id = support
-        value = 120
+        type = antagonize
+        id = "PRC"
+        value = 200
     }
     ai_strategy = {
-        type = equipment_production_min_factories
-        id = support
-        value = 3
-    }
-    ai_strategy = {
-        type = equipment_production_factor
-        id = artillery
-        value = 120
-    }
-    ai_strategy = {
-        type = equipment_production_min_factories
-        id = artillery
-        value = 4
-    }
-}
-
-CHI_generic_logistics_trains = { # 缺火车时单独强制产火车
-    allowed = {
-        OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
-        }
-    }
-    enable = {
-        num_of_military_factories > 20
-        has_equipment = { train_equipment < 40 }
-    }
-    abort_when_not_enabled = yes
-
-    ai_strategy = {
-        type = equipment_production_min_factories
-        id = train
-        value = 3
-    }
-}
-
-CHI_generic_logistics_trucks = { #缺卡车时单独强制产卡车
-    allowed = {
-        OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
-        }
-    }
-    enable = {
-        num_of_military_factories > 25
-        has_equipment = { motorized_equipment < 500 }
-    }
-    abort_when_not_enabled = yes
-
-    ai_strategy = {
-        type = equipment_production_min_factories
-        id = motorized
-        value = 3
-    }
-}
-
-#中后期空军生产
-CHI_generic_wartime_air_superiority = {
-    allowed = {
-        OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
-        }
-    }
-    enable = {
-        num_of_military_factories > 45
-        has_tech = basic_small_airframe
-    }
-    abort_when_not_enabled = yes
-
-    ai_strategy = {
-        type = unit_ratio
-        id = fighter
-        value = 40
-    }
-    ai_strategy = {
-        type = unit_ratio
-        id = cas
-        value = 20
-    }
-    ai_strategy = {
-        type = equipment_production_factor
-        id = fighter
-        value = 120
-    }
-    ai_strategy = {
-        type = equipment_production_min_factories
-        id = fighter
-        value = 8
-    }
-    ai_strategy = {
-        type = equipment_production_factor
-        id = cas
+        type = front_unit_request
+        tag = PRC
         value = 80
     }
     ai_strategy = {
-        type = equipment_production_min_factories
-        id = cas
-        value = 5
-    }
-    ai_strategy = {
-        type = air_factory_balance
-        value = 15
+        type = front_control
+        tag = PRC
+        ratio = 0.6
+        priority = 500
+        ordertype = front
+        execution_type = balanced
+        execute_order = yes
     }
 }
 
-CHI_generic_wartime_market_lock = { #战时禁止向国际市场乱卖急需军火
+#CHI对ROC作战策略（含协防WUH、FUJ、JSZ盟友边界）
+CHI_has_war_with_ROC = {
     allowed = {
-        OR = {
-            original_tag = CHI
-            original_tag = PRC
-            original_tag = ROC
-        }
+        tag = CHI
     }
     enable = {
-        has_war = yes
+        has_war_with = ROC
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
-        type = equipment_market_for_sale_threshold
-        id = infantry
-        value = 50000
-    }
-    ai_strategy = {
-        type = equipment_market_for_sale_threshold
-        id = support
-        value = 5000
-    }
-    ai_strategy = {
-        type = equipment_market_for_sale_threshold
-        id = artillery
-        value = 3000
-    }
-    ai_strategy = {
-        type = equipment_market_for_sale_threshold
-        id = motorized
-        value = 2000
-    }
-    ai_strategy = {
-        type = equipment_market_for_sale_threshold
-        id = train
+        type = antagonize
+        id = "ROC"
         value = 200
+    }
+    ai_strategy = {
+        type = front_unit_request
+        tag = ROC
+        value = 80
+    }
+    ai_strategy = {
+        type = force_defend_ally_borders
+        id = "WUH"
+        value = 100
+    }
+    ai_strategy = {
+        type = force_defend_ally_borders
+        id = "FUJ"
+        value = 100
+    }
+    ai_strategy = {
+        type = force_defend_ally_borders
+        id = "JSZ"
+        value = 100
+    }
+    ai_strategy = {
+        type = front_armor_score
+        id = ROC
+        value = 100
+    }
+    ai_strategy = {
+        type = front_control
+        tag = ROC
+        ratio = 0.6
+        priority = 500
+        ordertype = front
+        execution_type = balanced
+        execute_order = yes
+    }
+}
+
+#CHI对晋系（SHX）速推策略
+CHI_has_war_with_SHX = {
+    allowed = {
+        tag = CHI
+    }
+    enable = {
+        has_war_with = SHX
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = front_unit_request
+        tag = SHX
+        value = 80
+    }
+    ai_strategy = {
+        type = front_control
+        tag = SHX
+        ratio = 0.8
+        priority = 500
+        ordertype = front
+        execution_type = rush
+        execute_order = yes
+    }
+}
+
+#CHI向WUH派遣志愿军
+CHI_support_WUH = {
+    reversed = yes
+    allowed = {
+        original_tag = CHI
+    }
+    enable = {
+        tag = WUH
+        is_subject = no
+        has_war_with = ROC
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "CHI"
+        value = 1000
+    }
+}
+
+#CHI向FUJ派遣志愿军
+CHI_support_FUJ = {
+    reversed = yes
+    allowed = {
+        original_tag = CHI
+    }
+    enable = {
+        tag = FUJ
+        is_subject = no
+        has_war_with = ROC
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "CHI"
+        value = 1000
+    }
+}
+
+#CHI向YUN派遣志愿军
+CHI_support_YUN = {
+    reversed = yes
+    allowed = {
+        original_tag = CHI
+    }
+    enable = {
+        tag = YUN
+        is_subject = no
+        has_war_with = PRC
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "CHI"
+        value = 1000
+    }
+}
+
+#法国向ROC派遣志愿军
+FRA_support_ROC = {
+    reversed = yes
+    allowed = {
+        original_tag = FRA
+    }
+    enable = {
+        tag = ROC
+        OR = {
+            has_government = democratic
+            has_government = neutrality
+        }
+        FRA = {
+            OR = {
+                has_government = democratic
+                has_government = neutrality
+            }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "FRA"
+        value = 1000
+    }
+}
+
+#英国向ROC派遣志愿军
+ENG_support_ROC = {
+    reversed = yes
+    allowed = {
+        original_tag = ENG
+    }
+    enable = {
+        tag = ROC
+        OR = {
+            has_government = democratic
+            has_government = neutrality
+        }
+        ENG = {
+            OR = {
+                has_government = democratic
+                has_government = neutrality
+            }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = "ENG"
+        value = 1000
     }
 }
