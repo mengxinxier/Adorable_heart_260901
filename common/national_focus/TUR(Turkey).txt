@@ -11,7 +11,7 @@ focus_tree = {
 	
 	default = no
 
-	continuous_focus_position = { x = 100 y = 1500 }
+	continuous_focus_position = { x = 100 y = 1800 }
 
 	initial_show_position = {
 		x = 20
@@ -332,10 +332,10 @@ focus_tree = {
 				limit = {
 					GEO = { exists = yes }
 				}
-				GEO = { country_event = { id = tur_ah.28 } }
+				GEO = { country_event = { id = tur_ah.46 } }
 			}
 			else = { 
-				SOV = { country_event = { id = tur_ah.28 } }
+				SOV = { country_event = { id = tur_ah.46 } }
 			}
 		}
 	}
@@ -538,7 +538,7 @@ focus_tree = {
 					NOT = { has_war_with = ROOT }
 				}
 				country_event = {
-					id = tur_ah.26
+					id = tur_ah.44
 					days = 1
 				}
 			}
@@ -855,7 +855,7 @@ focus_tree = {
 	
 	focus = {
 		id = TUR_eastern_and_mediterranean_trade_routes
-		icon = GFX_goal_generic_mediterranean_shine
+		icon = GFX_goal_generic_mediterranean
 		prerequisite = { focus = TUR_expand_infrastructure_and_railway_network }
 		prerequisite = { focus = TUR_transfer_black_sea_shipbuilding_industry }
 		mutually_exclusive = { focus = TUR_provide_for_oneself }
@@ -1822,6 +1822,7 @@ focus_tree = {
 		available = {
 			custom_trigger_tooltip = {
 				tooltip = TUR_who_knew_econimics_was_so_easy_ttt
+				
 				date > 1936.2.15
 				NOT = { has_global_flag = THE_BIG_DEPRESSION_has_come }
 			}
@@ -1855,13 +1856,18 @@ focus_tree = {
 			has_idea = TUR_economic_crisis
 			custom_trigger_tooltip = {
 				tooltip = TUR_econimics_was_not_easy_ttt
-				all_other_country = { NOT = { has_country_flag = open_Aegean_Meeting_flag } }
+				
+				OR = {
+					has_country_flag = TUR_economy_recover_alone_flag
+					has_country_flag = TUR_ankara_success_flag
+					has_country_flag = TUR_aegean_success_flag
+				}
 			}
 		}
 		allow_branch = {
 			has_global_flag = THE_BIG_DEPRESSION_has_come
 		}
-		x = 10
+		x = 7
 		y = 8
 		relative_position_id = TUR_continue_the_policy_of_etatism_AH
 		cost = 8
@@ -1870,45 +1876,69 @@ focus_tree = {
 		}
 		select_effect = {
 			set_country_flag = open_Aegean_Meeting_flag
-			country_event = { id = tur_ah.10 hours = 6 }
+			if = {
+				limit = {
+					has_country_flag = TUR_aegean_success_flag
+				}
+				country_event = { id = tur_ah.31 hours = 6 }
+			}
+			else_if = {
+				limit = {
+					has_country_flag = TUR_ankara_success_flag
+				}
+				country_event = { id = tur_ah.71 hours = 6 }
+			}
 		}
 		completion_reward = {
 			clr_country_flag = open_Aegean_Meeting_flag
 			custom_effect_tooltip = TUR_econimics_was_not_easy_tt
-			hidden_effect = {
-				if = {
-					limit = {
-						TUR = { has_country_flag = TUR_vote_for_meeting_success_flag }
-						GRE = { has_country_flag = GRE_vote_for_meeting_success_flag }
-					}
-					GRE = { country_event = tur_ah.36 }
-					TUR = { country_event = tur_ah.36 }
+			if = {
+				limit = {
+					has_country_flag = TUR_aegean_success_flag
 				}
-				else_if = {
-					limit = {
-						OR = {
-							AND = {
-								TUR = { has_country_flag = TUR_vote_for_meeting_failed_flag }
-								GRE = { has_country_flag = GRE_vote_for_meeting_success_flag }
-							}
-							AND = {
-								TUR = { has_country_flag = TUR_vote_for_meeting_success_flag }
-								GRE = { has_country_flag = GRE_vote_for_meeting_failed_flag }
-							}
-							AND = {
-								TUR = { has_country_flag = TUR_vote_for_meeting_failed_flag }
-								GRE = { has_country_flag = GRE_vote_for_meeting_failed_flag }
+				hidden_effect = {
+					if = {
+						limit = {
+							TUR = { has_country_flag = TUR_vote_for_meeting_success_flag }
+							GRE = { has_country_flag = GRE_vote_for_meeting_success_flag }
+						}
+						country_event = tur_ah.36
+					#	GRE = { country_event = tur_ah.36 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								AND = {
+									TUR = { has_country_flag = TUR_vote_for_meeting_failed_flag }
+									GRE = { has_country_flag = GRE_vote_for_meeting_success_flag }
+								}
+								AND = {
+									TUR = { has_country_flag = TUR_vote_for_meeting_success_flag }
+									GRE = { has_country_flag = GRE_vote_for_meeting_failed_flag }
+								}
+								AND = {
+									TUR = { has_country_flag = TUR_vote_for_meeting_failed_flag }
+									GRE = { has_country_flag = GRE_vote_for_meeting_failed_flag }
+								}
 							}
 						}
+						country_event = tur_ah.39
+					#	GRE = { country_event = tur_ah.39 }
 					}
-					GRE = { country_event = tur_ah.39 }
-					TUR = { country_event = tur_ah.39 }
+					else = {
+						log = "[GetDateText]: [ROOT.GetName]: Meeting between Turkey and Greece did not end correctly."
+						#As envisioned, the meeting is almost certain to fail
+						country_event = tur_ah.39
+					#	GRE = { country_event = tur_ah.39 }
+					}
 				}
-				else = {
-					log = "[GetDateText]: [ROOT.GetName]: Meeting between Turkey and Greece did not end correctly."
-					#As envisioned, the meeting is almost certain to fail
-					GRE = { country_event = tur_ah.39 }
-					TUR = { country_event = tur_ah.39 }
+			}
+			else_if = {
+				limit = {
+					has_country_flag = TUR_ankara_success_flag
+				}
+				hidden_effect = {
+					country_event = tur_ah.81
 				}
 			}
 		}
@@ -1920,10 +1950,7 @@ focus_tree = {
 		available = {
 			always = no
 		}
-		allow_branch = {
-			has_country_flag = TUR_GRE_econimics_meeting_success_flag
-		}
-		x = 0
+		x = -4
 		y = 1
 		prerequisite = { focus = TUR_econimics_was_not_easy }
 		relative_position_id = TUR_econimics_was_not_easy
@@ -1933,6 +1960,9 @@ focus_tree = {
 		}
 		completion_reward = {
 			custom_effect_tooltip = TUR_econimics_meeting_success_tt
+			hidden_effect = {
+				activate_mission = TUR_EDCC_mission
+			}
 		}
 	}
 	
@@ -2206,10 +2236,10 @@ focus_tree = {
 		available = {
 			always = no
 		}
-		allow_branch = {
-			has_country_flag = TUR_GRE_econimics_meeting_fail_flag
-		}
-		x = 0
+		#allow_branch = {
+		#	has_country_flag = TUR_GRE_econimics_meeting_fail_flag
+		#}
+		x = 4
 		y = 1
 		prerequisite = { focus = TUR_econimics_was_not_easy }
 		relative_position_id = TUR_econimics_was_not_easy
@@ -2899,7 +2929,7 @@ focus_tree = {
 		}
 		available = { TUR_vatican_struggle = yes }
 		completion_reward = {
-			country_event = tur_ah.20
+			country_event = tur_ah.51
 		}
 	}
 	
@@ -2998,7 +3028,7 @@ focus_tree = {
 				id = TUR_power_struggle_bop
 				value = 0.10
 			}
-			country_event = tur_ah.21
+			country_event = tur_ah.52
 		}
 	}
 	
@@ -3291,7 +3321,7 @@ focus_tree = {
 			TUR_vatican_struggle = yes
 		}
 		completion_reward = {
-			country_event = tur_ah.22
+			country_event = tur_ah.53
 		}
 	}
 	
@@ -3415,7 +3445,7 @@ focus_tree = {
 			# 	custom_effect_tooltip = TUR_trial_tt2
 			# }
 			remove_country_leader_trait = in_traveling
-			country_event = tur_ah.42
+			country_event = tur_ah.101
 		}
 	}
 	
@@ -4464,7 +4494,7 @@ focus_tree = {
 		}
 		
 		completion_reward = {
-			DEN = { country_event = tur_ah.19 }
+		#	DEN = { country_event = tur_ah.19 }
 		}
 	}
 	
@@ -5425,7 +5455,7 @@ focus_tree = {
 		}
 		
 		completion_reward = {
-			LAN = { country_event = { id = tur_ah.58 days = 1 } }
+		#	LAN = { country_event = { id = tur_ah.58 days = 1 } }
 		}
 	}
 	
@@ -6106,10 +6136,15 @@ focus_tree = {
 		available = {
 			custom_trigger_tooltip = {
 				tooltip = TUR_BFTB_results_of_sea_ttt
-				always = no
+				
+				OR = {
+					has_global_flag	= bftb_results_of_sea_flag_1
+					has_global_flag	= bftb_results_of_sea_flag_2
+					has_global_flag	= bftb_results_of_sea_flag_3
+				}
 			}
 		}
-		x = 14
+		x = 13 # was 14
 		y = 1
 		cost = 0
 		ai_will_do = {
@@ -6117,8 +6152,8 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			add_stability = 0.01
-			add_political_power = -1
+			add_stability = 0.05
+			add_political_power = -10
 		}
 	}
 	
@@ -6133,8 +6168,11 @@ focus_tree = {
 				date > 1938.7.1
 			}
 		}
+		allow_branch = {
+			always = no
+		}
 		x = -5
-		y = 1
+		y = 6 # was 1
 		prerequisite = { focus = TUR_BFTB_results_of_sea }
 		relative_position_id = TUR_BFTB_results_of_sea
 		cost = 0
@@ -6143,7 +6181,6 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			country_event = { id = tur_ah.71 }
 			custom_effect_tooltip = TUR_BFTB_remember_fail_tt
 			773 = { add_core_of = ROOT }
 			341 = { add_core_of = ROOT }
@@ -6463,7 +6500,7 @@ focus_tree = {
 		available = {
 			has_global_flag = bftb_results_of_sea_flag_2
 		}
-		x = -2
+		x = -3 # was -2
 		y = 1
 		prerequisite = { focus = TUR_BFTB_results_of_sea }
 		relative_position_id = TUR_BFTB_results_of_sea
@@ -6605,7 +6642,7 @@ focus_tree = {
 		available = {
 			has_global_flag = bftb_results_of_sea_flag_3
 		}
-		x = 2
+		x = 3 was 2
 		y = 1
 		prerequisite = { focus = TUR_BFTB_results_of_sea }
 		relative_position_id = TUR_BFTB_results_of_sea
@@ -6690,7 +6727,7 @@ focus_tree = {
 		available = {
 			has_global_flag = bftb_results_of_sea_flag_4
 		}
-		x = 5
+		x = 0 # was 5
 		y = 1
 		prerequisite = { focus = TUR_BFTB_results_of_sea }
 		relative_position_id = TUR_BFTB_results_of_sea
@@ -7083,6 +7120,30 @@ focus_tree = {
 				add_core_of = TUR
 				TUR = { transfer_state = PREV }
 			}
+		}
+	}
+	
+	focus = {
+		id = TUR_GOE_expand_ankara_treaty
+		icon = GFX_goal_generic_stable_government
+		prerequisite = { focus = TUR_war_threat }
+		relative_position_id = TUR_war_threat
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TUR_GOE_results_of_sea_ttt
+				always = no
+			}
+		}
+		x = 22
+		y = 1
+		cost = 0
+		ai_will_do = {
+			base = 10
+		}
+
+		completion_reward = {
+			add_stability = 0.01
+			add_political_power = -1
 		}
 	}
 	

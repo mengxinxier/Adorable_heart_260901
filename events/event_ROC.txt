@@ -324,17 +324,8 @@ country_event = {
 	is_triggered_only = yes
 	immediate = {
 		hidden_effect = {
-			remove_from_array = { ROC_policy_unlock_card_array_true = 31 }
-			if = {
-				limit = { is_in_array = { ROC_policy_select_card_Economy_array_true = 31 } }
-				remove_from_array = { ROC_policy_select_card_Economy_array_true = 31 }
-				add_to_array = { ROC_policy_select_card_Economy_array_true = 0 }
-			}
-			if = {
-				limit = { is_in_array = { ROC_policy_select_card_Generic_array_true = 31 } }
-				remove_from_array = { ROC_policy_select_card_Generic_array_true = 31 }
-				add_to_array = { ROC_policy_select_card_Generic_array_true = 0 }
-			}
+			set_variable = { card_to_delete = 31 }
+			ROC_policy_delete_card = yes
 			ROC_policy_card_modifier = yes
 			country_event = {
 				id = roc.12
@@ -2316,6 +2307,13 @@ country_event = {#登基大典
 		set_cosmetic_tag = Yan_Empire
 		set_politics = { ruling_party = neutrality }
 		set_party_name = { ideology = neutrality long_name = ROC_Yan_party_long name = ROC_Yan_party }
+		set_portraits = {
+			character = ROC_Chen
+			civilian = {
+				large = "gfx/leaders/ROC/ROC_Chen2.dds"
+			}
+		}
+		set_country_leader_ideology = Absolute_monarchy
 		ai_chance = {
 			base = 10
 		}
@@ -2932,12 +2930,8 @@ country_event = {#北伐胜利！
 	picture = GFX_ROC_NRA_prepara_War_event
 	immediate = {
 		hidden_effect = {
-			if = {
-				limit = { is_in_array = { ROC_policy_select_card_Generic_array_true = 91 } }
-				remove_from_array = { ROC_policy_select_card_Generic_array_true = 91 }
-				add_to_array = { ROC_policy_select_card_Generic_array_true = 0 }
-			}
-			remove_from_array = { ROC_policy_unlock_card_array_true = 91 }
+			set_variable = { card_to_delete = 91 }
+			ROC_policy_delete_card = yes
 			ROC_policy_card_modifier = yes
 			if = {
 				limit = {
@@ -2977,7 +2971,7 @@ country_event = {
 			}
 		}
 		ai_chance = {
-			base = 25
+			base = 20
 		}
 	}
 	option = {
@@ -2988,14 +2982,14 @@ country_event = {
 			}
 		}
 		ai_chance = {
-			base = 75
+			base = 50
 			modifier = {
 				ROC = { is_ai = no }
 				factor = 0
 			}
 			modifier = {
 				ROC = { has_government = PRC }
-				factor = 0.75
+				factor = 0.1
 			}
 		}
 	}
@@ -8917,7 +8911,8 @@ country_event = {  ##
 	desc = roc.308.desc
 	is_triggered_only = yes
 	fire_only_once = no
-	picture = GFX_ROC_KMT_event
+	picture = GFX_ROC_Yuan_Keding_imprisoned_event
+	trigger = { CHI = { has_character = CHI_yuankeding } }
 	option = {
 		name = roc.308.a
 		add_political_power = 10
@@ -9812,10 +9807,17 @@ country_event = {  ##
 			tooltip = support_of_YCP_change_tt
 		}
 		ROC_change_to_hoi_pie_chart = yes
-		country_event = {
-			id = roc.341
-			days = 7
+		hidden_effect = {
+			country_event = {
+				id = roc.342
+				days = 14
+			}
+			country_event = {
+				id = roc.341
+				days = 7
+			}
 		}
+
 		ai_chance = {
 			base = 25
 		}
@@ -9829,6 +9831,7 @@ country_event = {  ##
 	is_triggered_only = yes
 	fire_only_once = no
 	picture = GFX_ROC_KMT_event
+	trigger = { CHI = { has_character = CHI_yuankeding } }
 	option = {
 		name = roc.341.a
 		every_possible_country = {
@@ -9847,10 +9850,7 @@ country_event = {  ##
 			limit = { has_character = CHI_sundianying }
 			CHI_sundianying = { character_retire = yes }
 		}
-		country_event = {
-			id = roc.342
-			days = 7
-		}
+
 		ai_chance = {
 			base = 25
 		}
@@ -9867,10 +9867,13 @@ country_event = {  ##
 	option = {
 		name = roc.342.a
 		add_political_power = 10
-		country_event = {
-			id = roc.343
-			days = 7
+		hidden_effect = {
+			country_event = {
+				id = roc.343
+				days = 7
+			}
 		}
+
 		ai_chance = {
 			base = 25
 		}
@@ -9883,7 +9886,8 @@ country_event = {  ##
 	desc = roc.343.desc
 	is_triggered_only = yes
 	fire_only_once = no
-	picture = GFX_ROC_KMT_event
+	picture = GFX_CHI_Lixingke_event
+	trigger = { CHI = { has_character = CHI_lixingke } }
 	option = {
 		name = roc.343.a
 		if = {
@@ -10417,7 +10421,8 @@ country_event = {  ##
 	desc = roc.376.desc
 	is_triggered_only = yes
 	fire_only_once = no
-	picture = GFX_ROC_KMT_event
+	picture = GFX_ROC_Yuan_Keding_imprisoned_event
+	trigger = { CHI = { has_character = CHI_yuankeding } }
 	option = {
 		name = roc.376.a
 		add_political_power = 10
@@ -11029,11 +11034,27 @@ country_event = {  ##陈线：傀儡樱花
 							}
 							promote_leader = yes
 						}
+						add_country_leader_role = {
+							country_leader = {
+								desc = ""
+								ideology = Military_socialism
+								traits = {
+								}
+								expire = "1999.1.1.1"
+								id = -1
+							}
+							promote_leader = yes
+						}
 					}
 				}
 				set_country_leader_ideology = oligarchism
 				set_party_name = {
 					ideology = neutrality
+					name = JAP_KMT_party
+					long_name = JAP_KMT_party_long
+				}
+				set_party_name = {
+					ideology = communism
 					name = JAP_KMT_party
 					long_name = JAP_KMT_party_long
 				}
@@ -11064,11 +11085,26 @@ country_event = {  ##陈线：傀儡樱花
 							}
 							promote_leader = yes
 						}
+						add_country_leader_role = {
+							country_leader = {
+								desc = ""
+								ideology = Military_socialism
+								traits = {
+								}
+								expire = "1999.1.1.1"
+								id = -1
+							}
+							promote_leader = yes
+						}
 					}
 				}
-				set_country_leader_ideology = oligarchism
 				set_party_name = {
 					ideology = neutrality
+					name = JAP_KMT_party
+					long_name = JAP_KMT_party_long
+				}
+				set_party_name = {
+					ideology = communism
 					name = JAP_KMT_party
 					long_name = JAP_KMT_party_long
 				}
@@ -11103,11 +11139,26 @@ country_event = {  ##陈线：傀儡樱花
 							}
 							promote_leader = yes
 						}
+						add_country_leader_role = {
+							country_leader = {
+								desc = ""
+								ideology = Military_socialism
+								traits = {
+								}
+								expire = "1999.1.1.1"
+								id = -1
+							}
+							promote_leader = yes
+						}
 					}
 				}
-				set_country_leader_ideology = oligarchism
 				set_party_name = {
 					ideology = neutrality
+					name = JAP_KMT_party
+					long_name = JAP_KMT_party_long
+				}
+				set_party_name = {
+					ideology = communism
 					name = JAP_KMT_party
 					long_name = JAP_KMT_party_long
 				}
@@ -11120,7 +11171,7 @@ country_event = {  ##陈线：傀儡樱花
 	}
 }
 
-country_event = {  ##
+country_event = {  ##宋教仁 特赦战犯
 	id = roc.403
 	title = roc.403.title
 	desc = roc.403.desc
@@ -11129,22 +11180,108 @@ country_event = {  ##
 	picture = GFX_ROC_KMT_event
 	option = {
 		name = roc.403.a
-		add_political_power = 10
+			CHI = {
+				CHI_lihonglan = {
+					set_nationality = ROOT
+				}
+				CHI_linali = {
+					set_nationality = ROOT
+				}
+				CHI_song_zheyuan = {
+					set_nationality = ROOT
+				}
+				CHI_zhangzongchang = {
+					set_nationality = ROOT
+				}
+				CHI_wangliumei = {
+					set_nationality = ROOT
+				}
+				CHI_yangsen = {
+					set_nationality = ROOT
+				}
+				CHI_liuhuaqiang = {
+					set_nationality = ROOT
+				}
+				CHI_wanglang = {
+					set_nationality = ROOT
+				}
+				CHI_fahai = {
+					set_nationality = ROOT
+				}
+				CHI_ling = {
+					set_nationality = ROOT
+				}
+				CHI_sazhenbing = {
+					set_nationality = ROOT
+				}
+				CHI_Hai_Tien = {
+					set_nationality = ROOT
+				}
+				CHI_Fei_Yun = {
+					set_nationality = ROOT
+				}
+				CHI_Hai_Chou = {
+					set_nationality = ROOT
+				}
+				CHI_Fu_Po = {
+					set_nationality = ROOT
+				}
+				CHI_Chang_Feng = {
+					set_nationality = ROOT
+				}
+				CHI_Hai_Yung = {
+					set_nationality = ROOT
+				}
+				CHI_Hai_Chi = {
+					set_nationality = ROOT
+				}
+			}
+			hidden_effect = {
+				country_event = {
+					id = roc.404
+					days = 7
+				}
+			}
 		ai_chance = {
 			base = 25
 		}
 	}
 }
 
-country_event = {  ##
+country_event = {  ##宋 特赦后续
 	id = roc.404
 	title = roc.404.title
 	desc = roc.404.desc
 	is_triggered_only = yes
 	fire_only_once = no
 	picture = GFX_ROC_KMT_event
-	option = {
+	option = {#他们为利而来，我们照单全收
 		name = roc.404.a
+		add_political_power = -20
+		JSZ = {
+			CHI_chentiaoyuan = {
+				set_nationality = ROC
+			}
+			CHI_duanqirui = {
+				set_nationality = ROC
+			}
+		}
+		CHI = {
+			CHI_zhangzongchang = {
+				set_nationality = ROC
+			}
+		}
+		FUJ = {
+			CHI_wupeifu = {
+				set_nationality = ROC
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = {#不要
+		name = roc.404.b
 		add_political_power = 10
 		ai_chance = {
 			base = 25
@@ -12461,7 +12598,7 @@ country_event = {
 
 
 #闽系顾问 海军购舰
-country_event = {#[FROM.GetAdj]提议购置潜艇
+country_event = {#[FROM.GetAdjective]提议购置潜艇
 	id = ROC_navy_trade.1
 	title = ROC_navy_trade.1.t
 	desc = ROC_navy_trade.1.d
@@ -12503,7 +12640,7 @@ country_event = {#[FROM.GetAdj]提议购置潜艇
 		}
 	}
 }
-country_event = {#[FROM.GetAdj]提议购置驱逐舰
+country_event = {#[FROM.GetAdjective]提议购置驱逐舰
 	id = ROC_navy_trade.2
 	title = ROC_navy_trade.2.t
 	desc = ROC_navy_trade.2.d
@@ -12546,7 +12683,7 @@ country_event = {#[FROM.GetAdj]提议购置驱逐舰
 	}
 }
 
-country_event = {#[FROM.GetAdj]提议购置轻巡洋舰
+country_event = {#[FROM.GetAdjective]提议购置轻巡洋舰
 	id = ROC_navy_trade.3
 	title = ROC_navy_trade.3.t
 	desc = ROC_navy_trade.3.d
@@ -16376,8 +16513,14 @@ country_event = {
 		}
 	}
 	option = {
-		name = KMT_spnode_shop_goods_array
-		add_to_variable = { ubs_save = 2000 }
+		name = Absolute_monarchy
+		set_portraits = {
+			character = ROC_Chen
+			civilian = {
+				large = "gfx/leaders/ROC/ROC_Chen2.dds"
+			}
+		}
+		set_country_leader_ideology = Absolute_monarchy
 		ai_chance = {
 			base = 25
 		}

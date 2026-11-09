@@ -476,7 +476,12 @@ Build_chinese_united_font = {
 			has_war = no
 			has_country_flag = CHINA_united_font_leader
 			if = {
-				limit = { any_allied_country = { tag = CHI } }
+				limit = {
+					or = {
+						tag = CHI
+						any_allied_country = { tag = CHI }
+					}
+				}
 				if = {
 					limit = {
 						CHI = {
@@ -638,6 +643,170 @@ Build_chinese_united_font = {
 		complete_effect = {
 			set_country_flag = unit_font_participant
 			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	##征召[FROM.Getname]爱国青年
+	CHI_conscript_patriotic_youth = {
+		icon = GFX_decision_generic_reorganize_irregulars
+		visible = {
+			is_subject = no
+			has_country_flag = Participate_in_the_competition_for_China_reunification
+			has_war_with = JAP
+			JAP = {
+				is_subject = no
+				is_major = yes
+			}
+			NOT = { has_global_flag = JAP_Fading_Sun }
+		}
+		target_trigger = {
+			FROM = {
+				is_core_of = ROOT
+				check_variable = { state_population_k > 2000 }
+			}
+		}
+		on_map_mode = map_only
+		target_array = owned_states
+		state_target = yes
+		available = {
+			FROM = { is_core_of = ROOT }
+		}
+		fire_only_once = yes
+		cost = 10
+		days_remove = 30
+		days_re_enable = 365
+		ai_will_do = {
+			factor = 1000
+		}
+		complete_effect = {
+			if = {
+				limit = { NOT = { has_template = "志愿民兵团" } }
+				division_template = {
+					name = "志愿民兵团"
+					is_locked = yes
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+						irregular_infantry = { x = 1 y = 1 }
+					}
+					support = {
+					}
+				}
+			}
+			set_variable = { num_of_irregular_infantry = 0 }
+			set_variable = { num_of_irregular_infantry_max = FROM.state_population_k }
+			divide_variable = { num_of_irregular_infantry_max = 2000 }
+			while_loop_effect = {
+				limit = { check_variable = { num_of_irregular_infantry < num_of_irregular_infantry_max } }
+				add_to_variable = { num_of_irregular_infantry = 1 }
+				FROM = {
+					create_unit = {
+						division = "name = \"志愿民兵团\" division_template = \"志愿民兵团\" start_experience_factor = 0 start_equipment_factor = 0.7"
+						#amount = 1
+						owner = ROOT
+					}
+				}
+			}
+		}
+	}
+	##进攻
+	CHI_generic_attck_FROM_after_war = {
+		icon = GFX_decision_generic_ignite_civil_war
+		allowed = {
+		}
+		visible = {
+			has_country_flag = Participate_in_the_competition_for_China_reunification
+			has_global_flag = dismate_Build_chinese_united_font
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				has_country_flag = Participate_in_the_competition_for_China_reunification
+				is_chinese_country = yes
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		available = {
+			FROM = {
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			not = {
+				has_country_flag = CHI_war_plan_going_on
+			}
+			FROM_subject_neighbor_with_root = yes
+			not = { has_non_aggression_pact_with = FROM }
+		}
+		cost = 10
+		days_remove = 15
+		war_with_target_on_remove = yes
+		complete_effect = {
+			set_country_flag = { flag = CHI_war_plan_going_on value = 1 days = 17 }
+			FROM_country_is_defender_and_ROOT_is_accacker = yes
+		}
+		cancel_effect  = { clr_country_flag = CHI_war_plan_going_on }
+		remove_effect = {
+			clr_country_flag = CHI_war_plan_going_on
+			declare_war_on = {
+				target = FROM
+				type = annex_everything
+			}
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				any_home_area_neighbor_country = {
+					has_war_with = ROOT
+				}
+				NOT = {
+					tag = GXC
+					FROM = { tag = ROC }
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = {
+					is_stronger_than_ROOT_and_not_vulnerable = yes
+					if = {
+						limit = { is_subject = yes }
+						overlord = { is_stronger_than_ROOT_and_not_vulnerable = yes }
+					}
+				}
+				not = {
+					tag = GXC
+					has_cosmetic_tag = NanNing_KMT_government
+					FROM = { tag = ROC }
+				}
+				factor = 0
+			}
+			modifier = {
+				FROM = { is_subject_of = JAP }
+				factor = 0
+			}
+			modifier = {
+				FROM = { tag = SHH }
+				factor = 0
+			}
+			modifier = {
+				tag = GXC
+				has_cosmetic_tag = NanNing_KMT_government
+				FROM = {
+					tag = ROC
+				}
+				add = 10000
+			}
 		}
 	}
 }
@@ -897,6 +1066,10 @@ CHI_reclaim_concession = {
 		cost = 15
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				var:326.owner = { has_war = no }
+				factor = 0
+			}
 		}
 		remove_effect = {
 			custom_effect_tooltip = CHI_seizure_concession_tt
@@ -951,6 +1124,10 @@ CHI_reclaim_concession = {
 		cost = 15
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				var:729.owner = { has_war = no }
+				factor = 0
+			}
 		}
 		remove_effect = {
 			custom_effect_tooltip = CHI_seizure_concession_tt
@@ -1005,6 +1182,10 @@ CHI_reclaim_concession = {
 		cost = 15
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				var:1187.owner = { has_war = no }
+				factor = 0
+			}
 		}
 		remove_effect = {
 			custom_effect_tooltip = CHI_seizure_concession_tt
@@ -1048,6 +1229,10 @@ CHI_reclaim_concession = {
 		}
 		available = {
 			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = CHI_Train_Taiwan_column_var_smaller_than_6
+				check_variable = { CHI_Train_Taiwan_column_var < 6 }
+			}
 		}
 		custom_cost_text = decision_cost_100_gun_and_10_xp
 		days_remove = 30
@@ -1096,6 +1281,10 @@ CHI_reclaim_concession = {
 		cost = 15
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				var:524.owner = { has_war = no }
+				factor = 0
+			}
 		}
 		remove_effect = {
 			custom_effect_tooltip = CHI_seizure_concession_tt
@@ -1203,6 +1392,10 @@ CHI_reclaim_concession = {
 		cost = 15
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				var:744.owner = { has_war = no }
+				factor = 0
+			}
 		}
 		remove_effect = {
 			custom_effect_tooltip = CHI_seizure_concession_tt

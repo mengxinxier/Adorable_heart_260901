@@ -1074,37 +1074,161 @@ scripted_gui = {
 		}
 	}
 }
-# #省份文化
-# scripted_gui = {
-# 	state_culture_window = {
-# 		context_type = selected_state_context
-# 		parent_window_token = selected_state_view
-# 		window_name = "state_culture_window"
-# 		visible = {
-# 			has_variable = state_culture
-# 		}
-# 		properties = {
-# 		}
-# 		triggers = {
-# 		}
-# 		effects = {
-# 		}
-# 	}
-# 	#相容文化
-# 	compatible_culture_winow = {
-# 		context_type = decision_category
-# 		window_name = "compatible_culture_winow"
-# 		visible = {
-# 		}
-# 		properties = {
-# 		}
-# 		dynamic_lists = {
-# 			compatible_culture_list = {
-# 				array = compatible_culture_array
-# 				index = compatible_culture_array_i
-# 				value = compatible_culture_array_id
-# 				entry_container = compatible_culture_entry
-# 			}
-# 		}
-# 	}
-# }
+#省份文化
+scripted_gui = {
+	state_culture_window = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "state_culture_window"
+		visible = {
+			has_variable = state_culture
+			ROOT = { not = { has_country_flag = state_culture_window_unvisible } }
+		}
+		properties = {
+			culture_ui_close_button = {
+				frame = 2
+			}
+			culture_icon = {
+				image = "[get_culture_icon]"
+			}
+		}
+		triggers = {
+		}
+		effects = {
+			culture_ui_close_button_click = {
+				ROOT = {
+					if = {
+						limit = { has_country_flag = state_culture_window_unvisible }
+						clr_country_flag = state_culture_window_unvisible
+					}
+					else = { set_country_flag = state_culture_window_unvisible }
+				}
+			}
+		}
+	}
+	state_culture_open_window = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "state_culture_open_window"
+		visible = {
+			has_variable = state_culture
+			ROOT = { has_country_flag = state_culture_window_unvisible }
+		}
+		properties = {
+			culture_ui_open_button = {
+				frame = 1
+			}
+		}
+		triggers = {
+		}
+		effects = {
+			culture_ui_open_button_click = {
+				ROOT = {
+					if = {
+						limit = { has_country_flag = state_culture_window_unvisible }
+						clr_country_flag = state_culture_window_unvisible
+					}
+					else = { set_country_flag = state_culture_window_unvisible }
+				}
+			}
+		}
+	}
+	#相容文化
+	compatible_culture_total_winow = {
+		window_name = "compatible_culture_total_winow"
+		context_type = player_context
+		parent_window_token = politics_tab
+		visible = {
+			has_variable = compatible_culture_button_var
+		}
+		properties = {
+			compatible_culture_button = {
+				frame = compatible_culture_button_var
+			}
+			incompatible_culture_button = {
+				frame = incompatible_culture_button_var
+			}
+		}
+		effects = {
+			compatible_culture_button_click = {
+				ROOT = {
+					set_variable = { compatible_culture_button_var = 2 }
+					set_variable = { incompatible_culture_button_var = 1 }
+				}
+			}
+			incompatible_culture_button_click = {
+				ROOT = {
+					set_variable = { compatible_culture_button_var = 1 }
+					set_variable = { incompatible_culture_button_var = 2 }
+				}
+			}
+			shuaxin_click = {
+				ROOT = {
+					sort_controlled_cultures_by_provinces = yes
+				}
+			}
+			close_button_click = {
+				ROOT = {
+					clear_variable = compatible_culture_button_var
+				}
+			}
+		}
+	}
+	compatible_culture_window = {
+		window_name = "compatible_culture_window"
+		context_type = player_context
+		parent_window_name = state_culture_container
+		visible = {
+			check_variable = { compatible_culture_button_var = 2 }
+		}
+		properties = {
+			culture_icon = {
+				image = "[get_compatible_culture_icon]"
+			}
+		}
+		dynamic_lists = {
+			compatible_culture_list = {
+				array = controlled_culture_compatible_array
+				index = controlled_culture_compatible_array_i
+				value = controlled_culture_compatible_array_id
+				entry_container = compatible_culture_entry
+			}
+		}
+	}
+	incompatible_culture_window = {
+		window_name = "incompatible_culture_window"
+		context_type = player_context
+		parent_window_name = state_culture_container
+		visible = {
+			check_variable = { incompatible_culture_button_var = 2 }
+		}
+		properties = {
+			culture_icon = {
+				image = "[get_incompatible_culture_icon]"
+			}
+		}
+		dynamic_lists = {
+			incompatible_culture_list = {
+				array = controlled_culture_incompatible_array
+				index = controlled_culture_incompatible_array_i
+				value = controlled_culture_incompatible_array_id
+				entry_container = incompatible_culture_entry
+			}
+		}
+	}
+	compatible_culture_total_winow_button = {
+		window_name = "compatible_culture_total_winow_button"
+		context_type = player_context
+		parent_window_token = politics_tab
+		visible = {
+		}
+		effects = {
+			compatible_culture_open_button_click = {
+				ROOT = {
+					set_variable = { compatible_culture_button_var = 2 }
+					set_variable = { incompatible_culture_button_var = 1 }
+				}
+			}
+		}
+	}
+}

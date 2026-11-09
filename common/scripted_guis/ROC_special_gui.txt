@@ -807,9 +807,24 @@ scripted_gui = {
 			ROC_spnode_shop_refresh_button_click = {
 				if = {
 					limit = { check_variable = { spshop_page_var = 0 } }
+					if = {
+						limit = { not = { check_variable = { ubs_save < 100 } } }
+						subtract_from_variable = { ubs_save = 100 }
+					}
+					else = {
+						subtract_from_variable = { ubs_save = 100 }
+						subtract_from_variable = { ubs_load = 100 }
+						clamp_variable = {
+							var = ubs_save
+							min = 0
+						}
+					}
 					ROC_Collection_shop_refresh = yes
 				}
-				else = { ROC_Collection_sp_shop_refresh = yes }
+				else = {
+					add_political_power = -50
+					ROC_Collection_sp_shop_refresh = yes
+				}
 			}
 		}
 	}
@@ -830,7 +845,7 @@ scripted_gui = {
 						not = { has_country_flag = ROC_collection_window_visible }
 					}
 					set_country_flag = ROC_collection_window_visible
-					ROC_collection_window_button_open_effect = yes
+					# ROC_collection_window_button_open_effect = yes   # 效果未定义（原本不生效），待补定义
 					scoped_sound_effect = "open_ui_collection"
 				}
 				else = { clr_country_flag = ROC_collection_window_visible }
@@ -1775,6 +1790,7 @@ scripted_gui = {
 scripted_gui = {
 	ROC_unit_leader_level_up_window = {
 		#context_type = decision_category
+		context_type = player_context
 		window_name = "ROC_unit_leader_level_up_window"
 		visible = {	
 			tag = ROC
@@ -1804,6 +1820,36 @@ scripted_gui = {
 					add_to_variable = { ROOT.num_unit_leader_level_up = -1 }
 				}
 			}
+		}
+	}
+}
+
+#时间
+scripted_gui = {
+	ROC_time_window = {
+		window_name = "ROC_time_window"
+		visible = {
+			tag = ROC
+			not = { has_country_flag = ROC_time_window_unvisible }
+			has_country_flag = use_era_name_ROC
+		}
+		effects = {
+			close_button_click = {
+				set_country_flag = ROC_time_window_unvisible
+            }
+		}
+	}
+	ROC_time_open_window = {
+		window_name = "ROC_time_open_window"
+		visible = {
+			is_ROCnese_country = yes
+			has_country_flag = ROC_time_window_unvisible
+			has_country_flag = use_era_name_ROC
+		}
+		effects = {
+			open_button_click = {
+				clr_country_flag = ROC_time_window_unvisible
+            }
 		}
 	}
 }
