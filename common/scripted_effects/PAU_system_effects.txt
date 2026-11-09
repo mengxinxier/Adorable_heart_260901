@@ -23,7 +23,18 @@ PAU_end_settlement = {
 
 PAU_refresh_mil_reform_tiers = {
     clamp_variable = { var = PAU_mil_reform_progress min = 0 max = 36 }
-    if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_mil_reform } } check_variable = { PAU_mil_reform_progress > 0 } } add_dynamic_modifier = { modifier = PAU_mil_reform } }
+    if = {
+        limit = {
+            NOT = { has_dynamic_modifier = { modifier = PAU_mil_reform } }
+            OR = {
+                check_variable = { PAU_mil_reform_progress > 0 }
+                check_variable = { PAU_axia_mil > 0 }
+                check_variable = { PAU_xfxy_mil > 0 }
+                check_variable = { PAU_xiaoyao_mil > 0 }
+            }
+        }
+        add_dynamic_modifier = { modifier = PAU_mil_reform }
+    }
     if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }
     if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }
     if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }
@@ -31,22 +42,27 @@ PAU_refresh_mil_reform_tiers = {
     if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
     if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
 
-    #第1点2.5%，前10点每点+0.5%，10点后每点+0.2%，满级12%
+    #按进度阶梯提供规整的 2.5% / 5.0% / 7.5% / 10.0% / 12.5% 全属性基础加成
     set_variable = { PAU_mil_base_val = 0 }
     if = {
+        limit = { check_variable = { PAU_mil_reform_progress > 31 } }
+        set_variable = { PAU_mil_base_val = 0.125 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_mil_reform_progress > 23 } }
+        set_variable = { PAU_mil_base_val = 0.10 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_mil_reform_progress > 15 } }
+        set_variable = { PAU_mil_base_val = 0.075 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_mil_reform_progress > 7 } }
+        set_variable = { PAU_mil_base_val = 0.05 }
+    }
+    else_if = {
         limit = { check_variable = { PAU_mil_reform_progress > 0 } }
-        if = {
-            limit = { check_variable = { PAU_mil_reform_progress < 11 } }
-            set_variable = { PAU_mil_base_val = PAU_mil_reform_progress }
-            multiply_variable = { PAU_mil_base_val = 0.005 }
-            add_to_variable = { PAU_mil_base_val = 0.02 }
-        }
-        else = {
-            set_variable = { PAU_mil_base_val = PAU_mil_reform_progress }
-            subtract_from_variable = { PAU_mil_base_val = 10 }
-            multiply_variable = { PAU_mil_base_val = 0.002 }
-            add_to_variable = { PAU_mil_base_val = 0.07 }
-        }
+        set_variable = { PAU_mil_base_val = 0.025 }
     }
     set_variable = { PAU_mil_base_neg = PAU_mil_base_val }
     multiply_variable = { PAU_mil_base_neg = -1 }
@@ -108,7 +124,18 @@ PAU_refresh_mil_reform_tiers = {
 
 PAU_refresh_eco_reform_tiers = {
     clamp_variable = { var = PAU_eco_reform_progress min = 0 max = 36 }
-    if = { limit = { NOT = { has_dynamic_modifier = { modifier = PAU_eco_reform } } check_variable = { PAU_eco_reform_progress > 0 } } add_dynamic_modifier = { modifier = PAU_eco_reform } }
+    if = {
+        limit = {
+            NOT = { has_dynamic_modifier = { modifier = PAU_eco_reform } }
+            OR = {
+                check_variable = { PAU_eco_reform_progress > 0 }
+                check_variable = { PAU_axia_eco > 0 }
+                check_variable = { PAU_xfxy_eco > 0 }
+                check_variable = { PAU_xiaoyao_eco > 0 }
+            }
+        }
+        add_dynamic_modifier = { modifier = PAU_eco_reform }
+    }
     if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }
     if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }
     if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }
@@ -116,22 +143,27 @@ PAU_refresh_eco_reform_tiers = {
     if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
     if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
 
-    #（第1点即有2.5%，前10点每点+0.5%，10点后每点+0.2%，满级12%）
+   #按进度阶梯提供规整的 2.5% / 5.0% / 7.5% / 10.0% / 12.5% 全属性基础加成
     set_variable = { PAU_eco_base_val = 0 }
     if = {
+        limit = { check_variable = { PAU_eco_reform_progress > 31 } }
+        set_variable = { PAU_eco_base_val = 0.125 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_eco_reform_progress > 23 } }
+        set_variable = { PAU_eco_base_val = 0.10 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_eco_reform_progress > 15 } }
+        set_variable = { PAU_eco_base_val = 0.075 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_eco_reform_progress > 7 } }
+        set_variable = { PAU_eco_base_val = 0.05 }
+    }
+    else_if = {
         limit = { check_variable = { PAU_eco_reform_progress > 0 } }
-        if = {
-            limit = { check_variable = { PAU_eco_reform_progress < 11 } }
-            set_variable = { PAU_eco_base_val = PAU_eco_reform_progress }
-            multiply_variable = { PAU_eco_base_val = 0.005 }
-            add_to_variable = { PAU_eco_base_val = 0.02 }
-        }
-        else = {
-            set_variable = { PAU_eco_base_val = PAU_eco_reform_progress }
-            subtract_from_variable = { PAU_eco_base_val = 10 }
-            multiply_variable = { PAU_eco_base_val = 0.002 }
-            add_to_variable = { PAU_eco_base_val = 0.07 }
-        }
+        set_variable = { PAU_eco_base_val = 0.025 }
     }
     set_variable = { PAU_eco_base_neg = PAU_eco_base_val }
     multiply_variable = { PAU_eco_base_neg = -1 }
@@ -271,126 +303,112 @@ PAU_pull_into_white_night_faction = {
     ROOT = { clr_country_flag = PAU_allow_major_faction_pull }
 }
 
-PAU_refresh_south_america_members = {
-    if = {
-        limit = { has_country_flag = PAU_south_america_super_fired }  #南美统一超事件触发标记
-        set_variable = { PAU_south_america_members = 0 }
+
+#将发展度与【南美大陆的共识】实时同步给所有南美阵营成员
+PAU_sync_south_america_all = {
+    PAU = {
+        if = {
+            limit = { NOT = { has_dynamic_modifier = { modifier = PAU_south_america_unity } } }
+            add_dynamic_modifier = { modifier = PAU_south_america_unity }
+        }
         every_faction_member = {
             limit = {
                 NOT = { tag = PAU }
                 capital_scope = { is_on_continent = south_america }
             }
-            ROOT = { add_to_variable = { PAU_south_america_members = 1 } }
+            if = {
+                limit = { NOT = { has_dynamic_modifier = { modifier = PAU_south_america_unity } } }
+                add_dynamic_modifier = { modifier = PAU_south_america_unity }
+            }
+            if = {
+                limit = {
+                    PAU = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
+                    NOT = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
+                }
+                add_dynamic_modifier = { modifier = PAU_state_council_tier }
+            }
+            #同步面板显示变量
+            set_variable = { PAU_south_america_development = PAU.PAU_south_america_development }
+
+            #同步委员会结算值
+            set_variable = { PAU_sc_political = PAU.PAU_sc_political }
+            set_variable = { PAU_sc_improve_relations = PAU.PAU_sc_improve_relations }
+            set_variable = { PAU_sc_industry = PAU.PAU_sc_industry }
+            set_variable = { PAU_sc_research = PAU.PAU_sc_research }
+            set_variable = { PAU_sc_buildings = PAU.PAU_sc_buildings }
+            set_variable = { PAU_sc_consumer = PAU.PAU_sc_consumer }
+            set_variable = { PAU_sc_trade = PAU.PAU_sc_trade }
+
+            #同步【南美大陆的共识】动态修正变量
+            set_variable = { pau_unity_production_speed_industrial_complex_factor = PAU.pau_unity_production_speed_industrial_complex_factor }
+            set_variable = { pau_unity_production_speed_arms_factory_factor = PAU.pau_unity_production_speed_arms_factory_factor }
+            set_variable = { pau_unity_production_speed_infrastructure_factor = PAU.pau_unity_production_speed_infrastructure_factor }
+            set_variable = { pau_unity_production_speed_rail_way_factor = PAU.pau_unity_production_speed_rail_way_factor }
+            set_variable = { pau_unity_production_speed_supply_node_factor = PAU.pau_unity_production_speed_supply_node_factor }
+            set_variable = { pau_unity_production_speed_naval_base_factor = PAU.pau_unity_production_speed_naval_base_factor }
+            set_variable = { pau_unity_cic_construction_boost = PAU.pau_unity_cic_construction_boost }
+            set_variable = { pau_unity_cic_construction_boost_factor = PAU.pau_unity_cic_construction_boost_factor }
+            set_variable = { pau_unity_experience_loss_factor = PAU.pau_unity_experience_loss_factor }
+            set_variable = { pau_unity_casualty_trickleback = PAU.pau_unity_casualty_trickleback }
+            set_variable = { pau_unity_training_time_factor = PAU.pau_unity_training_time_factor }
+            set_variable = { pau_unity_weekly_manpower = PAU.pau_unity_weekly_manpower }
+            set_variable = { pau_unity_consumer_goods_factor = PAU.pau_unity_consumer_goods_factor }
+            set_variable = { pau_unity_industrial_capacity_factory = PAU.pau_unity_industrial_capacity_factory }
+            set_variable = { pau_unity_hcp_income_factor_monthly = PAU.pau_unity_hcp_income_factor_monthly }
+            set_variable = { pau_unity_research_speed_factor = PAU.pau_unity_research_speed_factor }
         }
     }
 }
 
 PAU_refresh_south_america_development = {
-    if = {
-        limit = { has_country_flag = PAU_south_america_super_fired }
+    PAU = {
         if = {
-            limit = { has_dynamic_modifier = { modifier = PAU_south_america_development_tier1 } }
-            remove_dynamic_modifier = { modifier = PAU_south_america_development_tier1 }
-        }
-        if = {
-            limit = { has_dynamic_modifier = { modifier = PAU_south_america_development_tier2 } }
-            remove_dynamic_modifier = { modifier = PAU_south_america_development_tier2 }
-        }
-        if = {
-            limit = { has_dynamic_modifier = { modifier = PAU_south_america_development_tier3 } }
-            remove_dynamic_modifier = { modifier = PAU_south_america_development_tier3 }
-        }
-        if = {
-            limit = { check_variable = { PAU_south_america_development > 8 } }
-            add_dynamic_modifier = { modifier = PAU_south_america_development_tier3 }
-        }
-        else = {
+            limit = { has_country_flag = PAU_south_america_super_fired }
             if = {
-                limit = { check_variable = { PAU_south_america_development > 4 } }
-                add_dynamic_modifier = { modifier = PAU_south_america_development_tier2 }
-            }
-            else = {
-                if = {
-                    limit = { check_variable = { PAU_south_america_development > 0 } }
-                    add_dynamic_modifier = { modifier = PAU_south_america_development_tier1 }
+                limit = {
+                    check_variable = { PAU_south_america_development > 2 }
+                    NOT = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
                 }
+                add_dynamic_modifier = { modifier = PAU_state_council_tier }
+            }
+            if = {
+                limit = { check_variable = { PAU_south_america_development > 9 } }
+                set_variable = { PAU_sc_political = 0.10 }
+                set_variable = { PAU_sc_improve_relations = -0.05 }
+                set_variable = { PAU_sc_industry = 0.10 }
+                set_variable = { PAU_sc_research = 0.08 }
+                set_variable = { PAU_sc_buildings = 0.08 }
+                set_variable = { PAU_sc_consumer = -0.15 }
+                set_variable = { PAU_sc_trade = 0.20 }
+            }
+            else_if = {
+                limit = { check_variable = { PAU_south_america_development > 5 } }
+                set_variable = { PAU_sc_political = 0.10 }
+                set_variable = { PAU_sc_improve_relations = -0.05 }
+                set_variable = { PAU_sc_industry = 0.05 }
+                set_variable = { PAU_sc_research = 0.05 }
+                set_variable = { PAU_sc_buildings = 0 }
+                set_variable = { PAU_sc_consumer = -0.10 }
+                set_variable = { PAU_sc_trade = 0.15 }
+            }
+            else_if = {
+                limit = { check_variable = { PAU_south_america_development > 2 } }
+                set_variable = { PAU_sc_political = 0.10 }
+                set_variable = { PAU_sc_improve_relations = -0.05 }
+                set_variable = { PAU_sc_industry = 0 }
+                set_variable = { PAU_sc_research = 0 }
+                set_variable = { PAU_sc_buildings = 0 }
+                set_variable = { PAU_sc_consumer = 0 }
+                set_variable = { PAU_sc_trade = 0.10 }
             }
         }
     }
+    PAU_sync_south_america_all = yes
 }
 
-PAU_call_state_council_missions = {
-    PAU_refresh_south_america_members = yes
-        hidden_effect = { PAU_refresh_state_council = yes }
-}
-
-PAU_refresh_state_council = {
-    set_variable = { PAU_sa_state_tier = 0 }  #国务委员会等级=由各领域发展值决定
-    if = {
-        limit = {
-            check_variable = { PAU_sa_state_industry > 0 }  #国务委员会发展值：工业=对应领域任务累加
-            check_variable = { PAU_sa_state_infrastructure > 0 }  #国务委员会发展值：基础设施=对应领域任务累加
-            check_variable = { PAU_sa_state_trade > 0 }  #国务委员会发展值：贸易=对应领域任务累加
-            check_variable = { PAU_sa_state_welfare > 0 }  #国务委员会发展值：民生=对应领域任务累加
-            check_variable = { PAU_sa_state_mobilization > 0 }  #国务委员会发展值：动员=对应领域任务累加
-            NOT = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
-        }
-        add_dynamic_modifier = { modifier = PAU_state_council_tier }  #挂载动态精神：南美联合国务委员会
-    }
-    if = {
-        limit = {
-            check_variable = { PAU_sa_state_industry > 2 }  #国务委员会发展值：工业=对应领域任务累加
-            check_variable = { PAU_sa_state_infrastructure > 2 }  #国务委员会发展值：基础设施=对应领域任务累加
-            check_variable = { PAU_sa_state_trade > 2 }  #国务委员会发展值：贸易=对应领域任务累加
-            check_variable = { PAU_sa_state_welfare > 2 }  #国务委员会发展值：民生=对应领域任务累加
-            check_variable = { PAU_sa_state_mobilization > 2 }  #国务委员会发展值：动员=对应领域任务累加
-        }
-        custom_effect_tooltip = PAU_state_council_tier_tt
-        set_variable = { PAU_sa_state_tier = 3 }  #国务委员会等级=3级（五项发展值均>2）
-        set_variable = { PAU_sc_political = 0.10 }  #国务委员会结算值：政治点获取=1级基础0.10
-        set_variable = { PAU_sc_improve_relations = -0.05 }  #国务委员会结算值：改善关系维持成本=1级基础-0.05
-        set_variable = { PAU_sc_industry = 0.10 }  #国务委员会结算值：工厂产出=2级解锁0.10
-        set_variable = { PAU_sc_research = 0.10 }  #国务委员会结算值：科研速度=2级解锁0.10
-        set_variable = { PAU_sc_buildings = 0.10 }  #国务委员会结算值：建筑建造速度=3级解锁0.10
-        set_variable = { PAU_sc_consumer = -0.20 }  #国务委员会结算值：消费品工厂占比=2级-0.10+3级-0.10
-        set_variable = { PAU_sc_trade = 0.25 }  #国务委员会结算值：贸易好感=1级0.15+3级0.10
-    }
-    else_if = {
-        limit = {
-            check_variable = { PAU_sa_state_industry > 1 }  #国务委员会发展值：工业=对应领域任务累加
-            check_variable = { PAU_sa_state_infrastructure > 1 }  #国务委员会发展值：基础设施=对应领域任务累加
-            check_variable = { PAU_sa_state_trade > 1 }  #国务委员会发展值：贸易=对应领域任务累加
-            check_variable = { PAU_sa_state_welfare > 1 }  #国务委员会发展值：民生=对应领域任务累加
-            check_variable = { PAU_sa_state_mobilization > 1 }  #国务委员会发展值：动员=对应领域任务累加
-        }
-        custom_effect_tooltip = PAU_state_council_tier_tt
-        set_variable = { PAU_sa_state_tier = 2 }  #国务委员会等级=2级（五项发展值均>1）
-        set_variable = { PAU_sc_political = 0.10 }  #国务委员会结算值：政治点获取=1级基础0.10
-        set_variable = { PAU_sc_improve_relations = -0.05 }  #国务委员会结算值：改善关系维持成本=1级基础-0.05
-        set_variable = { PAU_sc_industry = 0.10 }  #国务委员会结算值：工厂产出=2级解锁0.10
-        set_variable = { PAU_sc_research = 0.10 }  #国务委员会结算值：科研速度=2级解锁0.10
-        set_variable = { PAU_sc_buildings = 0 }  #国务委员会结算值：建筑建造速度=2级未解锁
-        set_variable = { PAU_sc_consumer = -0.10 }  #国务委员会结算值：消费品工厂占比=2级解锁-0.10
-        set_variable = { PAU_sc_trade = 0.15 }  #国务委员会结算值：贸易好感=1级基础0.15
-    }
-    else_if = {
-        limit = {
-            check_variable = { PAU_sa_state_industry > 0 }  #国务委员会发展值：工业=对应领域任务累加
-            check_variable = { PAU_sa_state_infrastructure > 0 }  #国务委员会发展值：基础设施=对应领域任务累加
-            check_variable = { PAU_sa_state_trade > 0 }  #国务委员会发展值：贸易=对应领域任务累加
-            check_variable = { PAU_sa_state_welfare > 0 }  #国务委员会发展值：民生=对应领域任务累加
-            check_variable = { PAU_sa_state_mobilization > 0 }  #国务委员会发展值：动员=对应领域任务累加
-        }
-        set_variable = { PAU_sa_state_tier = 1 }  #国务委员会等级=1级（五项发展值均>0）
-        set_variable = { PAU_sc_political = 0.10 }  #国务委员会结算值：政治点获取=1级基础0.10
-        set_variable = { PAU_sc_improve_relations = -0.05 }  #国务委员会结算值：改善关系维持成本=1级基础-0.05
-        set_variable = { PAU_sc_industry = 0 }  #国务委员会结算值：工厂产出=1级未解锁
-        set_variable = { PAU_sc_research = 0 }  #国务委员会结算值：科研速度=1级未解锁
-        set_variable = { PAU_sc_buildings = 0 }  #国务委员会结算值：建筑建造速度=1级未解锁
-        set_variable = { PAU_sc_consumer = 0 }  #国务委员会结算值：消费品工厂占比=1级未解锁
-        set_variable = { PAU_sc_trade = 0.15 }  #国务委员会结算值：贸易好感=1级基础0.15
-    }
-}
+PAU_refresh_south_america_members = { PAU_refresh_south_america_development = yes }
+PAU_call_state_council_missions = { PAU_refresh_south_america_development = yes }
+PAU_refresh_state_council = { PAU_refresh_south_america_development = yes }
 
 PAU_advance_baiye_story = {
     if = { limit = { NOT = { has_variable = PAU_baiye_patrol_count } } set_variable = { PAU_baiye_patrol_count = 0 } }  #白夜巡游计数=每巡游一个州+1

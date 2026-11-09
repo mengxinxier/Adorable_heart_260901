@@ -734,15 +734,56 @@ country_event = {
     option = {
         name = PAU.13.a
         transfer_state = 299
+        hidden_effect = {
+            every_state = {
+                limit = {
+                    has_state_flag = is_lldy_state_flag
+                }
+                hidden_effect = {
+                    teleport_armies = {
+                        limit = { tag = PAU }
+                        to_state = 299
+                    }
+                }
+                transfer_state_to = ZDW
+            }
+        }
         every_state = {
             limit = {
                 has_state_flag = is_lldy_state_flag
             }
             transfer_state_to = ZDW
         }
+        hidden_effect = {
+            ZDW = {
+                if = {
+                    limit = { NOT = { has_template = "游荡尸群" } }
+                    division_template = {
+                        name = "游荡尸群"
+                        is_locked = yes
+                        regiments = {
+                            wangling = { x = 0 y = 0 }
+                            wangling = { x = 0 y = 1 }
+                            wangling = { x = 1 y = 0 }
+                            wangling = { x = 1 y = 1 }
+                            wangling = { x = 2 y = 0 }
+                            wangling = { x = 2 y = 1 }
+                        }
+                    }
+                }
+                every_controlled_state = {
+                    limit = { has_state_flag = is_lldy_state_flag }
+                    create_unit = {
+                        division = "name = \"游荡尸群\" division_template = \"游荡尸群\" start_experience_factor = 0.1 start_equipment_factor = 0.4"
+                        count = 3
+                        owner = ZDW
+                    }
+                }
+            }
+        }
         activate_mission = PAU_grail_camp_live
         add_to_variable = {
-            var = PAU_grail_rations  #圣杯流亡营口粮=初始100-分粮/贸易/换零件消耗
+            var = PAU_grail_rations
             value = -20
             tooltip = PAU_grail_rations_tt
         }
@@ -757,7 +798,6 @@ country_event = {
                 producer = PAU
             }
         }
-
     }
 }
 
@@ -891,6 +931,28 @@ country_event = {
             }
             declare_war_on = { target = ZDW type = annex_everything }
         }
+         278 = {
+            transfer_state_to = PAU
+        }
+        hidden_effect = {
+            299 = {
+                teleport_armies = {
+                    limit = { tag = PAU }
+                    to_state = 278
+                }
+            }
+            add_ideas = PAU_counterattack_zdw_buff
+            ZDW = {
+                every_controlled_state = {
+                    limit = { has_state_flag = is_lldy_state_flag }
+                    create_unit = {
+                        division = "name = \"游荡尸群\" division_template = \"游荡尸群\" start_experience_factor = 0.1 start_equipment_factor = 0.35"
+                        count = 2
+                        owner = ZDW
+                    }
+                }
+            }
+        }
         set_country_flag = PAU_fullscreen_rain
         add_equipment_to_stockpile = {
             type = convoy
@@ -900,6 +962,7 @@ country_event = {
         set_country_flag = xiaoyao_plan_flag
         division_template = {
             name = "白夜民兵"
+            is_locked = yes
             regiments = {
                 militia = { x = 0 y = 0 }
                 militia = { x = 0 y = 1 }
@@ -913,18 +976,20 @@ country_event = {
             }
         }
         every_state = {
-            limit = { or = {
-                state = 579
-                has_state_flag = PAU_xiaoyao_state_flag
-            } }  #白夜巡游过的州标记
+            limit = {
+                or = {
+                    state = 579
+                    has_state_flag = PAU_xiaoyao_state_flag
+                }
+            }
             create_unit = {
-                division = "name = \"白夜民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.1 start_equipment_factor = 0.2"
-                count = 1
+                division = "name = \"白夜民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.3 start_equipment_factor = 1.0"
+                count = 2
                 allow_spawning_on_enemy_provs = yes
                 owner = PAU
             }
         }
-        set_country_flag = has_PAU_xiaoyao3  #主线阶段 3：亡灵战争后
+        set_country_flag = has_PAU_xiaoyao3
         custom_effect_tooltip = jiesuoguoce
         mark_focus_tree_layout_dirty = yes
     }
@@ -1599,7 +1664,7 @@ country_event = {
             tooltip = army_org_factor_tt
         }
         set_country_flag = {
-            flag = pau_demote_leader 
+            flag = pau_demote_leader
             days = 1
             value = 1
         }
@@ -1626,7 +1691,7 @@ country_event = {
         name = PAU.34.a
 
         add_stability = 0.05
-         PAU_baiye = {
+        PAU_baiye = {
             add_unit_leader_trait = PAU_baiye_chubby
         }
         custom_effect_tooltip = PAU_mainline_append_tt
@@ -2041,6 +2106,7 @@ country_event = {
                     ideology = syndicalism
                     traits = {
                         PAU_xiaoyao_leader_autonomy
+                        PAU_summer_festival_trait
                     }
                 }
                 promote_leader = yes
@@ -2085,6 +2151,7 @@ country_event = {
                     ideology = warm_syndicalism_group
                     traits = {
                         PAU_xiaoyao_leader_union
+                        PAU_summer_festival_trait
                     }
                 }
                 promote_leader = yes
@@ -2137,6 +2204,7 @@ country_event = {
                     ideology = leninism
                     traits = {
                         PAU_xiaoyao_leader_vanguard
+                        PAU_summer_festival_trait
                     }
                 }
                 promote_leader = yes
@@ -3285,9 +3353,6 @@ country_event = {
     picture = GFX_event_PAU_hy
     is_triggered_only = yes
     fire_only_once = yes
-    trigger = {
-        PAU = { has_country_flag = PAU_grail_expedition_joined }
-    }
     option = {
         name = PAU.55.a
         PAU_Nymph = {
@@ -3788,58 +3853,7 @@ country_event = {
     }
 }
 
-country_event = {
-    id = PAU.480
-    title = PAU.480.t
-    desc = PAU.480.d
-    major = no
-    picture = GFX_event_PAU_xy5
-    is_triggered_only = yes
-    fire_only_once = yes
-    option = {
-        name = PAU.480.a
-        ai_chance = { base = 100 }
-        add_political_power = -50
-        add_equipment_to_stockpile = { type = support_equipment amount = -300 }
-        add_dynamic_modifier = { modifier = PAU_goodwill_asia days = 360 }
-        capital_scope = {
-            add_extra_state_shared_building_slots = 2
-            add_building_construction = { type = arms_factory level = 1 instant_build = yes }
-            add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-        }
-    }
-    option = {
-        name = PAU.480.b
-        ai_chance = { base = 100 }
-        add_political_power = 75
-    }
-}
 
-country_event = {
-    id = PAU.490
-    title = PAU.490.t
-    desc = PAU.490.d
-    major = no
-    picture = GFX_event_PAU_xy5
-    is_triggered_only = yes
-    fire_only_once = yes
-    option = {
-        name = PAU.490.a
-        ai_chance = { base = 100 }
-        add_political_power = -50
-        add_dynamic_modifier = { modifier = PAU_pacific_detente days = 360 }
-        capital_scope = {
-            add_extra_state_shared_building_slots = 2
-            add_building_construction = { type = dockyard level = 2 instant_build = yes }
-        }
-        add_fuel = 5000
-    }
-    option = {
-        name = PAU.490.b
-        ai_chance = { base = 100 }
-        add_political_power = 75
-    }
-}
 
 
 country_event = {
@@ -3929,235 +3943,115 @@ country_event = {
 
     option = {
         name = PAU.610.a
-        ai_chance = {
-            base = 10
-            modifier = {
-                factor = 10
-                PAU = { check_variable = { PAU_sa_state_industry < 3 } }
-            }
-        }
-        if = {
-            limit = {
-                ROOT = {
-                    tag = PAU
-                }
-            }
-            FROM = {
-                set_country_flag = PAU610_a_flag3  #国务合作任务=工厂维修
-            }
-        }
-        else = {
-            FROM = {
-                country_event = { id = PAU.610 days = 1 }
-            }
-            set_country_flag = PAU610_a_flag  #国务合作任务=工厂维修
-        }
+        ai_chance = { base = 20 }
+        set_country_flag = PAU610_a_flag
         custom_effect_tooltip = PAU_south_america_unity_tt
-        add_to_variable = {
-            var = pau_unity_production_speed_industrial_complex_factor
-            value = 0.05
-            tooltip = production_speed_industrial_complex_factor_tt
-        }
-        add_to_variable = {
-            var = pau_unity_production_speed_arms_factory_factor
-            value = 0.05
-            tooltip = production_speed_arms_factory_factor_tt
-        }
         PAU = {
-            add_to_variable = { var = PAU_sa_state_industry value = 1 }  #国务委员会发展值：工业=对应领域任务累加
-            hidden_effect = {
-                PAU_refresh_state_council = yes
+            add_to_variable = {
+                var = pau_unity_production_speed_industrial_complex_factor
+                value = 0.05
+                tooltip = production_speed_industrial_complex_factor_tt
             }
+            add_to_variable = {
+                var = pau_unity_production_speed_arms_factory_factor
+                value = 0.05
+                tooltip = production_speed_arms_factory_factor_tt
+            }
+            hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
     option = {
         name = PAU.610.b
-        ai_chance = {
-            base = 10
-            modifier = {
-                factor = 10
-                PAU = { check_variable = { PAU_sa_state_infrastructure < 3 } }
-            }
-        }
-        if = {
-            limit = {
-                ROOT = {
-                    tag = PAU
-                }
-            }
-            FROM = {
-                set_country_flag = PAU610_b_flag3  #国务合作任务=交通建设
-            }
-        }
-        else = {
-            FROM = {
-                country_event = { id = PAU.610 days = 1 }
-            }
-            set_country_flag = PAU610_b_flag  #国务合作任务=交通建设
-        }
+        ai_chance = { base = 20 }
+        set_country_flag = PAU610_b_flag
         custom_effect_tooltip = PAU_south_america_unity_tt
-        add_to_variable = {
-            var = pau_unity_production_speed_infrastructure_factor
-            value = 0.05
-            tooltip = production_speed_infrastructure_factor_tt
-        }
-        add_to_variable = {
-            var = pau_unity_production_speed_rail_way_factor
-            value = 0.05
-            tooltip = production_speed_rail_way_factor_tt
-        }
-        add_to_variable = {
-            var = pau_unity_production_speed_supply_node_factor
-            value = 0.05
-            tooltip = production_speed_supply_node_factor_tt
-        }
-        add_to_variable = {
-            var = pau_unity_production_speed_naval_base_factor
-            value = 0.05
-            tooltip = production_speed_naval_base_factor_tt
-        }
         PAU = {
-            add_to_variable = { var = PAU_sa_state_infrastructure value = 1 }  #国务委员会发展值：基础设施=对应领域任务累加
-            hidden_effect = {
-                PAU_refresh_state_council = yes
+            add_to_variable = {
+                var = pau_unity_production_speed_infrastructure_factor
+                value = 0.05
+                tooltip = production_speed_infrastructure_factor_tt
             }
+            add_to_variable = {
+                var = pau_unity_production_speed_rail_way_factor
+                value = 0.05
+                tooltip = production_speed_rail_way_factor_tt
+            }
+            add_to_variable = {
+                var = pau_unity_production_speed_supply_node_factor
+                value = 0.05
+                tooltip = production_speed_supply_node_factor_tt
+            }
+            add_to_variable = {
+                var = pau_unity_production_speed_naval_base_factor
+                value = 0.05
+                tooltip = production_speed_naval_base_factor_tt
+            }
+            hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
     option = {
         name = PAU.610.c
-        ai_chance = {
-            base = 10
-            modifier = {
-                factor = 10
-                PAU = { check_variable = { PAU_sa_state_trade < 3 } }
-            }
-        }
-        if = {
-            limit = {
-                ROOT = {
-                    tag = PAU
-                }
-            }
-            FROM = {
-                set_country_flag = PAU610_c_flag3  #国务合作任务=成员国贸易
-            }
-        }
-        else = {
-            FROM = {
-                country_event = { id = PAU.610 days = 1 }
-            }
-            set_country_flag = PAU610_c_flag  #国务合作任务=成员国贸易
-        }
+        ai_chance = { base = 20 }
+        set_country_flag = PAU610_c_flag
         custom_effect_tooltip = PAU_south_america_unity_tt
-        add_to_variable = {
-            var = pau_unity_cic_construction_boost
-            value = 0.05
-            tooltip = cic_construction_boost_tt
-        }
-        add_to_variable = {
-            var = pau_unity_cic_construction_boost_factor
-            value = 0.05
-            tooltip = cic_construction_boost_factor_tt
-        }
         PAU = {
-            add_to_variable = { var = PAU_sa_state_trade value = 1 }  #国务委员会发展值：贸易=对应领域任务累加
-            hidden_effect = {
-                PAU_refresh_state_council = yes
+            add_to_variable = {
+                var = pau_unity_cic_construction_boost
+                value = 0.05
+                tooltip = cic_construction_boost_tt
             }
+            add_to_variable = {
+                var = pau_unity_cic_construction_boost_factor
+                value = 0.05
+                tooltip = cic_construction_boost_factor_tt
+            }
+            hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
     option = {
         name = PAU.610.e
-        ai_chance = {
-            base = 10
-            modifier = {
-                factor = 10
-                PAU = { check_variable = { PAU_sa_state_welfare < 3 } }
-            }
-        }
-        if = {
-            limit = {
-                ROOT = {
-                    tag = PAU
-                }
-            }
-            FROM = {
-                set_country_flag = PAU610_e_flag3  #国务合作任务=生活物资与医疗
-            }
-        }
-        else = {
-            FROM = {
-                country_event = { id = PAU.610 days = 1 }
-            }
-            set_country_flag = PAU610_e_flag  #国务合作任务=生活物资与医疗
-        }
+        ai_chance = { base = 20 }
+        set_country_flag = PAU610_e_flag
         custom_effect_tooltip = PAU_south_america_unity_tt
-        add_to_variable = {
-            var = pau_unity_experience_loss_factor
-            value = -0.05
-            tooltip = experience_loss_factor_tt
-        }
-        add_to_variable = {
-            var = pau_unity_casualty_trickleback
-            value = 0.05
-            tooltip = casualty_trickleback_tt
-        }
         PAU = {
-            add_to_variable = { var = PAU_sa_state_welfare value = 1 }  #国务委员会发展值：民生=对应领域任务累加
-            hidden_effect = {
-                PAU_refresh_state_council = yes
+            add_to_variable = {
+                var = pau_unity_experience_loss_factor
+                value = -0.05
+                tooltip = experience_loss_factor_tt
             }
+            add_to_variable = {
+                var = pau_unity_casualty_trickleback
+                value = 0.05
+                tooltip = casualty_trickleback_tt
+            }
+            hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
     option = {
         name = PAU.610.f
-        ai_chance = {
-            base = 10
-            modifier = {
-                factor = 10
-                PAU = { check_variable = { PAU_sa_state_mobilization < 3 } }
-            }
-        }
-        if = {
-            limit = {
-                ROOT = {
-                    tag = PAU
-                }
-            }
-            FROM = {
-                set_country_flag = PAU610_f_flag3  #国务合作任务=联合训练
-            }
-        }
-        else = {
-            FROM = {
-                country_event = { id = PAU.610 days = 1 }
-            }
-            set_country_flag = PAU610_f_flag  #国务合作任务=联合训练
-        }
+        ai_chance = { base = 20 }
+        set_country_flag = PAU610_f_flag
         custom_effect_tooltip = PAU_south_america_unity_tt
-        add_to_variable = {
-            var = pau_unity_training_time_factor
-            value = -0.05
-            tooltip = training_time_factor_tt
-        }
-        add_to_variable = {
-            var = pau_unity_weekly_manpower
-            value = 1000
-            tooltip = weekly_manpower_tt
-        }
         PAU = {
-            add_to_variable = { var = PAU_sa_state_mobilization value = 1 }  #国务委员会发展值：动员=对应领域任务累加
-            hidden_effect = {
-                PAU_refresh_state_council = yes
+            add_to_variable = {
+                var = pau_unity_training_time_factor
+                value = -0.05
+                tooltip = training_time_factor_tt
             }
+            add_to_variable = {
+                var = pau_unity_weekly_manpower
+                value = 1000
+                tooltip = weekly_manpower_tt
+            }
+            hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
 }
 
 country_event = {
-    id = PAU.611
-    title = PAU.611.t
-    desc = PAU.611.desc
+    id = PAU.612
+    title = PAU.612.t
+    desc = PAU.612.desc
     major = no
     picture = GFX_event_PAU_xy6
     is_triggered_only = yes
@@ -4165,199 +4059,43 @@ country_event = {
     hidden = yes
 
     option = {
-        name = PAU.611.a
-        ai_chance = {
-            base = 100
-        }
+        name = PAU.612.a
+        ai_chance = { base = 100 }
         if = {
-            limit = {
-                has_country_flag = PAU610_a_flag
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
-            add_to_variable = {
-                var = pau_unity_production_speed_industrial_complex_factor
-                value = -0.05
-                tooltip = production_speed_industrial_complex_factor_tt
-            }
-            add_to_variable = {
-                var = pau_unity_production_speed_arms_factory_factor
-                value = -0.05
-                tooltip = production_speed_arms_factory_factor_tt
-            }
-        }
-        if = {
-            limit = {
-                has_country_flag = PAU610_b_flag
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
-            add_to_variable = {
-                var = pau_unity_production_speed_infrastructure_factor
-                value = -0.05
-                tooltip = production_speed_infrastructure_factor_tt
-            }
-            add_to_variable = {
-                var = pau_unity_production_speed_rail_way_factor
-                value = -0.05
-                tooltip = production_speed_rail_way_factor_tt
-            }
-            add_to_variable = {
-                var = pau_unity_production_speed_supply_node_factor
-                value = -0.05
-                tooltip = production_speed_supply_node_factor_tt
-            }
-            add_to_variable = {
-                var = pau_unity_production_speed_naval_base_factor
-                value = -0.05
-                tooltip = production_speed_naval_base_factor_tt
-            }
-        }
-        if = {
-            limit = {
-                has_country_flag = PAU610_c_flag
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
-            add_to_variable = {
-                var = pau_unity_cic_construction_boost
-                value = -0.05
-                tooltip = cic_construction_boost_tt
-            }
-            add_to_variable = {
-                var = pau_unity_cic_construction_boost_factor
-                value = -0.05
-                tooltip = cic_construction_boost_factor_tt
-            }
-        }
-        if = {
-            limit = {
-                has_country_flag = PAU610_e_flag
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
-            add_to_variable = {
-                var = pau_unity_experience_loss_factor
-                value = 0.05
-                tooltip = experience_loss_factor_tt
-            }
-            add_to_variable = {
-                var = pau_unity_casualty_trickleback
-                value = -0.05
-                tooltip = casualty_trickleback_tt
-            }
-        }
-        if = {
-            limit = {
-                has_country_flag = PAU610_f_flag
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
-            add_to_variable = {
-                var = pau_unity_training_time_factor
-                value = 0.05
-                tooltip = training_time_factor_tt
-            }
-            add_to_variable = {
-                var = pau_unity_weekly_manpower
-                value = -1000
-                tooltip = weekly_manpower_tt
-            }
-        }
-
-        if = {
-            limit = {
-                has_country_flag = PAU610_a_flag3
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
+            limit = { has_country_flag = PAU610_a_flag }
             PAU = {
-                add_to_variable = {
-                    var = pau_unity_production_speed_industrial_complex_factor
-                    value = -0.05
-                    tooltip = production_speed_industrial_complex_factor_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_production_speed_arms_factory_factor
-                    value = -0.05
-                    tooltip = production_speed_arms_factory_factor_tt
-                }
+                add_to_variable = { var = pau_unity_production_speed_industrial_complex_factor value = -0.04 }
+                add_to_variable = { var = pau_unity_production_speed_arms_factory_factor value = -0.04 }
             }
         }
         if = {
-            limit = {
-                has_country_flag = PAU610_b_flag3
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
+            limit = { has_country_flag = PAU610_b_flag }
             PAU = {
-                add_to_variable = {
-                    var = pau_unity_production_speed_infrastructure_factor
-                    value = -0.05
-                    tooltip = production_speed_infrastructure_factor_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_production_speed_rail_way_factor
-                    value = -0.05
-                    tooltip = production_speed_rail_way_factor_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_production_speed_supply_node_factor
-                    value = -0.05
-                    tooltip = production_speed_supply_node_factor_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_production_speed_naval_base_factor
-                    value = -0.05
-                    tooltip = production_speed_naval_base_factor_tt
-                }
+                add_to_variable = { var = pau_unity_production_speed_infrastructure_factor value = -0.04 }
+                add_to_variable = { var = pau_unity_production_speed_rail_way_factor value = -0.04 }
+                add_to_variable = { var = pau_unity_production_speed_supply_node_factor value = -0.04 }
+                add_to_variable = { var = pau_unity_production_speed_naval_base_factor value = -0.04 }
             }
         }
         if = {
-            limit = {
-                has_country_flag = PAU610_c_flag3
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
+            limit = { has_country_flag = PAU610_c_flag }
             PAU = {
-                add_to_variable = {
-                    var = pau_unity_cic_construction_boost
-                    value = -0.05
-                    tooltip = cic_construction_boost_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_cic_construction_boost_factor
-                    value = -0.05
-                    tooltip = cic_construction_boost_factor_tt
-                }
+                add_to_variable = { var = pau_unity_cic_construction_boost value = -0.04 }
+                add_to_variable = { var = pau_unity_cic_construction_boost_factor value = -0.04 }
             }
         }
         if = {
-            limit = {
-                has_country_flag = PAU610_e_flag3
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
+            limit = { has_country_flag = PAU610_e_flag }
             PAU = {
-                add_to_variable = {
-                    var = pau_unity_experience_loss_factor
-                    value = 0.05
-                    tooltip = experience_loss_factor_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_casualty_trickleback
-                    value = -0.05
-                    tooltip = casualty_trickleback_tt
-                }
+                add_to_variable = { var = pau_unity_experience_loss_factor value = 0.05 }
+                add_to_variable = { var = pau_unity_casualty_trickleback value = -0.04 }
             }
         }
         if = {
-            limit = {
-                has_country_flag = PAU610_f_flag3
-            }
-            custom_effect_tooltip = PAU_south_america_unity_tt
+            limit = { has_country_flag = PAU610_f_flag }
             PAU = {
-                add_to_variable = {
-                    var = pau_unity_training_time_factor
-                    value = 0.05
-                    tooltip = training_time_factor_tt
-                }
-                add_to_variable = {
-                    var = pau_unity_weekly_manpower
-                    value = -1000
-                    tooltip = weekly_manpower_tt
-                }
+                add_to_variable = { var = pau_unity_training_time_factor value = 0.05 }
+                add_to_variable = { var = pau_unity_weekly_manpower value = -800 }
             }
         }
         clr_country_flag = PAU610_a_flag
@@ -4365,15 +4103,11 @@ country_event = {
         clr_country_flag = PAU610_c_flag
         clr_country_flag = PAU610_e_flag
         clr_country_flag = PAU610_f_flag
-
-        clr_country_flag = PAU610_a_flag3
-        clr_country_flag = PAU610_b_flag3
-        clr_country_flag = PAU610_c_flag3
-        clr_country_flag = PAU610_e_flag3
-        clr_country_flag = PAU610_f_flag3
+        PAU = {
+            PAU_refresh_south_america_development = yes
+        }
     }
 }
-
 country_event = {
     id = PAU.54
     title = PAU.54.t

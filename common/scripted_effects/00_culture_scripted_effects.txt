@@ -24,6 +24,375 @@ check_repetitive_compatible_culture = {
 	clear_array = compatible_culture_array_temp
 }
 
+
+## 计算 ROOT 控制州中出现过的文化和所有相容文化
+## 输出三个同索引数组：culture / population_k / provinces
+## 不依赖全文化主数组，新文化只要写进 state_culture 就会自动进数组
+calculate_controlled_culture_arrays = {
+	clear_array = controlled_culture_array
+	clear_array = controlled_culture_population_k_array
+	clear_array = controlled_culture_provinces_array
+	clear_array = controlled_culture_compatible_flag_array
+	clear_array = controlled_culture_exclusion_flag_array
+	clear_array = temp_excluded_culture_array
+	add_to_array = { temp_excluded_culture_array = token:culture_Wasteland_Wilderness }
+	set_variable = { controlled_culture_count = 0 }
+	set_variable = { controlled_culture_compatible_count = 0 }
+	set_variable = { controlled_culture_incompatible_count = 0 }
+
+	## 先放入全部相容文化，初始人口和省份数为 0
+	for_each_loop = {
+		array = compatible_culture_array
+		value = current_culture
+		index = current_culture_i
+		if = {
+			limit = {
+				NOT = { is_in_array = { array = controlled_culture_array value = current_culture } }
+			}
+			add_to_array = { controlled_culture_array = current_culture }
+			add_to_array = { controlled_culture_population_k_array = 0 }
+			add_to_array = { controlled_culture_provinces_array = 0 }
+			add_to_array = { controlled_culture_compatible_flag_array = 1 }
+			if = {
+				limit = { is_in_array = { array = temp_excluded_culture_array value = current_culture } }
+				add_to_array = { controlled_culture_exclusion_flag_array = 1 }
+			}
+			else = {
+				add_to_array = { controlled_culture_exclusion_flag_array = 0 }
+			}
+			add_to_variable = { controlled_culture_count = 1 }
+			add_to_variable = { controlled_culture_compatible_count = 1 }
+		}
+	}
+
+	## 再遍历控制州，把出现过的文化补进数组并累加人口/省份数
+	every_controlled_state = {
+		if = {
+			limit = { has_variable = state_culture }
+			clear_array = ROOT.temp_state_culture_array
+			add_to_array = { ROOT.temp_state_culture_array = state_culture }
+
+			for_each_loop = {
+				array = ROOT.controlled_culture_array
+				value = current_culture
+				index = current_culture_i
+				if = {
+					limit = {
+						is_in_array = { array = ROOT.temp_state_culture_array value = current_culture }
+					}
+					add_to_variable = { ROOT.controlled_culture_population_k_array^current_culture_i = state_population_k }
+					add_to_variable = { ROOT.controlled_culture_provinces_array^current_culture_i = 1 }
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = { is_in_array = { array = ROOT.controlled_culture_array value = state_culture } }
+				}
+				add_to_array = { ROOT.controlled_culture_array = state_culture }
+				add_to_array = { ROOT.controlled_culture_population_k_array = state_population_k }
+				add_to_array = { ROOT.controlled_culture_provinces_array = 1 }
+				add_to_variable = { ROOT.controlled_culture_count = 1 }
+				if = {
+					limit = {
+						is_in_array = { array = ROOT.compatible_culture_array value = state_culture }
+					}
+					add_to_array = { ROOT.controlled_culture_compatible_flag_array = 1 }
+					add_to_variable = { ROOT.controlled_culture_compatible_count = 1 }
+				}
+				else = {
+					add_to_array = { ROOT.controlled_culture_compatible_flag_array = 0 }
+					add_to_variable = { ROOT.controlled_culture_incompatible_count = 1 }
+				}
+				if = {
+					limit = { is_in_array = { array = ROOT.temp_excluded_culture_array value = state_culture } }
+					add_to_array = { ROOT.controlled_culture_exclusion_flag_array = 1 }
+				}
+				else = {
+					add_to_array = { ROOT.controlled_culture_exclusion_flag_array = 0 }
+				}
+			}
+		}
+	}
+	clear_array = ROOT.temp_state_culture_array
+}
+
+## 按控制省份数量降序排序，排除无人区
+## 相容/不相容各用一套固定数组；省份和人口排序都重写这同一套数组
+sort_controlled_cultures_by_provinces = {
+	calculate_controlled_culture_arrays = yes
+
+	clear_array = controlled_culture_compatible_array
+	clear_array = controlled_culture_compatible_provinces_array
+	clear_array = controlled_culture_compatible_population_k_array
+	clear_array = controlled_culture_incompatible_array
+	clear_array = controlled_culture_incompatible_provinces_array
+	clear_array = controlled_culture_incompatible_population_k_array
+
+	clear_array = temp_sort_culture_array
+	clear_array = temp_sort_primary_value_array
+	clear_array = temp_sort_secondary_value_array
+	clear_array = temp_sort_flag_array
+	clear_array = temp_sort_exclude_flag_array
+
+	for_each_loop = {
+		array = controlled_culture_array
+		value = current_culture
+		index = current_i
+		add_to_array = { temp_sort_culture_array = current_culture }
+	}
+	for_each_loop = {
+		array = controlled_culture_provinces_array
+		value = current_value
+		index = current_i
+		add_to_array = { temp_sort_primary_value_array = current_value }
+	}
+	for_each_loop = {
+		array = controlled_culture_population_k_array
+		value = current_value
+		index = current_i
+		add_to_array = { temp_sort_secondary_value_array = current_value }
+	}
+	for_each_loop = {
+		array = controlled_culture_compatible_flag_array
+		value = current_flag
+		index = current_i
+		add_to_array = { temp_sort_flag_array = current_flag }
+	}
+	for_each_loop = {
+		array = controlled_culture_exclusion_flag_array
+		value = current_exclude
+		index = current_i
+		add_to_array = { temp_sort_exclude_flag_array = current_exclude }
+	}
+
+	for_each_loop = {
+		array = controlled_culture_array
+		value = current_loop
+		index = current_loop_i
+
+		find_highest_in_array = {
+			array = temp_sort_primary_value_array
+			value = temp_sort_max_value
+			index = temp_sort_max_index
+		}
+
+		set_temp_variable = { temp_sort_secondary_value = 0 }
+		for_each_loop = {
+			array = temp_sort_secondary_value_array
+			value = current_secondary
+			index = current_secondary_i
+			if = {
+				limit = { check_variable = { current_secondary_i = temp_sort_max_index } }
+				set_temp_variable = { temp_sort_secondary_value = current_secondary }
+			}
+		}
+
+		set_temp_variable = { temp_sort_current_flag = 0 }
+		for_each_loop = {
+			array = temp_sort_flag_array
+			value = current_flag
+			index = current_flag_i
+			if = {
+				limit = { check_variable = { current_flag_i = temp_sort_max_index } }
+				set_temp_variable = { temp_sort_current_flag = current_flag }
+			}
+		}
+
+		set_temp_variable = { temp_sort_current_exclude = 0 }
+		for_each_loop = {
+			array = temp_sort_exclude_flag_array
+			value = current_exclude
+			index = current_exclude_i
+			if = {
+				limit = { check_variable = { current_exclude_i = temp_sort_max_index } }
+				set_temp_variable = { temp_sort_current_exclude = current_exclude }
+			}
+		}
+
+		if = {
+			limit = { check_variable = { temp_sort_current_exclude = 0 } }
+			if = {
+				limit = { check_variable = { temp_sort_current_flag = 1 } }
+				add_to_array = { controlled_culture_compatible_provinces_array = temp_sort_max_value }
+				add_to_array = { controlled_culture_compatible_population_k_array = temp_sort_secondary_value }
+				for_each_loop = {
+					array = temp_sort_culture_array
+					value = current_culture
+					index = current_culture_i
+					if = {
+						limit = { check_variable = { current_culture_i = temp_sort_max_index } }
+						add_to_array = { controlled_culture_compatible_array = current_culture }
+					}
+				}
+			}
+			else = {
+				add_to_array = { controlled_culture_incompatible_provinces_array = temp_sort_max_value }
+				add_to_array = { controlled_culture_incompatible_population_k_array = temp_sort_secondary_value }
+				for_each_loop = {
+					array = temp_sort_culture_array
+					value = current_culture
+					index = current_culture_i
+					if = {
+						limit = { check_variable = { current_culture_i = temp_sort_max_index } }
+						add_to_array = { controlled_culture_incompatible_array = current_culture }
+					}
+				}
+			}
+		}
+
+		remove_from_array = { array = temp_sort_culture_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_primary_value_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_secondary_value_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_flag_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_exclude_flag_array index = temp_sort_max_index }
+	}
+
+	clear_array = temp_sort_culture_array
+	clear_array = temp_sort_primary_value_array
+	clear_array = temp_sort_secondary_value_array
+	clear_array = temp_sort_flag_array
+	clear_array = temp_sort_exclude_flag_array
+}
+
+## 按控制人口（k）降序排序，排除无人区
+## 相容/不相容各用一套固定数组；省份和人口排序都重写这同一套数组
+sort_controlled_cultures_by_population = {
+	calculate_controlled_culture_arrays = yes
+
+	clear_array = controlled_culture_compatible_array
+	clear_array = controlled_culture_compatible_provinces_array
+	clear_array = controlled_culture_compatible_population_k_array
+	clear_array = controlled_culture_incompatible_array
+	clear_array = controlled_culture_incompatible_provinces_array
+	clear_array = controlled_culture_incompatible_population_k_array
+
+	clear_array = temp_sort_culture_array
+	clear_array = temp_sort_primary_value_array
+	clear_array = temp_sort_secondary_value_array
+	clear_array = temp_sort_flag_array
+	clear_array = temp_sort_exclude_flag_array
+
+	for_each_loop = {
+		array = controlled_culture_array
+		value = current_culture
+		index = current_i
+		add_to_array = { temp_sort_culture_array = current_culture }
+	}
+	for_each_loop = {
+		array = controlled_culture_population_k_array
+		value = current_value
+		index = current_i
+		add_to_array = { temp_sort_primary_value_array = current_value }
+	}
+	for_each_loop = {
+		array = controlled_culture_provinces_array
+		value = current_value
+		index = current_i
+		add_to_array = { temp_sort_secondary_value_array = current_value }
+	}
+	for_each_loop = {
+		array = controlled_culture_compatible_flag_array
+		value = current_flag
+		index = current_i
+		add_to_array = { temp_sort_flag_array = current_flag }
+	}
+	for_each_loop = {
+		array = controlled_culture_exclusion_flag_array
+		value = current_exclude
+		index = current_i
+		add_to_array = { temp_sort_exclude_flag_array = current_exclude }
+	}
+
+	for_each_loop = {
+		array = controlled_culture_array
+		value = current_loop
+		index = current_loop_i
+
+		find_highest_in_array = {
+			array = temp_sort_primary_value_array
+			value = temp_sort_max_value
+			index = temp_sort_max_index
+		}
+
+		set_temp_variable = { temp_sort_secondary_value = 0 }
+		for_each_loop = {
+			array = temp_sort_secondary_value_array
+			value = current_secondary
+			index = current_secondary_i
+			if = {
+				limit = { check_variable = { current_secondary_i = temp_sort_max_index } }
+				set_temp_variable = { temp_sort_secondary_value = current_secondary }
+			}
+		}
+
+		set_temp_variable = { temp_sort_current_flag = 0 }
+		for_each_loop = {
+			array = temp_sort_flag_array
+			value = current_flag
+			index = current_flag_i
+			if = {
+				limit = { check_variable = { current_flag_i = temp_sort_max_index } }
+				set_temp_variable = { temp_sort_current_flag = current_flag }
+			}
+		}
+
+		set_temp_variable = { temp_sort_current_exclude = 0 }
+		for_each_loop = {
+			array = temp_sort_exclude_flag_array
+			value = current_exclude
+			index = current_exclude_i
+			if = {
+				limit = { check_variable = { current_exclude_i = temp_sort_max_index } }
+				set_temp_variable = { temp_sort_current_exclude = current_exclude }
+			}
+		}
+
+		if = {
+			limit = { check_variable = { temp_sort_current_exclude = 0 } }
+			if = {
+				limit = { check_variable = { temp_sort_current_flag = 1 } }
+				add_to_array = { controlled_culture_compatible_population_k_array = temp_sort_max_value }
+				add_to_array = { controlled_culture_compatible_provinces_array = temp_sort_secondary_value }
+				for_each_loop = {
+					array = temp_sort_culture_array
+					value = current_culture
+					index = current_culture_i
+					if = {
+						limit = { check_variable = { current_culture_i = temp_sort_max_index } }
+						add_to_array = { controlled_culture_compatible_array = current_culture }
+					}
+				}
+			}
+			else = {
+				add_to_array = { controlled_culture_incompatible_population_k_array = temp_sort_max_value }
+				add_to_array = { controlled_culture_incompatible_provinces_array = temp_sort_secondary_value }
+				for_each_loop = {
+					array = temp_sort_culture_array
+					value = current_culture
+					index = current_culture_i
+					if = {
+						limit = { check_variable = { current_culture_i = temp_sort_max_index } }
+						add_to_array = { controlled_culture_incompatible_array = current_culture }
+					}
+				}
+			}
+		}
+
+		remove_from_array = { array = temp_sort_culture_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_primary_value_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_secondary_value_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_flag_array index = temp_sort_max_index }
+		remove_from_array = { array = temp_sort_exclude_flag_array index = temp_sort_max_index }
+	}
+
+	clear_array = temp_sort_culture_array
+	clear_array = temp_sort_primary_value_array
+	clear_array = temp_sort_secondary_value_array
+	clear_array = temp_sort_flag_array
+	clear_array = temp_sort_exclude_flag_array
+}
+
 ##相容幻想乡文化组
 get_Gensokyo_culture = {
 	add_to_array = { compatible_culture_array = token:culture_Gensokyo_Human }
@@ -38,5 +407,11 @@ get_Gensokyo_culture = {
 	add_to_array = { compatible_culture_array = token:culture_Magical_Creature }
 	add_to_array = { compatible_culture_array = token:culture_Phantoms }
 	add_to_array = { compatible_culture_array = token:culture_Immortals }
+	add_to_array = { compatible_culture_array = token:culture_Gensokyo_Vampires }
+	add_to_array = { compatible_culture_array = token:culture_Kobito }
+	add_to_array = { compatible_culture_array = token:culture_Underground_Youkai }
+	add_to_array = { compatible_culture_array = token:culture_Celestials }
+	add_to_array = { compatible_culture_array = token:culture_Secret_Gods }
+	add_to_array = { compatible_culture_array = token:culture_Dream_Dwellers }
 	check_repetitive_compatible_culture = yes
 }
