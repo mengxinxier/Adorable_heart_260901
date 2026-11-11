@@ -304,9 +304,10 @@ PAU_pull_into_white_night_faction = {
 }
 
 
-#将发展度与【南美大陆的共识】实时同步给所有南美阵营成员
+#将发展度（0~100封顶）与【南美大陆的共识】实时同步给所有南美阵营成员
 PAU_sync_south_america_all = {
     PAU = {
+        clamp_variable = { var = PAU_south_america_development min = 0 max = 100 }
         if = {
             limit = { NOT = { has_dynamic_modifier = { modifier = PAU_south_america_unity } } }
             add_dynamic_modifier = { modifier = PAU_south_america_unity }
@@ -327,10 +328,8 @@ PAU_sync_south_america_all = {
                 }
                 add_dynamic_modifier = { modifier = PAU_state_council_tier }
             }
-            #同步面板显示变量
             set_variable = { PAU_south_america_development = PAU.PAU_south_america_development }
 
-            #同步委员会结算值
             set_variable = { PAU_sc_political = PAU.PAU_sc_political }
             set_variable = { PAU_sc_improve_relations = PAU.PAU_sc_improve_relations }
             set_variable = { PAU_sc_industry = PAU.PAU_sc_industry }
@@ -339,7 +338,6 @@ PAU_sync_south_america_all = {
             set_variable = { PAU_sc_consumer = PAU.PAU_sc_consumer }
             set_variable = { PAU_sc_trade = PAU.PAU_sc_trade }
 
-            #同步【南美大陆的共识】动态修正变量
             set_variable = { pau_unity_production_speed_industrial_complex_factor = PAU.pau_unity_production_speed_industrial_complex_factor }
             set_variable = { pau_unity_production_speed_arms_factory_factor = PAU.pau_unity_production_speed_arms_factory_factor }
             set_variable = { pau_unity_production_speed_infrastructure_factor = PAU.pau_unity_production_speed_infrastructure_factor }
@@ -362,44 +360,46 @@ PAU_sync_south_america_all = {
 
 PAU_refresh_south_america_development = {
     PAU = {
+        clamp_variable = { var = PAU_south_america_development min = 0 max = 100 }
         if = {
             limit = { has_country_flag = PAU_south_america_super_fired }
+            #按发展度 25 / 50 / 100 解锁一、二、三级委员会修正
             if = {
                 limit = {
-                    check_variable = { PAU_south_america_development > 2 }
+                    check_variable = { PAU_south_america_development > 24 }
                     NOT = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
                 }
                 add_dynamic_modifier = { modifier = PAU_state_council_tier }
             }
             if = {
-                limit = { check_variable = { PAU_south_america_development > 9 } }
+                limit = { check_variable = { PAU_south_america_development > 99 } }
                 set_variable = { PAU_sc_political = 0.10 }
                 set_variable = { PAU_sc_improve_relations = -0.05 }
                 set_variable = { PAU_sc_industry = 0.10 }
-                set_variable = { PAU_sc_research = 0.08 }
-                set_variable = { PAU_sc_buildings = 0.08 }
-                set_variable = { PAU_sc_consumer = -0.15 }
-                set_variable = { PAU_sc_trade = 0.20 }
+                set_variable = { PAU_sc_research = 0.10 }
+                set_variable = { PAU_sc_buildings = 0.10 }
+                set_variable = { PAU_sc_consumer = -0.20 }
+                set_variable = { PAU_sc_trade = 0.25 }
             }
             else_if = {
-                limit = { check_variable = { PAU_south_america_development > 5 } }
+                limit = { check_variable = { PAU_south_america_development > 49 } }
                 set_variable = { PAU_sc_political = 0.10 }
                 set_variable = { PAU_sc_improve_relations = -0.05 }
-                set_variable = { PAU_sc_industry = 0.05 }
-                set_variable = { PAU_sc_research = 0.05 }
+                set_variable = { PAU_sc_industry = 0.10 }
+                set_variable = { PAU_sc_research = 0.10 }
                 set_variable = { PAU_sc_buildings = 0 }
                 set_variable = { PAU_sc_consumer = -0.10 }
                 set_variable = { PAU_sc_trade = 0.15 }
             }
             else_if = {
-                limit = { check_variable = { PAU_south_america_development > 2 } }
+                limit = { check_variable = { PAU_south_america_development > 24 } }
                 set_variable = { PAU_sc_political = 0.10 }
                 set_variable = { PAU_sc_improve_relations = -0.05 }
                 set_variable = { PAU_sc_industry = 0 }
                 set_variable = { PAU_sc_research = 0 }
                 set_variable = { PAU_sc_buildings = 0 }
                 set_variable = { PAU_sc_consumer = 0 }
-                set_variable = { PAU_sc_trade = 0.10 }
+                set_variable = { PAU_sc_trade = 0.15 }
             }
         }
     }
