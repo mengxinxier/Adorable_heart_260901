@@ -115,6 +115,40 @@ calculate_controlled_culture_arrays = {
 		}
 	}
 	clear_array = ROOT.temp_state_culture_array
+
+	## 统计相容民族/文化占全国控制人口比例（排除无人区，按 10k 单位累加防定点数溢出）
+	set_temp_variable = { temp_total_pop_10k = 0 }
+	set_temp_variable = { temp_compatible_pop_10k = 0 }
+	for_each_loop = {
+		array = controlled_culture_array
+		value = current_culture
+		index = current_i
+		if = {
+			limit = { check_variable = { controlled_culture_exclusion_flag_array^current_i = 0 } }
+			set_temp_variable = { temp_culture_pop_10k = controlled_culture_population_k_array^current_i }
+			divide_temp_variable = { temp_culture_pop_10k = 10 }
+			add_to_temp_variable = { temp_total_pop_10k = temp_culture_pop_10k }
+			if = {
+				limit = { check_variable = { controlled_culture_compatible_flag_array^current_i = 1 } }
+				add_to_temp_variable = { temp_compatible_pop_10k = temp_culture_pop_10k }
+			}
+		}
+	}
+	if = {
+		limit = { check_variable = { temp_total_pop_10k > 0 } }
+		set_variable = { compatible_culture_population_ratio = temp_compatible_pop_10k }
+		divide_variable = { compatible_culture_population_ratio = temp_total_pop_10k }
+		clamp_variable = { var = compatible_culture_population_ratio min = 0 max = 1 }
+		set_variable = { compatible_culture_population_percent = compatible_culture_population_ratio }
+		multiply_variable = { compatible_culture_population_percent = 100 }
+		round_variable = compatible_culture_population_percent
+		clamp_variable = { var = compatible_culture_population_percent min = 0 max = 100 }
+	}
+	else = {
+		set_variable = { compatible_culture_population_ratio = 0 }
+		set_variable = { compatible_culture_population_percent = 0 }
+	}
+	update_country_culture_group_modifier = yes
 }
 
 ## 按控制省份数量降序排序，排除无人区
@@ -414,4 +448,47 @@ get_Gensokyo_culture = {
 	add_to_array = { compatible_culture_array = token:culture_Secret_Gods }
 	add_to_array = { compatible_culture_array = token:culture_Dream_Dwellers }
 	check_repetitive_compatible_culture = yes
+}
+
+## 清除州上旧的地区文化修正（供后续扩展多文化切换时防残留）
+clear_state_culture_modifiers = {
+	if = {
+		limit = {
+			has_dynamic_modifier = { modifier = culture_Russian_state_modifier }
+			NOT = { check_variable = { state_culture = token:culture_Russian } }
+		}
+		remove_dynamic_modifier = { modifier = culture_Russian_state_modifier }
+	}
+}
+
+## 按 state_culture 为控制州挂载对应地区文化修正
+apply_state_culture_modifier = {
+	clear_state_culture_modifiers = yes
+	if = {
+		limit = { check_variable = { state_culture = token:culture_Russian } }
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = culture_Russian_state_modifier } } }
+			add_dynamic_modifier = { modifier = culture_Russian_state_modifier }
+		}
+	}
+}
+
+## 刷新国家文化组增益（相容文化人口占比 > 50% 时触发对应文化组 buff）
+update_country_culture_group_modifier = {
+	if = {
+		limit = {
+			check_variable = { country_culture_group = token:culture_group_Russian_SOV }
+			check_variable = { compatible_culture_population_ratio > 0.5 }
+		}
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = culture_group_Russian_SOV_buff } } }
+			add_dynamic_modifier = { modifier = culture_group_Russian_SOV_buff }
+		}
+	}
+	else = {
+		if = {
+			limit = { has_dynamic_modifier = { modifier = culture_group_Russian_SOV_buff } }
+			remove_dynamic_modifier = { modifier = culture_group_Russian_SOV_buff }
+		}
+	}
 }
