@@ -22,7 +22,21 @@ PAU_end_settlement = {
 }
 
 PAU_refresh_mil_reform_tiers = {
+    if = {
+        limit = { NOT = { has_country_flag = PAU_reform_reset_initialized } }
+        set_country_flag = PAU_reform_reset_initialized
+        set_variable = { PAU_reform_reset_count = 1 }
+    }
     clamp_variable = { var = PAU_mil_reform_progress min = 0 max = 36 }
+    if = {
+        limit = {
+            check_variable = { PAU_mil_reform_progress > 35 }
+            NOT = { has_country_flag = PAU_mil_reform_cap_reward_claimed }
+        }
+        set_country_flag = PAU_mil_reform_cap_reward_claimed
+        add_to_variable = { PAU_reform_reset_count = 1 }
+        country_event = { id = PAU.701 hours = 1 }
+    }
     set_variable = { PAU_mil_reform_progress_frame = 0 }
     if = {
         limit = { check_variable = { PAU_mil_reform_progress > 0 } }
@@ -130,7 +144,21 @@ PAU_refresh_mil_reform_tiers = {
 }
 
 PAU_refresh_eco_reform_tiers = {
+    if = {
+        limit = { NOT = { has_country_flag = PAU_reform_reset_initialized } }
+        set_country_flag = PAU_reform_reset_initialized
+        set_variable = { PAU_reform_reset_count = 1 }
+    }
     clamp_variable = { var = PAU_eco_reform_progress min = 0 max = 36 }
+    if = {
+        limit = {
+            check_variable = { PAU_eco_reform_progress > 35 }
+            NOT = { has_country_flag = PAU_eco_reform_cap_reward_claimed }
+        }
+        set_country_flag = PAU_eco_reform_cap_reward_claimed
+        add_to_variable = { PAU_reform_reset_count = 1 }
+        country_event = { id = PAU.702 hours = 1 }
+    }
     set_variable = { PAU_eco_reform_progress_frame = 0 }
     if = {
         limit = { check_variable = { PAU_eco_reform_progress > 0 } }
@@ -466,6 +494,147 @@ PAU_advance_baiye_story = {
         }
         set_variable = { PAU_baiye_story_stage = 4 }
         country_event = { id = PAU.7004 hours = 6 }
+    }
+}
+
+#消耗重置次数重置当前所选改革分支
+PAU_reset_current_reform_branch = {
+    add_to_variable = { var = PAU_reform_reset_count value = -1 tooltip = PAU_reform_reset_count_tt }
+    if = {
+        limit = { check_variable = { PAU_gui_mode = 1 } }
+        custom_effect_tooltip = PAU_reset_eco_reform_effect_tt
+        hidden_effect = {
+            set_temp_variable = { PAU_refund_axia_eco = PAU_cnt_axia_granary }
+            add_to_temp_variable = { PAU_refund_axia_eco = PAU_cnt_axia_workshop }
+            add_to_temp_variable = { PAU_refund_axia_eco = PAU_cnt_axia_trade }
+            multiply_temp_variable = { PAU_refund_axia_eco = 20 }
+            add_to_variable = { PAU_axia_eco = PAU_refund_axia_eco }
+
+            set_temp_variable = { PAU_refund_xfxy_eco = PAU_cnt_xfxy_audit }
+            add_to_temp_variable = { PAU_refund_xfxy_eco = PAU_cnt_xfxy_wages }
+            add_to_temp_variable = { PAU_refund_xfxy_eco = PAU_cnt_xfxy_currency }
+            add_to_temp_variable = { PAU_refund_xfxy_eco = PAU_cnt_xfxy_procurement }
+            multiply_temp_variable = { PAU_refund_xfxy_eco = 20 }
+            add_to_variable = { PAU_xfxy_eco = PAU_refund_xfxy_eco }
+
+            set_temp_variable = { PAU_refund_xy_eco = PAU_cnt_xy_market }
+            add_to_temp_variable = { PAU_refund_xy_eco = PAU_cnt_xy_land }
+            add_to_temp_variable = { PAU_refund_xy_eco = PAU_cnt_xy_food }
+            multiply_temp_variable = { PAU_refund_xy_eco = 20 }
+            add_to_variable = { PAU_xiaoyao_eco = PAU_refund_xy_eco }
+
+            set_variable = { PAU_cnt_axia_granary = 0 }
+            set_variable = { PAU_cnt_axia_workshop = 0 }
+            set_variable = { PAU_cnt_axia_trade = 0 }
+            set_variable = { PAU_cnt_xfxy_audit = 0 }
+            set_variable = { PAU_cnt_xfxy_wages = 0 }
+            set_variable = { PAU_cnt_xfxy_currency = 0 }
+            set_variable = { PAU_cnt_xfxy_procurement = 0 }
+            set_variable = { PAU_cnt_xy_market = 0 }
+            set_variable = { PAU_cnt_xy_land = 0 }
+            set_variable = { PAU_cnt_xy_food = 0 }
+
+            set_variable = { PAU_eco_reform_bonus_industry = 0 }
+            set_variable = { PAU_eco_reform_bonus_construction = 0 }
+            set_variable = { PAU_eco_reform_bonus_arms = 0 }
+            set_variable = { PAU_eco_reform_bonus_buildings = 0 }
+            set_variable = { PAU_eco_reform_bonus_dockyard = 0 }
+            set_variable = { PAU_eco_reform_bonus_shipyard = 0 }
+            set_variable = { PAU_eco_reform_bonus_political = 0 }
+            set_variable = { PAU_eco_reform_bonus_research = 0 }
+            set_variable = { PAU_eco_reform_bonus_fuel = 0 }
+            set_variable = { PAU_eco_reform_bonus_efficiency = 0 }
+            set_variable = { PAU_eco_reform_bonus_trade = 0 }
+            set_variable = { PAU_eco_reform_bonus_morale = 0 }
+            set_variable = { PAU_eco_reform_bonus_consumer = 0 }
+            set_variable = { PAU_eco_reform_bonus_supply = 0 }
+
+            set_variable = { PAU_eco_reform_stability = 0 }
+            set_variable = { PAU_eco_reform_line_change = 0 }
+            set_variable = { PAU_eco_reform_conversion_speed = 0 }
+            set_variable = { PAU_eco_reform_repair = 0 }
+            set_variable = { PAU_eco_reform_resources = 0 }
+            set_variable = { PAU_eco_reform_efficiency_gain = 0 }
+            set_variable = { PAU_eco_reform_hcp_income = 0 }
+            set_variable = { PAU_eco_reform_conscription = 0 }
+            set_variable = { PAU_eco_reform_no_supply_grace = 0 }
+            set_variable = { PAU_eco_reform_out_of_supply = 0 }
+
+            set_variable = { PAU_eco_reform_progress = 0 }
+            PAU_refresh_eco_reform_tiers = yes
+        }
+    }
+    else = {
+        custom_effect_tooltip = PAU_reset_mil_reform_effect_tt
+        hidden_effect = {
+            set_temp_variable = { PAU_refund_axia_mil = PAU_cnt_axia_recon }
+            add_to_temp_variable = { PAU_refund_axia_mil = PAU_cnt_axia_supply }
+            add_to_temp_variable = { PAU_refund_axia_mil = PAU_cnt_axia_medics }
+            add_to_temp_variable = { PAU_refund_axia_mil = PAU_cnt_axia_armor }
+            multiply_temp_variable = { PAU_refund_axia_mil = 20 }
+            add_to_variable = { PAU_axia_mil = PAU_refund_axia_mil }
+
+            set_temp_variable = { PAU_refund_xfxy_mil = PAU_cnt_xfxy_command }
+            add_to_temp_variable = { PAU_refund_xfxy_mil = PAU_cnt_xfxy_signal }
+            add_to_temp_variable = { PAU_refund_xfxy_mil = PAU_cnt_xfxy_winter }
+            multiply_temp_variable = { PAU_refund_xfxy_mil = 20 }
+            add_to_variable = { PAU_xfxy_mil = PAU_refund_xfxy_mil }
+
+            set_temp_variable = { PAU_refund_xy_mil = PAU_cnt_xy_navy }
+            add_to_temp_variable = { PAU_refund_xy_mil = PAU_cnt_xy_landing }
+            add_to_temp_variable = { PAU_refund_xy_mil = PAU_cnt_xy_expedition }
+            multiply_temp_variable = { PAU_refund_xy_mil = 20 }
+            add_to_variable = { PAU_xiaoyao_mil = PAU_refund_xy_mil }
+
+            set_variable = { PAU_cnt_axia_recon = 0 }
+            set_variable = { PAU_cnt_axia_supply = 0 }
+            set_variable = { PAU_cnt_axia_medics = 0 }
+            set_variable = { PAU_cnt_axia_armor = 0 }
+            set_variable = { PAU_cnt_xfxy_command = 0 }
+            set_variable = { PAU_cnt_xfxy_signal = 0 }
+            set_variable = { PAU_cnt_xfxy_winter = 0 }
+            set_variable = { PAU_cnt_xy_navy = 0 }
+            set_variable = { PAU_cnt_xy_landing = 0 }
+            set_variable = { PAU_cnt_xy_expedition = 0 }
+
+            set_variable = { PAU_mil_reform_bonus_org = 0 }
+            set_variable = { PAU_mil_reform_bonus_planning = 0 }
+            set_variable = { PAU_mil_reform_bonus_breakthrough = 0 }
+            set_variable = { PAU_mil_reform_bonus_coordination = 0 }
+            set_variable = { PAU_mil_reform_bonus_initiative = 0 }
+            set_variable = { PAU_mil_reform_bonus_recon = 0 }
+            set_variable = { PAU_mil_reform_bonus_morale = 0 }
+            set_variable = { PAU_mil_reform_bonus_speed = 0 }
+            set_variable = { PAU_mil_reform_bonus_naval_coordination = 0 }
+            set_variable = { PAU_mil_reform_bonus_ship_recovery = 0 }
+            set_variable = { PAU_mil_reform_bonus_invasion_prep = 0 }
+            set_variable = { PAU_mil_reform_bonus_naval_penalty = 0 }
+            set_variable = { PAU_mil_reform_bonus_supply = 0 }
+            set_variable = { PAU_mil_reform_bonus_out_of_supply = 0 }
+            set_variable = { PAU_mil_reform_bonus_attrition = 0 }
+            set_variable = { PAU_mil_reform_bonus_training = 0 }
+            set_variable = { PAU_mil_reform_bonus_attack = 0 }
+            set_variable = { PAU_mil_reform_bonus_defence = 0 }
+
+            set_variable = { PAU_mil_reform_casualty_trickleback = 0 }
+            set_variable = { PAU_mil_reform_experience_loss_factor = 0 }
+            set_variable = { PAU_mil_reform_armor_attack = 0 }
+            set_variable = { PAU_mil_reform_armor_defence = 0 }
+            set_variable = { PAU_mil_reform_max_planning = 0 }
+            set_variable = { PAU_mil_reform_army_infantry_attack_factor = 0 }
+            set_variable = { PAU_mil_reform_army_infantry_defence_factor = 0 }
+            set_variable = { PAU_mil_reform_land_reinforce_rate = 0 }
+            set_variable = { PAU_mil_reform_army_supply_node_range = 0 }
+            set_variable = { PAU_mil_reform_naval_invasion_prep_days = 0 }
+            set_variable = { PAU_mil_reform_amphibious_invasion = 0 }
+            set_variable = { PAU_mil_reform_amphibious_invasion_defence = 0 }
+            set_variable = { PAU_mil_reform_naval_invasion_capacity = 0 }
+            set_variable = { PAU_mil_reform_naval_invasion_division_cap = 0 }
+            set_variable = { PAU_mil_reform_no_supply_grace = 0 }
+
+            set_variable = { PAU_mil_reform_progress = 0 }
+            PAU_refresh_mil_reform_tiers = yes
+        }
     }
 }
 

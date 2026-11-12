@@ -3849,6 +3849,27 @@ PAU_national_unification = {
         remove_effect = {
             clr_country_flag = PAU_fullscreen_rain
             set_country_flag = PAU_jap_cap
+            if = {
+                limit = { has_idea = PAU_zgjd_idea2 }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea2
+                    add_idea = PAU_zgjd_idea3
+                }
+            }
+            else_if = {
+                limit = { has_idea = PAU_zgjd_idea1 }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea1
+                    add_idea = PAU_zgjd_idea3
+                }
+            }
+            else_if = {
+                limit = { has_idea = PAU_zgjd_idea }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea
+                    add_idea = PAU_zgjd_idea3
+                }
+            }
             every_state = {
                 limit = { is_core_of = JAP }
                 add_claim_by_ROOT_if_has_no_core = yes
@@ -4366,5 +4387,469 @@ PAU_joint_institutions = {
             }
             activate_mission = PAU_south_america_development_program_loop
         }
+    }
+}
+
+PAU_airborne_armor_ops = {
+
+    #高空重型滑翔翼挂架
+    PAU_airborne_glider_retrofit = {
+        icon = GFX_decision_generic_tank
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_mil_reform_cap_reward_claimed
+            NOT = { has_tech = PAU_airborne_armor_glider_tech }
+        }
+        available = {
+            has_army_experience > 34
+        }
+        cost = 50
+        fire_only_once = yes
+        days_remove = 60
+        modifier = {
+            consumer_goods_factor = 0.05
+            industrial_capacity_factory = -0.05
+        }
+        complete_effect = {
+            army_experience = -35
+        }
+        remove_effect = {
+            set_technology = {
+                PAU_airborne_armor_glider_tech = 1
+            }
+            custom_effect_tooltip = PAU_airborne_armor_glider_tech_effect_tt
+            add_equipment_to_stockpile = {
+                type = light_tank_chassis_1
+                variant_name = "白夜空投轻战车"
+                amount = 80
+                producer = PAU
+            }
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #空投缓冲蜂窝舱与携行补给包改装
+    PAU_airborne_drop_pod_retrofit = {
+        icon = GFX_decision_supplies
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_mil_reform_cap_reward_claimed
+            NOT = { has_tech = PAU_airborne_armor_drop_pod_tech }
+        }
+        available = {
+            has_army_experience > 24
+        }
+        cost = 50
+        fire_only_once = yes
+        days_remove = 60
+        modifier = {
+            consumer_goods_factor = 0.05
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            army_experience = -25
+        }
+        remove_effect = {
+            set_technology = {
+                PAU_airborne_armor_drop_pod_tech = 1
+            }
+            custom_effect_tooltip = PAU_airborne_armor_drop_pod_tech_effect_tt
+            add_equipment_to_stockpile = {
+                type = transport_plane_equipment
+                amount = 30
+                producer = PAU
+            }
+            add_equipment_to_stockpile = {
+                type = support_equipment
+                amount = 50
+                producer = PAU
+            }
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #伞降轻装甲集群立体突击演习
+    PAU_airborne_joint_drop_exercise = {
+        icon = GFX_decision_generic_air
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_mil_reform_cap_reward_claimed
+        }
+        available = {
+            has_equipment = { light_tank_chassis > 39 }
+        }
+        cost = 35
+        fire_only_once = no
+        days_remove = 60
+        days_re_enable = 120
+        modifier = {
+            extra_paratrooper_supply_grace = 48
+            paradrop_organization_factor = 0.10
+            air_invasion_preparation = -0.10
+            air_invasion_division_cap = 5
+            special_forces_attack_factor = 0.05
+        }
+        remove_effect = {
+            army_experience = 25
+            air_experience = 25
+        }
+        ai_will_do = { factor = 15 }
+    }
+}
+
+PAU_hydro_dam_projects = {
+
+    PAU_build_parana_dam = {
+        icon = GFX_decision_generic_construction
+        allowed = { original_tag = PAU }
+        highlight_states = {
+            highlight_state_targets = {
+                state = 510
+            }
+        }
+        visible = {
+            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            NOT = { has_country_flag = PAU_parana_dam_built }
+        }
+        available = {
+            controls_state = 510
+            num_of_civilian_factories_available_for_projects > 9
+            custom_trigger_tooltip = {
+                tooltip = PAU_not_constructing_other_dam_tt
+                NOT = { has_country_flag = PAU_constructing_dam_flag }
+            }
+        }
+        cost = 75
+        fire_only_once = yes
+        days_remove = 120
+        modifier = {
+            civilian_factory_use = 10
+            consumer_goods_factor = 0.10
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            set_country_flag = PAU_constructing_dam_flag
+        }
+        cancel_trigger = {
+            NOT = { controls_state = 510 }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+        }
+        remove_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+            set_country_flag = PAU_parana_dam_built
+            add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            510 = {
+                add_building_construction = {
+                    type = dam
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 12453
+                    }
+                }
+                custom_effect_tooltip = {
+                    localization_key = building_state_modifier|dam
+                    INDENT = "    "
+                }
+            }
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    PAU_build_negro_dam = {
+        icon = GFX_decision_generic_construction
+        allowed = { original_tag = PAU }
+        highlight_states = {
+            highlight_state_targets = {
+                state = 300
+            }
+        }
+        visible = {
+            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            NOT = { has_country_flag = PAU_negro_dam_built }
+        }
+        available = {
+            controls_state = 300
+            num_of_civilian_factories_available_for_projects > 9
+            custom_trigger_tooltip = {
+                tooltip = PAU_not_constructing_other_dam_tt
+                NOT = { has_country_flag = PAU_constructing_dam_flag }
+            }
+        }
+        cost = 75
+        fire_only_once = yes
+        days_remove = 120
+        modifier = {
+            civilian_factory_use = 10
+            consumer_goods_factor = 0.10
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            set_country_flag = PAU_constructing_dam_flag
+        }
+        cancel_trigger = {
+            NOT = { controls_state = 300 }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+        }
+        remove_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+            set_country_flag = PAU_negro_dam_built
+            add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            300 = {
+                add_building_construction = {
+                    type = dam
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 10362
+                    }
+                }
+                custom_effect_tooltip = {
+                    localization_key = building_state_modifier|dam
+                    INDENT = "    "
+                }
+            }
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    PAU_build_cordoba_dam = {
+        icon = GFX_decision_generic_construction
+        allowed = { original_tag = PAU }
+        highlight_states = {
+            highlight_state_targets = {
+                state = 902
+            }
+        }
+        visible = {
+            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            NOT = { has_country_flag = PAU_cordoba_dam_built }
+        }
+        available = {
+            controls_state = 902
+            num_of_civilian_factories_available_for_projects > 9
+            custom_trigger_tooltip = {
+                tooltip = PAU_not_constructing_other_dam_tt
+                NOT = { has_country_flag = PAU_constructing_dam_flag }
+            }
+        }
+        cost = 75
+        fire_only_once = yes
+        days_remove = 120
+        modifier = {
+            civilian_factory_use = 10
+            consumer_goods_factor = 0.10
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            set_country_flag = PAU_constructing_dam_flag
+        }
+        cancel_trigger = {
+            NOT = { controls_state = 902 }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+        }
+        remove_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+            set_country_flag = PAU_cordoba_dam_built
+            add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            902 = {
+                add_building_construction = {
+                    type = dam
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 2172
+                    }
+                }
+                custom_effect_tooltip = {
+                    localization_key = building_state_modifier|dam
+                    INDENT = "    "
+                }
+            }
+        }
+        ai_will_do = { factor = 20 }
+    }
+
+    PAU_build_patagonia_dam = {
+        icon = GFX_decision_generic_construction
+        allowed = { original_tag = PAU }
+        highlight_states = {
+            highlight_state_targets = {
+                state = 1029
+            }
+        }
+        visible = {
+            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            NOT = { has_country_flag = PAU_patagonia_dam_built }
+        }
+        available = {
+            controls_state = 1029
+            num_of_civilian_factories_available_for_projects > 9
+            custom_trigger_tooltip = {
+                tooltip = PAU_not_constructing_other_dam_tt
+                NOT = { has_country_flag = PAU_constructing_dam_flag }
+            }
+        }
+        cost = 75
+        fire_only_once = yes
+        days_remove = 120
+        modifier = {
+            civilian_factory_use = 10
+            consumer_goods_factor = 0.10
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            set_country_flag = PAU_constructing_dam_flag
+        }
+        cancel_trigger = {
+            NOT = { controls_state = 1029 }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+        }
+        remove_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+            set_country_flag = PAU_patagonia_dam_built
+            add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            1029 = {
+                add_building_construction = {
+                    type = dam
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 15025
+                    }
+                }
+                custom_effect_tooltip = {
+                    localization_key = building_state_modifier|dam
+                    INDENT = "    "
+                }
+            }
+        }
+        ai_will_do = { factor = 20 }
+    }
+
+    PAU_build_corrientes_dam = {
+        icon = GFX_decision_generic_construction
+        allowed = { original_tag = PAU }
+        highlight_states = {
+            highlight_state_targets = {
+                state = 1074
+            }
+        }
+        visible = {
+            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            NOT = { has_country_flag = PAU_corrientes_dam_built }
+        }
+        available = {
+            controls_state = 1074
+            num_of_civilian_factories_available_for_projects > 9
+            custom_trigger_tooltip = {
+                tooltip = PAU_not_constructing_other_dam_tt
+                NOT = { has_country_flag = PAU_constructing_dam_flag }
+            }
+        }
+        cost = 75
+        fire_only_once = yes
+        days_remove = 120
+        modifier = {
+            civilian_factory_use = 10
+            consumer_goods_factor = 0.10
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            set_country_flag = PAU_constructing_dam_flag
+        }
+        cancel_trigger = {
+            NOT = { controls_state = 1074 }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+        }
+        remove_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+            set_country_flag = PAU_corrientes_dam_built
+            add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            1074 = {
+                add_building_construction = {
+                    type = dam
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 12964
+                    }
+                }
+                custom_effect_tooltip = {
+                    localization_key = building_state_modifier|dam
+                    INDENT = "    "
+                }
+            }
+        }
+        ai_will_do = { factor = 20 }
+    }
+
+    PAU_build_mendoza_dam = {
+        icon = GFX_decision_generic_construction
+        allowed = { original_tag = PAU }
+        highlight_states = {
+            highlight_state_targets = {
+                state = 1144
+            }
+        }
+        visible = {
+            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            NOT = { has_country_flag = PAU_mendoza_dam_built }
+        }
+        available = {
+            controls_state = 1144
+            num_of_civilian_factories_available_for_projects > 9
+            custom_trigger_tooltip = {
+                tooltip = PAU_not_constructing_other_dam_tt
+                NOT = { has_country_flag = PAU_constructing_dam_flag }
+            }
+        }
+        cost = 75
+        fire_only_once = yes
+        days_remove = 120
+        modifier = {
+            civilian_factory_use = 10
+            consumer_goods_factor = 0.10
+            production_speed_buildings_factor = -0.05
+        }
+        complete_effect = {
+            set_country_flag = PAU_constructing_dam_flag
+        }
+        cancel_trigger = {
+            NOT = { controls_state = 1144 }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+        }
+        remove_effect = {
+            clr_country_flag = PAU_constructing_dam_flag
+            set_country_flag = PAU_mendoza_dam_built
+            add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            1144 = {
+                add_building_construction = {
+                    type = dam
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 12942
+                    }
+                }
+                custom_effect_tooltip = {
+                    localization_key = building_state_modifier|dam
+                    INDENT = "    "
+                }
+            }
+        }
+        ai_will_do = { factor = 20 }
     }
 }
