@@ -2,18 +2,23 @@
 on_actions = {
     on_war = {
         effect = {
+            PAU_try_fire_grail_war_news = yes
+            PAU = { PAU_refresh_targeted_spirit_visibility = yes }
+        }
+    }
+    on_war_relation_added = {
+        effect = {
             if = {
                 limit = {
-                    tag = PAU
-                    has_war_with = ENG
-                    OR = {
-                        has_country_flag = PAU_world_revolution
-                        has_country_flag = PAU_armed_neutrality
-                    }
                     NOT = { has_global_flag = PAU_grail_war_news_fired }
+                    OR = {
+                        tag = PAU
+                        tag = ENG
+                        FROM = { tag = PAU }
+                        FROM = { tag = ENG }
+                    }
                 }
-                set_global_flag = PAU_grail_war_news_fired
-                news_event = { id = PAU_news.4 hours = 6 }
+                PAU_try_fire_grail_war_news = yes
             }
         }
     }
@@ -25,20 +30,21 @@ on_actions = {
                     value = 100
                 }
 
-                if = { limit = { NOT = { has_variable = PAU_mercenary_reputation } } set_variable = { PAU_mercenary_reputation = 50 } }  #雇佣兵信誉=初始50+合同事件增减
-                if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } }  #圣杯流亡营口粮=初始100-分粮/贸易/换零件消耗
-                if = { limit = { NOT = { has_variable = wl_attack_day } } set_variable = { wl_attack_day = 7 } }
-                if = { limit = { NOT = { has_variable = PAU_mil_reform_progress_frame } } set_variable = { PAU_mil_reform_progress_frame = 0 } }
-                if = { limit = { NOT = { has_variable = PAU_eco_reform_progress_frame } } set_variable = { PAU_eco_reform_progress_frame = 0 } }
-                if = {
-                    limit = { NOT = { has_country_flag = PAU_reform_reset_initialized } }
-                    set_country_flag = PAU_reform_reset_initialized
-                    set_variable = { PAU_reform_reset_count = 1 }
+                    if = { limit = { NOT = { has_variable = PAU_mercenary_reputation } } set_variable = { PAU_mercenary_reputation = 50 } }  #雇佣兵信誉=初始50+合同事件增减
+                    if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } }  #圣杯流亡营口粮=初始100-分粮/贸易/换零件消耗
+                    if = { limit = { NOT = { has_variable = wl_attack_day } } set_variable = { wl_attack_day = 7 } }
+                    if = { limit = { NOT = { has_variable = PAU_mil_reform_progress_frame } } set_variable = { PAU_mil_reform_progress_frame = 0 } }
+                    if = { limit = { NOT = { has_variable = PAU_eco_reform_progress_frame } } set_variable = { PAU_eco_reform_progress_frame = 0 } }
+                    PAU_sync_baiye_gui_vars = yes
+                    if = {
+                        limit = { NOT = { has_country_flag = PAU_reform_reset_initialized } }
+                        set_country_flag = PAU_reform_reset_initialized
+                        set_variable = { PAU_reform_reset_count = 1 }
+                    }
                 }
             }
         }
-    }
-    on_monthly = {
+    on_monthly = { 
         effect = {
             if = {
                 limit = { original_tag = PAU }
@@ -58,17 +64,29 @@ on_actions = {
                     }
                     PAU_refresh_harbor_spillover_states = yes
                 }
-                if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }  #阿夏军事改革点=军改国策+10，改革决议-10
-                if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }  #晓枫雪伊军事改革点=军改国策+10，改革决议-10
-                if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }  #小遥军事改革点=军改国策+10，改革决议-10
-                if = { limit = { check_variable = { PAU_axia_eco > 0 } } set_country_flag = PAU_economy_reform_axia_unlocked }  #阿夏经济改革点=经改国策+10，改革决议-10
-                if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }  #晓枫雪伊经济改革点=经改国策+10，改革决议-10
-                if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }  #小遥经济改革点=经改国策+10，改革决议-10
+                if = { limit = { check_variable = { PAU_axia_mil > 0 } } set_country_flag = PAU_army_reform_axia_unlocked }  #阿夏军事改革点=军改事件+20，改革决议-20
+                if = { limit = { check_variable = { PAU_xfxy_mil > 0 } } set_country_flag = PAU_army_reform_xfxy_unlocked }  #晓枫雪伊军事改革点=军改事件+20，改革决议-20
+                if = { limit = { check_variable = { PAU_xiaoyao_mil > 0 } } set_country_flag = PAU_army_reform_xiaoyao_unlocked }  #小遥军事改革点=军改事件+20，改革决议-20
+                if = { limit = { check_variable = { PAU_axia_eco > 0 } } set_country_flag = PAU_economy_reform_axia_unlocked }  #阿夏经济改革点=经改事件+20，改革决议-20
+                if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }  #晓枫雪伊经济改革点=经改事件+20，改革决议-20
+                if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }  #小遥经济改革点=经改事件+20，改革决议-20
+                PAU_refresh_targeted_spirit_visibility = yes
                 PAU_refresh_south_america_members = yes
                 PAU_refresh_south_america_development = yes
                 PAU_refresh_state_council = yes
                 PAU_refresh_mil_reform_tiers = yes
                 PAU_refresh_eco_reform_tiers = yes
+                if = {
+                    limit = {
+                        NOT = { has_country_flag = PAU_7005_fired }
+                        OR = {
+                            has_country_flag = PAU_pending_emma_rescue
+                            has_country_flag = PAU_undead_defeated
+                            has_completed_focus = PAU_ddjr
+                        }
+                    }
+                    PAU_check_baiye_story_progression = yes
+                }
             }
             if = {
                 limit = {
@@ -132,6 +150,35 @@ on_actions = {
                         }
                     }
             }
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								tag = PAU
+								is_in_faction_with = PAU
+							}
+						}
+						FROM = { tag = ZDW }
+						FROM.FROM = {
+							has_state_flag = is_lldy_state_flag
+							NOT = { has_state_flag = PAU_zdw_retaken_bonus }
+						}
+					}
+					FROM.FROM = { set_state_flag = PAU_zdw_retaken_bonus }
+					PAU = {
+						army_experience = 5
+						add_command_power = 10
+						add_manpower = 1000
+						if = {
+							limit = { has_war_support < 0.85 }
+							add_war_support = 0.01
+						}
+						else = {
+							add_political_power = 10
+						}
+					}
+					ZDW = { add_war_support = -0.01 }
+				}
         }
     }
 	#PAU每日逻辑
@@ -140,7 +187,117 @@ on_actions = {
 			if = {
 				limit = { original_tag = PAU }
 				PAU_daily_reform_tick = yes
+				if = {
+					limit = {
+						NOT = { has_global_flag = PAU_grail_war_news_fired }
+						has_war_with = ENG
+					}
+					PAU_try_fire_grail_war_news = yes
+				}
 			}
+		}
+	}
+	on_declare_war = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_global_flag = PAU_grail_war_news_fired }
+					OR = {
+						tag = PAU
+						tag = ENG
+						FROM = { tag = PAU }
+						FROM = { tag = ENG }
+					}
+				}
+				PAU_try_fire_grail_war_news = yes
+			}
+			if = {
+				limit = { PAU = { has_country_flag = PAU_guyong_tracking_active } }
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								tag = PAU
+								is_in_faction_with = PAU
+								is_subject_of = PAU
+							}
+						}
+						FROM = {
+							NOT = { has_country_flag = PAU_will_guyonged_touxiang_flag }
+							NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } }
+							NOT = {
+								any_allied_country = {
+									OR = {
+										has_country_flag = PAU_will_guyonged_touxiang_flag
+										is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+									}
+								}
+							}
+						}
+					}
+					ROOT = {
+						if = {
+							limit = { NOT = { is_in_array = { array = PAU_pre_contract_enemies value = FROM } } }
+							add_to_array = { PAU_pre_contract_enemies = FROM }
+						}
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							OR = {
+								tag = PAU
+								is_in_faction_with = PAU
+								is_subject_of = PAU
+							}
+						}
+						ROOT = {
+							NOT = { has_country_flag = PAU_will_guyonged_touxiang_flag }
+							NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } }
+							NOT = {
+								any_allied_country = {
+									OR = {
+										has_country_flag = PAU_will_guyonged_touxiang_flag
+										is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+									}
+								}
+							}
+						}
+					}
+					FROM = {
+						if = {
+							limit = { NOT = { is_in_array = { array = PAU_pre_contract_enemies value = ROOT } } }
+							add_to_array = { PAU_pre_contract_enemies = ROOT }
+						}
+					}
+				}
+			}
+		}
+	}
+	on_join_faction = {
+		effect = {
+			PAU_sync_active_ally_pre_contract_wars = yes
+		}
+	}
+	on_offer_join_faction = {
+		effect = {
+			PAU_sync_active_ally_pre_contract_wars = yes
+		}
+	}
+	on_puppet = {
+		effect = {
+			PAU = { PAU_refresh_targeted_spirit_visibility = yes }
+			PAU_sync_active_ally_pre_contract_wars = yes
+		}
+	}
+	on_annex = {
+		effect = {
+			PAU = { PAU_refresh_targeted_spirit_visibility = yes }
+		}
+	}
+	on_peaceconference_ended = {
+		effect = {
+			PAU = { PAU_refresh_targeted_spirit_visibility = yes }
 		}
 	}
 }

@@ -343,7 +343,7 @@ PAU_LHS_weiji = {
         allowed = {
             original_tag = PAU
         }
-        icon = GFX_decision_generic_shovels
+        icon = GFX_PAU_dec_xiufu
         available = {
             has_war_with = LHS
             FROM = {
@@ -396,239 +396,6 @@ PAU_LHS_weiji = {
             }
         }
     }
-    #决议名：押送白夜去后山晨跑
-    PAU_baiye_morning_run = {
-        icon = GFX_PAU_baiye4
-        allowed = { original_tag = PAU }
-        visible = {
-            if = {
-                limit = { has_character = PAU_baiye }
-                PAU_baiye = { has_trait = PAU_baiye_chubby }
-            }
-            else = { always = no }
-        }
-        available = {
-            if = {
-                limit = { has_character = PAU_baiye }
-                PAU_baiye = { has_trait = PAU_baiye_chubby }
-            }
-            else = { always = no }
-        }
-        cost = 100
-        days_remove = 180
-        fire_only_once = yes
-
-        remove_effect = {
-            PAU_baiye = {
-                remove_unit_leader_trait = PAU_baiye_chubby
-                add_unit_leader_trait = PAU_baiye_fit
-                add_attack = 2
-                add_defense = 2
-                add_planning = 2
-                add_logistics = 2
-            }
-        }
-        ai_will_do = { factor = 50 }
-    }
-    #决议名：放白夜去 [FROM.GetName]
-    PAU_xiaoyao_plan = {
-        icon = GFX_PAU_baiye3
-        allowed = {
-            original_tag = PAU
-        }
-        available = {
-            NOT = { has_country_flag = xiaoyao_plan_flag }
-            FROM = {
-                has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
-                or = {
-                    any_neighbor_state = {
-                        has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
-                    }
-                    is_controlled_by = PAU
-                }
-            }
-        }
-        visible = {
-            has_country_flag = has_PAU_xiaoyao
-            NOT = { has_country_flag = PAU_auto_baiye }  #白夜自动巡游开关
-        }
-        on_map_mode = map_and_decisions_view
-        state_target = yes
-        target_trigger = {
-            FROM = {
-                not = {
-                    has_state_flag = PAU_xiaoyao_state_flag
-                }
-                has_state_flag = is_lldy_state_flag
-            }
-        }
-        cost = 10
-        days_remove = 15
-        modifier = {
-            stability_weekly = 0.001
-            war_support_weekly = 0.001
-        }
-        cancel_trigger = {
-            FROM = {
-                not = {
-                    or = {
-                        any_neighbor_state = {
-                            has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
-                        }
-                        is_controlled_by = PAU
-                    }
-                }
-            }
-        }
-        cancel_effect = {
-            clr_country_flag = xiaoyao_plan_flag
-        }
-        complete_effect = {
-            set_country_flag = xiaoyao_plan_flag
-        }
-        remove_effect = {
-            clr_country_flag = xiaoyao_plan_flag
-            FROM = {
-                set_state_flag = PAU_xiaoyao_state_flag
-                if = {
-                    limit = {
-                        PAU = {
-                            has_completed_focus = PAU_bycx
-                        }
-                    }
-                    add_dynamic_modifier = {
-                        modifier = PAU_baiye_state1
-                    }
-                }
-                else = {
-                    add_dynamic_modifier = {
-                        modifier = PAU_baiye_state
-                    }
-                }
-            }
-            PAU_advance_baiye_story = yes
-        }
-        ai_will_do = { factor = 25 }
-    }
-
-    #决议名：自动放白夜出去遛弯
-    PAU_baiye_auto = {
-        icon = GFX_PAU_baiye2
-        allowed = { original_tag = PAU }
-        visible = {
-            has_completed_focus = PAU_tyzz
-            NOT = { has_country_flag = PAU_auto_baiye }
-            any_state = {
-                has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
-                not = {
-                    has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
-                }
-            }
-        }
-        cost = 0
-        fire_only_once = no
-        complete_effect = {
-            set_country_flag = PAU_auto_baiye
-            activate_mission = PAU_baiye_auto_task
-        }
-        ai_will_do = { factor = 0 }
-    }
-
-    #决议名：白夜巡游循环任务
-    PAU_baiye_auto_task = {
-        icon = GFX_PAU_baiye1
-        allowed = { original_tag = PAU }
-        available = { always = no }
-        activation = { always = no }
-        selectable_mission = no
-        is_good = yes
-        days_mission_timeout = 15
-        cancel_trigger = {
-            OR = {
-                not = { has_country_flag = PAU_auto_baiye }
-                not = {
-                    any_state = {
-                        has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
-                        not = {
-                            has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
-                        }
-                    }
-                }
-            }
-        }
-        timeout_effect = {
-            custom_effect_tooltip = PAU_baiye_auto_task_tt
-            if = {
-                limit = {
-                    has_political_power > 9
-                    any_controlled_state = {
-                        has_state_flag = is_lldy_state_flag
-                        not = {
-                            has_state_flag = PAU_xiaoyao_state_flag
-                        }
-                    }
-                }
-                add_political_power = -10
-                random_controlled_state = {
-                    limit = {
-                        not = { has_state_flag = PAU_xiaoyao_state_flag }
-                        has_state_flag = is_lldy_state_flag
-                    }
-                    set_state_flag = PAU_xiaoyao_state_flag
-                    if = {
-                        limit = {
-                            PAU = {
-                                has_completed_focus = PAU_bycx
-                            }
-                        }
-                        add_dynamic_modifier = {
-                            modifier = PAU_baiye_state1
-                        }
-                    }
-                    else = {
-                        add_dynamic_modifier = {
-                            modifier = PAU_baiye_state
-                        }
-                    }
-                }
-                ROOT = { PAU_advance_baiye_story = yes }
-            }
-            if = {
-                limit = {
-                    any_state = {
-                        has_state_flag = is_lldy_state_flag
-                        not = {
-                            has_state_flag = PAU_xiaoyao_state_flag
-                        }
-                    }
-                }
-                activate_mission = PAU_baiye_auto_task
-            }
-            else = {
-                clr_country_flag = PAU_auto_baiye
-            }
-        }
-        cancel_effect = {
-            clr_country_flag = PAU_auto_baiye
-        }
-    }
-
-    #决议名：取消自动白夜任务
-    PAU_baiye_auto_cancel = {
-        icon = GFX_FRA_button_close
-        allowed = { original_tag = PAU }
-        visible = {
-            has_completed_focus = PAU_tyzz
-            has_country_flag = PAU_auto_baiye
-        }
-        cost = 0
-        fire_only_once = no
-        complete_effect = {
-            clr_country_flag = PAU_auto_baiye
-        }
-        ai_will_do = { factor = 0 }
-    }
-
     #亡灵在蚕食着我们
     PAU_wl_attack_dec = {
         allowed = {
@@ -710,7 +477,7 @@ PAU_LHS_weiji = {
 
     #组织人员撤离
     PAU_undead_evacuate = {
-        icon = GFX_decision_category_generic_propaganda
+        icon = GFX_PAU_dec_evacuate
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
@@ -743,14 +510,25 @@ PAU_LHS_weiji = {
         }
         remove_effect = {
             add_manpower = 2000
-            add_stability = 0.02
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 300
+                producer = PAU
+            }
+            if = {
+                limit = { has_stability < 0.85 }
+                add_stability = 0.02
+            }
+            else = {
+                add_political_power = 15
+            }
         }
         ai_will_do = { factor = 25 }
     }
 
     #烧毁无法转移的物资
     PAU_undead_burn_depot = {
-        icon = GFX_decision_category_border_conflicts
+        icon = GFX_PAU_dec_burn_depot
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
@@ -761,7 +539,7 @@ PAU_LHS_weiji = {
             NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
             custom_trigger_tooltip = {
-                tooltip = PAU_cond_fuel_gt499_tt
+                tooltip = PAU_cond_fuel_gt1499_tt
                 has_fuel > 1499
             }
             any_controlled_state = {
@@ -771,9 +549,12 @@ PAU_LHS_weiji = {
             }
         }
         cost = 20
-        fire_only_once = yes
+        fire_only_once = no
+        days_remove = 10
+        days_re_enable = 15
         complete_effect = {
             add_fuel = -1500
+            army_experience = 10
             if = {
                 limit = { has_country_flag = control_dec }
                 add_days_mission_timeout = {
@@ -793,7 +574,7 @@ PAU_LHS_weiji = {
 
     #制造隔离带
     PAU_undead_scorched_earth = {
-        icon = GFX_decision_category_border_war
+        icon = GFX_PAU_dec_quarantine
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
@@ -803,7 +584,7 @@ PAU_LHS_weiji = {
         available = {
             NOT = { has_completed_focus = PAU_zmxx }
             NOT = { has_country_flag = PAU_undead_defeated }
-            has_fuel > 2999
+            has_fuel > 999
             any_controlled_state = {
                 NOT = { state = 278 }
                 any_neighbor_state = {
@@ -811,10 +592,18 @@ PAU_LHS_weiji = {
                 }
             }
         }
-        cost = 25
+        cost = 15
         fire_only_once = no
         complete_effect = {
-            add_fuel = -3000
+            add_fuel = -1000
+            army_experience = 10
+            if = {
+                limit = { has_country_flag = control_dec }
+                add_days_mission_timeout = {
+                    mission = PAU_wl_attack_dec
+                    days = 15
+                }
+            }
             random_state = {
                 limit = {
                     NOT = { state = 278 }
@@ -842,7 +631,7 @@ PAU_LHS_weiji = {
 
     #组织反冲击
     PAU_undead_counterattack = {
-        icon = GFX_decision_category_CHL_nacista_decisions
+        icon = GFX_PAU_dec_counterattack
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_undead_war
@@ -859,7 +648,7 @@ PAU_LHS_weiji = {
         cost = 10
         fire_only_once = no
         days_remove = 15
-        days_re_enable = 20
+        days_re_enable = 15
         modifier = {
             army_attack_factor = 0.15
             breakthrough_factor = 0.15
@@ -889,7 +678,7 @@ PAU_LHS_weiji = {
                 ZDW = {
                     add_timed_idea = {
                         idea = PAU_undead_counterattack
-                        days = 10
+                        days = 18
                     }
                 }
             }
@@ -902,6 +691,514 @@ PAU_LHS_weiji = {
             }
         }
         ai_will_do = { factor = 25 }
+    }
+
+    #海岸重炮火力覆盖
+    PAU_undead_fujii_bombardment = {
+        icon = GFX_PAU_dec_naval_bombard
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_completed_focus = PAU_zmxx
+        }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_war_with = ZDW
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_fuel_gt1499_tt
+                has_fuel > 1499
+            }
+        }
+        cost = 15
+        fire_only_once = no
+        days_remove = 15
+        days_re_enable = 20
+        modifier = {
+            shore_bombardment_bonus = 0.25
+            amphibious_invasion = 0.15
+            army_attack_factor = 0.10
+            breakthrough_factor = 0.10
+        }
+        complete_effect = {
+            add_fuel = -1500
+            navy_experience = 10
+        }
+        ai_will_do = { factor = 20 }
+    }
+
+    #高空照明弹驱散死雾
+    PAU_undead_baiye_mist_flare = {
+        icon = GFX_PAU_dec_baiye_flare
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_undead_war
+            NOT = { has_country_flag = PAU_undead_defeated }
+            OR = {
+                has_completed_focus = PAU_zmxx
+                has_country_flag = has_PAU_xiaoyao
+            }
+        }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_war_with = ZDW
+            command_power > 14
+        }
+        cost = 15
+        fire_only_once = no
+        days_remove = 20
+        days_re_enable = 25
+        modifier = {
+            recon_factor = 0.15
+            land_night_attack = 0.10
+            breakthrough_factor = 0.10
+        }
+        complete_effect = {
+            add_command_power = -15
+            ZDW = {
+                add_timed_idea = {
+                    idea = ZDW_mist_cleared_debuff
+                    days = 20
+                }
+            }
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #向抗樱国家请求军通与驻港权
+    PAU_get_military_access = {
+        icon = GFX_PAU_dec_naval_access
+        allowed = { original_tag = PAU }
+        target_trigger = {
+            NOT = { ROOT = { has_military_access_to = FROM } }
+            FROM = {
+                exists = yes
+                NOT = { tag = ROOT }
+                NOT = { has_war_with = ROOT }
+                OR = {
+                    AND = {
+                        country_exists = JAP
+                        has_war_with = JAP
+                    }
+                    any_enemy_country = {
+                        owns_state = 282
+                    }
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = PAU_zgjd
+            OR = {
+                AND = {
+                    country_exists = JAP
+                    NOT = {
+                        JAP = {
+                            OR = {
+                                is_subject_of = ROOT
+                                is_in_faction_with = ROOT
+                            }
+                        }
+                    }
+                }
+                282 = {
+                    owner = {
+                        NOT = { tag = ROOT }
+                        NOT = { is_subject_of = ROOT }
+                        NOT = { is_in_faction_with = ROOT }
+                    }
+                }
+            }
+        }
+        available = {
+            NOT = { ROOT = { has_military_access_to = FROM } }
+            FROM = {
+                NOT = { has_war_with = ROOT }
+                OR = {
+                    AND = {
+                        country_exists = JAP
+                        has_war_with = JAP
+                    }
+                    any_enemy_country = {
+                        owns_state = 282
+                    }
+                }
+            }
+        }
+        cost = 5
+        days_re_enable = 30
+        fire_only_once = no
+        complete_effect = {
+            FROM = {
+                country_event = { id = PAU.181 days = 1 }
+            }
+        }
+        ai_will_do = { factor = 20 }
+    }
+}
+
+PAU_baiye_category = {
+    #决议名：押送白夜去后山晨跑（非地图决议由白夜手账 GUI 承载；保留给 AI 使用）
+    PAU_baiye_morning_run = {
+        icon = GFX_PAU_baiye4
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            NOT = { has_country_flag = PAU_baiye_morning_run_active }
+            NOT = { has_country_flag = PAU_baiye_morning_run_done }
+            if = {
+                limit = { has_character = PAU_baiye }
+                PAU_baiye = { has_trait = PAU_baiye_chubby }
+            }
+            else = { always = no }
+        }
+        available = {
+            if = {
+                limit = { has_character = PAU_baiye }
+                PAU_baiye = { has_trait = PAU_baiye_chubby }
+            }
+            else = { always = no }
+        }
+        cost = 40
+        days_remove = 60
+        fire_only_once = yes
+
+        complete_effect = {
+            set_country_flag = PAU_baiye_morning_run_active
+        }
+        remove_effect = {
+            clr_country_flag = PAU_baiye_morning_run_active
+            set_country_flag = PAU_baiye_morning_run_done
+            PAU_baiye = {
+                if = {
+                    limit = { has_trait = PAU_baiye_chubby }
+                    remove_unit_leader_trait = PAU_baiye_chubby
+                    add_unit_leader_trait = PAU_baiye_fit
+                    add_attack = 2
+                    add_defense = 2
+                    add_planning = 2
+                    add_logistics = 2
+                }
+            }
+            PAU_sync_baiye_gui_vars = yes
+        }
+        ai_will_do = { factor = 50 }
+    }
+
+    #决议名：让白夜顺着雾气探路（阶段一：亡灵战争期间；由白夜手账 GUI 承载，保留给 AI）
+    PAU_baiye_mist_scouting = {
+        icon = GFX_PAU_baiye1
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            has_country_flag = has_PAU_xiaoyao
+            has_country_flag = has_PAU_xfzb
+            NOT = { has_country_flag = PAU_undead_defeated }
+        }
+        available = {
+            has_war_with = ZDW
+        }
+        cost = 25
+        days_remove = 60
+        days_re_enable = 60
+        modifier = {
+            recon_factor = 0.15
+            army_speed_factor = 0.05
+            attrition = -0.10
+        }
+        complete_effect = {
+            army_experience = 5
+            add_command_power = 10
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #决议名：立下神社小鱼干规矩（阶段二：战后重建与整顿后；由白夜手账 GUI 承载，保留给 AI）
+    PAU_baiye_shrine_snack_rule = {
+        icon = GFX_PAU_baiye3
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            NOT = { has_country_flag = PAU_baiye_shrine_done }
+            has_completed_focus = PAU_bycx
+        }
+        available = {
+            has_completed_focus = PAU_bycx
+        }
+        cost = 20
+        fire_only_once = yes
+        complete_effect = {
+            set_country_flag = PAU_baiye_shrine_done
+            country_event = { id = PAU.7011 }
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #决议名：请白夜蹲上旗舰瞭望台（阶段三：远征樱花期间；由白夜手账 GUI 承载，保留给 AI）
+    PAU_baiye_flagship_lookout = {
+        icon = GFX_PAU_baiye2
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            has_completed_focus = PAU_zgjd
+            NOT = { has_country_flag = PAU_jap_cap }
+        }
+        available = {
+            OR = {
+                has_war_with = JAP
+                has_completed_focus = PAU_zgjd
+            }
+        }
+        cost = 30
+        days_remove = 90
+        days_re_enable = 60
+        modifier = {
+            spotting_chance = 0.15
+            naval_coordination = 0.10
+            amphibious_invasion = 0.10
+        }
+        complete_effect = {
+            navy_experience = 5
+            add_command_power = 10
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #决议名：带白夜去逛樱花夜市（阶段四：击败樱花军部后；由白夜手账 GUI 承载，保留给 AI）
+    PAU_baiye_sakura_homecoming = {
+        icon = GFX_PAU_dec_baiye_sakura
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            NOT = { has_country_flag = PAU_baiye_sakura_active }
+            NOT = { has_country_flag = PAU_baiye_sakura_done }
+            has_completed_focus = PAU_fby
+        }
+        available = {
+            has_completed_focus = PAU_fby
+        }
+        cost = 25
+        fire_only_once = yes
+        days_remove = 15
+        complete_effect = {
+            set_country_flag = PAU_baiye_sakura_active
+        }
+        remove_effect = {
+            clr_country_flag = PAU_baiye_sakura_active
+            set_country_flag = PAU_baiye_sakura_done
+            country_event = { id = PAU.7012 }
+        }
+        ai_will_do = { factor = 50 }
+    }
+
+    #决议名：放白夜去 [FROM.GetName]
+    PAU_xiaoyao_plan = {
+        icon = GFX_PAU_dec_baiye_walk
+        allowed = {
+            original_tag = PAU
+        }
+        available = {
+            NOT = { has_country_flag = xiaoyao_plan_flag }
+            FROM = {
+                has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
+                or = {
+                    any_neighbor_state = {
+                        has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                    }
+                    is_controlled_by = PAU
+                }
+            }
+        }
+        visible = {
+            has_country_flag = has_PAU_xiaoyao
+            NOT = { has_country_flag = PAU_auto_baiye }  #白夜自动巡游开关
+            NOT = { has_country_flag = PAU_hide_xiaoyao_plan }  #面板按钮隐藏显示控制
+        }
+        on_map_mode = map_and_decisions_view
+        state_target = yes
+        target_trigger = {
+            FROM = {
+                not = {
+                    has_state_flag = PAU_xiaoyao_state_flag
+                }
+                has_state_flag = is_lldy_state_flag
+            }
+        }
+        cost = 10
+        days_remove = 15
+        modifier = {
+            stability_weekly = 0.001
+            war_support_weekly = 0.001
+        }
+        cancel_trigger = {
+            FROM = {
+                not = {
+                    or = {
+                        any_neighbor_state = {
+                            has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                        }
+                        is_controlled_by = PAU
+                    }
+                }
+            }
+        }
+        cancel_effect = {
+            clr_country_flag = xiaoyao_plan_flag
+        }
+        complete_effect = {
+            set_country_flag = xiaoyao_plan_flag
+        }
+        remove_effect = {
+            clr_country_flag = xiaoyao_plan_flag
+            FROM = {
+                set_state_flag = PAU_xiaoyao_state_flag
+                if = {
+                    limit = {
+                        PAU = {
+                            has_completed_focus = PAU_bycx
+                        }
+                    }
+                    add_dynamic_modifier = {
+                        modifier = PAU_baiye_state1
+                    }
+                }
+                else = {
+                    add_dynamic_modifier = {
+                        modifier = PAU_baiye_state
+                    }
+                }
+            }
+            PAU_advance_baiye_story = yes
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #决议名：自动放白夜出去遛弯（由白夜手账 GUI 按钮控制，保留给 AI）
+    PAU_baiye_auto = {
+        icon = GFX_PAU_dec_baiye_auto
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            has_country_flag = has_PAU_xiaoyao
+            NOT = { has_country_flag = PAU_auto_baiye }
+            any_state = {
+                has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
+                not = {
+                    has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                }
+            }
+        }
+        available = {
+            NOT = { has_country_flag = xiaoyao_plan_flag }
+            any_controlled_state = {
+                has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
+                not = {
+                    has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                }
+            }
+        }
+        cost = 0
+        fire_only_once = no
+        complete_effect = {
+            set_country_flag = PAU_auto_baiye
+            activate_mission = PAU_baiye_auto_task
+        }
+        ai_will_do = { factor = 0 }
+    }
+
+    #决议名：白夜巡游循环任务
+    PAU_baiye_auto_task = {
+        icon = GFX_PAU_dec_baiye_task
+        allowed = { original_tag = PAU }
+        available = { always = no }
+        activation = { always = no }
+        selectable_mission = no
+        is_good = yes
+        days_mission_timeout = 15
+        cancel_trigger = {
+            OR = {
+                not = { has_country_flag = PAU_auto_baiye }
+                not = {
+                    any_controlled_state = {
+                        has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
+                        not = {
+                            has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
+                        }
+                    }
+                }
+            }
+        }
+        timeout_effect = {
+            custom_effect_tooltip = PAU_baiye_auto_task_tt
+            if = {
+                limit = {
+                    has_political_power > 9
+                    any_controlled_state = {
+                        has_state_flag = is_lldy_state_flag
+                        not = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                    }
+                }
+                add_political_power = -10
+                random_controlled_state = {
+                    limit = {
+                        not = { has_state_flag = PAU_xiaoyao_state_flag }
+                        has_state_flag = is_lldy_state_flag
+                    }
+                    set_state_flag = PAU_xiaoyao_state_flag
+                    if = {
+                        limit = {
+                            PAU = {
+                                has_completed_focus = PAU_bycx
+                            }
+                        }
+                        add_dynamic_modifier = {
+                            modifier = PAU_baiye_state1
+                        }
+                    }
+                    else = {
+                        add_dynamic_modifier = {
+                            modifier = PAU_baiye_state
+                        }
+                    }
+                }
+                ROOT = { PAU_advance_baiye_story = yes }
+            }
+            if = {
+                limit = {
+                    any_controlled_state = {
+                        has_state_flag = is_lldy_state_flag
+                        not = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                    }
+                }
+                activate_mission = PAU_baiye_auto_task
+            }
+            else = {
+                clr_country_flag = PAU_auto_baiye
+            }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_auto_baiye
+        }
+    }
+
+    #决议名：取消自动白夜任务（由白夜手账 GUI 按钮控制，保留给 AI）
+    PAU_baiye_auto_cancel = {
+        icon = GFX_PAU_dec_baiye_stop
+        allowed = { original_tag = PAU }
+        visible = {
+            is_ai = yes
+            has_country_flag = has_PAU_xiaoyao
+            has_country_flag = PAU_auto_baiye
+        }
+        cost = 0
+        fire_only_once = no
+        complete_effect = {
+            clr_country_flag = PAU_auto_baiye
+        }
+        ai_will_do = { factor = 0 }
     }
 }
 
@@ -998,7 +1295,7 @@ PAU_hetong = {
 
     #任务：出发的准备
     PAU_guyong_zhunbei = {
-        icon = GFX_land_owners_finding_funding
+        icon = GFX_PAU_dec_mercenary_prep
         allowed = { tag = PAU }
         available = {
             var:PAU_loan_provider = {
@@ -1022,6 +1319,8 @@ PAU_hetong = {
         }
         cancel_effect = {
             clr_country_flag = PAU_guyonged_flag
+            PAU_revoke_mercenary_military_access = yes
+            PAU_clear_mercenary_tracking = yes
             var:PAU_loan_provider = {
                 clr_country_flag = yaobuyaoguyong
                 clr_country_flag = PAU_bop_loan_active
@@ -1038,6 +1337,7 @@ PAU_hetong = {
                 add_equipment_to_stockpile = { type = infantry_equipment amount = 1000 producer = PAU }
             }
             var:PAU_loan_provider = { clr_country_flag = yaobuyaoguyong }
+            PAU_record_pre_mercenary_wars = yes
             activate_mission = PAU_guyong_attack
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
@@ -1046,6 +1346,7 @@ PAU_hetong = {
                     every_owned_state = {
                         set_state_flag = PAU_guyong_enemy_state
                     }
+                    PAU_record_mercenary_enemy = yes
                     PAU = {
                         add_to_war = {
                             targeted_alliance = PREV.PREV
@@ -1066,6 +1367,7 @@ PAU_hetong = {
                 add_equipment_to_stockpile = { type = infantry_equipment amount = 1000 producer = PAU }
             }
             var:PAU_loan_provider = { clr_country_flag = yaobuyaoguyong }
+            PAU_record_pre_mercenary_wars = yes
             activate_mission = PAU_guyong_attack
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
@@ -1074,6 +1376,7 @@ PAU_hetong = {
                     every_owned_state = {
                         set_state_flag = PAU_guyong_enemy_state
                     }
+                    PAU_record_mercenary_enemy = yes
                     PAU = {
                         add_to_war = {
                             targeted_alliance = PREV.PREV
@@ -1107,6 +1410,7 @@ PAU_hetong = {
         complete_effect = {
             add_to_variable = { var = ubs_save value = 30 tooltip = ubs_save_tt }
             add_days_mission_timeout = { mission = PAU_guyong_attack days = 90 }
+            PAU_record_pre_mercenary_wars = yes
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 every_country = {
@@ -1114,6 +1418,7 @@ PAU_hetong = {
                     every_owned_state = {
                         set_state_flag = PAU_guyong_enemy_state
                     }
+                    PAU_record_mercenary_enemy = yes
                     PAU = {
                         add_to_war = {
                             targeted_alliance = PREV.PREV
@@ -1128,7 +1433,7 @@ PAU_hetong = {
 
     #任务：替雇主作战
     PAU_guyong_attack = {
-        icon = GFX_nanmeiziyuan
+        icon = GFX_PAU_dec_mercenary_strike
         allowed = { tag = PAU }
         available = { always = no }
         activation = { always = no }
@@ -1166,15 +1471,13 @@ PAU_hetong = {
             if = {
                 limit = { has_country_flag = PAU_guyonged_touxiang_flag }
                 add_timed_idea = { idea = PAU_guyong_debuff days = 90 }
-                every_country = {
-                    limit = { has_country_flag = PAU_will_guyonged_touxiang_flag }
-                    white_peace = { tag = PAU }
-                    clr_country_flag = PAU_will_guyonged_touxiang_flag
-                }
+                PAU_mercenary_retreat_peace = yes
+                PAU_revoke_mercenary_military_access = yes
                 every_country = {
                     limit = { has_country_flag = PAU_bop_loan_active }
                     clr_country_flag = PAU_bop_loan_active
                 }
+                PAU_clear_mercenary_tracking = yes
                 clr_country_flag = PAU_guyonged_touxiang_flag
                 add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
             }
@@ -1213,10 +1516,13 @@ PAU_hetong = {
                         }
                         clr_country_flag = PAU_guzhu_cap
                     }
+                    PAU_mercenary_retreat_peace = yes
+                    PAU_revoke_mercenary_military_access = yes
                     every_country = {
                         limit = { has_country_flag = PAU_bop_loan_active }
                         clr_country_flag = PAU_bop_loan_active
                     }
+                    PAU_clear_mercenary_tracking = yes
                 }
                 #与雇主翻脸开战
                 else_if = {
@@ -1228,11 +1534,14 @@ PAU_hetong = {
                     }
                     add_timed_idea = { idea = PAU_guyong_debuff days = 180 }
                     add_to_variable = { PAU_mercenary_reputation = -20 tooltip = PAU_guyong_dianshu_tt }
+                    PAU_mercenary_retreat_peace = yes
+                    PAU_revoke_mercenary_military_access = yes
                     country_event = { id = PAU.179 hours = 6 }
                     every_country = {
                         limit = { has_country_flag = PAU_bop_loan_active }
                         clr_country_flag = PAU_bop_loan_active
                     }
+                    PAU_clear_mercenary_tracking = yes
                 }
                 #帮助雇主大获全胜！
                 else = {
@@ -1400,6 +1709,8 @@ PAU_hetong = {
                     country_event = { id = PAU.176 hours = 6 }
                 }
             }
+            PAU_revoke_mercenary_military_access = yes
+            PAU_clear_mercenary_tracking = yes
             #清除本单合同的敌国地块印记
             every_state = {
                 limit = { has_state_flag = PAU_guyong_enemy_state }
@@ -1428,10 +1739,13 @@ PAU_hetong = {
                 }
                 white_peace = { tag = PAU }
             }
+            PAU_mercenary_retreat_peace = yes
+            PAU_revoke_mercenary_military_access = yes
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 clr_country_flag = PAU_bop_loan_active
             }
+            PAU_clear_mercenary_tracking = yes
             every_state = {
                 limit = { has_state_flag = PAU_guyong_enemy_state }
                 clr_state_flag = PAU_guyong_enemy_state
@@ -1454,7 +1768,7 @@ PAU_hetong = {
 
     #决议名：向租借港派遣雇佣兵团
     PAU_guyong_deploy = {
-        icon = GFX_decision_generic_military
+        icon = GFX_PAU_dec_mercenary_deploy
         allowed = { tag = PAU }
         visible = {
             has_country_flag = PAU_guyonged_flag
@@ -1513,7 +1827,7 @@ PAU_hetong = {
 
     #决议名：延长雇佣作战合同
     PAU_guyong_yanqi = {
-        icon = GFX_decision_hol_attract_foreign_investors
+        icon = GFX_PAU_dec_mercenary_extend
         allowed = { tag = PAU }
         visible = {
             has_active_mission = PAU_guyong_attack
@@ -1560,13 +1874,14 @@ PAU_hetong = {
         }
         complete_effect = {
             set_country_flag = PAU_guyonged_touxiang_flag
+            PAU_record_pre_mercenary_wars = yes
             add_manpower = 5000
             add_equipment_to_stockpile = { type = infantry_equipment amount = 1000 producer = PAU }
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 every_country = {
                     limit = { has_war_with = PREV }
-                    set_country_flag = PAU_will_guyonged_touxiang_flag
+                    PAU_record_mercenary_enemy = yes
                     country_event = { id = PAU.178 hours = 6 }
                 }
             }
@@ -1630,7 +1945,7 @@ PAU_lhs_integration = {
 
     #将她们的编制解散
     PAU_lhs_dissolve = {
-        icon = GFX_land_owners_finding_funding
+        icon = GFX_PAU_dec_lhs_dissolve
         allowed = { original_tag = PAU }
         visible = {
             NOT = { has_country_flag = PAU_lhs_integrated }
@@ -1695,7 +2010,7 @@ PAU_lhs_integration = {
 
     #决议名：让我们的军官去训练她们
     PAU_lhs_officer_exchange = {
-        icon = GFX_decision_attache
+        icon = GFX_PAU_dec_officer_exchange
         allowed = { original_tag = PAU }
         visible = {
             NOT = { has_country_flag = PAU_lhs_integrated }
@@ -1773,7 +2088,14 @@ PAU_lhs_integration = {
                 value = -0.5
                 tooltip = unit_youjibudui_design_cost_factor_tt
             }
-            remove_ideas = PAU_divided_legion2
+            if = {
+                limit = { has_idea = PAU_divided_legion2 }
+                remove_ideas = PAU_divided_legion2
+            }
+            else_if = {
+                limit = { has_idea = PAU_divided_legion2_no_lhs }
+                remove_ideas = PAU_divided_legion2_no_lhs
+            }
             set_technology = { youjidui_tech = 1 }
             set_country_flag = youji_on_me2
             set_technology = { youji_on_me2 = 1 }
@@ -1866,7 +2188,7 @@ PAU_grail_camp = {
 
     #把我们的食物分一分吧
     PAU_grail_split_rations = {
-        icon = GFX_nanmeiziyuan
+        icon = GFX_PAU_dec_grail_rations
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_grail_camp
@@ -1874,7 +2196,7 @@ PAU_grail_camp = {
         }
         available = {
             custom_trigger_tooltip = {
-                tooltip = PAU_cond_grail_rations_gt9_tt
+                tooltip = PAU_cond_grail_rations_gt19_tt
                 check_variable = { PAU_grail_rations > 19 }
             }
         }
@@ -1890,8 +2212,20 @@ PAU_grail_camp = {
         }
         remove_effect = {
             add_manpower = 3000
-            add_stability = 0.05
-            add_war_support = 0.05
+            if = {
+                limit = { has_stability < 0.85 }
+                add_stability = 0.05
+            }
+            else = {
+                add_political_power = 25
+            }
+            if = {
+                limit = { has_war_support < 0.85 }
+                add_war_support = 0.05
+            }
+            else = {
+                add_command_power = 20
+            }
             if = {
                 limit = { NOT = { has_country_flag = PAU_lhs_integrated } }
                 add_to_variable = {
@@ -1914,7 +2248,7 @@ PAU_grail_camp = {
         }
         available = {
             custom_trigger_tooltip = {
-                tooltip = PAU_cond_grail_rations_gt9_tt
+                tooltip = PAU_cond_grail_rations_gt29_tt
                 check_variable = { PAU_grail_rations > 29 }
             }
         }
@@ -1950,7 +2284,7 @@ PAU_grail_camp = {
 
     #替圣杯修船
     PAU_grail_repair_ships = {
-        icon = GFX_PAU_sbxc
+        icon = GFX_PAU_dec_grail_ship_repair
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_grail_camp
@@ -1958,7 +2292,7 @@ PAU_grail_camp = {
         }
         available = {
             custom_trigger_tooltip = {
-                tooltip = PAU_cond_grail_rations_gt9_tt
+                tooltip = PAU_cond_grail_rations_gt29_tt
                 check_variable = { PAU_grail_rations > 29 }
             }
         }
@@ -1994,6 +2328,82 @@ PAU_grail_camp = {
         }
         ai_will_do = { factor = 50 }
     }
+
+    #近海捕捞与补给抢滩
+    PAU_grail_deepsea_fishing = {
+        icon = GFX_PAU_dec_deepsea_fish
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_grail_camp
+            NOT = { has_completed_focus = PAU_dsyq }
+        }
+        available = {
+            has_country_flag = PAU_grail_camp
+            NOT = { has_completed_focus = PAU_zhyk }
+        }
+        cost = 10
+        days_remove = 20
+        days_re_enable = 10
+        fire_only_once = no
+        remove_effect = {
+            add_to_variable = {
+                var = PAU_grail_rations
+                value = 15
+                tooltip = PAU_grail_rations_tt
+            }
+            add_equipment_to_stockpile = {
+                type = convoy
+                amount = 10
+                producer = PAU
+            }
+        }
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 5
+                check_variable = { PAU_grail_rations < 40 }
+            }
+        }
+    }
+
+    #校射巡洋舰主炮与登陆艇
+    PAU_grail_naval_gunnery_prep = {
+        icon = GFX_PAU_dec_naval_gunnery
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_grail_camp
+            NOT = { has_completed_focus = PAU_dsyq }
+            check_variable = { PAU_grail_gunnery_prep_count < 2 }
+        }
+        available = {
+            has_country_flag = PAU_grail_camp
+            has_fuel > 499
+        }
+        cost = 15
+        days_remove = 25
+        days_re_enable = 15
+        fire_only_once = no
+        complete_effect = {
+            add_fuel = -500
+        }
+        remove_effect = {
+            add_to_variable = { var = PAU_grail_gunnery_prep_count value = 1 }
+            navy_experience = 15
+            army_experience = 15
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_amphibious_invasion
+                value = 0.05
+                tooltip = amphibious_invasion_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_naval_coordination
+                value = 0.05
+                tooltip = naval_coordination_tt
+            }
+        }
+        ai_will_do = { factor = 15 }
+    }
 }
 
 
@@ -2011,9 +2421,9 @@ PAU_safe_harbor = {
         timeout_effect = {
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_industrial_capacity_factory
-                value = 0.05
-                tooltip = industrial_capacity_factory_tt
+                var = PAU_ml_raw_trade_opinion_factor
+                value = 0.15
+                tooltip = trade_opinion_factor_tt
             }
             add_to_variable = {
                 var = PAU_ml_raw_production_speed_buildings_factor
@@ -2036,7 +2446,7 @@ PAU_safe_harbor = {
 
     #指定 [FROM.GetName] 为避风港
     PAU_designate_safe_harbor = {
-        icon = GFX_decision_generic_merge_plant_ship
+        icon = GFX_PAU_dec_harbor_designate
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
@@ -2104,7 +2514,7 @@ PAU_safe_harbor = {
 
     #将 [FROM.GetName] 建为军港
     PAU_harbor_military = {
-        icon = GFX_decision_eng_blackshirt_march
+        icon = GFX_PAU_dec_harbor_military
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
@@ -2190,7 +2600,7 @@ PAU_safe_harbor = {
 
     #将 [FROM.GetName] 建为商港
     PAU_harbor_trade = {
-        icon = GFX_decision_ger_mefo_bills
+        icon = GFX_PAU_dec_harbor_trade
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
@@ -2295,7 +2705,7 @@ PAU_safe_harbor = {
     #自动循环任务：军港
     PAU_safe_harbor_repair_loop = {
         name = PAU_safe_harbor_repair
-        icon = GFX_PAU_sbxc
+        icon = GFX_PAU_dec_repair_loop
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_auto_dockyard_active
@@ -2386,7 +2796,7 @@ PAU_safe_harbor = {
 
     #开通固定航线
     PAU_safe_harbor_lane = {
-        icon = GFX_decision_hol_inundate_water_lines
+        icon = GFX_PAU_dec_shipping_lane
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
@@ -2409,7 +2819,7 @@ PAU_safe_harbor = {
     #自动循环任务：固定航线
     PAU_safe_harbor_lane_loop = {
         name = PAU_safe_harbor_lane
-        icon = GFX_decision_hol_inundate_water_lines
+        icon = GFX_PAU_dec_lane_loop
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_auto_lane_active
@@ -2517,7 +2927,7 @@ PAU_safe_harbor = {
 
     #自动扩建避风港
     PAU_safe_harbor_auto = {
-        icon = GFX_PAU_bfg
+        icon = GFX_PAU_dec_harbor_auto
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_safe_harbor_unlocked
@@ -2538,7 +2948,7 @@ PAU_safe_harbor = {
     #自动扩建循环任务
     PAU_safe_harbor_auto_task = {
         name = PAU_safe_harbor_auto
-        icon = GFX_PAU_bfg
+        icon = GFX_PAU_dec_harbor_task
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_auto_harbor
@@ -2595,708 +3005,6 @@ PAU_safe_harbor = {
     }
 }
 
-
-PAU_army_reform_axia = {
-
-    #决议名：山地侦察
-    PAU_axia_recon = {
-        icon = GFX_mission_candy_and_recon
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_nzdt
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_mil_gt9_tt
-                check_variable = { PAU_axia_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_recon < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
-            add_to_variable = { PAU_cnt_axia_recon = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_bonus_recon value = 0.05 tooltip = recon_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_speed value = 0.025 tooltip = army_speed_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_planning value = 0.05 tooltip = planning_speed_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：弹药领用制度
-    PAU_axia_supply = {
-        icon = GFX_decision_supplies
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_nlwq
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_mil_gt9_tt
-                check_variable = { PAU_axia_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_supply < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
-            add_to_variable = { PAU_cnt_axia_supply = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_bonus_attack value = 0.025 tooltip = army_attack_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_supply value = -0.05 tooltip = supply_consumption_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_out_of_supply value = -0.05 tooltip = out_of_supply_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：装甲维修班
-    PAU_axia_armor = {
-        icon = GFX_decision_category_tank
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_ax_nyfy
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_mil_gt9_tt
-                check_variable = { PAU_axia_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_armor < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
-            add_to_variable = { PAU_cnt_axia_armor = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_armor_attack value = 0.05 tooltip = army_armor_attack_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_armor_defence value = 0.05 tooltip = army_armor_defence_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_breakthrough value = 0.025 tooltip = breakthrough_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：前线救护队
-    PAU_axia_medics = {
-        icon = GFX_decision_generic_independence
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_nlwq2
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_mil_gt9_tt
-                check_variable = { PAU_axia_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_medics < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
-            add_to_variable = { PAU_cnt_axia_medics = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_casualty_trickleback value = 0.05 tooltip = casualty_trickleback_tt }
-            add_to_variable = { var = PAU_mil_reform_experience_loss_factor value = -0.05 tooltip = experience_loss_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_defence value = 0.025 tooltip = army_defence_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-}
-
-PAU_army_reform_xfxy = {
-
-    #决议名：统一指挥体系
-    PAU_xfxy_command = {
-        icon = GFX_mission_delegate_command
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_jsgz
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_mil_gt9_tt
-                check_variable = { PAU_xfxy_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_command < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_mil value = -20 tooltip = PAU_xfxy_mil_tt }
-            add_to_variable = { PAU_cnt_xfxy_command = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_max_planning value = 0.025 tooltip = max_planning_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_planning value = 0.05 tooltip = planning_speed_tt }
-            add_to_variable = { var = PAU_mil_reform_army_infantry_attack_factor value = 0.025 tooltip = army_infantry_attack_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_army_infantry_defence_factor value = 0.025 tooltip = army_infantry_defence_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：备用通信网络
-    PAU_xfxy_signal = {
-        icon = GFX_decision_CHL_mapuche_liberate_isthmo_amerindia
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_nyjs
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_mil_gt9_tt
-                check_variable = { PAU_xfxy_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_signal < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_mil value = -20 tooltip = PAU_xfxy_mil_tt }
-            add_to_variable = { PAU_cnt_xfxy_signal = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_bonus_coordination value = 0.025 tooltip = coordination_bonus_tt }
-            add_to_variable = { var = PAU_mil_reform_land_reinforce_rate value = 0.025 tooltip = land_reinforce_rate_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_initiative value = 0.025 tooltip = initiative_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：协同防御
-    PAU_xfxy_joint_defense = {
-        icon = GFX_decision_buy_supplies_for_xueyi
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_nytjjs
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_mil_gt9_tt
-                check_variable = { PAU_xfxy_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_winter < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_mil value = -20 tooltip = PAU_xfxy_mil_tt }
-            add_to_variable = { PAU_cnt_xfxy_winter = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_bonus_attrition value = -0.05 tooltip = attrition_tt }
-            add_to_variable = { var = PAU_mil_reform_army_supply_node_range value = 0.05 tooltip = supply_node_range_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_morale value = 0.05 tooltip = army_morale_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_army_infantry_defence_factor value = 0.025 tooltip = army_infantry_defence_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-}
-
-PAU_army_reform_xiaoyao = {
-
-    #决议名：整备舰队
-    PAU_xiaoyao_navy = {
-        icon = GFX_trait_ROC_dianlei_navy
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xy_fy
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xiaoyao_mil_gt9_tt
-                check_variable = { PAU_xiaoyao_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xy_navy < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xiaoyao_mil value = -20 tooltip = PAU_xiaoyao_mil_tt }
-            add_to_variable = { PAU_cnt_xy_navy = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_bonus_naval_coordination value = 0.05 tooltip = naval_coordination_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_ship_recovery value = 0.05 tooltip = naval_ship_recovery_chance_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_bonus_attack value = 0.025 tooltip = army_attack_factor_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：远征装载计划
-    PAU_xiaoyao_expedition = {
-        icon = GFX_decision_generic_human_torpedo
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xy_ydjs
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xiaoyao_mil_gt9_tt
-                check_variable = { PAU_xiaoyao_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xy_expedition < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xiaoyao_mil value = -20 tooltip = PAU_xiaoyao_mil_tt }
-            add_to_variable = { PAU_cnt_xy_expedition = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_naval_invasion_capacity value = 2 tooltip = naval_invasion_plan_cap_tt }
-            add_to_variable = { var = PAU_mil_reform_naval_invasion_division_cap value = 5 tooltip = naval_invasion_division_cap_tt }
-            add_to_variable = { var = PAU_mil_reform_no_supply_grace value = 24 tooltip = no_supply_grace_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：登陆场勘察
-    PAU_xiaoyao_landing = {
-        icon = GFX_decision_CHL_mapuche_liberate_isthmo_amerindia
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xy_tltx
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xiaoyao_mil_gt9_tt
-                check_variable = { PAU_xiaoyao_mil > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xy_landing < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xiaoyao_mil value = -20 tooltip = PAU_xiaoyao_mil_tt }
-            add_to_variable = { PAU_cnt_xy_landing = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_mil_reform_append_tt
-            add_to_variable = { var = PAU_mil_reform_naval_invasion_prep_days value = -5 tooltip = naval_invasion_prep_days_tt }
-            add_to_variable = { var = PAU_mil_reform_amphibious_invasion value = 0.05 tooltip = amphibious_invasion_tt }
-            add_to_variable = { var = PAU_mil_reform_amphibious_invasion_defence value = 0.05 tooltip = amphibious_invasion_defence_tt }
-            add_to_variable = { var = PAU_mil_reform_progress value = 2 tooltip = PAU_mil_reform_progress_tt }
-            hidden_effect = { PAU_refresh_mil_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-}
-
-PAU_economy_reform_axia = {
-
-    #决议名：公开粮食配给
-    PAU_axia_granary = {
-        icon = GFX_decision_generic_scales
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_bxsb
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_eco_gt9_tt
-                check_variable = { PAU_axia_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_granary < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_eco value = -20 tooltip = PAU_axia_eco_tt }
-            add_to_variable = { PAU_cnt_axia_granary = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_bonus_consumer value = -0.025 tooltip = consumer_goods_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_supply value = -0.05 tooltip = supply_consumption_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_stability value = 0.025 tooltip = stability_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：统一维修标准
-    PAU_axia_workshop = {
-        icon = GFX_modifiers_industry
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_jjcl
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_eco_gt9_tt
-                check_variable = { PAU_axia_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_workshop < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_eco value = -20 tooltip = PAU_axia_eco_tt }
-            add_to_variable = { PAU_cnt_axia_workshop = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_line_change value = 0.05 tooltip = line_change_production_efficiency_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_conversion_speed value = 0.05 tooltip = equipment_conversion_speed_tt }
-            add_to_variable = { var = PAU_eco_reform_repair value = 0.05 tooltip = industry_repair_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_research value = 0.025 tooltip = research_speed_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：恢复港口贸易
-    PAU_axia_trade = {
-        icon = GFX_spring_market
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_nljj
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_axia_eco_gt9_tt
-                check_variable = { PAU_axia_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_axia_trade < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_axia_eco value = -20 tooltip = PAU_axia_eco_tt }
-            add_to_variable = { PAU_cnt_axia_trade = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_bonus_dockyard value = 0.05 tooltip = production_speed_dockyard_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_shipyard value = 0.05 tooltip = industrial_capacity_dockyard_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_fuel value = 0.05 tooltip = fuel_gain_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_trade value = 0.05 tooltip = trade_opinion_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-}
-
-PAU_economy_reform_xfxy = {
-
-    #决议名：清查公共物资
-    PAU_xfxy_audit = {
-        icon = GFX_Shanghai_Economic_Circle
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_jjhf
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_eco_gt9_tt
-                check_variable = { PAU_xfxy_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_audit < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
-            add_to_variable = { PAU_cnt_xfxy_audit = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_bonus_political value = 0.05 tooltip = political_power_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_resources value = 0.05 tooltip = local_resources_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_fuel value = 0.05 tooltip = fuel_gain_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：补发工人工资
-    PAU_xfxy_wages = {
-        icon = GFX_decision_united_party
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_nyjj
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_eco_gt9_tt
-                check_variable = { PAU_xfxy_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_wages < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
-            add_to_variable = { PAU_cnt_xfxy_wages = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_efficiency_gain value = 0.05 tooltip = production_factory_efficiency_gain_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_industry value = 0.025 tooltip = industrial_capacity_factory_tt }
-            add_to_variable = { var = PAU_eco_reform_stability value = 0.025 tooltip = stability_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：规范军需采购
-    PAU_xfxy_procurement = {
-        icon = GFX_decision_generic_political_discourse
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_hybd
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_eco_gt9_tt
-                check_variable = { PAU_xfxy_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_procurement < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
-            add_to_variable = { PAU_cnt_xfxy_procurement = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_bonus_efficiency value = 0.025 tooltip = production_factory_max_efficiency_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_arms value = 0.05 tooltip = production_speed_arms_factory_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：建立纸币兑换制度（归属晓枫雪伊系，由国策“这张钞票还没认输”解锁）
-    PAU_axia_currency = {
-        icon = GFX_cash_in_economic_loot
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xfxy_zsjj
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xfxy_eco_gt9_tt
-                check_variable = { PAU_xfxy_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xfxy_currency < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
-            add_to_variable = { PAU_cnt_xfxy_currency = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_hcp_income value = 0.05 tooltip = hcp_income_factor_monthly_tooltip }
-            add_to_variable = { var = PAU_eco_reform_bonus_trade value = 0.05 tooltip = trade_opinion_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_consumer value = -0.025 tooltip = consumer_goods_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-}
-
-PAU_economy_reform_xiaoyao = {
-
-    #决议名：恢复城镇集市
-    PAU_xiaoyao_market = {
-        icon = GFX_decision_generic_consumer_goods
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xy_sc
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xiaoyao_eco_gt9_tt
-                check_variable = { PAU_xiaoyao_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xy_market < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xiaoyao_eco value = -20 tooltip = PAU_xiaoyao_eco_tt }
-            add_to_variable = { PAU_cnt_xy_market = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_bonus_construction value = 0.05 tooltip = production_speed_industrial_complex_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_buildings value = 0.025 tooltip = production_speed_buildings_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_trade value = 0.05 tooltip = trade_opinion_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：改进远征军口粮
-    PAU_xiaoyao_food = {
-        icon = GFX_decision_generic_agriculture
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xy_ydjj
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xiaoyao_eco_gt9_tt
-                check_variable = { PAU_xiaoyao_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xy_food < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xiaoyao_eco value = -20 tooltip = PAU_xiaoyao_eco_tt }
-            add_to_variable = { PAU_cnt_xy_food = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_no_supply_grace value = 24 tooltip = no_supply_grace_tt }
-            add_to_variable = { var = PAU_eco_reform_out_of_supply value = -0.05 tooltip = out_of_supply_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_consumer value = -0.025 tooltip = consumer_goods_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-
-    #决议名：保障春耕生产
-    PAU_xiaoyao_land = {
-        icon = GFX_land_owners_guizu
-        allowed = { original_tag = PAU }
-        visible = { }
-        available = {
-            has_completed_focus = PAM_xy_zjdq
-            custom_trigger_tooltip = {
-                tooltip = PAU_cond_xiaoyao_eco_gt9_tt
-                check_variable = { PAU_xiaoyao_eco > 19 }
-            }
-            custom_trigger_tooltip = {
-                tooltip = PAU_reform_limit_5_tt
-                check_variable = { PAU_cnt_xy_land < 5 }
-            }
-        }
-        cost = 15
-        fire_only_once = no
-        days_remove = 30
-        complete_effect = {
-            add_to_variable = { var = PAU_xiaoyao_eco value = -20 tooltip = PAU_xiaoyao_eco_tt }
-            add_to_variable = { PAU_cnt_xy_land = 1 }
-        }
-        remove_effect = {
-            custom_effect_tooltip = PAU_eco_reform_append_tt
-            add_to_variable = { var = PAU_eco_reform_bonus_industry value = 0.025 tooltip = industrial_capacity_factory_tt }
-            add_to_variable = { var = PAU_eco_reform_conscription value = 0.025 tooltip = conscription_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_bonus_morale value = 0.05 tooltip = army_morale_factor_tt }
-            add_to_variable = { var = PAU_eco_reform_progress value = 2 tooltip = PAU_eco_reform_progress_tt }
-            hidden_effect = { PAU_refresh_eco_reform_tiers = yes }
-        }
-        ai_will_do = { factor = 10 }
-    }
-}
-
 PAU_bop_name = {
 
     #按自卫队的经验操练部队
@@ -3341,7 +3049,7 @@ PAU_bop_name = {
 
     #催货的先去后面排队
     PAU_bop_union_production_drive = {
-        icon = GFX_decision_eng_trade_unions_support
+        icon = GFX_PAU_dec_production_drive
         allowed = { original_tag = PAU }
         visible = { has_completed_focus = PAU_tyzz }
         cost = 25
@@ -3355,7 +3063,17 @@ PAU_bop_name = {
             resistance_target = -0.10
         }
         complete_effect = {
-            add_stability = 0.03
+            if = {
+                limit = { has_stability < 0.85 }
+                add_stability = 0.03
+            }
+            else = {
+                add_to_variable = {
+                    var = ubs_save
+                    value = 15
+                    tooltip = ubs_save_tt
+                }
+            }
             add_power_balance_value = {
                 id = PAU_bop
                 value = -0.15
@@ -3420,7 +3138,7 @@ PAU_bop_name = {
 
     #我们前线急用，批条回头再补
     PAU_bop_military_priority_requisition = {
-        icon = GFX_decision_generic_tank
+        icon = GFX_PAU_dec_military_req
         allowed = { original_tag = PAU }
         visible = { has_completed_focus = PAU_tyzz }
         cost = 25
@@ -3435,7 +3153,14 @@ PAU_bop_name = {
         }
         complete_effect = {
             add_fuel = 5000
-            add_war_support = 0.03
+            if = {
+                limit = { has_war_support < 0.85 }
+                add_war_support = 0.03
+            }
+            else = {
+                add_command_power = 15
+                army_experience = 5
+            }
             add_to_variable = {
                 var = PAU_mercenary_reputation
                 value = 5
@@ -3458,7 +3183,7 @@ PAU_bop_name = {
 
     #谁也别嫌弃谁了
     PAU_bop_joint_boiler_room = {
-        icon = GFX_decision_united_party
+        icon = GFX_PAU_dec_boiler_room
         allowed = { original_tag = PAU }
         visible = { has_completed_focus = PAU_tyzz }
         available = {
@@ -3483,8 +3208,20 @@ PAU_bop_name = {
             army_org_factor = 0.05
         }
         complete_effect = {
-            add_stability = 0.02
-            add_war_support = 0.02
+            if = {
+                limit = { has_stability < 0.85 }
+                add_stability = 0.02
+            }
+            else = {
+                add_political_power = 15
+            }
+            if = {
+                limit = { has_war_support < 0.85 }
+                add_war_support = 0.02
+            }
+            else = {
+                add_command_power = 10
+            }
             if = {
                 limit = {
                     power_balance_value = {
@@ -3586,7 +3323,14 @@ PAU_late_doctrine = {
             }
             if = {
                 limit = { check_variable = { PAU_mercenary_reputation > 59 } }
-                add_war_support = 0.05
+                if = {
+                    limit = { has_war_support < 0.85 }
+                    add_war_support = 0.03
+                }
+                else = {
+                    add_command_power = 15
+                    army_experience = 5
+                }
             }
         }
         ai_will_do = { factor = 1 }
@@ -3594,7 +3338,7 @@ PAU_late_doctrine = {
 
     #决议名：向 [FROM.GetName] 派出和平贸易使团
     PAU_peace_trade_mission = {
-        icon = GFX_decision_category_generic_economy
+        icon = GFX_PAU_dec_trade_mission
         allowed = { original_tag = PAU }
         available = {
             FROM = {
@@ -3625,7 +3369,7 @@ PAU_late_doctrine = {
 
     #决议名：加固 [FROM.GetName] 的海岸防线
     PAU_coastal_fortification = {
-        icon = GFX_decision_category_generic_fortification
+        icon = GFX_PAU_dec_coastal_fort
         allowed = { original_tag = PAU }
         visible = { has_country_flag = PAU_armed_neutrality }  #武装中立路线标记
         available = {
@@ -3681,7 +3425,7 @@ PAU_late_doctrine = {
 PAU_national_unification = {
     #决议名：重建苏联
     PAU_rebuild_soviet = {
-        icon = GFX_decision_generic_soviet_politics
+        icon = GFX_PAU_dec_rebuild_soviet
         allowed = { original_tag = PAU }
         visible = {
             has_completed_focus = PAU_els
@@ -3689,6 +3433,11 @@ PAU_national_unification = {
                 NOT = { country_exists = SOV }
                 SOV = { is_subject = yes NOT = { is_subject_of = ROOT } }
                 SOV = { has_capitulated = yes }
+                AND = {
+                    country_exists = SOV
+                    NOT = { SOV = { owns_state = 219 } }
+                    NOT = { SOV = { is_subject_of = ROOT } }
+                }
             }
         }
         available = {
@@ -3700,7 +3449,10 @@ PAU_national_unification = {
                 }
             }
             any_state = {
-                is_core_of = SOV
+                OR = {
+                    is_core_of = SOV
+                    has_state_flag = Soviet_union_state_area
+                }
                 NOT = { state = 219 }
                 OR = {
                     is_controlled_by = ROOT
@@ -3714,9 +3466,39 @@ PAU_national_unification = {
         days_remove = 30
 
         remove_effect = {
+            if = {
+                limit = { country_exists = SOV }
+                SOV = {
+                    if = {
+                        limit = { is_subject = yes }
+                        OVERLORD = { end_puppet = PREV }
+                    }
+                    if = {
+                        limit = {
+                            is_in_faction = yes
+                            NOT = { is_in_faction_with = ROOT }
+                        }
+                        leave_faction = yes
+                    }
+                }
+                every_country = {
+                    limit = {
+                        OR = {
+                            tag = ROOT
+                            is_in_faction_with = ROOT
+                            is_subject_of = ROOT
+                        }
+                        has_war_with = SOV
+                    }
+                    white_peace = SOV
+                }
+            }
             every_state = {
                 limit = {
-                    is_core_of = SOV
+                    OR = {
+                        is_core_of = SOV
+                        has_state_flag = Soviet_union_state_area
+                    }
                     NOT = { is_core_of = ROOT }
                     NOT = { is_core_of = PRC }
                     NOT = { is_claimed_by = PRC }
@@ -3729,14 +3511,34 @@ PAU_national_unification = {
                             }
                             NOT = { tag = PRC }
                         }
+                        AND = {
+                            OR = {
+                                is_owned_by = ROOT
+                                owner = {
+                                    OR = {
+                                        is_in_faction_with = ROOT
+                                        is_subject_of = ROOT
+                                    }
+                                    NOT = { tag = PRC }
+                                }
+                            }
+                            NOT = {
+                                controller = { has_war_with = ROOT }
+                            }
+                        }
                     }
                 }
+                add_core_of = SOV
                 transfer_state_to = SOV
             }
             SOV = {
                 if = {
                     limit = { is_subject = yes }
-                    OVERLORD = { end_puppet = SOV }
+                    OVERLORD = { end_puppet = PREV }
+                }
+                if = {
+                    limit = { 219 = { is_owned_by = SOV } }
+                    set_capital = { state = 219 remember_old_capital = no }
                 }
                 set_politics = {
                     ruling_party = communism
@@ -3754,9 +3556,6 @@ PAU_national_unification = {
             if = {
                 limit = { is_in_faction = yes }
                 faction_leader = { add_to_faction = SOV }
-            }
-            else = {
-                add_to_faction = SOV
             }
             set_country_flag = PAU_soviet_ally
             add_dynamic_modifier = {
@@ -3862,7 +3661,7 @@ PAU_national_unification = {
 
     #决议名：宣告樱花战败
     PAU_sakura_super_event = {
-        icon = GFX_decision_POL_organize_strike_two
+        icon = GFX_PAU_dec_sakura_victory
         allowed = { original_tag = PAU }
         visible = { has_country_flag = has_PAU_xiaoyao8 has_country_flag = PAU_yhzb }
         available = {
@@ -3929,6 +3728,13 @@ PAU_national_unification = {
                 }
             }
             else_if = {
+                limit = { has_idea = PAU_zgjd_idea2_no_jap }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea2_no_jap
+                    add_idea = PAU_zgjd_idea3
+                }
+            }
+            else_if = {
                 limit = { has_idea = PAU_zgjd_idea1 }
                 swap_ideas = {
                     remove_idea = PAU_zgjd_idea1
@@ -3936,9 +3742,23 @@ PAU_national_unification = {
                 }
             }
             else_if = {
+                limit = { has_idea = PAU_zgjd_idea1_no_jap }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea1_no_jap
+                    add_idea = PAU_zgjd_idea3
+                }
+            }
+            else_if = {
                 limit = { has_idea = PAU_zgjd_idea }
                 swap_ideas = {
                     remove_idea = PAU_zgjd_idea
+                    add_idea = PAU_zgjd_idea3
+                }
+            }
+            else_if = {
+                limit = { has_idea = PAU_zgjd_idea_no_jap }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea_no_jap
                     add_idea = PAU_zgjd_idea3
                 }
             }
@@ -3956,7 +3776,7 @@ PAU_national_unification = {
 
     #决议名：索要樱花核心领土
     PAU_demand_sakura_cores = {
-        icon = GFX_decision_eng_trade_unions_support
+        icon = GFX_PAU_dec_treaty_map
         allowed = { original_tag = PAU }
         visible = { has_country_flag = has_PAU_xiaoyao7 has_completed_focus = PAU_llbg }
         available = {
@@ -3992,7 +3812,7 @@ PAU_joint_institutions = {
 
     #当有盟友向我国派出合作小组时，在我国面板顶部显示是谁派来的
     PAU_coop_incoming_mission = {
-        icon = GFX_decision_eng_trade_unions_support
+        icon = GFX_PAU_dec_joint_coop
         allowed = { always = yes }
         available = { always = no }
         activation = { always = no }
@@ -4006,7 +3826,7 @@ PAU_joint_institutions = {
 
     #当有盟友找我国召开研讨会时，在我国面板顶部显示是谁发起的
     PAU_seminar_incoming_mission = {
-        icon = GFX_decision_generic_protection
+        icon = GFX_PAU_dec_seminar
         allowed = { always = yes }
         available = { always = no }
         activation = { always = no }
@@ -4020,7 +3840,7 @@ PAU_joint_institutions = {
 
     #举行联合参谋学院课程会议
     PAU_south_america_joint_logistics = {
-        icon = GFX_decision_eng_blackshirt_march
+        icon = GFX_PAU_dec_joint_staff
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_south_america_super_fired
@@ -4048,7 +3868,7 @@ PAU_joint_institutions = {
 
     #与 [FROM.GetName] 召开联合学说研讨会
     PAU_south_america_development_fund = {
-        icon = GFX_decision_generic_protection
+        icon = GFX_PAU_dec_dev_fund
         allowed = { always = yes }
         visible = {
             PAU = { has_country_flag = PAU_south_america_super_fired }
@@ -4215,7 +4035,7 @@ PAU_joint_institutions = {
 
     #向 [FROM.GetName] 派出合作小组
     PAU_south_america_member_mission = {
-        icon = GFX_decision_eng_trade_unions_support
+        icon = GFX_PAU_dec_sa_member
         allowed = { always = yes }
         visible = {
             PAU = { has_country_flag = PAU_south_america_super_fired }
@@ -4329,7 +4149,7 @@ PAU_joint_institutions = {
     #联合发展计划
     PAU_south_america_development_program_loop = {
         name = PAU_south_america_development_program
-        icon = GFX_gongyejihua2
+        icon = GFX_PAU_dec_dev_loop
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_dev_program_auto_loop
@@ -4466,7 +4286,7 @@ PAU_airborne_armor_ops = {
 
     #高空重型滑翔翼挂架
     PAU_airborne_glider_retrofit = {
-        icon = GFX_decision_generic_tank
+        icon = GFX_PAU_dec_airborne_glider
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_mil_reform_cap_reward_claimed
@@ -4502,7 +4322,7 @@ PAU_airborne_armor_ops = {
 
     #空投缓冲蜂窝舱与携行补给包改装
     PAU_airborne_drop_pod_retrofit = {
-        icon = GFX_decision_supplies
+        icon = GFX_PAU_dec_airborne_pod
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_mil_reform_cap_reward_claimed
@@ -4542,7 +4362,7 @@ PAU_airborne_armor_ops = {
 
     #伞降轻装甲集群立体突击演习
     PAU_airborne_joint_drop_exercise = {
-        icon = GFX_decision_generic_air
+        icon = GFX_PAU_dec_air_exercise
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_mil_reform_cap_reward_claimed
@@ -4572,7 +4392,7 @@ PAU_airborne_armor_ops = {
 PAU_hydro_dam_projects = {
 
     PAU_build_parana_dam = {
-        icon = GFX_decision_generic_construction
+        icon = GFX_PAU_dec_hydro_dam
         allowed = { original_tag = PAU }
         highlight_states = {
             highlight_state_targets = {
@@ -4631,7 +4451,7 @@ PAU_hydro_dam_projects = {
     }
 
     PAU_build_negro_dam = {
-        icon = GFX_decision_generic_construction
+        icon = GFX_PAU_dec_hydro_dam
         allowed = { original_tag = PAU }
         highlight_states = {
             highlight_state_targets = {
@@ -4690,7 +4510,7 @@ PAU_hydro_dam_projects = {
     }
 
     PAU_build_cordoba_dam = {
-        icon = GFX_decision_generic_construction
+        icon = GFX_PAU_dec_hydro_dam
         allowed = { original_tag = PAU }
         highlight_states = {
             highlight_state_targets = {
@@ -4749,7 +4569,7 @@ PAU_hydro_dam_projects = {
     }
 
     PAU_build_patagonia_dam = {
-        icon = GFX_decision_generic_construction
+        icon = GFX_PAU_dec_hydro_dam
         allowed = { original_tag = PAU }
         highlight_states = {
             highlight_state_targets = {
@@ -4808,7 +4628,7 @@ PAU_hydro_dam_projects = {
     }
 
     PAU_build_corrientes_dam = {
-        icon = GFX_decision_generic_construction
+        icon = GFX_PAU_dec_hydro_dam
         allowed = { original_tag = PAU }
         highlight_states = {
             highlight_state_targets = {
@@ -4867,7 +4687,7 @@ PAU_hydro_dam_projects = {
     }
 
     PAU_build_mendoza_dam = {
-        icon = GFX_decision_generic_construction
+        icon = GFX_PAU_dec_hydro_dam
         allowed = { original_tag = PAU }
         highlight_states = {
             highlight_state_targets = {
@@ -4923,5 +4743,79 @@ PAU_hydro_dam_projects = {
             }
         }
         ai_will_do = { factor = 20 }
+    }
+}
+
+political_actions = {
+
+    #发放民生红利
+    PAU_civic_livelihood_dividend = {
+        icon = GFX_PAU_dec_social_dividend
+        allowed = { original_tag = PAU }
+        visible = { original_tag = PAU }
+        available = {
+            has_stability > 0.7
+        }
+        cost = 15
+        fire_only_once = no
+        days_remove = 60
+        days_re_enable = 60
+        modifier = {
+            consumer_goods_factor = -0.05
+            production_speed_buildings_factor = 0.10
+            industrial_capacity_factory = 0.08
+        }
+        complete_effect = {
+            add_stability = -0.1
+            add_to_variable = {
+                var = ubs_save
+                value = 60
+                tooltip = ubs_save_tt
+            }
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 15
+                has_stability > 0.88
+            }
+        }
+    }
+
+    #前线整训
+    PAU_war_fervor_mobilization = {
+        icon = GFX_PAU_dec_war_fervor
+        allowed = { original_tag = PAU }
+        visible = { original_tag = PAU }
+        available = {
+            has_war_support > 0.7
+        }
+        cost = 15
+        fire_only_once = no
+        days_remove = 60
+        days_re_enable = 60
+        modifier = {
+            training_time_factor = -0.15
+            mobilization_speed = 0.20
+            industrial_capacity_factory = 0.05
+        }
+        complete_effect = {
+            add_war_support = -0.1
+            add_command_power = 25
+            army_experience = 15
+            add_manpower = 2500
+            add_equipment_to_stockpile = {
+                type = support_equipment
+                amount = 200
+                producer = PAU
+            }
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 15
+                has_war_support > 0.88
+            }
+        }
     }
 }
