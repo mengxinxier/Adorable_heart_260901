@@ -33,31 +33,12 @@ country_event = {
     option = {
         name = PAU.1.a
         country_event = {
-            id = PAU.1000
-        }
-
-    }
-}
-
-country_event = {
-    id = PAU.1000
-    title = PAU.1000.t
-    desc = PAU.1000.d
-    major = no
-    picture = GFX_event_PAU_xy
-    is_triggered_only = yes
-    fire_only_once = yes
-
-    option = {
-        name = PAU.1000.a
-        country_event = {
             id = PAU.2
-            hours = 1
         }
-
 
     }
 }
+
 
 country_event = {
     id = PAU.2
@@ -216,6 +197,7 @@ country_event = {
         activate_mission = PAU_wl_anti1
         hidden_effect = {
             ZDW = {
+                add_ideas = ZDW_unstoppable_tide
                 add_to_variable = {
                     var = ubs_save  #王室欠饷债务余额=每月把负值折算进ubs_load
                     value = 500
@@ -764,17 +746,18 @@ country_event = {
                         regiments = {
                             wangling = { x = 0 y = 0 }
                             wangling = { x = 0 y = 1 }
-                            wangling = { x = 1 y = 0 }
-                            wangling = { x = 1 y = 1 }
-                            wangling = { x = 2 y = 0 }
-                            wangling = { x = 2 y = 1 }
                         }
                     }
                 }
                 every_controlled_state = {
-                    limit = { has_state_flag = is_lldy_state_flag }
+                   limit = {
+                        has_state_flag = is_lldy_state_flag
+                        not = {
+                            has_state_flag = PAU_xiaoyao_state_flag
+                        }
+                    }
                     create_unit = {
-                        division = "name = \"游荡尸群\" division_template = \"游荡尸群\" start_experience_factor = 0.1 start_equipment_factor = 0.4"
+                        division = "name = \"游荡尸群\" division_template = \"游荡尸群\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
                         count = 3
                         owner = ZDW
                     }
@@ -931,25 +914,22 @@ country_event = {
             }
             declare_war_on = { target = ZDW type = annex_everything }
         }
-         278 = {
-            transfer_state_to = PAU
+        579 = {
+            set_state_controller_to = PAU
         }
         hidden_effect = {
             299 = {
                 teleport_armies = {
                     limit = { tag = PAU }
-                    to_state = 278
+                    to_state = 579
                 }
             }
             add_ideas = PAU_counterattack_zdw_buff
             ZDW = {
-                every_controlled_state = {
-                    limit = { has_state_flag = is_lldy_state_flag }
-                    create_unit = {
-                        division = "name = \"游荡尸群\" division_template = \"游荡尸群\" start_experience_factor = 0.1 start_equipment_factor = 0.35"
-                        count = 2
-                        owner = ZDW
-                    }
+                remove_ideas = ZDW_unstoppable_tide
+                add_timed_idea = {
+                    id = ZDW_solana_backlash
+                    days = 180
                 }
             }
         }
@@ -983,7 +963,7 @@ country_event = {
                 }
             }
             create_unit = {
-                division = "name = \"白夜民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.3 start_equipment_factor = 1.0"
+                division = "name = \"白夜民兵\" division_template = \"白夜民兵\" start_experience_factor = 0.5 start_equipment_factor = 1.0"
                 count = 2
                 allow_spawning_on_enemy_provs = yes
                 owner = PAU
@@ -1178,6 +1158,7 @@ country_event = {
 
     option = {
         name = PAU.25.a
+        set_politics = { ruling_party = democratic elections_allowed = no }
         PAU_Nymph = {
             set_portraits = {
                 army = {
@@ -1693,6 +1674,12 @@ country_event = {
         add_stability = 0.05
         PAU_baiye = {
             add_unit_leader_trait = PAU_baiye_chubby
+        }
+        PAU_gwl = {
+            if = {
+                limit = { has_trait = PAU_xiaochuan }
+                remove_unit_leader_trait = PAU_xiaochuan
+            }
         }
         custom_effect_tooltip = PAU_mainline_append_tt
         add_to_variable = {
@@ -2256,9 +2243,20 @@ country_event = {
             days = 360
         }
         PAU = {
-            add_dynamic_modifier = {
-                modifier = PAU_restitution_received_debuff
-                days = var:PAU_restitution_received_time
+            if = {
+                limit = {
+                    not = {
+                        has_dynamic_modifier = PAU_restitution_received_debuff
+                    }
+                }
+                add_dynamic_modifier = {
+                    modifier = PAU_restitution_received_debuff
+                    days = var:PAU_restitution_received_time
+                }
+            }
+            add_to_variable = {
+                var = PAU_restitution_received_time
+                value = 15
             }
         }
 
@@ -2972,47 +2970,9 @@ country_event = {
         set_variable = { var = PAU_loan_provider value = FROM }
         PAU = {
             diplomatic_relation = { country = FROM relation = military_access active = yes }
-            diplomatic_relation = { country = FROM relation = docking_rights active = yes }
         }
         FROM = {
             diplomatic_relation = { country = PAU relation = military_access active = yes }
-            diplomatic_relation = { country = PAU relation = docking_rights active = yes }
-            if = {
-                limit = {
-                    check_variable = { num_controlled_states > 1 }
-                    any_owned_State = {
-                        is_controlled_by = PREV
-                        is_coastal = yes
-                        is_capital = no
-                        any_province_building_level = {
-                            province = { all_provinces = yes }
-                            building = naval_base
-                            level > 0
-                        }
-                    }
-                }
-                random_owned_controlled_state = {
-                    limit = {
-                        is_coastal = yes
-                        is_capital = no
-                        any_province_building_level = {
-                            province = { all_provinces = yes }
-                            building = naval_base
-                            level > 0
-                        }
-                    }
-                    transfer_state_to = PAU
-                    set_state_flag = PAU_guyong_state_flag
-                }
-            }
-            else_if = {
-                limit = { check_variable = { num_controlled_states > 1 } }
-                random_owned_controlled_state = {
-                    limit = { is_coastal = yes is_capital = no }
-                    transfer_state_to = PAU
-                    set_state_flag = PAU_guyong_state_flag
-                }
-            }
         }
         activate_mission = PAU_guyong_zhunbei
     }
@@ -3945,6 +3905,8 @@ country_event = {
         name = PAU.610.a
         ai_chance = { base = 20 }
         set_country_flag = PAU610_a_flag
+        set_variable = { PAU_coop_send_type = 1 }
+        var:PAU_coop_target_var = { set_variable = { PAU_coop_recv_type = 1 } }
         custom_effect_tooltip = PAU_south_america_unity_tt
         PAU = {
             add_to_variable = {
@@ -3960,10 +3922,13 @@ country_event = {
             hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
+
     option = {
         name = PAU.610.b
         ai_chance = { base = 20 }
         set_country_flag = PAU610_b_flag
+        set_variable = { PAU_coop_send_type = 2 }
+        var:PAU_coop_target_var = { set_variable = { PAU_coop_recv_type = 2 } }
         custom_effect_tooltip = PAU_south_america_unity_tt
         PAU = {
             add_to_variable = {
@@ -3989,10 +3954,13 @@ country_event = {
             hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
+
     option = {
         name = PAU.610.c
         ai_chance = { base = 20 }
         set_country_flag = PAU610_c_flag
+        set_variable = { PAU_coop_send_type = 3 }
+        var:PAU_coop_target_var = { set_variable = { PAU_coop_recv_type = 3 } }
         custom_effect_tooltip = PAU_south_america_unity_tt
         PAU = {
             add_to_variable = {
@@ -4008,10 +3976,13 @@ country_event = {
             hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
+
     option = {
         name = PAU.610.e
         ai_chance = { base = 20 }
         set_country_flag = PAU610_e_flag
+        set_variable = { PAU_coop_send_type = 4 }
+        var:PAU_coop_target_var = { set_variable = { PAU_coop_recv_type = 4 } }
         custom_effect_tooltip = PAU_south_america_unity_tt
         PAU = {
             add_to_variable = {
@@ -4027,10 +3998,13 @@ country_event = {
             hidden_effect = { PAU_refresh_south_america_development = yes }
         }
     }
+
     option = {
         name = PAU.610.f
         ai_chance = { base = 20 }
         set_country_flag = PAU610_f_flag
+        set_variable = { PAU_coop_send_type = 5 }
+        var:PAU_coop_target_var = { set_variable = { PAU_coop_recv_type = 5 } }
         custom_effect_tooltip = PAU_south_america_unity_tt
         PAU = {
             add_to_variable = {
@@ -4141,6 +4115,7 @@ country_event = {
     option = {
         name = PAU_by_h1.a
         add_political_power = 15
+        set_country_flag = PAU_7001
     }
 }
 
@@ -4155,6 +4130,7 @@ country_event = {
     option = {
         name = PAU_by_h2.a
         add_political_power = 15
+        set_country_flag = PAU_7002
     }
 }
 
@@ -4169,6 +4145,7 @@ country_event = {
     option = {
         name = PAU_by_h3.a
         add_political_power = 15
+        set_country_flag = PAU_7003
     }
 }
 
@@ -4183,6 +4160,7 @@ country_event = {
     option = {
         name = PAU_by_h4.a
         add_political_power = 15
+        set_country_flag = PAU_7004
     }
 }
 
@@ -4410,5 +4388,119 @@ country_event = {
             clamp_variable = { var = PAU_trade_partners min = 0 max = 999 }
             add_stability = -0.02
         }
+    }
+}
+
+#军事改革首次达到上限（36）
+country_event = {
+    id = PAU.701
+    title = PAU.701.t
+    desc = PAU.701.d
+    major = no
+    picture = GFX_event_PAU_gtjz
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.701.a
+        ai_chance = { base = 100 }
+        custom_effect_tooltip = PAU_mil_cap_reward_event_tt
+        set_technology = {
+            paratroopers = 1
+            PAU_airborne_light_armor_tech = 1
+        }
+        custom_effect_tooltip = PAU_airborne_light_armor_tech_effect_tt
+        if = {
+            limit = { has_dlc = "No Step Back" }
+            create_equipment_variant = {
+                name = "白夜空投轻战车"
+                type = light_tank_chassis_1
+                parent_version = 0
+                modules = {
+                    main_armament_slot = tank_small_cannon
+                    turret_type_slot = tank_light_two_man_tank_turret
+                    suspension_type_slot = tank_bogie_suspension
+                    armor_type_slot = tank_riveted_armor
+                    engine_type_slot = tank_gasoline_engine
+                    special_type_slot_1 = tank_radio_1
+                    special_type_slot_2 = smoke_launchers
+                }
+                upgrades = {
+                    tank_nsb_engine_upgrade = 6
+                    tank_nsb_armor_upgrade = 2
+                }
+            }
+            add_equipment_to_stockpile = {
+                type = light_tank_chassis_1
+                variant_name = "白夜空投轻战车"
+                amount = 160
+                producer = PAU
+            }
+        }
+        else = {
+            add_equipment_to_stockpile = {
+                type = light_tank_equipment_1
+                amount = 160
+                producer = PAU
+            }
+        }
+        add_equipment_to_stockpile = {
+            type = transport_plane_equipment
+            amount = 40
+            producer = PAU
+        }
+        add_equipment_to_stockpile = {
+            type = support_equipment
+            amount = 60
+            producer = PAU
+        }
+        division_template = {
+            name = "白夜伞降轻装甲旅"
+            regiments = {
+                PAU_airborne_light_armor = { x = 0 y = 0 }
+                PAU_airborne_light_armor = { x = 0 y = 1 }
+                PAU_airborne_light_armor = { x = 1 y = 0 }
+                PAU_airborne_light_armor = { x = 1 y = 1 }
+                paratrooper = { x = 2 y = 0 }
+                paratrooper = { x = 2 y = 1 }
+            }
+            support = {
+                engineer = { x = 0 y = 0 }
+                recon = { x = 0 y = 1 }
+            }
+            priority = 2
+        }
+        capital_scope = {
+            create_unit = {
+                division = "name = \"白夜第一伞降轻装甲旅\" division_template = \"白夜伞降轻装甲旅\" start_experience_factor = 0.6 start_equipment_factor = 1.0"
+                count = 1
+                owner = PAU
+            }
+            create_unit = {
+                division = "name = \"白夜第二伞降轻装甲旅\" division_template = \"白夜伞降轻装甲旅\" start_experience_factor = 0.6 start_equipment_factor = 1.0"
+                count = 1
+                owner = PAU
+            }
+        }
+        unlock_decision_category_tooltip = PAU_airborne_armor_ops
+    }
+}
+
+#经济改革首次达到上限（36）：流域水电与大坝工程总局成立
+country_event = {
+    id = PAU.702
+    title = PAU.702.t
+    desc = PAU.702.d
+    major = no
+    picture = GFX_event_PAU_xy5
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.702.a
+        ai_chance = { base = 100 }
+        custom_effect_tooltip = PAU_eco_cap_reward_event_tt
+        add_political_power = 50
+        unlock_decision_category_tooltip = PAU_hydro_dam_projects
     }
 }

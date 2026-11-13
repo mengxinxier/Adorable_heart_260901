@@ -19,30 +19,21 @@ on_actions = {
     }
     on_startup = {
         effect = {
-            every_state = {
-                limit = {
-                    or = {
-                        is_core_of = PAM
-                        is_core_of = CHL
-                        is_core_of = PAU
-                        is_core_of = LHS
-                    }
+            PAU = {
+                add_to_variable = {
+                    var = ubs_load
+                    value = 100
                 }
-                set_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
-            }
-            every_country = {
-                if = {
-                    limit = {
-                        tag = PAU
-                    }
-                    add_to_variable = {
-                        var = ubs_load
-                        value = 100
-                    }
 
-                    if = { limit = { NOT = { has_variable = PAU_mercenary_reputation } } set_variable = { PAU_mercenary_reputation = 50 } }  #雇佣兵信誉=初始50+合同事件增减
-                    if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } }  #圣杯流亡营口粮=初始100-分粮/贸易/换零件消耗
-                    if = { limit = { NOT = { has_variable = wl_attack_day } } set_variable = { wl_attack_day = 7 } }
+                if = { limit = { NOT = { has_variable = PAU_mercenary_reputation } } set_variable = { PAU_mercenary_reputation = 50 } }  #雇佣兵信誉=初始50+合同事件增减
+                if = { limit = { NOT = { has_variable = PAU_grail_rations } } set_variable = { PAU_grail_rations = 100 } }  #圣杯流亡营口粮=初始100-分粮/贸易/换零件消耗
+                if = { limit = { NOT = { has_variable = wl_attack_day } } set_variable = { wl_attack_day = 7 } }
+                if = { limit = { NOT = { has_variable = PAU_mil_reform_progress_frame } } set_variable = { PAU_mil_reform_progress_frame = 0 } }
+                if = { limit = { NOT = { has_variable = PAU_eco_reform_progress_frame } } set_variable = { PAU_eco_reform_progress_frame = 0 } }
+                if = {
+                    limit = { NOT = { has_country_flag = PAU_reform_reset_initialized } }
+                    set_country_flag = PAU_reform_reset_initialized
+                    set_variable = { PAU_reform_reset_count = 1 }
                 }
             }
         }
@@ -143,4 +134,13 @@ on_actions = {
             }
         }
     }
+	#PAU每日逻辑
+	on_daily = {
+		effect = {
+			if = {
+				limit = { original_tag = PAU }
+				PAU_daily_reform_tick = yes
+			}
+		}
+	}
 }

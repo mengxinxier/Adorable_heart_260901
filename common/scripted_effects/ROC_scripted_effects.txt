@@ -3074,6 +3074,14 @@ ROC_monthly_check_effect = {
 					}
 					has_idea = ROC_Hu_Zongnan_idea
 				}
+				country_event = {
+					id = roc.308
+					days = 7
+				}
+				country_event = {
+					id = roc.309
+					days = 21
+				}
 			}
 			else_if = {
 				limit = {
@@ -3093,6 +3101,10 @@ ROC_monthly_check_effect = {
 						ruling_only = yes
 						character = ROC_Chen
 					}
+				}
+				country_event = {
+					id = roc.369
+					days = 7
 				}
 			}
 			else_if = {
@@ -3179,6 +3191,10 @@ ROC_monthly_check_effect = {
 					}
 					has_idea = ROC_Hu_Zongnan_idea
 				}
+				country_event = {
+					id = roc.317
+					days = 7
+				}
 			}
 			else_if = {
 				limit = {
@@ -3198,6 +3214,10 @@ ROC_monthly_check_effect = {
 						ruling_only = yes
 						character = ROC_Chen
 					}
+				}
+				country_event = {
+					id = roc.373
+					days = 14
 				}
 			}
 			else_if = {
@@ -4962,7 +4982,7 @@ ROC_collection_proactive_effect = {
 		random_list = {
 			50 = {
 				random_navy_leader = {
-					add_trait = naval_lineage
+					add_trait = { trait = naval_lineage }
 					character = { save_global_event_target_as = ROC_collection_14_leader }
 				}
 				## 弹窗（编号3：海军血统）——用 ROOT 切回本国作用域
@@ -4978,7 +4998,7 @@ ROC_collection_proactive_effect = {
 			}
 			50 = {
 				random_army_leader = {
-					add_trait = career_officer
+					add_trait = { trait = career_officer }
 					character = { save_global_event_target_as = ROC_collection_14_leader }
 				}
 				## 弹窗（编号4：职业军官）——用 ROOT 切回本国作用域
@@ -7714,4 +7734,190 @@ ROC_lunar_daily_effect = {
 			}
 		}
 	}
+}
+
+# ========================================================
+# 蒋巾帼右线：新生活社会改造总览
+# ========================================================
+ROC_social_reform_init_effect = {
+	if = {
+		limit = { NOT = { has_country_flag = ROC_social_reform_init } }
+		set_country_flag = ROC_social_reform_init
+		set_variable = { ROC_sr_youth_force = 35 }
+		# 四界初始旧病灶（0~100，越低越好）
+		set_variable = { ROC_sr_rural_disease = 75 }
+		set_variable = { ROC_sr_youth_disease = 65 }
+		set_variable = { ROC_sr_business_disease = 80 }
+		set_variable = { ROC_sr_military_disease = 70 }
+		# 四界初始改造度（0~上限，越高越好）
+		set_variable = { ROC_sr_rural_reform = 15 }
+		set_variable = { ROC_sr_youth_reform = 20 }
+		set_variable = { ROC_sr_business_reform = 10 }
+		set_variable = { ROC_sr_military_reform = 15 }
+	}
+	ROC_social_reform_recalc_effect = yes
+}
+
+ROC_social_reform_recalc_effect = {
+	# 计算各领域改造上限（未破局时受制于旧势力，完成对应破局国策后解锁至100）
+	if = {
+		limit = {
+			OR = {
+				has_completed_focus = ROC_focus_crackdown_on_despotic_landlords
+				has_country_flag = ROC_sr_rural_cap_unlocked
+			}
+		}
+		set_variable = { ROC_sr_rural_cap = 100 }
+	}
+	else = {
+		set_variable = { ROC_sr_rural_cap = 65 }
+	}
+	if = {
+		limit = {
+			OR = {
+				has_completed_focus = ROC_focus_paramilitary_youth_corps
+				has_country_flag = ROC_sr_youth_cap_unlocked
+			}
+		}
+		set_variable = { ROC_sr_youth_cap = 100 }
+	}
+	else = {
+		set_variable = { ROC_sr_youth_cap = 70 }
+	}
+	if = {
+		limit = {
+			OR = {
+				has_completed_focus = ROC_focus_swat_flies_and_strike_tigers
+				has_country_flag = ROC_sr_business_cap_unlocked
+			}
+		}
+		set_variable = { ROC_sr_business_cap = 100 }
+	}
+	else = {
+		set_variable = { ROC_sr_business_cap = 60 }
+	}
+	if = {
+		limit = {
+			OR = {
+				has_completed_focus = ROC_focus_crackdown_on_military_factions
+				has_country_flag = ROC_sr_military_cap_unlocked
+			}
+		}
+		set_variable = { ROC_sr_military_cap = 100 }
+	}
+	else = {
+		set_variable = { ROC_sr_military_cap = 65 }
+	}
+
+	# 钳制数值范围
+	clamp_variable = { var = ROC_sr_youth_force min = 0 max = 100 }
+	clamp_variable = { var = ROC_sr_rural_disease min = 0 max = 100 }
+	clamp_variable = { var = ROC_sr_youth_disease min = 0 max = 100 }
+	clamp_variable = { var = ROC_sr_business_disease min = 0 max = 100 }
+	clamp_variable = { var = ROC_sr_military_disease min = 0 max = 100 }
+	clamp_variable = { var = ROC_sr_rural_reform min = 0 max = ROC_sr_rural_cap }
+	clamp_variable = { var = ROC_sr_youth_reform min = 0 max = ROC_sr_youth_cap }
+	clamp_variable = { var = ROC_sr_business_reform min = 0 max = ROC_sr_business_cap }
+	clamp_variable = { var = ROC_sr_military_reform min = 0 max = ROC_sr_military_cap }
+
+	# 计算全境均值
+	set_temp_variable = { tmp_disease_sum = ROC_sr_rural_disease }
+	add_to_temp_variable = { tmp_disease_sum = ROC_sr_youth_disease }
+	add_to_temp_variable = { tmp_disease_sum = ROC_sr_business_disease }
+	add_to_temp_variable = { tmp_disease_sum = ROC_sr_military_disease }
+	divide_temp_variable = { tmp_disease_sum = 4 }
+	set_variable = { ROC_sr_avg_disease = tmp_disease_sum }
+
+	set_temp_variable = { tmp_reform_sum = ROC_sr_rural_reform }
+	add_to_temp_variable = { tmp_reform_sum = ROC_sr_youth_reform }
+	add_to_temp_variable = { tmp_reform_sum = ROC_sr_business_reform }
+	add_to_temp_variable = { tmp_reform_sum = ROC_sr_military_reform }
+	divide_temp_variable = { tmp_reform_sum = 4 }
+	set_variable = { ROC_sr_avg_reform = tmp_reform_sum }
+
+	# 黄金纪元达标判定：四界改造度均 >= 80 且 旧病灶均 <= 25
+	if = {
+		limit = {
+			NOT = { check_variable = { ROC_sr_rural_reform < 80 } }
+			NOT = { check_variable = { ROC_sr_youth_reform < 80 } }
+			NOT = { check_variable = { ROC_sr_business_reform < 80 } }
+			NOT = { check_variable = { ROC_sr_military_reform < 80 } }
+			NOT = { check_variable = { ROC_sr_rural_disease > 25 } }
+			NOT = { check_variable = { ROC_sr_youth_disease > 25 } }
+			NOT = { check_variable = { ROC_sr_business_disease > 25 } }
+			NOT = { check_variable = { ROC_sr_military_disease > 25 } }
+		}
+		set_variable = { ROC_sr_golden_ready = 1 }
+	}
+	else = {
+		set_variable = { ROC_sr_golden_ready = 0 }
+	}
+}
+
+# 1. 乡村基层：柔和妥协 / 铁腕清洗
+ROC_sr_rural_soft_effect = {
+	add_political_power = -25
+	add_stability = 0.01
+	add_to_variable = { ROC_sr_youth_force = 5 }
+	add_to_variable = { ROC_sr_rural_disease = -4 }
+	add_to_variable = { ROC_sr_rural_reform = 8 }
+	ROC_social_reform_recalc_effect = yes
+}
+ROC_sr_rural_hard_effect = {
+	add_to_variable = { ROC_sr_youth_force = -15 }
+	add_stability = -0.02
+	add_to_variable = { ROC_sr_rural_disease = -14 }
+	add_to_variable = { ROC_sr_rural_reform = 12 }
+	ROC_social_reform_recalc_effect = yes
+}
+
+# 2. 青年与文教：柔和妥协 / 铁腕清洗
+ROC_sr_youth_soft_effect = {
+	add_political_power = -25
+	add_stability = 0.01
+	add_to_variable = { ROC_sr_youth_force = 5 }
+	add_to_variable = { ROC_sr_youth_disease = -4 }
+	add_to_variable = { ROC_sr_youth_reform = 8 }
+	ROC_social_reform_recalc_effect = yes
+}
+ROC_sr_youth_hard_effect = {
+	add_to_variable = { ROC_sr_youth_force = -15 }
+	add_stability = -0.02
+	add_to_variable = { ROC_sr_youth_disease = -14 }
+	add_to_variable = { ROC_sr_youth_reform = 12 }
+	ROC_social_reform_recalc_effect = yes
+}
+
+# 3. 工商与财阀：柔和妥协 / 铁腕清洗
+ROC_sr_business_soft_effect = {
+	add_political_power = -25
+	add_stability = 0.01
+	add_to_variable = { ROC_sr_youth_force = 5 }
+	add_to_variable = { ROC_sr_business_disease = -4 }
+	add_to_variable = { ROC_sr_business_reform = 8 }
+	ROC_social_reform_recalc_effect = yes
+}
+ROC_sr_business_hard_effect = {
+	add_to_variable = { ROC_sr_youth_force = -15 }
+	add_stability = -0.02
+	add_to_variable = { ROC_sr_business_disease = -14 }
+	add_to_variable = { ROC_sr_business_reform = 12 }
+	ROC_social_reform_recalc_effect = yes
+}
+
+# 4. 军政与山头：柔和妥协 / 铁腕清洗
+ROC_sr_military_soft_effect = {
+	add_political_power = -25
+	add_stability = 0.01
+	add_to_variable = { ROC_sr_youth_force = 5 }
+	add_to_variable = { ROC_sr_military_disease = -4 }
+	add_to_variable = { ROC_sr_military_reform = 8 }
+	ROC_social_reform_recalc_effect = yes
+}
+ROC_sr_military_hard_effect = {
+	add_to_variable = { ROC_sr_youth_force = -15 }
+	add_stability = -0.02
+	add_to_variable = { ROC_sr_military_disease = -14 }
+	add_to_variable = { ROC_sr_military_reform = 12 }
+	ROC_social_reform_recalc_effect = yes
 }

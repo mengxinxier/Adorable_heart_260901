@@ -98,6 +98,11 @@ NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED = 50
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_KEY_SCALE = 0.02
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED_DISTANCE_MULT = 8.0
 
+-- 远景国界线/海岸渐变优化（参考 TNO 5120x2560 地图图形参数）
+NDefines_Graphics.NGraphics.BORDER_WIDTH = 1.0
+NDefines_Graphics.NGraphics.GRADIENT_BORDERS_OPTIMIZATION_RANGE = 90.0
+NDefines_Graphics.NGraphics.GRADIENT_BORDERS_THICKNESS_COUNTRY_HIGH = 35.0
+
 -- 奇迹工程
 NDefines.NProject.BREAKTHROUGH_DAILY_TECHNOLOGY_GAIN = 24          -- Vanilla is 12 突破点每日获取
 NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 10     -- Vanilla is 5 科学家技能的突破点获取

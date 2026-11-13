@@ -1243,40 +1243,6 @@ add_core_of_ROOT = {
 }
 
 #计算太空竞赛
-generate_Space_race_rankings = {
-	clear_array = global.Space_race_countries
-	every_country = {
-		limit = {
-			has_country_flag = add_to_Space_Race
-			has_tech = rocket_engines
-			NOT = {
-				or = {
-					tag = DVL
-					tag = RJE
-				}
-			}
-		}
-		add_to_array = {
-			global.Space_race_countries = THIS
-		}
-	}
-	get_sorted_scored_countries = {
-		scorer = Space_race_scorer
-		array = global.Space_race_countries
-	}
-	# Set up ranking positions
-	for_each_scope_loop = {
-		array = global.Space_race_countries
-		add_to_variable = {
-			global.Space_race_countries_index = 1
-		}
-		set_variable = {
-			Space_race_ranking = global.Space_race_countries_index
-		}
-	}
-	clear_variable = global.Space_race_countries_index
-}
-
 increase_state_category_by_one_level = {
 	if = {
 		limit = { has_state_category = zero }
@@ -2649,7 +2615,7 @@ clear_embargo_TARGET = {
 			meta_effect = {
 				text = {
 					if = {
-						limit = { has_dlc_bba = yes }
+						limit = { has_dlc = "By Blood Alone" }
 						diplomatic_relation = {
 							country = [TARGET]
 							relation = embargo
@@ -2664,7 +2630,7 @@ clear_embargo_TARGET = {
 					}
 					[TARGET] = {
 						if = {
-							limit = { has_dlc_bba = yes }
+							limit = { has_dlc = "By Blood Alone" }
 							diplomatic_relation = {
 								country = PREV
 								relation = embargo
@@ -2686,124 +2652,14 @@ clear_embargo_TARGET = {
 }
 
 #requires a temp variable target
-embargo_TARGET = {
-	if = {
-		limit = {
-			var:target = {
-				NOT = { has_variable = embargoed_@PREV }
-				is_in_same_economic_sphere_as_PREV = no
-				NOT = { tag = PREV } #sanity check
-			}
-		}
-		hidden_effect = {
-			var:target = {
-				add_to_temp_array = { embargo_target_and_subjects = THIS }
-				every_subject_country = { add_to_temp_array = { embargo_target_and_subjects = THIS } }
-			}
-			add_to_temp_array = { embargo_target_and_subjects_reverse = THIS }
-			every_subject_country = { add_to_temp_array = { embargo_target_and_subjects_reverse = THIS } }
-			for_each_scope_loop = {
-				array = embargo_target_and_subjects
-				for_each_scope_loop = {
-					array = embargo_target_and_subjects_reverse
-					set_variable = { embargoed_@PREV = 1 }
-					PREV = { set_variable = { embargoed_@PREV = 1 } }
-					if = {
-						limit = { has_dlc_bba = yes }
-						if = {
-							limit = { NOT = { is_embargoing = PREV } }
-							diplomatic_relation = {
-								country = PREV
-								relation = embargo
-							}
-						}
-						if = {
-							limit = { NOT = { is_embargoed_by = PREV } }
-							PREV = {
-								diplomatic_relation = {
-									country = PREV
-									relation = embargo
-								}
-							}
-						}
-					}
-					else = {
-						add_opinion_modifier = {
-							modifier = embargo
-							target = PREV
-						}
-						reverse_add_opinion_modifier = {
-							modifier = embargo
-							target = PREV
-						}
-					}
-				}
-			}
-			clear_temp_array = embargo_target_and_subjects
-			clear_temp_array = embargo_target_and_subjects_reverse
-		}
-		effect_tooltip = {
-			meta_effect = {
-				text = {
-					if = {
-						limit = { has_dlc_bba = yes }
-						if = {
-							limit = { NOT = { is_embargoing = [TARGET] } }
-							diplomatic_relation = {
-								country = [TARGET]
-								relation = embargo
-							}
-						}
-						if = {
-							limit = { NOT = { is_embargoed_by = [TARGET] } }
-							[TARGET] = {
-								diplomatic_relation = {
-									country = PREV
-									relation = embargo
-								}
-							}
-						}
-					}
-					else = {
-						add_opinion_modifier = {
-							modifier = embargo
-							target = [TARGET]
-						}
-						reverse_add_opinion_modifier = {
-							modifier = embargo
-							target = [TARGET]
-						}
-					}
-				}
-				TARGET = "[?target.GetTag]"
-			}
-		}
-	}
-}
-
-embargo_ROOT = {
-	set_temp_variable = { target = ROOT }
-	embargo_TARGET = yes
-}
-
 clear_embargo_ROOT = {
 	set_temp_variable = { target = ROOT }
 	clear_embargo_TARGET = yes
 }
 
-embargo_PREV = {
-	set_temp_variable = { target = PREV }
-	embargo_TARGET = yes
-}
-
 clear_embargo_PREV = {
 	set_temp_variable = { target = PREV }
 	clear_embargo_TARGET = yes
-}
-
-embargo_FROM = {
-	set_temp_variable = { target = FROM }
-	embargo_TARGET = yes
 }
 
 clear_embargo_FROM = {
@@ -2882,4 +2738,64 @@ character_dead = {  ##死亡
 character_retire = {  ##退休
 	custom_effect_tooltip = character_retire_tt
 	hidden_effect = { retire = yes }
+}
+
+# 源翠石能源兑换：确保所有交换变量存在，避免动态修正读取未初始化变量
+OEM_initialize_energy_vars = {
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_oil_var } }
+		set_variable = { OEM_country_resource_oil_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_aluminium_var } }
+		set_variable = { OEM_country_resource_aluminium_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_rubber_var } }
+		set_variable = { OEM_country_resource_rubber_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_tungsten_var } }
+		set_variable = { OEM_country_resource_tungsten_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_steel_var } }
+		set_variable = { OEM_country_resource_steel_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_chromium_var } }
+		set_variable = { OEM_country_resource_chromium_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_coal_var } }
+		set_variable = { OEM_country_resource_coal_var = 0 }
+	}
+	if = {
+		limit = { not = { has_variable = OEM_country_resource_originium_var } }
+		set_variable = { OEM_country_resource_originium_var = 0 }
+	}
+}
+
+# 源翠石能源兑换：所有已兑换资源的总量即为额外源翠石消耗
+OEM_refresh_originium_energy_cost = {
+	OEM_initialize_energy_vars = yes
+	set_variable = { OEM_country_resource_originium_var = OEM_country_resource_oil_var }
+	add_to_variable = { OEM_country_resource_originium_var = OEM_country_resource_aluminium_var }
+	add_to_variable = { OEM_country_resource_originium_var = OEM_country_resource_rubber_var }
+	add_to_variable = { OEM_country_resource_originium_var = OEM_country_resource_tungsten_var }
+	add_to_variable = { OEM_country_resource_originium_var = OEM_country_resource_steel_var }
+	add_to_variable = { OEM_country_resource_originium_var = OEM_country_resource_chromium_var }
+	add_to_variable = { OEM_country_resource_originium_var = OEM_country_resource_coal_var }
+}
+
+# 源翠石能源兑换：透支归零时清空全部兑换变量
+OEM_clear_energy_vars = {
+	set_variable = { OEM_country_resource_oil_var = 0 }
+	set_variable = { OEM_country_resource_aluminium_var = 0 }
+	set_variable = { OEM_country_resource_rubber_var = 0 }
+	set_variable = { OEM_country_resource_tungsten_var = 0 }
+	set_variable = { OEM_country_resource_steel_var = 0 }
+	set_variable = { OEM_country_resource_chromium_var = 0 }
+	set_variable = { OEM_country_resource_coal_var = 0 }
+	set_variable = { OEM_country_resource_originium_var = 0 }
 }

@@ -1,0 +1,731 @@
+scripted_gui = {
+
+    #屏幕按钮
+    pau_reform_open_btn_gui = {
+        context_type = player_context
+        window_name = "pau_reform_open_btn_window"
+        parent_window_token = top_bar
+        visible = {
+            original_tag = PAU
+        }
+
+        properties = {
+            pau_reform_entry_mil_progress = {
+                frame = PAU_mil_reform_progress_frame
+            }
+            pau_reform_entry_eco_progress = {
+                frame = PAU_eco_reform_progress_frame
+            }
+        }
+
+        triggers = {
+            pau_reform_entry_mil_progress_visible = {
+                NOT = { check_variable = { PAU_gui_mode = 1 } }
+            }
+            pau_reform_entry_eco_progress_visible = {
+                check_variable = { PAU_gui_mode = 1 }
+            }
+            btn_toggle_reform_desk_click_enabled = {
+                PAU_reform_desk_unlocked = yes
+            }
+        }
+
+        effects = {
+            btn_toggle_reform_desk_click = {
+                if = {
+                    limit = { has_country_flag = PAU_reform_desk_open }
+                    clr_country_flag = PAU_reform_desk_open
+                }
+                else = {
+                    set_country_flag = PAU_reform_desk_open
+                }
+            }
+        }
+    }
+
+    #窗口框架
+    pau_reform_desk_gui = {
+        context_type = player_context
+        window_name = "pau_reform_desk_window"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            original_tag = PAU
+            has_country_flag = PAU_reform_desk_open
+        }
+
+        triggers = {
+            btn_reset_reform_click_enabled = {
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_has_reset_count_tt
+                    check_variable = { PAU_reform_reset_count > 0 }
+                }
+                if = {
+                    limit = { check_variable = { PAU_gui_mode = 1 } }
+                    custom_trigger_tooltip = {
+                        tooltip = PAU_cond_eco_progress_gt0_tt
+                        check_variable = { PAU_eco_reform_progress > 0 }
+                    }
+                    custom_trigger_tooltip = {
+                        tooltip = PAU_cond_no_eco_reform_active_tt
+                        PAU_no_eco_reform_in_progress = yes
+                    }
+                }
+                else = {
+                    custom_trigger_tooltip = {
+                        tooltip = PAU_cond_mil_progress_gt0_tt
+                        check_variable = { PAU_mil_reform_progress > 0 }
+                    }
+                    custom_trigger_tooltip = {
+                        tooltip = PAU_cond_no_mil_reform_active_tt
+                        PAU_no_mil_reform_in_progress = yes
+                    }
+                }
+            }
+        }
+
+        effects = {
+            btn_close_desk_click = { clr_country_flag = PAU_reform_desk_open }
+            btn_tab_mil_click = { set_variable = { PAU_gui_mode = 0 } }
+            btn_tab_eco_click = { set_variable = { PAU_gui_mode = 1 } }
+            btn_char_axia_click = { set_variable = { PAU_gui_char = 0 } }
+            btn_char_xfxy_click = { set_variable = { PAU_gui_char = 1 } }
+            btn_char_xy_click = { set_variable = { PAU_gui_char = 2 } }
+            btn_reset_reform_click = { PAU_reset_current_reform_branch = yes }
+        }
+    }
+
+    #阿夏军事提案
+    pau_reform_mil_axia_gui = {
+        context_type = player_context
+        parent_window_name = "pau_reform_desk_window"
+        window_name = "group_mil_axia"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            has_country_flag = PAU_reform_desk_open
+            check_variable = { PAU_gui_mode = 0 }
+            check_variable = { PAU_gui_char = 0 }
+        }
+
+        properties = {
+            prog_bar_axia_recon = {
+                frame = PAU_frame_axia_recon
+            }
+            prog_bar_axia_supply = {
+                frame = PAU_frame_axia_supply
+            }
+            prog_bar_axia_medics = {
+                frame = PAU_frame_axia_medics
+            }
+            prog_bar_axia_armor = {
+                frame = PAU_frame_axia_armor
+            }
+        }
+
+        triggers = {
+            btn_axia_recon_click_enabled = {
+                has_completed_focus = PAM_nzdt
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_mil_gt9_tt check_variable = { PAU_axia_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_recon < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_recon > 0 } }
+                }
+            }
+            btn_axia_supply_click_enabled = {
+                has_completed_focus = PAM_nlwq
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_mil_gt9_tt check_variable = { PAU_axia_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_supply < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_supply > 0 } }
+                }
+            }
+            btn_axia_medics_click_enabled = {
+                has_completed_focus = PAM_nlwq2
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_mil_gt9_tt check_variable = { PAU_axia_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_medics < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_medics > 0 } }
+                }
+            }
+            btn_axia_armor_click_enabled = {
+                has_completed_focus = PAM_ax_nyfy
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_mil_gt9_tt check_variable = { PAU_axia_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_armor < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_armor > 0 } }
+                }
+            }
+            prog_bar_axia_recon_visible = {
+                check_variable = { PAU_timer_axia_recon > 0 }
+            }
+            prog_bar_axia_supply_visible = {
+                check_variable = { PAU_timer_axia_supply > 0 }
+            }
+            prog_bar_axia_medics_visible = {
+                check_variable = { PAU_timer_axia_medics > 0 }
+            }
+            prog_bar_axia_armor_visible = {
+                check_variable = { PAU_timer_axia_armor > 0 }
+            }
+        }
+
+        effects = {
+            btn_axia_recon_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
+                set_variable = { PAU_timer_axia_recon = 30 }
+                set_variable = { PAU_frame_axia_recon = 0 }
+            }
+            btn_axia_supply_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
+                set_variable = { PAU_timer_axia_supply = 30 }
+                set_variable = { PAU_frame_axia_supply = 0 }
+            }
+            btn_axia_medics_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
+                set_variable = { PAU_timer_axia_medics = 30 }
+                set_variable = { PAU_frame_axia_medics = 0 }
+            }
+            btn_axia_armor_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_mil value = -20 tooltip = PAU_axia_mil_tt }
+                set_variable = { PAU_timer_axia_armor = 30 }
+                set_variable = { PAU_frame_axia_armor = 0 }
+            }
+        }
+
+        ai_enabled = { original_tag = PAU }
+        ai_test_interval = 168
+        ai_check = { has_political_power > 30 }
+        ai_weights = {
+            btn_axia_recon_click = { ai_will_do = { base = 10 } }
+            btn_axia_supply_click = { ai_will_do = { base = 10 } }
+            btn_axia_medics_click = { ai_will_do = { base = 10 } }
+            btn_axia_armor_click = { ai_will_do = { base = 10 } }
+        }
+    }
+
+    #晓枫雪伊军事提案
+    pau_reform_mil_xfxy_gui = {
+        context_type = player_context
+        parent_window_name = "pau_reform_desk_window"
+        window_name = "group_mil_xfxy"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            has_country_flag = PAU_reform_desk_open
+            check_variable = { PAU_gui_mode = 0 }
+            check_variable = { PAU_gui_char = 1 }
+        }
+
+        properties = {
+            prog_bar_xfxy_command = {
+                frame = PAU_frame_xfxy_command
+            }
+            prog_bar_xfxy_signal = {
+                frame = PAU_frame_xfxy_signal
+            }
+            prog_bar_xfxy_joint = {
+                frame = PAU_frame_xfxy_joint_defense
+            }
+        }
+
+        triggers = {
+            btn_xfxy_command_click_enabled = {
+                has_completed_focus = PAM_xfxy_jsgz
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_mil_gt9_tt check_variable = { PAU_xfxy_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_command < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_command > 0 } }
+                }
+            }
+            btn_xfxy_signal_click_enabled = {
+                has_completed_focus = PAM_xfxy_nyjs
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_mil_gt9_tt check_variable = { PAU_xfxy_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_signal < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_signal > 0 } }
+                }
+            }
+            btn_xfxy_joint_defense_click_enabled = {
+                has_completed_focus = PAM_xfxy_nytjjs
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_mil_gt9_tt check_variable = { PAU_xfxy_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_winter < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_joint_defense > 0 } }
+                }
+            }
+            prog_bar_xfxy_command_visible = {
+                check_variable = { PAU_timer_xfxy_command > 0 }
+            }
+            prog_bar_xfxy_signal_visible = {
+                check_variable = { PAU_timer_xfxy_signal > 0 }
+            }
+            prog_bar_xfxy_joint_visible = {
+                check_variable = { PAU_timer_xfxy_joint_defense > 0 }
+            }
+        }
+
+        effects = {
+            btn_xfxy_command_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_mil value = -20 tooltip = PAU_xfxy_mil_tt }
+                set_variable = { PAU_timer_xfxy_command = 30 }
+                set_variable = { PAU_frame_xfxy_command = 0 }
+            }
+            btn_xfxy_signal_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_mil value = -20 tooltip = PAU_xfxy_mil_tt }
+                set_variable = { PAU_timer_xfxy_signal = 30 }
+                set_variable = { PAU_frame_xfxy_signal = 0 }
+            }
+            btn_xfxy_joint_defense_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_mil value = -20 tooltip = PAU_xfxy_mil_tt }
+                set_variable = { PAU_timer_xfxy_joint_defense = 30 }
+                set_variable = { PAU_frame_xfxy_joint_defense = 0 }
+            }
+        }
+
+        ai_enabled = { original_tag = PAU }
+        ai_test_interval = 168
+        ai_check = { has_political_power > 30 }
+        ai_weights = {
+            btn_xfxy_command_click = { ai_will_do = { base = 10 } }
+            btn_xfxy_signal_click = { ai_will_do = { base = 10 } }
+            btn_xfxy_joint_defense_click = { ai_will_do = { base = 10 } }
+        }
+    }
+
+    # ==================== 3C. 子分页：小遥军事提案 ====================
+    pau_reform_mil_xy_gui = {
+        context_type = player_context
+        parent_window_name = "pau_reform_desk_window"
+        window_name = "group_mil_xy"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            has_country_flag = PAU_reform_desk_open
+            check_variable = { PAU_gui_mode = 0 }
+            check_variable = { PAU_gui_char = 2 }
+        }
+
+        properties = {
+            prog_bar_xy_navy = {
+                frame = PAU_frame_xy_navy
+            }
+            prog_bar_xy_landing = {
+                frame = PAU_frame_xy_landing
+            }
+            prog_bar_xy_expedition = {
+                frame = PAU_frame_xy_expedition
+            }
+        }
+
+        triggers = {
+            btn_xy_navy_click_enabled = {
+                has_completed_focus = PAM_xy_fy
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xiaoyao_mil_gt9_tt check_variable = { PAU_xiaoyao_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xy_navy < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xy_navy > 0 } }
+                }
+            }
+            btn_xy_landing_click_enabled = {
+                has_completed_focus = PAM_xy_tltx
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xiaoyao_mil_gt9_tt check_variable = { PAU_xiaoyao_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xy_landing < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xy_landing > 0 } }
+                }
+            }
+            btn_xy_expedition_click_enabled = {
+                has_completed_focus = PAM_xy_ydjs
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xiaoyao_mil_gt9_tt check_variable = { PAU_xiaoyao_mil > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xy_expedition < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xy_expedition > 0 } }
+                }
+            }
+            prog_bar_xy_navy_visible = {
+                check_variable = { PAU_timer_xy_navy > 0 }
+            }
+            prog_bar_xy_landing_visible = {
+                check_variable = { PAU_timer_xy_landing > 0 }
+            }
+            prog_bar_xy_expedition_visible = {
+                check_variable = { PAU_timer_xy_expedition > 0 }
+            }
+        }
+
+        effects = {
+            btn_xy_navy_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xiaoyao_mil value = -20 tooltip = PAU_xiaoyao_mil_tt }
+                set_variable = { PAU_timer_xy_navy = 30 }
+                set_variable = { PAU_frame_xy_navy = 0 }
+            }
+            btn_xy_landing_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xiaoyao_mil value = -20 tooltip = PAU_xiaoyao_mil_tt }
+                set_variable = { PAU_timer_xy_landing = 30 }
+                set_variable = { PAU_frame_xy_landing = 0 }
+            }
+            btn_xy_expedition_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xiaoyao_mil value = -20 tooltip = PAU_xiaoyao_mil_tt }
+                set_variable = { PAU_timer_xy_expedition = 30 }
+                set_variable = { PAU_frame_xy_expedition = 0 }
+            }
+        }
+
+        ai_enabled = { original_tag = PAU }
+        ai_test_interval = 168
+        ai_check = { has_political_power > 30 }
+        ai_weights = {
+            btn_xy_navy_click = { ai_will_do = { base = 10 } }
+            btn_xy_landing_click = { ai_will_do = { base = 10 } }
+            btn_xy_expedition_click = { ai_will_do = { base = 10 } }
+        }
+    }
+
+    #阿夏经济提案
+    pau_reform_eco_axia_gui = {
+        context_type = player_context
+        parent_window_name = "pau_reform_desk_window"
+        window_name = "group_eco_axia"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            has_country_flag = PAU_reform_desk_open
+            check_variable = { PAU_gui_mode = 1 }
+            check_variable = { PAU_gui_char = 0 }
+        }
+
+        properties = {
+            prog_bar_axia_granary = {
+                frame = PAU_frame_axia_granary
+            }
+            prog_bar_axia_workshop = {
+                frame = PAU_frame_axia_workshop
+            }
+            prog_bar_axia_trade = {
+                frame = PAU_frame_axia_trade
+            }
+        }
+
+        triggers = {
+            btn_axia_granary_click_enabled = {
+                has_completed_focus = PAM_bxsb
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_eco_gt9_tt check_variable = { PAU_axia_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_granary < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_granary > 0 } }
+                }
+            }
+            btn_axia_workshop_click_enabled = {
+                has_completed_focus = PAM_jjcl
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_eco_gt9_tt check_variable = { PAU_axia_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_workshop < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_workshop > 0 } }
+                }
+            }
+            btn_axia_trade_click_enabled = {
+                has_completed_focus = PAM_nljj
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_axia_eco_gt9_tt check_variable = { PAU_axia_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_axia_trade < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_axia_trade > 0 } }
+                }
+            }
+            prog_bar_axia_granary_visible = {
+                check_variable = { PAU_timer_axia_granary > 0 }
+            }
+            prog_bar_axia_workshop_visible = {
+                check_variable = { PAU_timer_axia_workshop > 0 }
+            }
+            prog_bar_axia_trade_visible = {
+                check_variable = { PAU_timer_axia_trade > 0 }
+            }
+        }
+
+        effects = {
+            btn_axia_granary_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_eco value = -20 tooltip = PAU_axia_eco_tt }
+                set_variable = { PAU_timer_axia_granary = 30 }
+                set_variable = { PAU_frame_axia_granary = 0 }
+            }
+            btn_axia_workshop_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_eco value = -20 tooltip = PAU_axia_eco_tt }
+                set_variable = { PAU_timer_axia_workshop = 30 }
+                set_variable = { PAU_frame_axia_workshop = 0 }
+            }
+            btn_axia_trade_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_axia_eco value = -20 tooltip = PAU_axia_eco_tt }
+                set_variable = { PAU_timer_axia_trade = 30 }
+                set_variable = { PAU_frame_axia_trade = 0 }
+            }
+        }
+
+        ai_enabled = { original_tag = PAU }
+        ai_test_interval = 168
+        ai_check = { has_political_power > 30 }
+        ai_weights = {
+            btn_axia_granary_click = { ai_will_do = { base = 10 } }
+            btn_axia_workshop_click = { ai_will_do = { base = 10 } }
+            btn_axia_trade_click = { ai_will_do = { base = 10 } }
+        }
+    }
+
+    #晓枫雪伊经济提案
+    pau_reform_eco_xfxy_gui = {
+        context_type = player_context
+        parent_window_name = "pau_reform_desk_window"
+        window_name = "group_eco_xfxy"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            has_country_flag = PAU_reform_desk_open
+            check_variable = { PAU_gui_mode = 1 }
+            check_variable = { PAU_gui_char = 1 }
+        }
+
+        properties = {
+            prog_bar_xfxy_audit = {
+                frame = PAU_frame_xfxy_audit
+            }
+            prog_bar_xfxy_wages = {
+                frame = PAU_frame_xfxy_wages
+            }
+            prog_bar_xfxy_currency = {
+                frame = PAU_frame_xfxy_currency
+            }
+            prog_bar_xfxy_procurement = {
+                frame = PAU_frame_xfxy_procurement
+            }
+        }
+
+        triggers = {
+            btn_xfxy_audit_click_enabled = {
+                has_completed_focus = PAM_xfxy_jjhf
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_eco_gt9_tt check_variable = { PAU_xfxy_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_audit < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_audit > 0 } }
+                }
+            }
+            btn_xfxy_wages_click_enabled = {
+                has_completed_focus = PAM_xfxy_nyjj
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_eco_gt9_tt check_variable = { PAU_xfxy_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_wages < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_wages > 0 } }
+                }
+            }
+            btn_xfxy_currency_click_enabled = {
+                has_completed_focus = PAM_xfxy_zsjj
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_eco_gt9_tt check_variable = { PAU_xfxy_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_currency < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_currency > 0 } }
+                }
+            }
+            btn_xfxy_procurement_click_enabled = {
+                has_completed_focus = PAM_xfxy_hybd
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xfxy_eco_gt9_tt check_variable = { PAU_xfxy_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xfxy_procurement < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xfxy_procurement > 0 } }
+                }
+            }
+            prog_bar_xfxy_audit_visible = {
+                check_variable = { PAU_timer_xfxy_audit > 0 }
+            }
+            prog_bar_xfxy_wages_visible = {
+                check_variable = { PAU_timer_xfxy_wages > 0 }
+            }
+            prog_bar_xfxy_currency_visible = {
+                check_variable = { PAU_timer_xfxy_currency > 0 }
+            }
+            prog_bar_xfxy_procurement_visible = {
+                check_variable = { PAU_timer_xfxy_procurement > 0 }
+            }
+        }
+
+        effects = {
+            btn_xfxy_audit_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
+                set_variable = { PAU_timer_xfxy_audit = 30 }
+                set_variable = { PAU_frame_xfxy_audit = 0 }
+            }
+            btn_xfxy_wages_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
+                set_variable = { PAU_timer_xfxy_wages = 30 }
+                set_variable = { PAU_frame_xfxy_wages = 0 }
+            }
+            btn_xfxy_currency_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
+                set_variable = { PAU_timer_xfxy_currency = 30 }
+                set_variable = { PAU_frame_xfxy_currency = 0 }
+            }
+            btn_xfxy_procurement_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xfxy_eco value = -20 tooltip = PAU_xfxy_eco_tt }
+                set_variable = { PAU_timer_xfxy_procurement = 30 }
+                set_variable = { PAU_frame_xfxy_procurement = 0 }
+            }
+        }
+
+        ai_enabled = { original_tag = PAU }
+        ai_test_interval = 168
+        ai_check = { has_political_power > 30 }
+        ai_weights = {
+            btn_xfxy_audit_click = { ai_will_do = { base = 10 } }
+            btn_xfxy_wages_click = { ai_will_do = { base = 10 } }
+            btn_xfxy_currency_click = { ai_will_do = { base = 10 } }
+            btn_xfxy_procurement_click = { ai_will_do = { base = 10 } }
+        }
+    }
+
+    #小遥经济提案
+    pau_reform_eco_xy_gui = {
+        context_type = player_context
+        parent_window_name = "pau_reform_desk_window"
+        window_name = "group_eco_xy"
+
+        visible = {
+            PAU_reform_desk_unlocked = yes
+            has_country_flag = PAU_reform_desk_open
+            check_variable = { PAU_gui_mode = 1 }
+            check_variable = { PAU_gui_char = 2 }
+        }
+
+        properties = {
+            prog_bar_xy_market = {
+                frame = PAU_frame_xy_market
+            }
+            prog_bar_xy_land = {
+                frame = PAU_frame_xy_land
+            }
+            prog_bar_xy_food = {
+                frame = PAU_frame_xy_food
+            }
+        }
+
+        triggers = {
+            btn_xy_market_click_enabled = {
+                has_completed_focus = PAM_xy_sc
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xiaoyao_eco_gt9_tt check_variable = { PAU_xiaoyao_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xy_market < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xy_market > 0 } }
+                }
+            }
+            btn_xy_land_click_enabled = {
+                has_completed_focus = PAM_xy_zjdq
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xiaoyao_eco_gt9_tt check_variable = { PAU_xiaoyao_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xy_land < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xy_land > 0 } }
+                }
+            }
+            btn_xy_food_click_enabled = {
+                has_completed_focus = PAM_xy_ydjj
+                has_political_power > 14
+                custom_trigger_tooltip = { tooltip = PAU_cond_xiaoyao_eco_gt9_tt check_variable = { PAU_xiaoyao_eco > 19 } }
+                custom_trigger_tooltip = { tooltip = PAU_reform_limit_5_tt check_variable = { PAU_cnt_xy_food < 5 } }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_reform_not_in_progress_tt
+                    NOT = { check_variable = { PAU_timer_xy_food > 0 } }
+                }
+            }
+            prog_bar_xy_market_visible = {
+                check_variable = { PAU_timer_xy_market > 0 }
+            }
+            prog_bar_xy_land_visible = {
+                check_variable = { PAU_timer_xy_land > 0 }
+            }
+            prog_bar_xy_food_visible = {
+                check_variable = { PAU_timer_xy_food > 0 }
+            }
+        }
+
+        effects = {
+            btn_xy_market_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xiaoyao_eco value = -20 tooltip = PAU_xiaoyao_eco_tt }
+                set_variable = { PAU_timer_xy_market = 30 }
+                set_variable = { PAU_frame_xy_market = 0 }
+            }
+            btn_xy_land_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xiaoyao_eco value = -20 tooltip = PAU_xiaoyao_eco_tt }
+                set_variable = { PAU_timer_xy_land = 30 }
+                set_variable = { PAU_frame_xy_land = 0 }
+            }
+            btn_xy_food_click = {
+                add_political_power = -15
+                add_to_variable = { var = PAU_xiaoyao_eco value = -20 tooltip = PAU_xiaoyao_eco_tt }
+                set_variable = { PAU_timer_xy_food = 30 }
+                set_variable = { PAU_frame_xy_food = 0 }
+            }
+        }
+
+        ai_enabled = { original_tag = PAU }
+        ai_test_interval = 168
+        ai_check = { has_political_power > 30 }
+        ai_weights = {
+            btn_xy_market_click = { ai_will_do = { base = 10 } }
+            btn_xy_land_click = { ai_will_do = { base = 10 } }
+            btn_xy_food_click = { ai_will_do = { base = 10 } }
+        }
+    }
+}
