@@ -5,8 +5,8 @@ scripted_gui = {
 		parent_window_token = politics_tab
 		visible = {
 			tag = GRE
-			has_country_flag = GRE_Iuno_Tarot_open_visible
-			#is_ai = no
+			#has_country_flag = GRE_Iuno_Tarot_open_visible
+			is_ai = no
 			always = no
 		}
 		properties = {
@@ -35,6 +35,9 @@ scripted_gui = {
 			has_country_flag = GRE_Iuno_Tarot_map_gui_visble
 		}
 		effects = {
+			close_button_click = {
+				clr_country_flag = GRE_Iuno_Tarot_map_gui_visble 
+			}
 			GRE_Iuno_Tarot_click = {
 				ROOT = {
 					if = {
@@ -121,7 +124,10 @@ scripted_gui = {
 						}
 						while_loop_effect = {
 							limit = {
-								is_in_array = { GRE_Iuno_Tarot_tarot_array = GRE_Iuno_Tarot_temp_var }
+								OR = {
+									NOT = { is_in_array = { GRE_Iuno_Tarot_pie_chart_array = GRE_Iuno_Tarot_temp_var } } #can not use.
+									is_in_array = { GRE_Iuno_Tarot_tarot_array = GRE_Iuno_Tarot_temp_var } #already has.
+								}
 							}
 							set_variable_to_random = {
 								var = GRE_Iuno_Tarot_temp_var
@@ -143,18 +149,31 @@ scripted_gui = {
 				#	}
 				#}
 				effect_tooltip = {
-					meta_effect = {
-						text = {
-							custom_effect_tooltip = GRE_enter_button_tt_1
-							add_ideas = GRE_Iuno_Tarot_idea_[ID1]
-							custom_effect_tooltip = GRE_enter_button_tt_2
-							add_ideas = GRE_Iuno_Tarot_idea_[ID2]
-							custom_effect_tooltip = GRE_enter_button_tt_3
-							add_ideas = GRE_Iuno_Tarot_idea_[ID3]
+					if = {
+						limit = {
+							check_variable = {
+								GRE_Iuno_Tarot_tarot_array^0 > 0
+							}
+							check_variable = {
+								GRE_Iuno_Tarot_tarot_array^1 > 0
+							}
+							check_variable = {
+								GRE_Iuno_Tarot_tarot_array^2 > 0
+							}
 						}
-						ID1 = "[?GRE_Iuno_Tarot_tarot_array^0]"
-						ID2 = "[?GRE_Iuno_Tarot_tarot_array^1]"
-						ID3 = "[?GRE_Iuno_Tarot_tarot_array^2]"
+						meta_effect = {
+							text = {
+								custom_effect_tooltip = GRE_enter_button_tt_1
+								add_ideas = GRE_Iuno_Tarot_idea_[ID1]
+								custom_effect_tooltip = GRE_enter_button_tt_2
+								add_ideas = GRE_Iuno_Tarot_idea_[ID2]
+								custom_effect_tooltip = GRE_enter_button_tt_3
+								add_ideas = GRE_Iuno_Tarot_idea_[ID3]
+							}
+							ID1 = "[?GRE_Iuno_Tarot_tarot_array^0]"
+							ID2 = "[?GRE_Iuno_Tarot_tarot_array^1]"
+							ID3 = "[?GRE_Iuno_Tarot_tarot_array^2]"
+						}
 					}
 				}
 				clr_country_flag = GRE_Iuno_Tarot_map_gui_visble 
@@ -191,6 +210,9 @@ scripted_gui = {
 							GRE_Iuno_Tarot_tarot_refresh_array^ti = 1
 						}
 					}
+					check_variable = {
+						GRE_Iuno_Tarot_tarot_array^ti > 0
+					}
 				}
 			}
 			GRE_divine_button_click_enabled = {
@@ -200,6 +222,23 @@ scripted_gui = {
 						tooltip = GRE_divine_button_ttd_ttt
 					
 						always = no
+					}
+				}
+			}
+			GRE_enter_button_click_enabled = {
+				ROOT = {
+					custom_trigger_tooltip = {
+						tooltip = GRE_enter_button_click_enabled_tt_ttt
+					
+						check_variable = {
+							GRE_Iuno_Tarot_tarot_array^0 > 0
+						}
+						check_variable = {
+							GRE_Iuno_Tarot_tarot_array^1 > 0
+						}
+						check_variable = {
+							GRE_Iuno_Tarot_tarot_array^2 > 0
+						}
 					}
 				}
 			}
