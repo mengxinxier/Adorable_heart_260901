@@ -474,6 +474,17 @@ generate_econ_rankings = {
 }
 #计算全球gdp与各经济阵营收入占比
 compute_global_gdp = {
+	if = {
+		limit = {
+			country_exists = AHM
+		}
+		AHM = {
+			AHES_compute_global_gdp = yes
+		}
+	}
+}
+
+AHES_compute_global_gdp = {
     set_variable = { global.global_gdp_var = 0 } #所有国家gdp
     set_variable = { global.temp_economy_faction_index = 1 } #临时变量
     clear_array = global.economy_faction_GDP  ##各个经济阵营GDP
@@ -527,7 +538,9 @@ compute_global_gdp = {
         set_variable = { global.economy_faction_GDP_rank_num^economy_faction_var = global.economy_faction_index }
     }
     clear_variable = global.economy_faction_index
-    Wto_leader_modifier_effect = yes
+    ENG = {
+        Wto_leader_modifier_effect = yes
+    }
 }
 
 ###  计算负债率及debuff
@@ -650,106 +663,7 @@ econmic_debuff_calculation = {
 
 ###  月度结算
 save_and_load_settlement = {
-    AHES_Refresh_income_and_outcome = yes
-    if = {
-        limit = { check_variable = { ubs_save < 0 } }
-        subtract_from_variable = {
-            var = ubs_load
-            value = ubs_save
-        }
-        clamp_variable = {
-            var = ubs_save
-            min = 0
-        }
-    }
-    if = {
-        limit = { check_variable = { ubs_load < 0 } }
-        subtract_from_variable = {
-            var = ubs_save
-            value = ubs_load
-        }
-        clamp_variable = {
-            var = ubs_load
-            min = 0
-        }
-    }
-    clamp_variable = {
-        var = THIS.ubs_load
-        min = 0
-    }
-    clamp_variable = {
-        var = ubs_save
-        min = 0
-    }
-    round_variable = THIS.ubs_load
-    round_variable = ubs_save
-    every_country = {
-        limit = { NOT = { has_country_flag = shouru_zhichu_CD_30 } }
-        ##结算存款与债务
-        if = {
-            limit = {
-                #收入为正
-                check_variable = { AHES_Net_income > 0 }
-            }
-            add_to_variable = {
-                var = ubs_save
-                value = AHES_Net_income
-            }
-        }
-        else = {
-            #收入为0或负
-            subtract_from_variable = {
-                var = ubs_load
-                value = AHES_Net_income
-            }
-        }
-        ###自动还款###
-        if = {
-            limit = {
-                check_variable = { ubs_save > 0 }
-                check_variable = { ubs_load > 0 }
-                check_variable = { adorable_heart_automatic_repayment_var = 2 }
-            }
-            if = {
-                limit = {
-                    not = { check_variable = { ubs_load > ubs_save } }
-                }
-                subtract_from_variable = { ubs_save = ubs_load }
-                set_variable = { ubs_load = 0 }
-            }
-            else = {
-                subtract_from_variable = { ubs_load = ubs_save }
-                set_variable = { ubs_save = 0 }
-            }
-        }
-        #####利息结算####
-        multiply_variable = {
-            var = ubs_load
-            value = 1.005
-        }
-        ###图标变化
-        if = {
-            limit = {
-                not = { check_variable = { AHES_Net_income < 0 } }
-                not = { check_variable = { current_jinglirun_icon_frame = 2 } }
-            }
-            set_variable = { current_jinglirun_icon_frame = 2 }
-        }
-        if = {
-            limit = {
-                check_variable = { AHES_Net_income < 0 }
-                not = { check_variable = { current_jinglirun_icon_frame = 1 } }
-            }
-            set_variable = { current_jinglirun_icon_frame = 1 }
-        }
-        UBS_bank_icon_frames = yes
-        set_country_flag = {
-            flag = shouru_zhichu_CD_30
-            value = 1
-            days = 27
-        }
-        econmic_debuff_calculation = yes
-    }
+	AHM_economy_process_settlement = yes
 }
 
 #图标变化
@@ -831,28 +745,7 @@ UBS_bank_icon_frames = {
 
 ###  刷新收支
 AHES_Refresh_income_and_outcome = {
-    every_country = { AHES_Initialize_var = yes }  ###初始化变量
-    every_country = {
-        AHES_Refresh_income_indus = yes  ###工业及消费税
-        AHES_Refresh_income_factor = yes  ###收入修正
-        AHES_Refresh_income_dipol_factor = yes  ###外交收入修正
-        AHES_Refresh_outcome_army = yes  ###陆军支出
-        AHES_Refresh_outcome_navy = yes  ###海军支出
-        AHES_Refresh_outcome_administration = yes  ###行政支出
-        AHES_Refresh_outcome_factor = yes  ###支出修正
-        AHES_Refresh_outcome_dipol = yes  ###外交支出
-        AHES_Refresh_exoutcome = yes  ###额外支出
-    }
-    every_country = {
-        AHES_Refresh_exincome = yes  ###额外收入
-        econmic_debuff_calculation = yes  ###计算负债率及debuff
-        UBS_bank_icon_frames = yes  ###图标变化
-        round_variable = AHES_Total_income
-        round_variable = AHES_Total_outcome
-        set_variable = { AHES_Net_income = AHES_Total_income }
-        subtract_from_variable = { AHES_Net_income = AHES_Total_outcome }
-    }
-    generate_econ_rankings = yes
+	AHM_economy_request_refresh = yes
 }
 
 remove_all_education_fund_ideas = {

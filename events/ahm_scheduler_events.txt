@@ -1,0 +1,97 @@
+add_namespace = ahm_scheduler
+
+# 每月 8 日（通过 on_monthly_AHM days = 7 调度）：各国控制文化组数组月度重算
+country_event = {
+	id = ahm_scheduler.1
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		every_country = {
+			limit = { has_variable = country_culture_group }
+			calculate_controlled_culture_arrays = yes
+		}
+	}
+}
+
+# 每月 15 日（通过 on_monthly_AHM days = 14 调度）：PAU 对日自卫战全局标记扫描
+country_event = {
+	id = ahm_scheduler.2
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				any_country = {
+					has_defensive_war_with = JAP
+					NOT = {
+						has_country_flag = pau_jap_defence_flag
+					}
+				}
+			}
+			every_country = {
+				limit = {
+					NOT = {
+						tag = PAU
+						has_country_flag = pau_jap_defence_flag
+					}
+					has_defensive_war_with = JAP
+				}
+				set_country_flag = pau_jap_defence_flag
+			}
+		}
+	}
+}
+
+# 每周中段（通过 on_weekly_AHM days = 4 调度）：替代原 generic.2004 3天 MTTH 轮询，检测中国再次陷入战火
+country_event = {
+	id = ahm_scheduler.3
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_global_flag = CHI_REUNIT
+		NOT = { has_global_flag = CHI_war_again }
+		OR = {
+			CHI = {
+				exists = yes
+				has_war = yes
+				is_subject = no
+				NOT = {
+					any_enemy_country = {
+						is_chinese_country = yes
+					}
+				}
+			}
+			ROC = {
+				exists = yes
+				has_war = yes
+				is_subject = no
+				NOT = {
+					any_enemy_country = {
+						is_chinese_country = yes
+					}
+				}
+			}
+			PRC = {
+				exists = yes
+				has_war = yes
+				is_subject = no
+				NOT = {
+					any_enemy_country = {
+						is_chinese_country = yes
+					}
+				}
+			}
+		}
+	}
+
+	immediate = {
+		set_global_flag = CHI_war_again
+		every_country = {
+			set_variable = { adorable_heart_super_event_var = 47 }
+			adorable_heart_fire_super_event = yes
+		}
+	}
+}

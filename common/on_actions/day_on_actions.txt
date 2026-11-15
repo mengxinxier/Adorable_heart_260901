@@ -22,6 +22,97 @@ on_actions = {
 				}
 				OEM_clear_energy_vars = yes
 			}
+			# 巴尔干一体化每日排名（从 on_daily_ROM 迁移至此，未激活时仅一次全局旗标判定）
+			if = {
+				limit = {
+					NOT = {
+						has_global_flag = UBF_united_balkan_federation_has_built
+					}
+					has_global_flag = UBF_united_balkan_federation_will_start
+				}
+				clear_array = global.Balkan_integration_members
+				every_country = {
+					limit = {
+						exists = yes
+						is_subject = no
+						has_country_flag = jion_in_the_Balkan_integration
+						capital_scope = {
+							BUL_is_balkan_state = yes
+						}
+					}
+					add_to_array = {
+						global.Balkan_integration_members = THIS
+					}
+				}
+				get_sorted_scored_countries = {
+					scorer = Balkan_integration_scorer
+					array = global.Balkan_integration_members
+				}
+				for_each_scope_loop = {
+					array = global.Balkan_integration_members
+					add_to_variable = {
+						global.Balkan_integration_members_index = 1
+					}
+					set_variable = {
+						Balkan_integration_ranking = global.Balkan_integration_members_index
+					}
+				}
+				clear_variable = global.Balkan_integration_members_index
+			}
+			# 北欧一体化每日排名（从 on_daily_SWE 迁移至此，未激活时仅一次全局旗标判定）
+			if = {
+				limit = {
+					NOT = {
+						has_global_flag = Nordic_integration_has_built
+					}
+					has_global_flag = SWE_Start_Nordic_integration_agenda
+				}
+				clear_array = global.Nordic_integration_members
+				every_country = {
+					limit = {
+						exists = yes
+						is_subject = no
+						has_country_flag = jion_in_the_Nordic_integration
+						NORDIC_is_nordic = yes
+					}
+					add_to_array = {
+						global.Nordic_integration_members = THIS
+					}
+				}
+				get_sorted_scored_countries = {
+					scorer = Nordic_integration_scorer
+					array = global.Nordic_integration_members
+				}
+				for_each_scope_loop = {
+					array = global.Nordic_integration_members
+					add_to_variable = {
+						global.Nordic_integration_members_index = 1
+					}
+					set_variable = {
+						Nordic_integration_ranking = global.Nordic_integration_members_index
+					}
+				}
+				clear_variable = global.Nordic_integration_members_index
+			}
+		}
+	}
+	# AHM 错峰月度调度：8 日（days = 7）文化数组重算；15 日（days = 14）PAU 对日防卫扫描（避开 1 日与 3 日经济结算）
+	on_monthly_AHM = {
+		effect = {
+			country_event = { id = ahm_scheduler.1 days = 7 }
+			country_event = { id = ahm_scheduler.2 days = 14 }
+		}
+	}
+	# AHM 错峰周度调度：周中（days = 4）检测中国再起战火超事件
+	on_weekly_AHM = {
+		effect = {
+			if = {
+				limit = {
+					has_global_flag = CHI_REUNIT
+					NOT = { has_global_flag = CHI_war_again }
+				}
+				country_event = { id = ahm_scheduler.3 days = 4 }
+			}
 		}
 	}
 }
