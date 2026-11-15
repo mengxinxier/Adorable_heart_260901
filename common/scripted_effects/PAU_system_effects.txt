@@ -1335,7 +1335,170 @@ PAU_clear_mercenary_tracking = {
         clear_array = PAU_pre_contract_enemies
     }
 }
+PAU_reduce_mil_focus_cost_step = {
+    if = {
+        limit = { check_variable = { PAU_mil_focus_reduced_days < 28 } }
+        add_to_variable = { var = PAU_mil_focus_reduced_days value = 2 }
+        reduce_focus_completion_cost = {
+            focus = PAM_xbhm
+            focus = PAM_nzdt
+            focus = PAM_jzbx
+            focus = PAM_jzbx2
+            focus = PAM_nlwq
+            focus = PAM_nlwq2
+            focus = PAM_ax_bz
+            focus = PAM_ax_nyjs
+            focus = PAM_ax_nyfy
+            focus = PAM_ax_jhdd
+            focus = PAM_ax_zsjs
+            focus = PAM_ax_sjjs
+            focus = PAM_xfxy_jsgz
+            focus = PAM_xfxy_nyjs
+            focus = PAM_xfxy_nytjjs
+            focus = PAM_xfxy_ycdd
+            focus = PAM_xfxy_zsjs
+            focus = PAM_xfxy_sjjs
+            focus = PAM_xy_fy
+            focus = PAM_xy_nyjs
+            focus = PAM_xy_tltx
+            focus = PAM_xy_ydjs
+            focus = PAM_xy_zsjs
+            focus = PAM_xy_sjjs
+            cost = 2
+        }
+    }
+}
+#白夜巡游进度 <-> 「白夜券（PAU_byq_hb）」信用
+PAU_check_baiye_byq_credit_bonus = {
+    #永久经济信用奖励（分别在 12 / 24 / 36 州触发一次）
+    if = {
+        limit = {
+            check_variable = { PAU_baiye_patrol_count > 11 }
+            NOT = { has_country_flag = PAU_baiye_credit_tier_1 }
+        }
+        set_country_flag = PAU_baiye_credit_tier_1
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_global_building_slots_factor
+            value = -0.02
+            tooltip = global_building_slots_factor_tt
+        }
+    }
+    if = {
+        limit = {
+            check_variable = { PAU_baiye_patrol_count > 23 }
+            NOT = { has_country_flag = PAU_baiye_credit_tier_2 }
+        }
+        set_country_flag = PAU_baiye_credit_tier_2
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_global_building_slots_factor
+            value = 0.03
+            tooltip = global_building_slots_factor_tt
+        }
+    }
+    if = {
+        limit = {
+            check_variable = { PAU_baiye_patrol_count > 35 }
+            NOT = { has_country_flag = PAU_baiye_credit_tier_3 }
+        }
+        set_country_flag = PAU_baiye_credit_tier_3
+        custom_effect_tooltip = PAU_mainline_append_tt
+        add_to_variable = {
+            var = PAU_ml_raw_global_building_slots_factor
+            value = 0.05
+            tooltip = global_building_slots_factor_tt
+        }
+    }
 
+    #无论先巡游还是先印白夜券，只要PAU_byq_hb处于激活状态就补扣任务时间
+    if = {
+        limit = {
+            has_active_mission = PAU_byq_hb
+            check_variable = { PAU_baiye_patrol_count > 11 }
+            NOT = { has_country_flag = PAU_byq_baiye_timeout_1 }
+        }
+        set_country_flag = PAU_byq_baiye_timeout_1
+        add_days_mission_timeout = {
+            mission = PAU_byq_hb
+            days = -30
+        }
+    }
+    if = {
+        limit = {
+            has_active_mission = PAU_byq_hb
+            check_variable = { PAU_baiye_patrol_count > 23 }
+            NOT = { has_country_flag = PAU_byq_baiye_timeout_2 }
+        }
+        set_country_flag = PAU_byq_baiye_timeout_2
+        add_days_mission_timeout = {
+            mission = PAU_byq_hb
+            days = -45
+        }
+    }
+    if = {
+        limit = {
+            has_active_mission = PAU_byq_hb
+            check_variable = { PAU_baiye_patrol_count > 35 }
+            NOT = { has_country_flag = PAU_byq_baiye_timeout_3 }
+        }
+        set_country_flag = PAU_byq_baiye_timeout_3
+        add_days_mission_timeout = {
+            mission = PAU_byq_hb
+            days = -60
+        }
+    }
+}
+
+#投喂计数器溢出检查
+PAU_check_baiye_snack_overflow = {
+    if = {
+        limit = {
+            has_character = PAU_baiye
+            PAU_baiye = { NOT = { has_trait = PAU_baiye_chubby } }
+            NOT = { has_country_flag = PAU_baiye_morning_run_active }
+            check_variable = { PAU_baiye_snack_count > 7 }
+        }
+        set_variable = { PAU_baiye_snack_count = 0 }
+        country_event = {
+            id = PAU.7014
+            days = 1
+        }
+    }
+}
+PAU_reduce_eco_focus_cost_step = {
+    if = {
+        limit = { check_variable = { PAU_eco_focus_reduced_days < 28 } }
+        add_to_variable = { var = PAU_eco_focus_reduced_days value = 2 }
+        reduce_focus_completion_cost = {
+            focus = PAM_bxsb
+            focus = PAM_jxbs
+            focus = PAM_jjcl
+            focus = PAM_jjcl2
+            focus = PAM_nljj
+            focus = PAM_nljj2
+            focus = PAM_ax_jt
+            focus = PAM_ax_nyjj
+            focus = PAM_ax_nyxx
+            focus = PAM_ax_hyjj
+            focus = PAM_ax_zsjj
+            focus = PAM_ax_sjjj
+            focus = PAM_xfxy_jjhf
+            focus = PAM_xfxy_nyjj
+            focus = PAM_xfxy_nykf
+            focus = PAM_xfxy_hybd
+            focus = PAM_xfxy_zsjj
+            focus = PAM_xfxy_sjmy
+            focus = PAM_xy_sc
+            focus = PAM_xy_nyjj
+            focus = PAM_xy_zjdq
+            focus = PAM_xy_ydjj
+            focus = PAM_xy_mdtz
+            focus = PAM_xy_sjjj
+            cost = 2
+        }
+    }
+}
 #雇佣系统：雇佣期间同步阵营/附庸新增非合同敌国到各自豁免列表，防止撤军白和波及雇佣外战争
 PAU_sync_active_ally_pre_contract_wars = {
     if = {
@@ -1567,10 +1730,10 @@ PAU_daily_baiye_tick = {
                 PAU_baiye = {
                     remove_unit_leader_trait = PAU_baiye_chubby
                     add_unit_leader_trait = PAU_baiye_fit
-                    add_attack = 2
-                    add_defense = 2
-                    add_planning = 2
-                    add_logistics = 2
+                    add_attack = 1
+                    add_defense = 1
+                    add_planning = 1
+                    add_logistics = 1
                 }
             }
             country_event = { id = PAU.7013 }
