@@ -7756,6 +7756,12 @@ ROC_social_reform_init_effect = {
 		set_variable = { ROC_sr_military_reform = 15 }
 	}
 	ROC_social_reform_recalc_effect = yes
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = ROC_social_reform_modifier } }
+		}
+		add_dynamic_modifier = { modifier = ROC_social_reform_modifier }
+	}
 }
 
 ROC_social_reform_recalc_effect = {
@@ -7848,10 +7854,28 @@ ROC_social_reform_recalc_effect = {
 			NOT = { check_variable = { ROC_sr_military_disease > 25 } }
 		}
 		set_variable = { ROC_sr_golden_ready = 1 }
+		set_variable = { ROC_sr_mod_max_eff = 0.05 }
+		set_variable = { ROC_sr_mod_army_attack = 0.05 }
+		set_variable = { ROC_sr_mod_army_defence = 0.05 }
+		set_variable = { ROC_sr_mod_mobilization = 0.15 }
+		set_variable = { ROC_sr_mod_compliance = 0.10 }
 	}
 	else = {
 		set_variable = { ROC_sr_golden_ready = 0 }
+		set_variable = { ROC_sr_mod_max_eff = 0 }
+		set_variable = { ROC_sr_mod_army_attack = 0 }
+		set_variable = { ROC_sr_mod_army_defence = 0 }
+		set_variable = { ROC_sr_mod_mobilization = 0 }
+		set_variable = { ROC_sr_mod_compliance = 0 }
 	}
+
+	# 过程动态增益：随平均改造度 0%~100% 线性成长，满额各 +10%
+	set_temp_variable = { tmp_sr_scale = ROC_sr_avg_reform }
+	multiply_temp_variable = { tmp_sr_scale = 0.001 }
+	set_variable = { ROC_sr_mod_buildings_speed = tmp_sr_scale }
+	set_variable = { ROC_sr_mod_factory_output = tmp_sr_scale }
+	set_variable = { ROC_sr_mod_pp_factor = tmp_sr_scale }
+	set_variable = { ROC_sr_mod_stability = tmp_sr_scale }
 }
 
 # 1. 乡村基层：柔和妥协 / 铁腕清洗

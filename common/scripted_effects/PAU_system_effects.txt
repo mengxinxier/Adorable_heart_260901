@@ -1092,7 +1092,6 @@ PAU_daily_reform_tick = {
         }
     }
 }
-
 #雇佣系统：记录签约/参战前 PAU 及同阵营盟友、附庸的既有敌国，避免撤军白和波及非雇佣战争
 PAU_record_pre_mercenary_wars = {
     if = {
@@ -1144,6 +1143,13 @@ PAU_record_mercenary_enemy = {
             NOT = { has_country_flag = PAU_bop_loan_active }
             OR = {
                 NOT = { PAU = { has_variable = PAU_loan_provider } }
+                var:PAU.PAU_loan_provider = {
+                    OR = {
+                        exists = no
+                        is_subject = yes
+                        has_war_with = PAU
+                    }
+                }
                 AND = {
                     NOT = { tag = var:PAU.PAU_loan_provider }
                     NOT = { is_in_faction_with = var:PAU.PAU_loan_provider }
@@ -1152,6 +1158,7 @@ PAU_record_mercenary_enemy = {
                 }
             }
         }
+        set_country_flag = PAU_will_guyonged_touxiang_flag
         if = {
             limit = { NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } } }
             add_to_array = { PAU.PAU_contract_enemies = THIS }
@@ -1163,9 +1170,67 @@ PAU_record_mercenary_enemy = {
         clr_country_flag = PAU_mercenary_enemy_seed_tmp
     }
 }
+#雇佣系统：开战后自动补录中途加入战争的雇佣敌国同盟/附庸/共同交战方，避免遗漏或被误判为原敌国
+PAU_sync_contract_enemies = {
+    if = {
+        limit = {
+            PAU = {
+                has_country_flag = PAU_guyong_tracking_active
+                has_active_mission = PAU_guyong_attack
+            }
+        }
+        PAU = {
+            every_enemy_country = {
+                limit = {
+                    NOT = { has_country_flag = PAU_bop_loan_active }
+                    NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
+                    NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } }
+                    NOT = { has_country_flag = PAU_will_guyonged_touxiang_flag }
+                    OR = {
+                        AND = {
+                            PAU = { has_variable = PAU_loan_provider }
+                            var:PAU.PAU_loan_provider = {
+                                exists = yes
+                                is_subject = no
+                                NOT = { has_war_with = PAU }
+                            }
+                            NOT = { tag = var:PAU.PAU_loan_provider }
+                            NOT = { is_in_faction_with = var:PAU.PAU_loan_provider }
+                            NOT = { is_subject_of = var:PAU.PAU_loan_provider }
+                            has_war_with = var:PAU.PAU_loan_provider
+                        }
+                        any_allied_country = {
+                            OR = {
+                                has_country_flag = PAU_will_guyonged_touxiang_flag
+                                is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                            }
+                        }
+                        any_subject_country = {
+                            OR = {
+                                has_country_flag = PAU_will_guyonged_touxiang_flag
+                                is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                            }
+                        }
+                        AND = {
+                            is_subject = yes
+                            overlord = {
+                                OR = {
+                                    has_country_flag = PAU_will_guyonged_touxiang_flag
+                                    is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                }
+                            }
+                        }
+                    }
+                }
+                PAU_record_mercenary_enemy = yes
+            }
+        }
+    }
+}
 
 #雇佣系统：提前跑路/撤退时仅令 PAU 及其盟友/附庸与雇佣敌国无条件停战，保留各自其余战争
 PAU_mercenary_retreat_peace = {
+    PAU_sync_contract_enemies = yes
     every_country = {
         limit = {
             OR = {
@@ -1193,16 +1258,26 @@ PAU_mercenary_retreat_peace = {
             NOT = { has_country_flag = PAU_bop_loan_active }
             OR = {
                 NOT = { PAU = { has_variable = PAU_loan_provider } }
-                AND = {
-                    NOT = { tag = var:PAU.PAU_loan_provider }
-                    NOT = { is_in_faction_with = var:PAU.PAU_loan_provider }
-                    NOT = { is_subject_of = var:PAU.PAU_loan_provider }
-                }
+                NOT = { tag = var:PAU.PAU_loan_provider }
             }
             OR = {
                 has_country_flag = PAU_will_guyonged_touxiang_flag
                 is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
                 AND = {
+                    OR = {
+                        NOT = { PAU = { has_variable = PAU_loan_provider } }
+                        var:PAU.PAU_loan_provider = {
+                            OR = {
+                                exists = no
+                                is_subject = yes
+                                has_war_with = PAU
+                            }
+                        }
+                        AND = {
+                            NOT = { is_in_faction_with = var:PAU.PAU_loan_provider }
+                            NOT = { is_subject_of = var:PAU.PAU_loan_provider }
+                        }
+                    }
                     has_country_flag = PAU_contract_enemy_side_tmp
                     has_war_with = PAU
                 }
@@ -1214,10 +1289,51 @@ PAU_mercenary_retreat_peace = {
         limit = { has_country_flag = PAU_contract_enemy_side_tmp }
         clr_country_flag = PAU_contract_enemy_side_tmp
     }
+    #先处理 PAU 本体白和（先宗主/独立国，后附庸国），避免被盟友循环顺序打乱
+    PAU = {
+        every_country = {
+            limit = {
+                is_in_array = { array = PREV.PAU_pre_contract_enemies value = THIS }
+            }
+            set_country_flag = PAU_ally_keep_war_tmp
+            every_allied_country = { set_country_flag = PAU_ally_keep_war_tmp }
+            every_subject_country = { set_country_flag = PAU_ally_keep_war_tmp }
+            if = {
+                limit = { is_subject = yes }
+                overlord = {
+                    set_country_flag = PAU_ally_keep_war_tmp
+                    every_allied_country = { set_country_flag = PAU_ally_keep_war_tmp }
+                    every_subject_country = { set_country_flag = PAU_ally_keep_war_tmp }
+                }
+            }
+        }
+        every_country = {
+            limit = {
+                has_country_flag = PAU_retreat_target_enemy_tmp
+                is_subject = no
+                has_war_with = PREV
+                NOT = { has_country_flag = PAU_ally_keep_war_tmp }
+            }
+            white_peace = { tag = PREV }
+        }
+        every_country = {
+            limit = {
+                has_country_flag = PAU_retreat_target_enemy_tmp
+                has_war_with = PREV
+                NOT = { has_country_flag = PAU_ally_keep_war_tmp }
+            }
+            white_peace = { tag = PREV }
+        }
+        every_country = {
+            limit = { has_country_flag = PAU_ally_keep_war_tmp }
+            clr_country_flag = PAU_ally_keep_war_tmp
+        }
+    }
+    #再处理 PAU 同阵营盟友与附庸的白和
     every_country = {
         limit = {
+            NOT = { tag = PAU }
             OR = {
-                tag = PAU
                 is_in_faction_with = PAU
                 is_subject_of = PAU
             }
@@ -1241,6 +1357,15 @@ PAU_mercenary_retreat_peace = {
         every_country = {
             limit = {
                 has_country_flag = PAU_retreat_target_enemy_tmp
+                is_subject = no
+                has_war_with = PREV
+                NOT = { has_country_flag = PAU_ally_keep_war_tmp }
+            }
+            white_peace = { tag = PREV }
+        }
+        every_country = {
+            limit = {
+                has_country_flag = PAU_retreat_target_enemy_tmp
                 has_war_with = PREV
                 NOT = { has_country_flag = PAU_ally_keep_war_tmp }
             }
@@ -1251,7 +1376,7 @@ PAU_mercenary_retreat_peace = {
             clr_country_flag = PAU_ally_keep_war_tmp
         }
     }
-    every_country = {
+    every_possible_country = {
         limit = {
             OR = {
                 has_country_flag = PAU_retreat_target_enemy_tmp
@@ -1262,6 +1387,7 @@ PAU_mercenary_retreat_peace = {
         clr_country_flag = PAU_will_guyonged_touxiang_flag
     }
 }
+
 
 #雇佣系统：取消合同期间与雇佣国互予的军事通行权
 PAU_revoke_mercenary_military_access = {
@@ -1311,7 +1437,7 @@ PAU_revoke_mercenary_military_access = {
         }
         clr_country_flag = PAU_revoke_access_target_tmp
     }
-    every_country = {
+    every_possible_country = {
         limit = { has_country_flag = PAU_revoke_access_target_tmp }
         clr_country_flag = PAU_revoke_access_target_tmp
     }
@@ -1324,14 +1450,16 @@ PAU_clear_mercenary_tracking = {
         clear_array = PAU_contract_enemies
         clear_array = PAU_mercenary_access_partners
     }
-    every_country = {
+    every_possible_country = {
         limit = {
             OR = {
                 has_country_flag = PAU_will_guyonged_touxiang_flag
+                has_country_flag = PAU_guzhu_cap
                 check_variable = { PAU_pre_contract_enemies^num > 0 }
             }
         }
         clr_country_flag = PAU_will_guyonged_touxiang_flag
+        clr_country_flag = PAU_guzhu_cap
         clear_array = PAU_pre_contract_enemies
     }
 }
@@ -1503,12 +1631,47 @@ PAU_reduce_eco_focus_cost_step = {
 PAU_sync_active_ally_pre_contract_wars = {
     if = {
         limit = { PAU = { has_country_flag = PAU_guyong_tracking_active } }
+        PAU_sync_contract_enemies = yes
         PAU = {
             every_enemy_country = {
                 limit = {
+                    NOT = { has_country_flag = PAU_bop_loan_active }
                     NOT = { has_country_flag = PAU_will_guyonged_touxiang_flag }
                     NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } }
                     NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
+                    NOT = {
+                        any_allied_country = {
+                            OR = {
+                                has_country_flag = PAU_will_guyonged_touxiang_flag
+                                is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                            }
+                        }
+                    }
+                    NOT = {
+                        any_subject_country = {
+                            OR = {
+                                has_country_flag = PAU_will_guyonged_touxiang_flag
+                                is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                            }
+                        }
+                    }
+                    NOT = {
+                        AND = {
+                            is_subject = yes
+                            overlord = {
+                                OR = {
+                                    has_country_flag = PAU_will_guyonged_touxiang_flag
+                                    is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                }
+                            }
+                        }
+                    }
+                    NOT = {
+                        AND = {
+                            PAU = { has_variable = PAU_loan_provider }
+                            has_war_with = var:PAU.PAU_loan_provider
+                        }
+                    }
                 }
                 add_to_array = { PAU.PAU_pre_contract_enemies = THIS }
             }
@@ -1516,9 +1679,43 @@ PAU_sync_active_ally_pre_contract_wars = {
                 limit = { exists = yes }
                 every_enemy_country = {
                     limit = {
+                        NOT = { has_country_flag = PAU_bop_loan_active }
                         NOT = { has_country_flag = PAU_will_guyonged_touxiang_flag }
                         NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } }
                         NOT = { is_in_array = { array = PREV.PAU_pre_contract_enemies value = THIS } }
+                        NOT = {
+                            any_allied_country = {
+                                OR = {
+                                    has_country_flag = PAU_will_guyonged_touxiang_flag
+                                    is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                }
+                            }
+                        }
+                        NOT = {
+                            any_subject_country = {
+                                OR = {
+                                    has_country_flag = PAU_will_guyonged_touxiang_flag
+                                    is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                }
+                            }
+                        }
+                        NOT = {
+                            AND = {
+                                is_subject = yes
+                                overlord = {
+                                    OR = {
+                                        has_country_flag = PAU_will_guyonged_touxiang_flag
+                                        is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                    }
+                                }
+                            }
+                        }
+                        NOT = {
+                            AND = {
+                                PAU = { has_variable = PAU_loan_provider }
+                                has_war_with = var:PAU.PAU_loan_provider
+                            }
+                        }
                     }
                     add_to_array = { PREV.PAU_pre_contract_enemies = THIS }
                 }
@@ -1527,9 +1724,43 @@ PAU_sync_active_ally_pre_contract_wars = {
                 limit = { exists = yes }
                 every_enemy_country = {
                     limit = {
+                        NOT = { has_country_flag = PAU_bop_loan_active }
                         NOT = { has_country_flag = PAU_will_guyonged_touxiang_flag }
                         NOT = { is_in_array = { array = PAU.PAU_contract_enemies value = THIS } }
                         NOT = { is_in_array = { array = PREV.PAU_pre_contract_enemies value = THIS } }
+                        NOT = {
+                            any_allied_country = {
+                                OR = {
+                                    has_country_flag = PAU_will_guyonged_touxiang_flag
+                                    is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                }
+                            }
+                        }
+                        NOT = {
+                            any_subject_country = {
+                                OR = {
+                                    has_country_flag = PAU_will_guyonged_touxiang_flag
+                                    is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                }
+                            }
+                        }
+                        NOT = {
+                            AND = {
+                                is_subject = yes
+                                overlord = {
+                                    OR = {
+                                        has_country_flag = PAU_will_guyonged_touxiang_flag
+                                        is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                    }
+                                }
+                            }
+                        }
+                        NOT = {
+                            AND = {
+                                PAU = { has_variable = PAU_loan_provider }
+                                has_war_with = var:PAU.PAU_loan_provider
+                            }
+                        }
                     }
                     add_to_array = { PREV.PAU_pre_contract_enemies = THIS }
                 }

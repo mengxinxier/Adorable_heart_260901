@@ -1051,21 +1051,27 @@ country_event = {
     major = no
     picture = GFX_event_PAU_sln
     fire_only_once = yes
-    is_triggered_only = yes
+    trigger = {
+        TAG = PAU
+        PAO = {
+            or = {
+                exists = no
+                is_subject_of = PAU
+            }
+        }
+    }
+    mean_time_to_happen = {
+        days = 1
+    }
     option = {
         name = PAU.22.a
         annex_country = {
             target = PAO
             transfer_troops = no
         }
-        every_state = {
-            limit = {
-                has_state_flag = PAO_orgin_controlled_state
-            }
-            add_claim_by_ROOT_if_has_no_core = yes
-            enable_state_integration_50_compliance = yes
-        }
-        complete_national_focus = PAU_mzyy
+        set_country_flag = has_PAU_xiaoyao4
+        custom_effect_tooltip = jiesuoguoce
+        mark_focus_tree_layout_dirty = yes
         hidden_effect = {
             annex_country = {
                 target = WL1
@@ -2243,6 +2249,16 @@ country_event = {
     picture = GFX_event_taiyang
     is_triggered_only = yes
     fire_only_once = no
+    immediate = {
+        hidden_effect = {
+            PAU = {
+                add_to_variable = {
+                    var = PAU_restitution_received_time
+                    value = 15
+                }
+            }
+        }
+    }
 
     option = {
         name = PAU.45.a
@@ -2252,20 +2268,9 @@ country_event = {
             days = 360
         }
         PAU = {
-            if = {
-                limit = {
-                    not = {
-                        has_dynamic_modifier = PAU_restitution_received_debuff
-                    }
-                }
-                add_dynamic_modifier = {
-                    modifier = PAU_restitution_received_debuff
-                    days = var:PAU_restitution_received_time
-                }
-            }
-            add_to_variable = {
-                var = PAU_restitution_received_time
-                value = 15
+            add_dynamic_modifier = {
+                modifier = PAU_restitution_received_debuff
+                days = var:PAU_restitution_received_time
             }
         }
 
@@ -3267,19 +3272,6 @@ country_event = {
             value = 15
             tooltip = ubs_save_tt
         }
-        every_country = {
-            limit = {
-                any_country = {
-                    has_country_flag = PAU_bop_loan_active
-                    has_war_with = PREV
-                }
-                has_war_with = PAU
-            }
-            white_peace = {
-                tag = PAU
-            }
-        }
-        PAU_mercenary_retreat_peace = yes
         PAU_revoke_mercenary_military_access = yes
         PAU_clear_mercenary_tracking = yes
     }
@@ -3310,20 +3302,6 @@ country_event = {
         name = PAU.179.a
         ai_chance = { base = 100 }
         custom_effect_tooltip = PAU.179_tt
-        every_country = {
-            limit = {
-                has_war_with = PAU
-                any_country = {
-                    has_country_flag = PAU_bop_loan_active
-                    has_war_with = PREV
-                }
-            }
-            white_peace = {
-                tag = PAU
-            }
-            country_event = { id = PAU.178 hours = 6 }
-        }
-        PAU_mercenary_retreat_peace = yes
         PAU_revoke_mercenary_military_access = yes
         PAU_clear_mercenary_tracking = yes
     }
@@ -3340,21 +3318,34 @@ country_event = {
         name = PAU.180.a
         ai_chance = { base = 100 }
         PAU = {
+            if = {
+                limit = {
+                    has_country_flag = PAU_guyong_tracking_active
+                    has_active_mission = PAU_guyong_attack
+                }
+                PAU_mercenary_retreat_peace = yes
+            }
             PAU_revoke_mercenary_military_access = yes
             PAU_clear_mercenary_tracking = yes
+            remove_ideas = PAU_annex_debuff
+            clr_country_flag = PAU_guyonged_flag
+            clr_country_flag = PAU_guyonged_touxiang_flag
         }
         every_possible_country = {
             limit = {
-                has_country_flag = PAU_bop_loan_active
+                OR = {
+                    has_country_flag = PAU_bop_loan_active
+                    has_country_flag = PAU_guzhu_cap
+                }
             }
             clr_country_flag = PAU_bop_loan_active
+            clr_country_flag = PAU_guzhu_cap
         }
         PAU = {
             clear_variable = PAU_loan_provider
         }
     }
 }
-
 
 country_event = {
     id = PAU.55
@@ -3881,6 +3872,47 @@ country_event = {
 
 
 
+
+country_event = {
+    id = PAU.521
+    title = PAU.521.t
+    desc = PAU.521.d
+    major = no
+    picture = GFX_event_PAU_hy
+    is_triggered_only = yes
+    option = {
+        name = PAU.521.a
+        ai_chance = {
+            base = 60
+        }
+        country_event = PAU.5211
+    }
+}
+
+country_event = {
+    id = PAU.5211
+    title = PAU.5211.t
+    desc = PAU.5211.d
+    major = no
+    picture = GFX_event_PAU_hy
+    is_triggered_only = yes
+    option = {
+        name = PAU.521.a
+        ai_chance = {
+            base = 60
+        }
+        add_to_variable = {
+            var = PAU_xiaoyao_eco
+            value = 20
+            tooltip = PAU_xiaoyao_eco_tt
+        }
+        add_to_variable = {
+            var = PAU_xiaoyao_mil
+            value = 20
+            tooltip = PAU_xiaoyao_mil_tt
+        }
+    }
+}
 
 country_event = {
     id = PAU.520

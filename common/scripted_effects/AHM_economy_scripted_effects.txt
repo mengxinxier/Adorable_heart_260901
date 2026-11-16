@@ -1,0 +1,312 @@
+# AHM统一经济调度辅助脚本效果
+# AHM Unified Economy Dispatch Scripted Effects
+
+AHM_economy_schedule_startup = {
+	if = {
+		limit = {
+			country_exists = AHM
+			NOT = { has_global_flag = AHM_economy_startup_scheduled }
+		}
+		set_global_flag = AHM_economy_startup_scheduled
+		if = {
+			limit = {
+				NOT = { has_global_flag = AHM_economy_settlement_pending }
+				NOT = {
+					AND = {
+						has_variable = global.AHM_economy_schedule_day
+						check_variable = { global.AHM_economy_schedule_day = global.num_days }
+					}
+				}
+			}
+			add_to_variable = { global.AHM_economy_batch_seq = 1 }
+			set_variable = { global.AHM_economy_scheduled_batch = global.AHM_economy_batch_seq }
+			set_variable = { global.AHM_economy_schedule_day = global.num_days }
+			set_global_flag = AHM_economy_settlement_pending
+			AHM = {
+				country_event = {
+					id = generic.2005
+					hours = 4
+				}
+			}
+		}
+	}
+}
+
+AHM_economy_schedule_monthly = {
+	if = {
+		limit = {
+			country_exists = AHM
+			NOT = { has_global_flag = AHM_economy_settlement_pending }
+			OR = {
+				NOT = { has_variable = global.AHM_economy_schedule_day }
+				NOT = { check_variable = { global.AHM_economy_schedule_day = global.num_days } }
+			}
+		}
+		add_to_variable = { global.AHM_economy_batch_seq = 1 }
+		set_variable = { global.AHM_economy_scheduled_batch = global.AHM_economy_batch_seq }
+		set_variable = { global.AHM_economy_schedule_day = global.num_days }
+		set_global_flag = AHM_economy_settlement_pending
+		AHM = {
+			country_event = {
+				id = generic.2005
+				days = 2
+			}
+		}
+	}
+}
+
+AHM_economy_process_settlement = {
+	if = {
+		limit = {
+			tag = AHM
+			has_global_flag = AHM_economy_settlement_pending
+			NOT = { check_variable = { global.AHM_economy_processed_batch = global.AHM_economy_scheduled_batch } }
+		}
+		clr_global_flag = AHM_economy_settlement_pending
+		set_variable = { global.AHM_economy_processed_batch = global.AHM_economy_scheduled_batch }
+		AHES_apply_world_settlement = yes
+		China_tribute_system_leader_modifier_effect = yes
+		onm_eco_system_leader_modifier_effect = yes
+		set_variable = { global.AHM_economy_last_refresh_day = global.num_days }
+		set_variable = { global.AHM_economy_last_refresh_date = global.date }
+	}
+}
+
+AHM_economy_request_refresh = {
+	if = {
+		limit = {
+			country_exists = AHM
+		}
+		AHM = {
+			if = {
+				limit = {
+					OR = {
+					NOT = { has_variable = global.AHM_economy_last_refresh_day }
+					NOT = { check_variable = { global.AHM_economy_last_refresh_day = global.num_days } }
+				}
+				}
+				AHES_calculate_world_economy = yes
+				China_tribute_system_leader_modifier_effect = yes
+				onm_eco_system_leader_modifier_effect = yes
+				set_variable = { global.AHM_economy_last_refresh_day = global.num_days }
+				set_variable = { global.AHM_economy_last_refresh_date = global.date }
+			}
+		}
+	}
+}
+
+AHM_economy_warn_missing = {
+	if = {
+		limit = {
+			is_ai = no
+			NOT = { country_exists = AHM }
+			NOT = { has_country_flag = ahm_economy_missing_warned }
+		}
+		set_country_flag = ahm_economy_missing_warned
+		country_event = { id = ahm_economy.1 }
+	}
+}
+
+AHES_calculate_world_economy = {
+	AHES_Initialize_var = yes
+	every_country = {
+		AHES_Refresh_income_indus = yes
+		AHES_Refresh_income_factor = yes
+		AHES_Refresh_income_dipol_factor = yes
+		AHES_Refresh_outcome_army = yes
+		AHES_Refresh_outcome_navy = yes
+		AHES_Refresh_outcome_administration = yes
+		AHES_Refresh_outcome_factor = yes
+		AHES_Refresh_outcome_dipol = yes
+		AHES_Refresh_exoutcome = yes
+	}
+	every_country = {
+		AHES_Refresh_exincome = yes
+		econmic_debuff_calculation = yes
+		UBS_bank_icon_frames = yes
+		round_variable = AHES_Total_income
+		round_variable = AHES_Total_outcome
+		set_variable = { AHES_Net_income = AHES_Total_income }
+		subtract_from_variable = { AHES_Net_income = AHES_Total_outcome }
+	}
+	generate_econ_rankings = yes
+}
+
+AHES_apply_world_settlement = {
+	AHES_calculate_world_economy = yes
+	every_country = {
+		limit = { NOT = { has_country_flag = shouru_zhichu_CD_30 } }
+		if = {
+			limit = { check_variable = { ubs_save < 0 } }
+			subtract_from_variable = {
+				var = ubs_load
+				value = ubs_save
+			}
+			clamp_variable = {
+				var = ubs_save
+				min = 0
+			}
+		}
+		if = {
+			limit = { check_variable = { ubs_load < 0 } }
+			subtract_from_variable = {
+				var = ubs_save
+				value = ubs_load
+			}
+			clamp_variable = {
+				var = ubs_load
+				min = 0
+			}
+		}
+		clamp_variable = {
+			var = THIS.ubs_load
+			min = 0
+		}
+		clamp_variable = {
+			var = ubs_save
+			min = 0
+		}
+		round_variable = THIS.ubs_load
+		round_variable = ubs_save
+		##结算存款与债务
+		if = {
+			limit = {
+				#收入为正
+				check_variable = { AHES_Net_income > 0 }
+			}
+			add_to_variable = {
+				var = ubs_save
+				value = AHES_Net_income
+			}
+		}
+		else = {
+			#收入为0或负
+			subtract_from_variable = {
+				var = ubs_load
+				value = AHES_Net_income
+			}
+		}
+		###自动还款###
+		if = {
+			limit = {
+				check_variable = { ubs_save > 0 }
+				check_variable = { ubs_load > 0 }
+				check_variable = { adorable_heart_automatic_repayment_var = 2 }
+			}
+			if = {
+				limit = {
+					not = { check_variable = { ubs_load > ubs_save } }
+				}
+				subtract_from_variable = { ubs_save = ubs_load }
+				set_variable = { ubs_load = 0 }
+			}
+			else = {
+				subtract_from_variable = { ubs_load = ubs_save }
+				set_variable = { ubs_save = 0 }
+			}
+		}
+		#####利息结算####
+		multiply_variable = {
+			var = ubs_load
+			value = 1.005
+		}
+		###图标变化
+		if = {
+			limit = {
+				not = { check_variable = { AHES_Net_income < 0 } }
+				not = { check_variable = { current_jinglirun_icon_frame = 2 } }
+			}
+			set_variable = { current_jinglirun_icon_frame = 2 }
+		}
+		if = {
+			limit = {
+				check_variable = { AHES_Net_income < 0 }
+				not = { check_variable = { current_jinglirun_icon_frame = 1 } }
+			}
+			set_variable = { current_jinglirun_icon_frame = 1 }
+		}
+		UBS_bank_icon_frames = yes
+		set_country_flag = {
+			flag = shouru_zhichu_CD_30
+			value = 1
+			days = 27
+		}
+		econmic_debuff_calculation = yes
+	}
+}
+
+# 国家被吞并（on_annex）时清除其经济阵营归属并仅重算对应经济阵营的成员数组/人数/GDP
+AHES_on_annex_refresh_economy_faction = {
+	if = {
+		limit = {
+			FROM = {
+				check_variable = { economy_faction_var > 0 }
+			}
+		}
+		set_temp_variable = { temp_annexed_economy_faction = FROM.economy_faction_var }
+		FROM = {
+			set_variable = { economy_faction_var = 0 }
+		}
+		if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 1 } }
+			wto_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 2 } }
+			comecon_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 3 } }
+			DVL_Berlin_Economic_Agreement_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 4 } }
+			Vienna_Convention_effect = yes
+			WSDO_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 5 } }
+			Rose_International_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 6 } }
+			Customs_Union_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 7 } }
+			China_tribute_system_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 8 } }
+			Greater_East_Asia_Coprosperity_Sphere_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 9 } }
+			American_Economic_Union_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 10 } }
+			generic_economy_faction_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 11 } }
+			FourSeasons_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 13 } }
+			Shanghai_Cooperation_Organization_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 15 } }
+			ankara_agreement_effect = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 16 } }
+			Friendship_mutual_aid_faction = yes
+		}
+		else_if = {
+			limit = { check_variable = { temp_annexed_economy_faction = 114 } }
+			onm_eco_system_effect = yes
+		}
+	}
+}
