@@ -1349,6 +1349,10 @@ PAU_hetong = {
             clr_country_flag = PAU_guyonged_flag
             PAU_revoke_mercenary_military_access = yes
             PAU_clear_mercenary_tracking = yes
+            every_possible_country = {
+                limit = { has_country_flag = PAU_bop_loan_active }
+                clr_country_flag = PAU_bop_loan_active
+            }
             var:PAU_loan_provider = {
                 clr_country_flag = yaobuyaoguyong
                 clr_country_flag = PAU_bop_loan_active
@@ -1438,7 +1442,6 @@ PAU_hetong = {
         complete_effect = {
             add_to_variable = { var = ubs_save value = 30 tooltip = ubs_save_tt }
             add_days_mission_timeout = { mission = PAU_guyong_attack days = 90 }
-            PAU_record_pre_mercenary_wars = yes
             every_country = {
                 limit = { has_country_flag = PAU_bop_loan_active }
                 every_country = {
@@ -1469,6 +1472,18 @@ PAU_hetong = {
 
         cancel_trigger = {
             or = {
+                AND = {
+                    has_variable = PAU_loan_provider
+                    var:PAU_loan_provider = {
+                        or = {
+                            exists = no
+                            has_war_with = ROOT
+                            has_war = no
+                            has_capitulated = yes
+                            is_subject = yes
+                        }
+                    }
+                }
                 any_country = {
                     has_country_flag = PAU_bop_loan_active
                     or = {
@@ -1476,7 +1491,6 @@ PAU_hetong = {
                         has_war = no
                         has_capitulated = yes
                         is_subject = yes
-                        exists = no
                     }
                 }
                 AND = {
@@ -1501,23 +1515,38 @@ PAU_hetong = {
                 add_timed_idea = { idea = PAU_guyong_debuff days = 90 }
                 PAU_mercenary_retreat_peace = yes
                 PAU_revoke_mercenary_military_access = yes
-                every_country = {
-                    limit = { has_country_flag = PAU_bop_loan_active }
+                every_possible_country = {
+                    limit = {
+                        OR = {
+                            has_country_flag = PAU_bop_loan_active
+                            has_country_flag = PAU_guzhu_cap
+                        }
+                    }
                     clr_country_flag = PAU_bop_loan_active
+                    clr_country_flag = PAU_guzhu_cap
                 }
                 PAU_clear_mercenary_tracking = yes
                 clr_country_flag = PAU_guyonged_touxiang_flag
                 add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
             }
             else = {
-                #雇主战败投降
+                #雇主战败投降/被吞并/被傀儡
                 if = {
                     limit = {
                         or = {
+                            AND = {
+                                has_variable = PAU_loan_provider
+                                var:PAU_loan_provider = {
+                                    or = {
+                                        exists = no
+                                        has_capitulated = yes
+                                        is_subject = yes
+                                    }
+                                }
+                            }
                             any_country = {
                                 has_country_flag = PAU_bop_loan_active
                                 or = {
-                                    exists = no
                                     has_capitulated = yes
                                     is_subject = yes
                                 }
@@ -1528,8 +1557,11 @@ PAU_hetong = {
                     add_timed_idea = { idea = PAU_guyong_debuff days = 90 }
                     add_to_variable = { PAU_mercenary_reputation = -10 tooltip = PAU_guyong_dianshu_tt }
                     country_event = { id = PAU.175 hours = 6 }
+                    PAU_mercenary_retreat_peace = yes
                     every_country = {
                         limit = {
+                            has_war_with = PAU
+                            NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
                             or = {
                                 has_country_flag = PAU_guzhu_cap
                                 any_country = {
@@ -1539,39 +1571,83 @@ PAU_hetong = {
                             }
                         }
                         if = {
+                            limit = {
+                                is_subject = yes
+                                overlord = {
+                                    has_war_with = PAU
+                                    NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
+                                }
+                            }
+                            overlord = { white_peace = { tag = PAU } }
+                        }
+                        if = {
                             limit = { has_war_with = PAU }
                             white_peace = { tag = PAU }
                         }
-                        clr_country_flag = PAU_guzhu_cap
                     }
-                    PAU_mercenary_retreat_peace = yes
                     PAU_revoke_mercenary_military_access = yes
-                    every_country = {
-                        limit = { has_country_flag = PAU_bop_loan_active }
+                    every_possible_country = {
+                        limit = {
+                            OR = {
+                                has_country_flag = PAU_bop_loan_active
+                                has_country_flag = PAU_guzhu_cap
+                            }
+                        }
                         clr_country_flag = PAU_bop_loan_active
+                        clr_country_flag = PAU_guzhu_cap
                     }
                     PAU_clear_mercenary_tracking = yes
                 }
                 #与雇主翻脸开战
                 else_if = {
                     limit = {
-                        any_country = {
-                            has_country_flag = PAU_bop_loan_active
-                            has_war_with = ROOT
+                        or = {
+                            AND = {
+                                has_variable = PAU_loan_provider
+                                var:PAU_loan_provider = {
+                                    exists = yes
+                                    has_war_with = ROOT
+                                }
+                            }
+                            any_country = {
+                                has_country_flag = PAU_bop_loan_active
+                                has_war_with = ROOT
+                            }
                         }
                     }
                     add_timed_idea = { idea = PAU_guyong_debuff days = 180 }
                     add_to_variable = { PAU_mercenary_reputation = -20 tooltip = PAU_guyong_dianshu_tt }
+                    every_country = {
+                        limit = {
+                            has_war_with = PAU
+                            NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
+                            OR = {
+                                has_country_flag = PAU_will_guyonged_touxiang_flag
+                                is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                                any_country = {
+                                    has_country_flag = PAU_bop_loan_active
+                                    has_war_with = PREV
+                                }
+                            }
+                        }
+                        country_event = { id = PAU.178 hours = 6 }
+                    }
                     PAU_mercenary_retreat_peace = yes
                     PAU_revoke_mercenary_military_access = yes
                     country_event = { id = PAU.179 hours = 6 }
-                    every_country = {
-                        limit = { has_country_flag = PAU_bop_loan_active }
+                    every_possible_country = {
+                        limit = {
+                            OR = {
+                                has_country_flag = PAU_bop_loan_active
+                                has_country_flag = PAU_guzhu_cap
+                            }
+                        }
                         clr_country_flag = PAU_bop_loan_active
+                        clr_country_flag = PAU_guzhu_cap
                     }
                     PAU_clear_mercenary_tracking = yes
                 }
-                #帮助雇主大获全胜！
+                #帮助雇主大获全胜！（若雇主系剧情/单独白和停战导致PAU仍留在战场，也在此一并撤军白和）
                 else = {
                     every_country = {
                         limit = { has_country_flag = PAU_bop_loan_active }
@@ -1593,7 +1669,17 @@ PAU_hetong = {
                             }
                             transfer_state_to = PREV
                         }
+                    }
+                    PAU_mercenary_retreat_peace = yes
+                    every_possible_country = {
+                        limit = {
+                            OR = {
+                                has_country_flag = PAU_bop_loan_active
+                                has_country_flag = PAU_guzhu_cap
+                            }
+                        }
                         clr_country_flag = PAU_bop_loan_active
+                        clr_country_flag = PAU_guzhu_cap
                     }
                     hidden_effect = {
                         if = {
@@ -1757,21 +1843,41 @@ PAU_hetong = {
         complete_effect = { }
 
         timeout_effect = {
+            PAU_mercenary_retreat_peace = yes
             every_country = {
                 limit = {
+                    has_war_with = PAU
+                    NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
                     any_country = {
                         has_country_flag = PAU_bop_loan_active
                         has_war_with = PREV
                     }
-                    has_war_with = PAU
                 }
-                white_peace = { tag = PAU }
+                if = {
+                    limit = {
+                        is_subject = yes
+                        overlord = {
+                            has_war_with = PAU
+                            NOT = { is_in_array = { array = PAU.PAU_pre_contract_enemies value = THIS } }
+                        }
+                    }
+                    overlord = { white_peace = { tag = PAU } }
+                }
+                if = {
+                    limit = { has_war_with = PAU }
+                    white_peace = { tag = PAU }
+                }
             }
-            PAU_mercenary_retreat_peace = yes
             PAU_revoke_mercenary_military_access = yes
-            every_country = {
-                limit = { has_country_flag = PAU_bop_loan_active }
+            every_possible_country = {
+                limit = {
+                    OR = {
+                        has_country_flag = PAU_bop_loan_active
+                        has_country_flag = PAU_guzhu_cap
+                    }
+                }
                 clr_country_flag = PAU_bop_loan_active
+                clr_country_flag = PAU_guzhu_cap
             }
             PAU_clear_mercenary_tracking = yes
             every_state = {
@@ -1902,16 +2008,22 @@ PAU_hetong = {
         }
         complete_effect = {
             set_country_flag = PAU_guyonged_touxiang_flag
-            PAU_record_pre_mercenary_wars = yes
             add_manpower = 5000
             add_equipment_to_stockpile = { type = infantry_equipment amount = 1000 producer = PAU }
             every_country = {
-                limit = { has_country_flag = PAU_bop_loan_active }
-                every_country = {
-                    limit = { has_war_with = PREV }
-                    PAU_record_mercenary_enemy = yes
-                    country_event = { id = PAU.178 hours = 6 }
+                limit = {
+                    has_war_with = PAU
+                    OR = {
+                        has_country_flag = PAU_will_guyonged_touxiang_flag
+                        is_in_array = { array = PAU.PAU_contract_enemies value = THIS }
+                        any_country = {
+                            has_country_flag = PAU_bop_loan_active
+                            has_war_with = PREV
+                        }
+                    }
                 }
+                PAU_record_mercenary_enemy = yes
+                country_event = { id = PAU.178 hours = 6 }
             }
         }
     }
