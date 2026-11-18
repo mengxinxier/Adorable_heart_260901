@@ -1,5 +1,6 @@
 PAU_Debug = {
     xiaoyao_annex = {
+        allowed = { original_tag = PAU }
         complete_effect = {
             every_country = {
                 limit = {
@@ -21,6 +22,7 @@ PAU_Debug = {
 
     #决议名：解锁全部小遥路线
     xiaoyao_luxian = {
+        allowed = { original_tag = PAU }
         complete_effect = {
             set_country_flag = has_PAU_xiaoyao  #主线启动：小遥接管军团
             set_country_flag = has_PAU_xiaoyao2  #主线阶段 2：左侧国策解锁
@@ -886,14 +888,15 @@ PAU_LHS_weiji = {
                         country_exists = JAP
                         has_war_with = JAP
                     }
-                    any_enemy_country = {
-                        owns_state = 282
+                    var:282.owner = {
+                        has_war_with = PREV
                     }
                 }
             }
         }
         visible = {
             has_completed_focus = PAU_zgjd
+            NOT = { has_country_flag = PAU_jap_cap }
             OR = {
                 AND = {
                     country_exists = JAP
@@ -924,8 +927,8 @@ PAU_LHS_weiji = {
                         country_exists = JAP
                         has_war_with = JAP
                     }
-                    any_enemy_country = {
-                        owns_state = 282
+                    var:282.owner = {
+                        has_war_with = PREV
                     }
                 }
             }
@@ -1199,7 +1202,7 @@ PAU_baiye_category = {
             is_ai = yes
             has_country_flag = has_PAU_xiaoyao
             NOT = { has_country_flag = PAU_auto_baiye }
-            any_state = {
+            any_controlled_state = {
                 has_state_flag = is_lldy_state_flag  #莉兰迪亚核心州标记
                 not = {
                     has_state_flag = PAU_xiaoyao_state_flag  #白夜巡游过的州标记
@@ -2020,10 +2023,22 @@ PAU_baiye_category = {
         allowed = { tag = PAU }
         visible = {
             has_country_flag = PAU_guyonged_flag
-            any_country = { has_country_flag = PAU_bop_loan_active }
+            OR = {
+                AND = {
+                    has_variable = PAU_loan_provider
+                    var:PAU_loan_provider = { has_country_flag = PAU_bop_loan_active }
+                }
+                any_country = { has_country_flag = PAU_bop_loan_active }
+            }
         }
         available = {
-            any_country = { has_country_flag = PAU_bop_loan_active }
+            OR = {
+                AND = {
+                    has_variable = PAU_loan_provider
+                    var:PAU_loan_provider = { has_country_flag = PAU_bop_loan_active }
+                }
+                any_country = { has_country_flag = PAU_bop_loan_active }
+            }
             has_manpower > 4999
             has_equipment = { infantry_equipment > 499 }
         }
@@ -3710,16 +3725,18 @@ PAU_national_unification = {
                     controller = { is_subject_of = ROOT }
                 }
             }
-            any_state = {
+            any_country = {
                 OR = {
-                    is_core_of = SOV
-                    has_state_flag = Soviet_union_state_area
+                    tag = ROOT
+                    is_in_faction_with = ROOT
+                    is_subject_of = ROOT
                 }
-                NOT = { state = 219 }
-                OR = {
-                    is_controlled_by = ROOT
-                    controller = { is_in_faction_with = ROOT }
-                    controller = { is_subject_of = ROOT }
+                any_controlled_state = {
+                    NOT = { state = 219 }
+                    OR = {
+                        is_core_of = SOV
+                        has_state_flag = Soviet_union_state_area
+                    }
                 }
             }
         }
@@ -4044,13 +4061,8 @@ PAU_national_unification = {
         visible = { has_country_flag = has_PAU_xiaoyao7 has_completed_focus = PAU_llbg }
         available = {
             has_completed_focus = PAU_llbg
-            any_country = {
-                exists = yes
-                NOT = { tag = PAU }
-                NOT = { is_subject_of = ROOT }
-                NOT = { has_war_with = ROOT }
-                any_controlled_state = {
-                    is_core_of = JAP
+            JAP = {
+                any_core_state = {
                     not = {
                         OR = {
                             is_core_of = KOR
@@ -4062,6 +4074,12 @@ PAU_national_unification = {
                             is_core_of = PRC
                             is_core_of = MAN
                         }
+                    }
+                    controller = {
+                        exists = yes
+                        NOT = { tag = PAU }
+                        NOT = { is_subject_of = ROOT }
+                        NOT = { has_war_with = ROOT }
                     }
                 }
             }
@@ -4414,23 +4432,30 @@ PAU_national_unification = {
             visible = {
                 has_country_flag = PAU_south_america_super_fired
                 has_country_flag = PAU_south_america_super_fired1
-                NOT = { has_country_flag = PAU_dev_program_auto_loop }
+                NOT = { has_active_mission = PAU_south_america_development_program_loop }
             }
             available = {
             }
             cost = 0
-            fire_only_once = yes
+            fire_only_once = no
 
             complete_effect = {
                 set_country_flag = PAU_dev_program_auto_loop
                 set_country_flag = pau_development_program_leader
-                every_faction_member = {
-                    limit = {
-                        not = { tag = PAU }
-                        capital_scope = { is_on_continent = south_america }
+                hidden_effect = {
+                    set_variable = { PAU_dev_program_current_leader = PAU }
+                    if = {
+                        limit = { is_in_faction = yes }
+                        every_faction_member = {
+                            limit = { capital_scope = { is_on_continent = south_america } }
+                            PAU_clear_dev_program_ideas = yes
+                        }
                     }
-                    add_ideas = PAU_south_america_development_program_ideaPAU
+                    else = {
+                        PAU_clear_dev_program_ideas = yes
+                    }
                 }
+                PAU_distribute_dev_program_idea_from_scope = yes
                 PAU_refresh_south_america_development = yes
                 activate_mission = PAU_south_america_development_program_loop
             }
@@ -4448,12 +4473,14 @@ PAU_national_unification = {
         available = { always = no }
         activation = { always = no }
         cancel_trigger = {
-            not = {
-                any_country = {
-                    capital_scope = { is_on_continent = south_america }
-                    is_in_faction_with = PAU
-                }
+            OR = {
+                is_subject = yes
+                NOT = { has_country_flag = PAU_south_america_super_fired }
+                NOT = { has_country_flag = PAU_dev_program_auto_loop }
             }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_dev_program_auto_loop
         }
         selectable_mission = no
         is_good = yes
@@ -4475,20 +4502,21 @@ PAU_national_unification = {
                     }
                 }
                 hidden_effect = {
-                    every_faction_member = {
-                        remove_ideas = PAU_south_america_development_program_ideaPAU
-                        remove_ideas = PAU_south_america_development_program_ideaPA1
-                        remove_ideas = PAU_south_america_development_program_ideaPAQ
-                        remove_ideas = PAU_south_america_development_program_ideaELF
-                        remove_ideas = PAU_south_america_development_program_ideaLFC
-                        remove_ideas = PAU_south_america_development_program_ideaMGU
-                        remove_ideas = PAU_south_america_development_program_ideaPGM
-                        remove_ideas = PAU_south_america_development_program_ideaAHM
+                    if = {
+                        limit = { is_in_faction = yes }
+                        every_faction_member = {
+                            limit = { capital_scope = { is_on_continent = south_america } }
+                            PAU_clear_dev_program_ideas = yes
+                        }
+                    }
+                    else = {
+                        PAU_clear_dev_program_ideas = yes
                     }
                 }
                 if = {
                     limit = {
-                        any_country = {
+                        is_in_faction = yes
+                        any_other_country = {
                             capital_scope = { is_on_continent = south_america }
                             not = { has_country_flag = pau_development_program_leader }
                             is_subject = no
@@ -4496,7 +4524,7 @@ PAU_national_unification = {
                         }
                     }
                     custom_effect_tooltip = PAU_next_leader
-                    random_country = {
+                    random_other_country = {
                         limit = {
                             capital_scope = { is_on_continent = south_america }
                             not = { has_country_flag = pau_development_program_leader }
@@ -4504,66 +4532,34 @@ PAU_national_unification = {
                             is_subject = no
                         }
                         set_country_flag = pau_development_program_leader
+                        hidden_effect = {
+                            PAU = { set_variable = { PAU_dev_program_current_leader = PREV } }
+                        }
                         capital_scope = {
                             add_extra_state_shared_building_slots = 2
                             add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
                             add_building_construction = { type = arms_factory level = 1 instant_build = yes }
                         }
-                        if = {
-                            limit = { tag = PA1 }
-                            every_faction_member = {
-                                limit = { not = { tag = PA1 } capital_scope = { is_on_continent = south_america } }
-                                add_ideas = PAU_south_america_development_program_ideaPA1
-                            }
-                        }
-                        else_if = {
-                            limit = { tag = ELF }
-                            every_faction_member = {
-                                limit = { not = { tag = ELF } capital_scope = { is_on_continent = south_america } }
-                                add_ideas = PAU_south_america_development_program_ideaELF
-                            }
-                        }
-                        else_if = {
-                            limit = { tag = LFC }
-                            every_faction_member = {
-                                limit = { not = { tag = LFC } capital_scope = { is_on_continent = south_america } }
-                                add_ideas = PAU_south_america_development_program_ideaLFC
-                            }
-                        }
-                        else_if = {
-                            limit = { tag = MGU }
-                            every_faction_member = {
-                                limit = { not = { tag = MGU } capital_scope = { is_on_continent = south_america } }
-                                add_ideas = PAU_south_america_development_program_ideaMGU
-                            }
-                        }
-                        else_if = {
-                            limit = { tag = PGM }
-                            every_faction_member = {
-                                limit = { not = { tag = PGM } capital_scope = { is_on_continent = south_america } }
-                                add_ideas = PAU_south_america_development_program_ideaPGM
-                            }
-                        }
-                        else_if = {
-                            limit = { tag = AHM }
-                            every_faction_member = {
-                                limit = { not = { tag = AHM } capital_scope = { is_on_continent = south_america } }
-                                add_ideas = PAU_south_america_development_program_ideaAHM
-                            }
-                        }
+                        PAU_distribute_dev_program_idea_from_scope = yes
                     }
                 }
                 else = {
                     custom_effect_tooltip = PAU_next_leader
-                    every_faction_member = {
-                        limit = { capital_scope = { is_on_continent = south_america } }
+                    if = {
+                        limit = { is_in_faction = yes }
+                        every_faction_member = {
+                            limit = { capital_scope = { is_on_continent = south_america } }
+                            clr_country_flag = pau_development_program_leader
+                        }
+                    }
+                    else = {
                         clr_country_flag = pau_development_program_leader
                     }
                     set_country_flag = pau_development_program_leader
-                    every_faction_member = {
-                        limit = { not = { tag = PAU } capital_scope = { is_on_continent = south_america } }
-                        add_ideas = PAU_south_america_development_program_ideaPAU
+                    hidden_effect = {
+                        set_variable = { PAU_dev_program_current_leader = PAU }
                     }
+                    PAU_distribute_dev_program_idea_from_scope = yes
                 }
                 hidden_effect = {
                     PAU_refresh_south_america_development = yes
