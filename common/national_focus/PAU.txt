@@ -12,8 +12,8 @@
         }
     }
     continuous_focus_position = {
-        x = 48
-        y = 10
+        x = 60
+        y = 2250
     }
     default = no
 
@@ -589,6 +589,10 @@
         select_effect = {
             country_event = {
                 id = PAU.19
+                days = 15
+            }
+            country_event = {
+                id = PAU.221
                 hours = 6
             }
         }
@@ -654,6 +658,15 @@
             }
             hidden_effect = {
                 remove_ideas = PAU_counterattack_zdw_buff
+                clr_country_flag = PAU_undead_war
+                if = {
+                    limit = { has_dynamic_modifier = { modifier = PAU_liberation_surge } }
+                    remove_dynamic_modifier = { modifier = PAU_liberation_surge }
+                }
+                if = {
+                    limit = { ZDW = { has_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } } }
+                    ZDW = { remove_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } }
+                }
                 annex_country = {
                     target = PAM
                     transfer_troops = no
@@ -821,6 +834,9 @@
         }
 
         completion_reward = {
+            effect_tooltip = {
+                declare_war_on = { target = PAO type = annex_everything }
+            } 
             every_state = {
                 limit = {
                     has_state_flag = PAO_orgin_controlled_state
@@ -828,7 +844,9 @@
                 add_claim_by_ROOT_if_has_no_core = yes
                 enable_state_integration_50_compliance = yes
             }
-            create_wargoal = { target = 301.owner type = annex_everything }
+            hidden_effect = {
+                country_event = { id = PAU.22 }
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_stability_factor  #主线动态修正原始值：稳定度=国策/决议累加
@@ -1937,10 +1955,27 @@
             has_country_flag = PAU_jap_cap
             custom_trigger_tooltip = {
                 tooltip = PAU_controls_all_jap_cores_tt
+                282 = {
+                    OR = {
+                        is_controlled_by = ROOT
+                        controller = { is_subject_of = ROOT }
+                        controller = { is_in_faction_with = ROOT }
+                    }
+                }
                 all_state = {
                     OR = {
                         NOT = { is_core_of = JAP }
+                        is_core_of = KOR
+                        is_claimed_by = KOR
+                        region = 186
+                        state = 525
+                        state = 527
+                        is_core_of = CHI
+                        is_core_of = PRC
+                        is_core_of = MAN
                         is_controlled_by = ROOT
+                        controller = { is_subject_of = ROOT }
+                        controller = { is_in_faction_with = ROOT }
                     }
                 }
             }
@@ -2962,21 +2997,55 @@
                         limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
                         if = {
                             limit = { PAU = { is_in_faction = yes } }
-                            PAU = {
-                                every_faction_member = {
-                                    limit = { NOT = { tag = PAU } }
-                                    display_individual_scopes = yes
-                                    leave_faction = yes
+                            effect_tooltip = {
+                                PAU = {
+                                    every_faction_member = {
+                                        limit = { NOT = { tag = PAU } is_subject = no }
+                                        display_individual_scopes = yes
+                                        SOV = {
+                                            faction_leader = {
+                                                add_to_faction = PREV.PREV
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            hidden_effect = {
+                                PAU = {
+                                    set_country_flag = PAU_faction_transition_in_progress
+                                    set_country_flag = leave_faction_happily_flag
+                                    every_faction_member = {
+                                        limit = { NOT = { tag = PAU } is_subject = no }
+                                        set_country_flag = PAU_comintern_faction_transfer
+                                        set_country_flag = leave_faction_happily_flag
+                                    }
+                                }
+                                every_other_country = {
+                                    limit = { has_country_flag = PAU_comintern_faction_transfer }
+                                    if = {
+                                        limit = { is_in_faction = yes }
+                                        leave_faction = yes
+                                    }
                                     SOV = {
                                         faction_leader = {
                                             add_to_faction = PREV.PREV
                                         }
                                     }
+                                    clr_country_flag = PAU_comintern_faction_transfer
+                                    clr_country_flag = leave_faction_happily_flag
                                 }
-                                leave_faction = yes
+                                PAU = {
+                                    leave_faction = yes
+                                    clr_country_flag = leave_faction_happily_flag
+                                }
                             }
                         }
                         SOV = { faction_leader = { add_to_faction = PAU } }
+                        hidden_effect = {
+                            PAU = {
+                                clr_country_flag = PAU_faction_transition_in_progress
+                            }
+                        }
                     }
                 }
                 else = {
@@ -3003,6 +3072,8 @@
                 }
             }
             hidden_effect = {
+                PAU_recover_dev_program_loop = yes
+                PAU_refresh_south_america_development = yes
                 country_event = { id = PAU.521 days = 15 }
             }
             custom_effect_tooltip = PAU_sjgm_tt
@@ -3263,7 +3334,7 @@
         y = 13
         cost = 0
         available = {
-            has_war = no
+                has_war = no
         }
         bypass = {
         }
@@ -3854,6 +3925,9 @@
         x = -22
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
         }
@@ -3911,6 +3985,9 @@
         x = -22
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
         }
@@ -4170,6 +4247,9 @@
         x = -24
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_ycdd
         }
@@ -4229,6 +4309,9 @@
         x = -24
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_zsjs
         }
@@ -4489,6 +4572,9 @@
         x = -20
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_ydjs
         }
@@ -4533,6 +4619,9 @@
         x = -20
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_zsjs
         }
@@ -5062,6 +5151,9 @@
         x = 22
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
         }
@@ -5116,6 +5208,9 @@
         x = 22
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
         }
@@ -5392,6 +5487,9 @@
         x = 20
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_hybd
         }
@@ -5442,6 +5540,9 @@
         x = 20
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_zsjj
         }
@@ -5681,6 +5782,9 @@
         x = 24
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_ydjj
         }
@@ -5746,6 +5850,9 @@
         x = 24
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_mdtz
         }

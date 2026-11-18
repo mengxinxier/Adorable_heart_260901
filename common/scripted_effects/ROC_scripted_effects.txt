@@ -3148,6 +3148,13 @@ ROC_monthly_check_effect = {
 		ROC_PCC_event_modifier_effect = yes
 	}
 	ROC_PCC_modifier_effect = yes
+	if = {
+		limit = {
+			has_global_flag = ROC_Whampoa_party_win
+			has_country_flag = ROC_whampoa_init
+		}
+		ROC_whampoa_monthly_effect = yes
+	}
 	##PRC###
 	if = {
 		limit = { not = { has_global_flag = ROC_win_PRC } }
@@ -7944,4 +7951,676 @@ ROC_sr_military_hard_effect = {
 	add_to_variable = { ROC_sr_military_disease = -14 }
 	add_to_variable = { ROC_sr_military_reform = 12 }
 	ROC_social_reform_recalc_effect = yes
+}
+
+# ========================================================
+# 黄埔线：训政中枢办公桌（一底三面 · 副手机制联动）
+# ========================================================
+ROC_whampoa_cd_sync_effect = {
+	if = {
+		limit = { has_country_flag = ROC_wt_btn_1_cd }
+		if = {
+			limit = { NOT = { has_variable = ROC_wt_btn_1_cd_days } }
+			set_variable = { ROC_wt_btn_1_cd_days = 30 }
+		}
+		set_variable = { ROC_wt_btn_1_cd_pct = ROC_wt_btn_1_cd_days }
+		multiply_variable = { ROC_wt_btn_1_cd_pct = 100 }
+		divide_variable = { ROC_wt_btn_1_cd_pct = 60 }
+		round_variable = ROC_wt_btn_1_cd_pct
+		clamp_variable = { var = ROC_wt_btn_1_cd_pct min = 2 max = 100 }
+	}
+	else = {
+		clear_variable = ROC_wt_btn_1_cd_days
+		clear_variable = ROC_wt_btn_1_cd_pct
+	}
+	if = {
+		limit = { has_country_flag = ROC_wt_btn_2_cd }
+		if = {
+			limit = { NOT = { has_variable = ROC_wt_btn_2_cd_days } }
+			set_variable = { ROC_wt_btn_2_cd_days = 30 }
+		}
+		set_variable = { ROC_wt_btn_2_cd_pct = ROC_wt_btn_2_cd_days }
+		multiply_variable = { ROC_wt_btn_2_cd_pct = 100 }
+		divide_variable = { ROC_wt_btn_2_cd_pct = 60 }
+		round_variable = ROC_wt_btn_2_cd_pct
+		clamp_variable = { var = ROC_wt_btn_2_cd_pct min = 2 max = 100 }
+	}
+	else = {
+		clear_variable = ROC_wt_btn_2_cd_days
+		clear_variable = ROC_wt_btn_2_cd_pct
+	}
+	if = {
+		limit = { has_country_flag = ROC_wt_btn_3_cd }
+		if = {
+			limit = { NOT = { has_variable = ROC_wt_btn_3_cd_days } }
+			set_variable = { ROC_wt_btn_3_cd_days = 30 }
+		}
+		set_variable = { ROC_wt_btn_3_cd_pct = ROC_wt_btn_3_cd_days }
+		multiply_variable = { ROC_wt_btn_3_cd_pct = 100 }
+		divide_variable = { ROC_wt_btn_3_cd_pct = 60 }
+		round_variable = ROC_wt_btn_3_cd_pct
+		clamp_variable = { var = ROC_wt_btn_3_cd_pct min = 2 max = 100 }
+	}
+	else = {
+		clear_variable = ROC_wt_btn_3_cd_days
+		clear_variable = ROC_wt_btn_3_cd_pct
+	}
+}
+
+ROC_whampoa_tutelage_init_effect = {
+	if = {
+		limit = { NOT = { has_country_flag = ROC_whampoa_init } }
+		set_country_flag = ROC_whampoa_init
+		set_variable = { ROC_wt_hu_m1 = 15 }
+		set_variable = { ROC_wt_hu_m2 = 0 }
+		set_variable = { ROC_wt_tang_m1 = 15 }
+		set_variable = { ROC_wt_tang_m2 = 0 }
+		set_variable = { ROC_wt_hos_m1 = 15 }
+		set_variable = { ROC_wt_hos_m2 = 0 }
+	}
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier } }
+		}
+		add_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier }
+	}
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+ROC_whampoa_tutelage_recalc_effect = {
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier } }
+		}
+		add_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier }
+	}
+
+	# 1. 上半区双轨上限判定：初始 50 -> 《民主必要之训政》后 75 -> 中轴解锁至 100
+	set_temp_variable = { tmp_wt_base_cap = 50 }
+	if = {
+		limit = { has_completed_focus = ROC_focus_tutelage_necessary_for_democracy }
+		set_temp_variable = { tmp_wt_base_cap = 75 }
+	}
+
+	set_variable = { ROC_wt_hu_m1_cap = tmp_wt_base_cap }
+	set_variable = { ROC_wt_hu_m2_cap = tmp_wt_base_cap }
+	if = {
+		limit = { has_completed_focus = ROC_focus_high_salaries_foster_integrity }
+		set_variable = { ROC_wt_hu_m1_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_true_heir_of_chiang_kai_shek }
+		set_variable = { ROC_wt_hu_m2_cap = 100 }
+	}
+
+	set_variable = { ROC_wt_tang_m1_cap = tmp_wt_base_cap }
+	set_variable = { ROC_wt_tang_m2_cap = tmp_wt_base_cap }
+	if = {
+		limit = { has_completed_focus = ROC_focus_stability_above_all }
+		set_variable = { ROC_wt_tang_m1_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_old_hus_testament }
+		set_variable = { ROC_wt_tang_m2_cap = 100 }
+	}
+
+	set_variable = { ROC_wt_hos_m1_cap = tmp_wt_base_cap }
+	set_variable = { ROC_wt_hos_m2_cap = tmp_wt_base_cap }
+	if = {
+		limit = { has_completed_focus = ROC_focus_purge_parasites }
+		set_variable = { ROC_wt_hos_m1_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_nationwide_surveillance_system }
+		set_variable = { ROC_wt_hos_m2_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_republic_business_as_usual }
+		set_variable = { ROC_wt_hos_m2_cap = 100 }
+		set_variable = { ROC_wt_hos_m2 = 100 }
+	}
+
+	# 钳制 6 条轨道范围
+	clamp_variable = { var = ROC_wt_hu_m1 min = 0 max = ROC_wt_hu_m1_cap }
+	clamp_variable = { var = ROC_wt_hu_m2 min = 0 max = ROC_wt_hu_m2_cap }
+	clamp_variable = { var = ROC_wt_tang_m1 min = 0 max = ROC_wt_tang_m1_cap }
+	clamp_variable = { var = ROC_wt_tang_m2 min = 0 max = ROC_wt_tang_m2_cap }
+	clamp_variable = { var = ROC_wt_hos_m1 min = 0 max = ROC_wt_hos_m1_cap }
+	clamp_variable = { var = ROC_wt_hos_m2 min = 0 max = ROC_wt_hos_m2_cap }
+
+	# 2. 下半区共用底座阶级判定（跨领袖继承、不因换人清零）
+	set_variable = { ROC_wt_ms_lv = 0 }
+	set_variable = { ROC_wt_ms_slot_1_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_2_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_3_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_4_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_5_frame = 1 }
+	if = {
+		limit = { has_completed_focus = ROC_focus_chinese_natural_economy }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_1_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_import_livelihood_goods }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_2_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_maintain_rural_security }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_3_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_impose_socioeconomic_tasks }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_4_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_walk_on_great_harmony }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_5_frame = 2 }
+	}
+
+	set_variable = { ROC_wt_ra_lv = 0 }
+	set_variable = { ROC_wt_ra_slot_1_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_2_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_3_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_4_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_5_frame = 1 }
+	if = {
+		limit = { has_completed_focus = ROC_focus_win_over_financial_magnates }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_1_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_develop_capital_economic_zone }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_2_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_safeguard_peoples_livelihood }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_3_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_republic_industrial_master_plan }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_4_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_rule_with_benevolence }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_5_frame = 3 }
+	}
+
+	# 3. 归零动态修正变量
+	set_variable = { ROC_wt_mod_conscription = 0 }
+	set_variable = { ROC_wt_mod_compliance = 0 }
+	set_variable = { ROC_wt_mod_resistance = 0 }
+	set_variable = { ROC_wt_mod_core_attack = 0 }
+	set_variable = { ROC_wt_mod_core_defence = 0 }
+	set_variable = { ROC_wt_mod_supply = 0 }
+	set_variable = { ROC_wt_mod_slots = 0 }
+	set_variable = { ROC_wt_mod_build_speed = 0 }
+	set_variable = { ROC_wt_mod_arms_speed = 0 }
+	set_variable = { ROC_wt_mod_max_eff = 0 }
+	set_variable = { ROC_wt_mod_eff_gain = 0 }
+	set_variable = { ROC_wt_mod_factory_output = 0 }
+	set_variable = { ROC_wt_mod_ind_tax = 0 }
+	set_variable = { ROC_wt_mod_hcp_income = 0 }
+	set_variable = { ROC_wt_mod_consumer_goods = 0 }
+	set_variable = { ROC_wt_mod_research = 0 }
+	set_variable = { ROC_wt_mod_pp_factor = 0 }
+	set_variable = { ROC_wt_mod_stability = 0 }
+	set_variable = { ROC_wt_mod_war_support = 0 }
+	set_variable = { ROC_wt_mod_mobilization = 0 }
+	set_variable = { ROC_wt_mod_army_attack = 0 }
+	set_variable = { ROC_wt_mod_army_defence = 0 }
+	set_variable = { ROC_wt_mod_army_org = 0 }
+	set_variable = { ROC_wt_mod_max_planning = 0 }
+	set_variable = { ROC_wt_mod_breakthrough = 0 }
+	set_variable = { ROC_wt_mod_capture = 0 }
+	set_variable = { ROC_wt_mod_non_core_attack = 0 }
+	set_variable = { ROC_wt_mod_non_core_defence = 0 }
+	set_variable = { ROC_wt_mod_operative_slot = 0 }
+	set_variable = { ROC_wt_mod_decryption = 0 }
+	set_variable = { ROC_wt_mod_army_morale = 0 }
+	set_variable = { ROC_wt_mod_initiative = 0 }
+	set_variable = { ROC_wt_mod_intel_net = 0 }
+	set_variable = { ROC_wt_mod_agency_time = 0 }
+	set_variable = { ROC_wt_mod_resistance_growth = 0 }
+
+	# 4. 注入下半区左翼【民生·保甲自然经济】底座（Lv.5 满阶：适役+15%、顺从+10%、抵抗-15%、核心攻防+10%、补给-10%）
+	set_temp_variable = { tmp_ms_03 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_03 = 0.03 }
+	set_temp_variable = { tmp_ms_02 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_02 = 0.02 }
+	set_temp_variable = { tmp_ms_neg03 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_neg03 = -0.03 }
+	set_temp_variable = { tmp_ms_neg02 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_neg02 = -0.02 }
+
+	add_to_variable = { ROC_wt_mod_conscription = tmp_ms_03 }
+	add_to_variable = { ROC_wt_mod_compliance = tmp_ms_02 }
+	add_to_variable = { ROC_wt_mod_resistance = tmp_ms_neg03 }
+	add_to_variable = { ROC_wt_mod_core_attack = tmp_ms_02 }
+	add_to_variable = { ROC_wt_mod_core_defence = tmp_ms_02 }
+	add_to_variable = { ROC_wt_mod_supply = tmp_ms_neg02 }
+
+	# 展示用共享底座数值变量
+	set_variable = { ROC_wt_ms_disp_conscription = tmp_ms_03 }
+	set_variable = { ROC_wt_ms_disp_compliance = tmp_ms_02 }
+	set_variable = { ROC_wt_ms_disp_resistance = tmp_ms_neg03 }
+	set_variable = { ROC_wt_ms_disp_core = tmp_ms_02 }
+	set_variable = { ROC_wt_ms_disp_supply = tmp_ms_neg02 }
+
+	# 5. 注入下半区右翼【仁爱·首都资本兴国】底座（Lv.5 满阶：工厂格+20%、建造+15%、效率上限+10%、税+15%、HCP+15%、消费品-5%）
+	set_temp_variable = { tmp_ra_04 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_04 = 0.04 }
+	set_temp_variable = { tmp_ra_03 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_03 = 0.03 }
+	set_temp_variable = { tmp_ra_02 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_02 = 0.02 }
+	set_temp_variable = { tmp_ra_neg01 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_neg01 = -0.01 }
+
+	add_to_variable = { ROC_wt_mod_slots = tmp_ra_04 }
+	add_to_variable = { ROC_wt_mod_build_speed = tmp_ra_03 }
+	add_to_variable = { ROC_wt_mod_max_eff = tmp_ra_02 }
+	add_to_variable = { ROC_wt_mod_ind_tax = tmp_ra_03 }
+	add_to_variable = { ROC_wt_mod_hcp_income = tmp_ra_03 }
+	add_to_variable = { ROC_wt_mod_consumer_goods = tmp_ra_neg01 }
+
+	set_variable = { ROC_wt_ra_disp_slots = tmp_ra_04 }
+	set_variable = { ROC_wt_ra_disp_build = tmp_ra_03 }
+	set_variable = { ROC_wt_ra_disp_eff = tmp_ra_02 }
+	set_variable = { ROC_wt_ra_disp_tax = tmp_ra_03 }
+	set_variable = { ROC_wt_ra_disp_cg = tmp_ra_neg01 }
+
+	# 6. 注入当前执政领袖上半区轨道 & 副手协同档位
+	set_variable = { ROC_wt_deputy_tier = 0 }
+	if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Hu_Zongnan
+				ruling_only = yes
+			}
+		}
+		set_variable = { ROC_wt_active_mode = 1 }
+		set_temp_variable = { tmp_m1 = ROC_wt_hu_m1 }
+		divide_temp_variable = { tmp_m1 = 100 }
+		set_temp_variable = { tmp_m2 = ROC_wt_hu_m2 }
+		divide_temp_variable = { tmp_m2 = 100 }
+
+		# 轨道1【黄埔军风】：攻防+10%、组织+10%、计划上限+15%
+		set_temp_variable = { tmp_val = tmp_m1 }
+		multiply_temp_variable = { tmp_val = 0.10 }
+		add_to_variable = { ROC_wt_mod_army_attack = tmp_val }
+		add_to_variable = { ROC_wt_mod_army_defence = tmp_val }
+		add_to_variable = { ROC_wt_mod_army_org = tmp_val }
+		set_temp_variable = { tmp_val2 = tmp_m1 }
+		multiply_temp_variable = { tmp_val2 = 0.15 }
+		add_to_variable = { ROC_wt_mod_max_planning = tmp_val2 }
+
+		# 轨道2【训政正统】：PP+10%、稳定+10%、战支+10%、动员速度+20%
+		set_temp_variable = { tmp_val3 = tmp_m2 }
+		multiply_temp_variable = { tmp_val3 = 0.10 }
+		add_to_variable = { ROC_wt_mod_pp_factor = tmp_val3 }
+		add_to_variable = { ROC_wt_mod_stability = tmp_val3 }
+		add_to_variable = { ROC_wt_mod_war_support = tmp_val3 }
+		set_temp_variable = { tmp_val4 = tmp_m2 }
+		multiply_temp_variable = { tmp_val4 = 0.20 }
+		add_to_variable = { ROC_wt_mod_mobilization = tmp_val4 }
+
+		# 副手联动：戴季陶（文官统筹）
+		if = {
+			limit = { has_idea = ROC_Dai_Jitao_idea }
+			if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hu_m1 < 80 } }
+						NOT = { check_variable = { ROC_wt_hu_m2 < 80 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 2 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.10 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.10 }
+				add_to_variable = { ROC_wt_mod_max_eff = 0.05 }
+				add_to_variable = { ROC_wt_mod_pp_factor = 0.05 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hu_m1 < 50 } }
+						NOT = { check_variable = { ROC_wt_hu_m2 < 50 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 1 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.05 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.05 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Tangtang
+				ruling_only = yes
+			}
+		}
+		set_variable = { ROC_wt_active_mode = 2 }
+		set_temp_variable = { tmp_m1 = ROC_wt_tang_m1 }
+		divide_temp_variable = { tmp_m1 = 100 }
+		set_temp_variable = { tmp_m2 = ROC_wt_tang_m2 }
+		divide_temp_variable = { tmp_m2 = 100 }
+
+		# 轨道1【江湖义气】：突破+15%、缴获+10%（含清波精神10%共20%）、非核心攻防+10%
+		set_temp_variable = { tmp_val = tmp_m1 }
+		multiply_temp_variable = { tmp_val = 0.15 }
+		add_to_variable = { ROC_wt_mod_breakthrough = tmp_val }
+		set_temp_variable = { tmp_val2 = tmp_m1 }
+		multiply_temp_variable = { tmp_val2 = 0.10 }
+		add_to_variable = { ROC_wt_mod_capture = tmp_val2 }
+		add_to_variable = { ROC_wt_mod_non_core_attack = tmp_val2 }
+		add_to_variable = { ROC_wt_mod_non_core_defence = tmp_val2 }
+
+		# 轨道2【遗嘱践行】：产出+10%、PP+10%、效率增长+15%
+		set_temp_variable = { tmp_val3 = tmp_m2 }
+		multiply_temp_variable = { tmp_val3 = 0.10 }
+		add_to_variable = { ROC_wt_mod_factory_output = tmp_val3 }
+		add_to_variable = { ROC_wt_mod_pp_factor = tmp_val3 }
+		set_temp_variable = { tmp_val4 = tmp_m2 }
+		multiply_temp_variable = { tmp_val4 = 0.15 }
+		add_to_variable = { ROC_wt_mod_eff_gain = tmp_val4 }
+
+		# 双80灵前觉醒：全军攻防+5%
+		if = {
+			limit = { has_country_flag = ROC_wt_tang_awakened }
+			add_to_variable = { ROC_wt_mod_army_attack = 0.05 }
+			add_to_variable = { ROC_wt_mod_army_defence = 0.05 }
+		}
+
+		# 副手联动：弥弗（清波账房，觉醒后永久锁定满阶红利）
+		if = {
+			limit = { has_idea = ROC_Mi_Fu_idea }
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ROC_wt_tang_awakened
+						NOT = { check_variable = { ROC_wt_tang_m1 < 80 } }
+						NOT = { check_variable = { ROC_wt_tang_m2 < 80 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 2 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.10 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.10 }
+				add_to_variable = { ROC_wt_mod_arms_speed = 0.05 }
+				add_to_variable = { ROC_wt_mod_max_eff = 0.05 }
+				add_to_variable = { ROC_wt_mod_slots = 0.10 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_tang_m1 < 50 } }
+						NOT = { check_variable = { ROC_wt_tang_m2 < 50 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 1 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.05 }
+				add_to_variable = { ROC_wt_mod_arms_speed = 0.10 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Herrscher_of_Sentience
+				ruling_only = yes
+			}
+		}
+		set_variable = { ROC_wt_active_mode = 3 }
+		set_temp_variable = { tmp_m1 = ROC_wt_hos_m1 }
+		divide_temp_variable = { tmp_m1 = 100 }
+		set_temp_variable = { tmp_m2 = ROC_wt_hos_m2 }
+		divide_temp_variable = { tmp_m2 = 100 }
+
+		# 轨道1【天网净化】：特工位+1/+2（无LaR转破译+30%）、抵抗-20%、组织恢复+20%、工厂产出+5%
+		if = {
+			limit = { has_dlc = "La Resistance" }
+			if = {
+				limit = { NOT = { check_variable = { ROC_wt_hos_m1 < 60 } } }
+				add_to_variable = { ROC_wt_mod_operative_slot = 2 }
+			}
+			else_if = {
+				limit = { NOT = { check_variable = { ROC_wt_hos_m1 < 30 } } }
+				add_to_variable = { ROC_wt_mod_operative_slot = 1 }
+			}
+		}
+		else = {
+			set_temp_variable = { tmp_dec = tmp_m1 }
+			multiply_temp_variable = { tmp_dec = 0.30 }
+			add_to_variable = { ROC_wt_mod_decryption = tmp_dec }
+		}
+		set_temp_variable = { tmp_val = tmp_m1 }
+		multiply_temp_variable = { tmp_val = -0.20 }
+		add_to_variable = { ROC_wt_mod_resistance = tmp_val }
+		set_temp_variable = { tmp_val2 = tmp_m1 }
+		multiply_temp_variable = { tmp_val2 = 0.20 }
+		add_to_variable = { ROC_wt_mod_army_morale = tmp_val2 }
+		set_temp_variable = { tmp_val3 = tmp_m1 }
+		multiply_temp_variable = { tmp_val3 = 0.05 }
+		add_to_variable = { ROC_wt_mod_factory_output = tmp_val3 }
+
+		# 轨道2【如常运作·伪装】：PP+15%、稳定+10%、效率增长+10%
+		set_temp_variable = { tmp_val4 = tmp_m2 }
+		multiply_temp_variable = { tmp_val4 = 0.15 }
+		add_to_variable = { ROC_wt_mod_pp_factor = tmp_val4 }
+		set_temp_variable = { tmp_val5 = tmp_m2 }
+		multiply_temp_variable = { tmp_val5 = 0.10 }
+		add_to_variable = { ROC_wt_mod_stability = tmp_val5 }
+		add_to_variable = { ROC_wt_mod_eff_gain = tmp_val5 }
+
+		# 识律中轴情报/监控国策动态联动
+		if = {
+			limit = { has_completed_focus = ROC_focus_train_agents }
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				add_to_variable = { ROC_wt_mod_intel_net = 0.25 }
+				add_to_variable = { ROC_wt_mod_agency_time = -0.25 }
+			}
+			else = {
+				add_to_variable = { ROC_wt_mod_decryption = 0.15 }
+			}
+		}
+		if = {
+			limit = { has_completed_focus = ROC_focus_offensive_operations }
+			add_to_variable = { ROC_wt_mod_decryption = 0.20 }
+		}
+		if = {
+			limit = { has_completed_focus = ROC_focus_recruit_informants }
+			add_to_variable = { ROC_wt_mod_resistance_growth = -0.25 }
+		}
+
+		# 归档觉醒：主动权+10%
+		if = {
+			limit = { has_country_flag = ROC_wt_hos_awakened }
+			add_to_variable = { ROC_wt_mod_initiative = 0.10 }
+		}
+
+		# 副手联动：孙科（体面门面）
+		if = {
+			limit = { has_idea = ROC_Sun_Ke_idea }
+			if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hos_m1 < 80 } }
+						NOT = { check_variable = { ROC_wt_hos_m2 < 80 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 2 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.10 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.10 }
+				add_to_variable = { ROC_wt_mod_consumer_goods = -0.05 }
+				add_to_variable = { ROC_wt_mod_max_eff = 0.05 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hos_m1 < 50 } }
+						NOT = { check_variable = { ROC_wt_hos_m2 < 50 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 1 }
+				add_to_variable = { ROC_wt_mod_consumer_goods = -0.03 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.05 }
+			}
+		}
+	}
+	ROC_whampoa_cd_sync_effect = yes
+}
+
+# 每日按钮冷却计时同步（由 on_daily_ROC 调用）
+ROC_whampoa_daily_effect = {
+	if = {
+		limit = {
+			has_country_flag = ROC_wt_btn_1_cd
+			has_variable = ROC_wt_btn_1_cd_days
+			check_variable = { ROC_wt_btn_1_cd_days > 1 }
+		}
+		subtract_from_variable = { ROC_wt_btn_1_cd_days = 1 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ROC_wt_btn_2_cd
+			has_variable = ROC_wt_btn_2_cd_days
+			check_variable = { ROC_wt_btn_2_cd_days > 1 }
+		}
+		subtract_from_variable = { ROC_wt_btn_2_cd_days = 1 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ROC_wt_btn_3_cd
+			has_variable = ROC_wt_btn_3_cd_days
+			check_variable = { ROC_wt_btn_3_cd_days > 1 }
+		}
+		subtract_from_variable = { ROC_wt_btn_3_cd_days = 1 }
+	}
+	ROC_whampoa_cd_sync_effect = yes
+}
+
+# 月度副手巡航脉冲（由 ROC_monthly_check_effect 调用）
+ROC_whampoa_monthly_effect = {
+	ROC_whampoa_tutelage_recalc_effect = yes
+	if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Hu_Zongnan
+				ruling_only = yes
+			}
+			has_idea = ROC_Dai_Jitao_idea
+		}
+		add_to_variable = { ROC_wt_hu_m2 = 2 }
+		add_to_variable = { ROC_wt_hu_m2 = ROC_wt_ra_lv }
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Tangtang
+				ruling_only = yes
+			}
+			has_idea = ROC_Mi_Fu_idea
+		}
+		add_to_variable = { ROC_wt_tang_m1 = 2 }
+		add_to_variable = { ROC_wt_tang_m2 = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Herrscher_of_Sentience
+				ruling_only = yes
+			}
+			has_idea = ROC_Sun_Ke_idea
+		}
+		add_to_variable = { ROC_wt_hos_m2 = 3 }
+	}
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 桌面交互按钮：模式 A · 胡宗南
+ROC_wt_btn_hu_1_effect = {
+	add_political_power = -25
+	add_to_variable = { ROC_wt_hu_m1 = 12 }
+	random_army_leader = {
+		add_logistics = 1
+	}
+	set_country_flag = { flag = ROC_wt_btn_1_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_1_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hu_2_effect = {
+	add_command_power = -20
+	add_to_variable = { ROC_wt_hu_m1 = 10 }
+	army_experience = 10
+	set_country_flag = { flag = ROC_wt_btn_2_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_2_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hu_3_effect = {
+	add_political_power = -30
+	add_to_variable = { ROC_wt_hu_m2 = 12 }
+	add_stability = 0.03
+	add_popularity = { ideology = neutrality popularity = 0.05 }
+	set_country_flag = { flag = ROC_wt_btn_3_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_3_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 桌面交互按钮：模式 B · 汤汤
+ROC_wt_btn_tang_1_effect = {
+	add_political_power = -20
+	add_to_variable = { ROC_wt_tang_m1 = 12 }
+	army_experience = 10
+	set_country_flag = { flag = ROC_wt_btn_1_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_1_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_tang_2_effect = {
+	add_political_power = -25
+	add_to_variable = { ROC_wt_tang_m2 = 12 }
+	add_stability = 0.02
+	set_country_flag = { flag = ROC_wt_btn_2_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_2_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_tang_3_effect = {
+	set_country_flag = ROC_wt_tang_awakened
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 桌面交互按钮：模式 C · 识之律者
+ROC_wt_btn_hos_1_effect = {
+	add_political_power = -15
+	add_to_variable = { ROC_wt_hos_m2 = 14 }
+	add_stability = 0.03
+	set_country_flag = { flag = ROC_wt_btn_1_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_1_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hos_2_effect = {
+	add_stability = -0.03
+	add_to_variable = { ROC_wt_hos_m1 = 12 }
+	add_to_variable = {
+		var = ubs_save
+		value = 30
+		tooltip = ubs_save_tt
+	}
+	set_country_flag = { flag = ROC_wt_btn_2_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_2_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hos_3_effect = {
+	add_command_power = -25
+	add_to_variable = { ROC_wt_hos_m1 = 10 }
+	set_country_flag = ROC_wt_hos_awakened
+	ROC_whampoa_tutelage_recalc_effect = yes
 }
