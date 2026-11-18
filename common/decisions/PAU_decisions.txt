@@ -727,11 +727,121 @@ PAU_LHS_weiji = {
         ai_will_do = { factor = 20 }
     }
 
-    #高空照明弹驱散死雾
+    #巡洋舰徐进弹幕掩护推进
+    PAU_undead_rolling_barrage = {
+        icon = GFX_PAU_dec_naval_bombard
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_undead_war
+            has_country_flag = PAU_counterattack_started
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_completed_focus = PAU_dsyq
+        }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_war_with = ZDW
+            command_power > 24
+            custom_trigger_tooltip = {
+                tooltip = PAU_cond_fuel_gt1499_tt
+                has_fuel > 1499
+            }
+        }
+        cost = 20
+        fire_only_once = no
+        days_remove = 20
+        days_re_enable = 25
+        modifier = {
+            army_artillery_attack_factor = 0.15
+            breakthrough_factor = 0.15
+            army_speed_factor = 0.10
+        }
+        complete_effect = {
+            add_fuel = -1500
+            add_command_power = -25
+            custom_effect_tooltip = PAU_zdw_decay_burst_tt
+            hidden_effect = {
+                if = {
+                    limit = { country_exists = ZDW }
+                    ZDW = {
+                        add_to_variable = { ZDW_decay_progress = 15 }
+                        PAU_sync_zdw_decay_vars = yes
+                    }
+                }
+            }
+        }
+        remove_effect = {
+            army_experience = 15
+        }
+        ai_will_do = { factor = 25 }
+    }
+
+    #号召光复区幸存者
+    PAU_undead_partisan_uprising = {
+        icon = GFX_PAU_dec_war_fervor
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_undead_war
+            has_country_flag = PAU_counterattack_started
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_completed_focus = PAU_dsyq
+        }
+        available = {
+            NOT = { has_country_flag = PAU_undead_defeated }
+            has_war_with = ZDW
+            OR = {
+                controls_state = 579
+                any_controlled_state = { has_state_flag = is_lldy_state_flag }
+            }
+        }
+        cost = 25
+        fire_only_once = no
+        days_remove = 25
+        days_re_enable = 30
+        modifier = {
+            army_org_regain = 0.15
+            supply_consumption_factor = -0.10
+        }
+        complete_effect = {
+            custom_effect_tooltip = PAU_liberation_snowball_tt
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 600
+                producer = PAU
+            }
+            add_equipment_to_stockpile = {
+                type = support_equipment
+                amount = 50
+                producer = PAU
+            }
+            hidden_effect = {
+                PAU_ensure_militia_template = yes
+                add_to_variable = { PAU_liberation_tiers = 1 }
+                PAU_refresh_liberation_surge_vars = yes
+                random_controlled_state = {
+                    limit = {
+                        OR = {
+                            state = 579
+                            has_state_flag = is_lldy_state_flag
+                        }
+                    }
+                    create_unit = {
+                        division = "name = \"幸存者\" division_template = \"白夜民兵\" start_experience_factor = 0.45 start_equipment_factor = 1.0"
+                        count = 2
+                        allow_spawning_on_enemy_provs = yes
+                        owner = PAU
+                    }
+                }
+            }
+        }
+        ai_will_do = { factor = 20 }
+    }
+
+    #高空照明弹驱散死雾（由白夜手账 GUI 承载；保留给 AI 使用）
     PAU_undead_baiye_mist_flare = {
         icon = GFX_PAU_dec_baiye_flare
         allowed = { original_tag = PAU }
         visible = {
+            is_ai = yes
             has_country_flag = PAU_undead_war
             NOT = { has_country_flag = PAU_undead_defeated }
             OR = {
@@ -1162,15 +1272,20 @@ PAU_baiye_category = {
                     if = {
                         limit = {
                             is_coastal = yes
-                            PAM = {
+                            ROOT = {
                                 has_completed_focus = PAU_sztytz
                                 has_character = PAU_baiye
-                                PAU_baiye = { NOT = { has_trait = PAU_baiye_chubby } }
+                                PAU_baiye = {
+                                    NOT = { has_trait = PAU_baiye_chubby }
+                                    NOT = { has_trait = PAU_baiye_fit }
+                                }
                                 NOT = { has_country_flag = PAU_baiye_morning_run_active }
                             }
                         }
-                        add_to_variable = { PAU_baiye_snack_count = 1 }
-                        PAU_check_baiye_snack_overflow = yes
+                        ROOT = {
+                            add_to_variable = { PAU_baiye_snack_count = 1 }
+                            PAU_check_baiye_snack_overflow = yes
+                        }
                     }
                     if = {
                         limit = {
@@ -1206,9 +1321,12 @@ PAU_baiye_category = {
                     clr_country_flag = PAU_auto_baiye
                 }
             }
-            cancel_effect = {
+            else = {
                 clr_country_flag = PAU_auto_baiye
             }
+        }
+        cancel_effect = {
+            clr_country_flag = PAU_auto_baiye
         }
     }
 
@@ -2282,6 +2400,10 @@ PAU_baiye_category = {
             complete_effect = {
             }
             cancel_trigger = {
+                OR = {
+                    NOT = { has_country_flag = PAU_grail_camp }
+                    has_completed_focus = PAU_zhyk
+                }
             }
             cancel_effect = {
             }
@@ -2321,6 +2443,10 @@ PAU_baiye_category = {
             complete_effect = {
             }
             cancel_trigger = {
+                OR = {
+                    NOT = { has_country_flag = PAU_grail_camp }
+                    has_completed_focus = PAU_zhyk
+                }
             }
             cancel_effect = {
             }
@@ -2475,7 +2601,7 @@ PAU_baiye_category = {
         allowed = { original_tag = PAU }
         visible = {
             has_country_flag = PAU_grail_camp
-            NOT = { has_completed_focus = PAU_dsyq }
+            NOT = { has_completed_focus = PAU_zhyk }
         }
         available = {
             has_country_flag = PAU_grail_camp
@@ -3905,8 +4031,9 @@ PAU_national_unification = {
             every_state = {
                 limit = { is_core_of = JAP }
                 add_claim_by_ROOT_if_has_no_core = yes
-                enable_state_integration_50_compliance = yes
+                enable_state_integration_80_compliance = yes
             }
+            country_event = { id = PAU.451 days = 6 }
             hidden_effect = {
                 news_event = { id = PAU_news.2 hours = 6 }
             }

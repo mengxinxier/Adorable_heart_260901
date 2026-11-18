@@ -28,6 +28,12 @@ scripted_gui = {
             btn_toggle_reform_desk_click_enabled = {
                 PAU_reform_desk_unlocked = yes
             }
+            pau_reform_btn_glow_visible = {
+                PAU_has_actionable_reform_card = yes
+            }
+            pau_reform_alert_badge_visible = {
+                PAU_has_actionable_reform_card = yes
+            }
         }
 
         effects = {
@@ -35,9 +41,12 @@ scripted_gui = {
                 if = {
                     limit = { has_country_flag = PAU_reform_desk_open }
                     clr_country_flag = PAU_reform_desk_open
+                    clr_country_flag = PAU_desk_note_active
+                    clr_country_flag = PAU_desk_stamp_armed
                 }
                 else = {
                     set_country_flag = PAU_reform_desk_open
+                    PAU_sync_desk_plum_frame = yes
                 }
             }
         }
@@ -54,7 +63,30 @@ scripted_gui = {
             has_country_flag = PAU_reform_desk_open
         }
 
+        properties = {
+            pau_desk_plum_branch = {
+                frame = PAU_desk_plum_frame
+            }
+        }
+
         triggers = {
+            pau_desk_plum_petals_visible = {
+                check_variable = { PAU_desk_plum_frame > 4 }
+            }
+            pau_desk_stamp_burst_a_visible = {
+                has_country_flag = PAU_desk_stamp_armed
+                has_country_flag = PAU_desk_stamp_parity
+            }
+            pau_desk_stamp_burst_b_visible = {
+                has_country_flag = PAU_desk_stamp_armed
+                NOT = { has_country_flag = PAU_desk_stamp_parity }
+            }
+            pau_desk_easter_note_btn_visible = {
+                has_country_flag = PAU_desk_note_active
+            }
+            pau_desk_easter_note_text_visible = {
+                has_country_flag = PAU_desk_note_active
+            }
             btn_reset_reform_click_enabled = {
                 custom_trigger_tooltip = {
                     tooltip = PAU_cond_has_reset_count_tt
@@ -85,13 +117,59 @@ scripted_gui = {
         }
 
         effects = {
-            btn_close_desk_click = { clr_country_flag = PAU_reform_desk_open }
+            btn_close_desk_click = {
+                clr_country_flag = PAU_reform_desk_open
+                clr_country_flag = PAU_desk_note_active
+                clr_country_flag = PAU_desk_stamp_armed
+            }
             btn_tab_mil_click = { set_variable = { PAU_gui_mode = 0 } }
             btn_tab_eco_click = { set_variable = { PAU_gui_mode = 1 } }
             btn_char_axia_click = { set_variable = { PAU_gui_char = 0 } }
             btn_char_xfxy_click = { set_variable = { PAU_gui_char = 1 } }
             btn_char_xy_click = { set_variable = { PAU_gui_char = 2 } }
-            btn_reset_reform_click = { PAU_reset_current_reform_branch = yes }
+            btn_reset_reform_click = {
+                PAU_reset_current_reform_branch = yes
+                PAU_trigger_desk_stamp_burst = yes
+            }
+            btn_desk_plum_poke_click = {
+                PAU_trigger_desk_stamp_burst = yes
+                set_country_flag = PAU_desk_note_active
+                set_variable = { PAU_desk_last_egg = 1 }
+                if = {
+                    limit = { NOT = { has_variable = PAU_desk_plum_poke_idx } }
+                    set_variable = { PAU_desk_plum_poke_idx = 0 }
+                }
+                else = {
+                    add_to_variable = { PAU_desk_plum_poke_idx = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_desk_plum_poke_idx > 3 } }
+                        set_variable = { PAU_desk_plum_poke_idx = 0 }
+                    }
+                }
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 1 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 15 }
+                }
+            }
+            btn_desk_bow_charm_click = {
+                set_country_flag = PAU_desk_note_active
+                set_variable = { PAU_desk_last_egg = 2 }
+                if = {
+                    limit = { NOT = { has_variable = PAU_desk_bow_note_idx } }
+                    set_variable = { PAU_desk_bow_note_idx = 0 }
+                }
+                else = {
+                    add_to_variable = { PAU_desk_bow_note_idx = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_desk_bow_note_idx > 3 } }
+                        set_variable = { PAU_desk_bow_note_idx = 0 }
+                    }
+                }
+            }
+            pau_desk_easter_note_btn_click = {
+                clr_country_flag = PAU_desk_note_active
+            }
         }
     }
 
@@ -185,6 +263,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_recon = 25 }
                 set_variable = { PAU_frame_axia_recon = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_axia_supply_click = {
                 add_political_power = -15
@@ -192,6 +271,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_supply = 25 }
                 set_variable = { PAU_frame_axia_supply = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_axia_medics_click = {
                 add_political_power = -15
@@ -199,6 +279,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_medics = 25 }
                 set_variable = { PAU_frame_axia_medics = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_axia_armor_click = {
                 add_political_power = -15
@@ -206,6 +287,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_armor = 25 }
                 set_variable = { PAU_frame_axia_armor = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
         }
 
@@ -294,6 +376,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_command = 25 }
                 set_variable = { PAU_frame_xfxy_command = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xfxy_signal_click = {
                 add_political_power = -15
@@ -301,6 +384,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_signal = 25 }
                 set_variable = { PAU_frame_xfxy_signal = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xfxy_joint_defense_click = {
                 add_political_power = -15
@@ -308,6 +392,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_joint_defense = 25 }
                 set_variable = { PAU_frame_xfxy_joint_defense = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
         }
 
@@ -395,6 +480,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xy_navy = 25 }
                 set_variable = { PAU_frame_xy_navy = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xy_landing_click = {
                 add_political_power = -15
@@ -402,6 +488,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xy_landing = 25 }
                 set_variable = { PAU_frame_xy_landing = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xy_expedition_click = {
                 add_political_power = -15
@@ -409,6 +496,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xy_expedition = 25 }
                 set_variable = { PAU_frame_xy_expedition = 0 }
                 PAU_reduce_mil_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
         }
 
@@ -496,6 +584,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_granary = 25 }
                 set_variable = { PAU_frame_axia_granary = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_axia_workshop_click = {
                 add_political_power = -15
@@ -503,6 +592,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_workshop = 25 }
                 set_variable = { PAU_frame_axia_workshop = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_axia_trade_click = {
                 add_political_power = -15
@@ -510,6 +600,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_axia_trade = 25 }
                 set_variable = { PAU_frame_axia_trade = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
         }
 
@@ -613,6 +704,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_audit = 25 }
                 set_variable = { PAU_frame_xfxy_audit = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xfxy_wages_click = {
                 add_political_power = -15
@@ -620,6 +712,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_wages = 25 }
                 set_variable = { PAU_frame_xfxy_wages = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xfxy_currency_click = {
                 add_political_power = -15
@@ -627,6 +720,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_currency = 25 }
                 set_variable = { PAU_frame_xfxy_currency = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xfxy_procurement_click = {
                 add_political_power = -15
@@ -634,6 +728,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xfxy_procurement = 25 }
                 set_variable = { PAU_frame_xfxy_procurement = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
         }
 
@@ -722,6 +817,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xy_market = 25 }
                 set_variable = { PAU_frame_xy_market = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xy_land_click = {
                 add_political_power = -15
@@ -729,6 +825,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xy_land = 25 }
                 set_variable = { PAU_frame_xy_land = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
             btn_xy_food_click = {
                 add_political_power = -15
@@ -736,6 +833,7 @@ scripted_gui = {
                 set_variable = { PAU_timer_xy_food = 25 }
                 set_variable = { PAU_frame_xy_food = 0 }
                 PAU_reduce_eco_focus_cost_step = yes
+                PAU_trigger_desk_stamp_burst = yes
             }
         }
 
@@ -749,21 +847,85 @@ scripted_gui = {
         }
     }
 
-    #白夜专属决议面板：白夜巡游手账与互动控制
+    #白夜专属手账面板（由桌角白夜左键点击呼出）：白夜巡游手账与互动控制
     PAU_baiye_category_ui = {
-        context_type = decision_category
-        window_name = "PAU_baiye_category_window"
+        context_type = player_context
+        window_name = "PAU_baiye_notebook_window"
+        parent_window_token = top_bar
         visible = {
             original_tag = PAU
+            is_ai = no
+            has_character = PAU_baiye
+            has_country_flag = PAU_baiye_notebook_open
         }
+        ai_enabled = { always = no }
 
         properties = {
             PAU_baiye_story_progressbar = {
                 frame = PAU_baiye_story_pct
             }
+            PAU_baiye_plum_branch = {
+                frame = PAU_baiye_plum_frame
+            }
         }
 
         triggers = {
+            PAU_baiye_plum_petals_visible = {
+                check_variable = { PAU_baiye_plum_frame > 4 }
+                OR = {
+                    has_country_flag = PAU_baiye_sakura_done
+                    check_variable = { PAU_baiye_story_stage > 4 }
+                }
+            }
+            PAU_nb_stamp_burst_a_visible = {
+                has_country_flag = PAU_nb_stamp_armed
+                has_country_flag = PAU_nb_stamp_parity
+            }
+            PAU_nb_stamp_burst_b_visible = {
+                has_country_flag = PAU_nb_stamp_armed
+                NOT = { has_country_flag = PAU_nb_stamp_parity }
+            }
+            PAU_baiye_peek_paw_btn_visible = {
+                has_character = PAU_baiye
+            }
+            PAU_baiye_easter_note_btn_visible = {
+                has_country_flag = PAU_nb_note_active
+            }
+            PAU_baiye_easter_note_text_visible = {
+                has_country_flag = PAU_nb_note_active
+            }
+            PAU_baiye_portrait_frame_visible = {
+                OR = {
+                    NOT = { has_character = PAU_baiye }
+                    PAU_baiye = {
+                        NOT = { has_trait = PAU_baiye_chubby }
+                        NOT = { has_trait = PAU_baiye_fit }
+                    }
+                }
+            }
+            PAU_baiye_portrait_frame_chubby_visible = {
+                has_character = PAU_baiye
+                PAU_baiye = { has_trait = PAU_baiye_chubby }
+            }
+            PAU_baiye_portrait_frame_fit_visible = {
+                has_character = PAU_baiye
+                PAU_baiye = {
+                    has_trait = PAU_baiye_fit
+                    NOT = { has_trait = PAU_baiye_chubby }
+                }
+            }
+            PAU_baiye_auto_btn_visible = {
+                NOT = { has_country_flag = PAU_auto_baiye }
+            }
+            PAU_baiye_auto_stop_btn_visible = {
+                has_country_flag = PAU_auto_baiye
+            }
+            PAU_baiye_toggle_btn_visible = {
+                NOT = { has_country_flag = PAU_hide_xiaoyao_plan }
+            }
+            PAU_baiye_toggle_show_btn_visible = {
+                has_country_flag = PAU_hide_xiaoyao_plan
+            }
             PAU_baiye_auto_btn_click_enabled = {
                 if = {
                     limit = { has_country_flag = PAU_auto_baiye }
@@ -786,6 +948,9 @@ scripted_gui = {
                         }
                     }
                 }
+            }
+            PAU_baiye_auto_stop_btn_click_enabled = {
+                always = yes
             }
             PAU_baiye_mist_btn_click_enabled = {
                 custom_trigger_tooltip = {
@@ -910,10 +1075,42 @@ scripted_gui = {
                     NOT = { has_political_power < 40 }
                 }
             }
+            PAU_baiye_flare_btn_click_enabled = {
+                has_country_flag = PAU_undead_war
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_undead_not_defeated_tt
+                    NOT = { has_country_flag = PAU_undead_defeated }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_has_xiaoyao_tt
+                    OR = {
+                        has_completed_focus = PAU_zmxx
+                        has_country_flag = has_PAU_xiaoyao
+                    }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_war_zdw_tt
+                    has_war_with = ZDW
+                }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_flare_ready_cd_tt
+                    NOT = { check_variable = { PAU_baiye_flare_active > 0 } }
+                    NOT = { check_variable = { PAU_baiye_flare_cooldown > 0 } }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_cp_15_tt
+                    command_power > 14
+                }
+                custom_trigger_tooltip = {
+                    tooltip = PAU_cond_pp_15_tt
+                    NOT = { has_political_power < 15 }
+                }
+            }
         }
 
         effects = {
             PAU_baiye_auto_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
                 if = {
                     limit = { has_country_flag = PAU_auto_baiye }
                     clr_country_flag = PAU_auto_baiye
@@ -923,7 +1120,12 @@ scripted_gui = {
                     activate_mission = PAU_baiye_auto_task
                 }
             }
+            PAU_baiye_auto_stop_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
+                clr_country_flag = PAU_auto_baiye
+            }
             PAU_baiye_toggle_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
                 if = {
                     limit = { has_country_flag = PAU_hide_xiaoyao_plan }
                     clr_country_flag = PAU_hide_xiaoyao_plan
@@ -931,6 +1133,10 @@ scripted_gui = {
                 else = {
                     set_country_flag = PAU_hide_xiaoyao_plan
                 }
+            }
+            PAU_baiye_toggle_show_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
+                clr_country_flag = PAU_hide_xiaoyao_plan
             }
             PAU_baiye_mist_btn_click = {
                 add_political_power = -25
@@ -942,10 +1148,12 @@ scripted_gui = {
                 }
                 set_variable = { PAU_baiye_mist_active = 60 }
                 set_variable = { PAU_baiye_mist_cooldown = 60 }
+                PAU_trigger_nb_stamp_burst = yes
             }
             PAU_baiye_shrine_btn_click = {
                 add_political_power = -20
                 set_country_flag = PAU_baiye_shrine_done
+                PAU_trigger_nb_stamp_burst = yes
                 country_event = { id = PAU.7011 }
             }
             PAU_baiye_lookout_btn_click = {
@@ -958,17 +1166,2398 @@ scripted_gui = {
                 }
                 set_variable = { PAU_baiye_lookout_active = 90 }
                 set_variable = { PAU_baiye_lookout_cooldown = 60 }
+                PAU_trigger_nb_stamp_burst = yes
             }
             PAU_baiye_sakura_btn_click = {
                 add_political_power = -25
                 set_country_flag = PAU_baiye_sakura_active
                 set_variable = { PAU_baiye_sakura_timer = 15 }
+                PAU_trigger_nb_stamp_burst = yes
             }
             PAU_baiye_morning_run_btn_click = {
                 add_political_power = -40
                 set_country_flag = PAU_baiye_morning_run_active
                 set_variable = { PAU_baiye_morning_run_timer = 60 }
+                PAU_trigger_nb_stamp_burst = yes
+            }
+            PAU_baiye_flare_btn_click = {
+                add_political_power = -15
+                add_command_power = -15
+                add_timed_idea = {
+                    idea = PAU_baiye_mist_flare_idea
+                    days = 20
+                }
+                ZDW = {
+                    add_timed_idea = {
+                        idea = ZDW_mist_cleared_debuff
+                        days = 20
+                    }
+                }
+                set_variable = { PAU_baiye_flare_active = 20 }
+                set_variable = { PAU_baiye_flare_cooldown = 25 }
+                PAU_trigger_nb_stamp_burst = yes
+            }
+            PAU_baiye_bookmark_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
+                if = {
+                    limit = { NOT = { has_variable = PAU_nb_bookmark_streak } }
+                    set_variable = { PAU_nb_bookmark_streak = 0 }
+                }
+                add_to_variable = { PAU_nb_bookmark_streak = 1 }
+                if = {
+                    limit = { check_variable = { PAU_nb_bookmark_streak > 3 } }
+                    set_variable = { PAU_nb_bookmark_streak = 0 }
+                    clr_country_flag = PAU_nb_note_active
+                    clear_variable = PAU_baiye_pet_egg_mode
+                    clear_variable = PAU_baiye_pet_bubble_timer
+                }
+                else = {
+                    set_country_flag = PAU_nb_note_active
+                    set_variable = { PAU_nb_last_egg = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_nb_bookmark_streak = 3 } }
+                        set_variable = { PAU_baiye_pet_egg_mode = 3 }
+                    }
+                    else = {
+                        if = {
+                            limit = { NOT = { has_variable = PAU_nb_bookmark_idx } }
+                            set_variable = { PAU_nb_bookmark_idx = 0 }
+                        }
+                        else = {
+                            add_to_variable = { PAU_nb_bookmark_idx = 1 }
+                            if = {
+                                limit = { check_variable = { PAU_nb_bookmark_idx > 2 } }
+                                set_variable = { PAU_nb_bookmark_idx = 0 }
+                            }
+                        }
+                        set_variable = { PAU_baiye_pet_egg_mode = 2 }
+                    }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 15 }
+                }
+            }
+            PAU_baiye_peek_paw_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
+                set_country_flag = PAU_nb_note_active
+                set_variable = { PAU_nb_last_egg = 2 }
+                if = {
+                    limit = { NOT = { has_variable = PAU_nb_paw_idx } }
+                    set_variable = { PAU_nb_paw_idx = 0 }
+                }
+                else = {
+                    add_to_variable = { PAU_nb_paw_idx = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_nb_paw_idx > 2 } }
+                        set_variable = { PAU_nb_paw_idx = 0 }
+                    }
+                }
+                if = {
+                    limit = { NOT = { has_variable = PAU_baiye_pet_mood_idx } }
+                    set_variable = { PAU_baiye_pet_mood_idx = 0 }
+                }
+                else = {
+                    add_to_variable = { PAU_baiye_pet_mood_idx = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_baiye_pet_mood_idx > 3 } }
+                        set_variable = { PAU_baiye_pet_mood_idx = 0 }
+                    }
+                }
+                set_variable = { PAU_baiye_pet_egg_mode = 4 }
+                set_variable = { PAU_baiye_pet_bubble_timer = 15 }
+            }
+            PAU_baiye_easter_note_btn_click = {
+                clr_country_flag = PAU_nb_note_active
+                set_variable = { PAU_nb_bookmark_streak = 0 }
+            }
+            PAU_baiye_bow_btn_click = {
+                PAU_trigger_nb_stamp_burst = yes
+                set_country_flag = PAU_nb_note_active
+                set_variable = { PAU_nb_last_egg = 3 }
+                if = {
+                    limit = { NOT = { has_variable = PAU_nb_bow_idx } }
+                    set_variable = { PAU_nb_bow_idx = 0 }
+                }
+                else = {
+                    add_to_variable = { PAU_nb_bow_idx = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_nb_bow_idx > 1 } }
+                        set_variable = { PAU_nb_bow_idx = 0 }
+                    }
+                }
+                set_variable = { PAU_baiye_pet_egg_mode = 2 }
+                set_variable = { PAU_baiye_pet_bubble_timer = 15 }
+            }
+            PAU_baiye_notebook_close_btn_click = {
+                clr_country_flag = PAU_baiye_notebook_open
+                clr_country_flag = PAU_nb_note_active
+                clr_country_flag = PAU_nb_stamp_armed
+                set_variable = { PAU_nb_bookmark_streak = 0 }
             }
         }
     }
+
+    PAU_deadair_stage1_gui = {
+        context_type = player_context
+        window_name = "PAU_deadair_stage1_window"
+        parent_window_token = top_bar
+        visible = {
+            original_tag = PAU
+            is_ai = no
+            PAU_has_active_deadair_threat = yes
+            NOT = { check_variable = { PAU_baiye_mist_active > 0 } }
+            NOT = { PAU_is_deadair_stage2 = yes }
+        }
+        ai_enabled = { always = no }
+    }
+
+    PAU_deadair_stage2_gui = {
+        context_type = player_context
+        window_name = "PAU_deadair_stage2_window"
+        parent_window_token = top_bar
+        visible = {
+            original_tag = PAU
+            is_ai = no
+            PAU_has_active_deadair_threat = yes
+            NOT = { check_variable = { PAU_baiye_mist_active > 0 } }
+            PAU_is_deadair_stage2 = yes
+        }
+        ai_enabled = { always = no }
+    }
+
+    PAU_deadair_clearing_gui = {
+        context_type = player_context
+        window_name = "PAU_deadair_clearing_window"
+        parent_window_token = top_bar
+        visible = {
+            original_tag = PAU
+            is_ai = no
+            PAU_has_active_deadair_threat = yes
+            check_variable = { PAU_baiye_mist_active > 0 }
+        }
+        ai_enabled = { always = no }
+    }
+
+    PAU_baiye_pet_gui = {
+        context_type = player_context
+        window_name = "PAU_baiye_pet_root"
+        parent_window_token = top_bar
+        visible = {
+            original_tag = PAU
+            is_ai = no
+            has_character = PAU_baiye
+        }
+        ai_enabled = { always = no }
+        triggers = {
+            PAU_baiye_pet_bubble_bg_visible = {
+                check_variable = { PAU_baiye_pet_bubble_timer > 0 }
+            }
+            PAU_baiye_pet_bubble_text_visible = {
+                check_variable = { PAU_baiye_pet_bubble_timer > 0 }
+            }
+            PAU_baiye_pet_anim_mist_visible = {
+                check_variable = { PAU_baiye_mist_active > 0 }
+            }
+            PAU_baiye_pet_anim_chubby_visible = {
+                NOT = { check_variable = { PAU_baiye_mist_active > 0 } }
+                PAU_baiye = { has_trait = PAU_baiye_chubby }
+            }
+            PAU_baiye_pet_anim_fit_visible = {
+                NOT = { check_variable = { PAU_baiye_mist_active > 0 } }
+                PAU_baiye = { NOT = { has_trait = PAU_baiye_chubby } }
+                PAU_baiye = { has_trait = PAU_baiye_fit }
+            }
+            PAU_baiye_pet_anim_normal_visible = {
+                NOT = { check_variable = { PAU_baiye_mist_active > 0 } }
+                PAU_baiye = { NOT = { has_trait = PAU_baiye_chubby } }
+                PAU_baiye = { NOT = { has_trait = PAU_baiye_fit } }
+            }
+        }
+        effects = {
+            PAU_baiye_pet_btn_click = {
+                clear_variable = PAU_baiye_pet_egg_mode
+                if = {
+                    limit = { NOT = { has_variable = PAU_baiye_pet_mood_idx } }
+                    set_variable = { PAU_baiye_pet_mood_idx = 0 }
+                }
+                else = {
+                    add_to_variable = { PAU_baiye_pet_mood_idx = 1 }
+                    if = {
+                        limit = { check_variable = { PAU_baiye_pet_mood_idx > 3 } }
+                        set_variable = { PAU_baiye_pet_mood_idx = 0 }
+                    }
+                }
+                set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                if = {
+                    limit = { has_country_flag = PAU_baiye_notebook_open }
+                    clr_country_flag = PAU_baiye_notebook_open
+                    clr_country_flag = PAU_nb_note_active
+                    clr_country_flag = PAU_nb_stamp_armed
+                    set_variable = { PAU_nb_bookmark_streak = 0 }
+                }
+                else = {
+                    set_country_flag = PAU_baiye_notebook_open
+                    PAU_sync_baiye_gui_vars = yes
+                }
+            }
+        }
+    }
+
+	# Project #4: PAU Focus Storybook Scripted GUIs (6 flat root buckets in grid_window + Dawn Petals + Wax-Seal Bookmark)
+	PAU_focus_storybook_b_12_m2_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_b_12_m2_win"
+		parent_window_name = "pau_focus_storybook_underlay"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			NOT = { check_variable = { PAU_book_view_mode = 2 } }
+			has_country_flag = has_PAU_xiaoyao2
+			has_country_flag = has_PAU_xiaoyao4
+			OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } }
+		}
+		ai_enabled = { always = no }
+		triggers = {
+			sb_b_12_m2_base_r0_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r0_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r0_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r0_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r0_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r0_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r0_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r0_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r1_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r1_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r1_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r1_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r1_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r1_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_base_r1_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_12_m2_base_r1_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_12_m2_wing_mil_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_12_m2_wing_mil_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_12_m2_wing_mil_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_12_m2_wing_mil_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_12_m2_wing_mil_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_12_m2_wing_eco_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_12_m2_wing_eco_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_12_m2_wing_eco_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_12_m2_wing_eco_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_12_m2_wing_eco_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_12_m2_wing_mil_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_12_m2_wing_mil_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_12_m2_wing_mil_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_12_m2_wing_mil_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_12_m2_wing_mil_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_12_m2_wing_eco_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_12_m2_wing_eco_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_12_m2_wing_eco_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_12_m2_wing_eco_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_12_m2_wing_eco_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_12_m2_ch2a_west_exile_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2a_stage }
+					check_variable = { PAU_story_ch2a_stage = 0 }
+				}
+			}
+			sb_b_12_m2_ch2a_west_exile_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 1 }
+			}
+			sb_b_12_m2_ch2a_west_exile_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 2 }
+			}
+			sb_b_12_m2_ch2a_west_exile_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 3 }
+			}
+			sb_b_12_m2_ch2a_west_exile_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 4 }
+			}
+			sb_b_12_m2_ch3a_east_festival_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3a_stage }
+					check_variable = { PAU_story_ch3a_stage = 0 }
+				}
+			}
+			sb_b_12_m2_ch3a_east_festival_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 1 }
+			}
+			sb_b_12_m2_ch3a_east_festival_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 2 }
+			}
+			sb_b_12_m2_ch3a_east_festival_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 3 }
+			}
+			sb_b_12_m2_ch3a_east_festival_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 4 }
+			}
+			sb_b_12_m2_ch2b_west_harbor_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2b_stage }
+					check_variable = { PAU_story_ch2b_stage = 0 }
+				}
+			}
+			sb_b_12_m2_ch2b_west_harbor_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 1 }
+			}
+			sb_b_12_m2_ch2b_west_harbor_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 2 }
+			}
+			sb_b_12_m2_ch2b_west_harbor_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 3 }
+			}
+			sb_b_12_m2_ch2b_west_harbor_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 4 }
+			}
+			sb_b_12_m2_ch3b_east_shrine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3b_stage }
+					check_variable = { PAU_story_ch3b_stage = 0 }
+				}
+			}
+			sb_b_12_m2_ch3b_east_shrine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 1 }
+			}
+			sb_b_12_m2_ch3b_east_shrine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 2 }
+			}
+			sb_b_12_m2_ch3b_east_shrine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 3 }
+			}
+			sb_b_12_m2_ch3b_east_shrine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 4 }
+			}
+			sb_b_12_m2_ch4_finale_homecoming_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch4_stage }
+					check_variable = { PAU_story_ch4_stage = 0 }
+				}
+			}
+			sb_b_12_m2_ch4_finale_homecoming_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 1 }
+			}
+			sb_b_12_m2_ch4_finale_homecoming_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 2 }
+			}
+			sb_b_12_m2_ch4_finale_homecoming_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 3 }
+			}
+			sb_b_12_m2_ch4_finale_homecoming_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 4 }
+			}
+			sb_b_12_m2_ch1_valley_s0_visible = {
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch1_stage }
+					check_variable = { PAU_story_ch1_stage = 0 }
+				}
+			}
+			sb_b_12_m2_ch1_valley_s1_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 1 }
+			}
+			sb_b_12_m2_ch1_valley_s2_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 2 }
+			}
+			sb_b_12_m2_ch1_valley_s3_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 3 }
+			}
+			sb_b_12_m2_ch1_valley_s4_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 4 }
+			}
+			sb_b_12_m2_spine_vine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_spine_stage }
+					check_variable = { PAU_story_spine_stage = 0 }
+				}
+			}
+			sb_b_12_m2_spine_vine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 1 }
+			}
+			sb_b_12_m2_spine_vine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 2 }
+			}
+			sb_b_12_m2_spine_vine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 3 }
+			}
+			sb_b_12_m2_spine_vine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 4 }
+			}
+		}
+	}
+
+	PAU_focus_storybook_b_13_m2_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_b_13_m2_win"
+		parent_window_name = "pau_focus_storybook_underlay"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			NOT = { check_variable = { PAU_book_view_mode = 2 } }
+			has_country_flag = has_PAU_xiaoyao2
+			NOT = { has_country_flag = has_PAU_xiaoyao4 }
+			OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } }
+		}
+		ai_enabled = { always = no }
+		triggers = {
+			sb_b_13_m2_base_r0_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r0_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r0_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r0_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r0_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r0_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r0_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r0_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r1_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r1_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r1_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r1_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r1_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r1_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_base_r1_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m2_base_r1_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m2_wing_mil_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_13_m2_wing_mil_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_13_m2_wing_mil_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_13_m2_wing_mil_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_13_m2_wing_mil_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_13_m2_wing_eco_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_13_m2_wing_eco_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_13_m2_wing_eco_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_13_m2_wing_eco_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_13_m2_wing_eco_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_13_m2_wing_mil_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_13_m2_wing_mil_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_13_m2_wing_mil_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_13_m2_wing_mil_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_13_m2_wing_mil_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_13_m2_wing_eco_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_13_m2_wing_eco_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_13_m2_wing_eco_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_13_m2_wing_eco_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_13_m2_wing_eco_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_13_m2_ch2a_west_exile_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2a_stage }
+					check_variable = { PAU_story_ch2a_stage = 0 }
+				}
+			}
+			sb_b_13_m2_ch2a_west_exile_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 1 }
+			}
+			sb_b_13_m2_ch2a_west_exile_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 2 }
+			}
+			sb_b_13_m2_ch2a_west_exile_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 3 }
+			}
+			sb_b_13_m2_ch2a_west_exile_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 4 }
+			}
+			sb_b_13_m2_ch3a_east_festival_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3a_stage }
+					check_variable = { PAU_story_ch3a_stage = 0 }
+				}
+			}
+			sb_b_13_m2_ch3a_east_festival_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 1 }
+			}
+			sb_b_13_m2_ch3a_east_festival_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 2 }
+			}
+			sb_b_13_m2_ch3a_east_festival_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 3 }
+			}
+			sb_b_13_m2_ch3a_east_festival_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 4 }
+			}
+			sb_b_13_m2_ch2b_west_harbor_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2b_stage }
+					check_variable = { PAU_story_ch2b_stage = 0 }
+				}
+			}
+			sb_b_13_m2_ch2b_west_harbor_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 1 }
+			}
+			sb_b_13_m2_ch2b_west_harbor_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 2 }
+			}
+			sb_b_13_m2_ch2b_west_harbor_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 3 }
+			}
+			sb_b_13_m2_ch2b_west_harbor_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 4 }
+			}
+			sb_b_13_m2_ch3b_east_shrine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3b_stage }
+					check_variable = { PAU_story_ch3b_stage = 0 }
+				}
+			}
+			sb_b_13_m2_ch3b_east_shrine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 1 }
+			}
+			sb_b_13_m2_ch3b_east_shrine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 2 }
+			}
+			sb_b_13_m2_ch3b_east_shrine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 3 }
+			}
+			sb_b_13_m2_ch3b_east_shrine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 4 }
+			}
+			sb_b_13_m2_ch4_finale_homecoming_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch4_stage }
+					check_variable = { PAU_story_ch4_stage = 0 }
+				}
+			}
+			sb_b_13_m2_ch4_finale_homecoming_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 1 }
+			}
+			sb_b_13_m2_ch4_finale_homecoming_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 2 }
+			}
+			sb_b_13_m2_ch4_finale_homecoming_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 3 }
+			}
+			sb_b_13_m2_ch4_finale_homecoming_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 4 }
+			}
+			sb_b_13_m2_ch1_valley_s0_visible = {
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch1_stage }
+					check_variable = { PAU_story_ch1_stage = 0 }
+				}
+			}
+			sb_b_13_m2_ch1_valley_s1_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 1 }
+			}
+			sb_b_13_m2_ch1_valley_s2_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 2 }
+			}
+			sb_b_13_m2_ch1_valley_s3_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 3 }
+			}
+			sb_b_13_m2_ch1_valley_s4_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 4 }
+			}
+			sb_b_13_m2_spine_vine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_spine_stage }
+					check_variable = { PAU_story_spine_stage = 0 }
+				}
+			}
+			sb_b_13_m2_spine_vine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 1 }
+			}
+			sb_b_13_m2_spine_vine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 2 }
+			}
+			sb_b_13_m2_spine_vine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 3 }
+			}
+			sb_b_13_m2_spine_vine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 4 }
+			}
+		}
+	}
+
+	PAU_focus_storybook_b_13_m1_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_b_13_m1_win"
+		parent_window_name = "pau_focus_storybook_underlay"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			NOT = { check_variable = { PAU_book_view_mode = 2 } }
+			has_country_flag = has_PAU_xiaoyao2
+			NOT = { has_country_flag = has_PAU_xiaoyao4 }
+			AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb NOT = { has_country_flag = PAU_xiaoyaoxian } NOT = { has_country_flag = has_PAU_xiaoyao4 } }
+		}
+		ai_enabled = { always = no }
+		triggers = {
+			sb_b_13_m1_base_r0_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r0_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r0_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r0_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r0_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r0_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r0_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r0_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r1_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r1_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r1_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r1_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r1_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r1_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_base_r1_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_m1_base_r1_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_m1_wing_mil_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_13_m1_wing_mil_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_13_m1_wing_mil_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_13_m1_wing_mil_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_13_m1_wing_mil_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_13_m1_wing_eco_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_13_m1_wing_eco_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_13_m1_wing_eco_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_13_m1_wing_eco_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_13_m1_wing_eco_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_13_m1_wing_mil_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_13_m1_wing_mil_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_13_m1_wing_mil_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_13_m1_wing_mil_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_13_m1_wing_mil_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_13_m1_wing_eco_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_13_m1_wing_eco_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_13_m1_wing_eco_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_13_m1_wing_eco_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_13_m1_wing_eco_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_13_m1_ch2a_west_exile_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2a_stage }
+					check_variable = { PAU_story_ch2a_stage = 0 }
+				}
+			}
+			sb_b_13_m1_ch2a_west_exile_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 1 }
+			}
+			sb_b_13_m1_ch2a_west_exile_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 2 }
+			}
+			sb_b_13_m1_ch2a_west_exile_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 3 }
+			}
+			sb_b_13_m1_ch2a_west_exile_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 4 }
+			}
+			sb_b_13_m1_ch3a_east_festival_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3a_stage }
+					check_variable = { PAU_story_ch3a_stage = 0 }
+				}
+			}
+			sb_b_13_m1_ch3a_east_festival_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 1 }
+			}
+			sb_b_13_m1_ch3a_east_festival_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 2 }
+			}
+			sb_b_13_m1_ch3a_east_festival_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 3 }
+			}
+			sb_b_13_m1_ch3a_east_festival_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 4 }
+			}
+			sb_b_13_m1_ch2b_west_harbor_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2b_stage }
+					check_variable = { PAU_story_ch2b_stage = 0 }
+				}
+			}
+			sb_b_13_m1_ch2b_west_harbor_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 1 }
+			}
+			sb_b_13_m1_ch2b_west_harbor_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 2 }
+			}
+			sb_b_13_m1_ch2b_west_harbor_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 3 }
+			}
+			sb_b_13_m1_ch2b_west_harbor_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 4 }
+			}
+			sb_b_13_m1_ch3b_east_shrine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3b_stage }
+					check_variable = { PAU_story_ch3b_stage = 0 }
+				}
+			}
+			sb_b_13_m1_ch3b_east_shrine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 1 }
+			}
+			sb_b_13_m1_ch3b_east_shrine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 2 }
+			}
+			sb_b_13_m1_ch3b_east_shrine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 3 }
+			}
+			sb_b_13_m1_ch3b_east_shrine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 4 }
+			}
+			sb_b_13_m1_ch4_finale_homecoming_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch4_stage }
+					check_variable = { PAU_story_ch4_stage = 0 }
+				}
+			}
+			sb_b_13_m1_ch4_finale_homecoming_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 1 }
+			}
+			sb_b_13_m1_ch4_finale_homecoming_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 2 }
+			}
+			sb_b_13_m1_ch4_finale_homecoming_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 3 }
+			}
+			sb_b_13_m1_ch4_finale_homecoming_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 4 }
+			}
+			sb_b_13_m1_ch1_valley_s0_visible = {
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch1_stage }
+					check_variable = { PAU_story_ch1_stage = 0 }
+				}
+			}
+			sb_b_13_m1_ch1_valley_s1_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 1 }
+			}
+			sb_b_13_m1_ch1_valley_s2_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 2 }
+			}
+			sb_b_13_m1_ch1_valley_s3_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 3 }
+			}
+			sb_b_13_m1_ch1_valley_s4_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 4 }
+			}
+			sb_b_13_m1_spine_vine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_spine_stage }
+					check_variable = { PAU_story_spine_stage = 0 }
+				}
+			}
+			sb_b_13_m1_spine_vine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 1 }
+			}
+			sb_b_13_m1_spine_vine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 2 }
+			}
+			sb_b_13_m1_spine_vine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 3 }
+			}
+			sb_b_13_m1_spine_vine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 4 }
+			}
+		}
+	}
+
+	PAU_focus_storybook_b_13_0_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_b_13_0_win"
+		parent_window_name = "pau_focus_storybook_underlay"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			NOT = { check_variable = { PAU_book_view_mode = 2 } }
+			has_country_flag = has_PAU_xiaoyao2
+			NOT = { has_country_flag = has_PAU_xiaoyao4 }
+			NOT = { OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } } }
+			NOT = { AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb NOT = { has_country_flag = PAU_xiaoyaoxian } NOT = { has_country_flag = has_PAU_xiaoyao4 } } }
+		}
+		ai_enabled = { always = no }
+		triggers = {
+			sb_b_13_0_base_early_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_0_base_early_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_0_base_early_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_0_base_early_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_0_base_early_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_0_base_early_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_0_base_early_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_13_0_base_early_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_13_0_wing_mil_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_13_0_wing_mil_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_13_0_wing_mil_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_13_0_wing_mil_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_13_0_wing_mil_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_13_0_wing_eco_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_13_0_wing_eco_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_13_0_wing_eco_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_13_0_wing_eco_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_13_0_wing_eco_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_13_0_wing_mil_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_13_0_wing_mil_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_13_0_wing_mil_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_13_0_wing_mil_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_13_0_wing_mil_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_13_0_wing_eco_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_13_0_wing_eco_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_13_0_wing_eco_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_13_0_wing_eco_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_13_0_wing_eco_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_13_0_ch2a_west_exile_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2a_stage }
+					check_variable = { PAU_story_ch2a_stage = 0 }
+				}
+			}
+			sb_b_13_0_ch2a_west_exile_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 1 }
+			}
+			sb_b_13_0_ch2a_west_exile_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 2 }
+			}
+			sb_b_13_0_ch2a_west_exile_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 3 }
+			}
+			sb_b_13_0_ch2a_west_exile_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 4 }
+			}
+			sb_b_13_0_ch3a_east_festival_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3a_stage }
+					check_variable = { PAU_story_ch3a_stage = 0 }
+				}
+			}
+			sb_b_13_0_ch3a_east_festival_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 1 }
+			}
+			sb_b_13_0_ch3a_east_festival_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 2 }
+			}
+			sb_b_13_0_ch3a_east_festival_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 3 }
+			}
+			sb_b_13_0_ch3a_east_festival_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 4 }
+			}
+			sb_b_13_0_ch2b_west_harbor_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2b_stage }
+					check_variable = { PAU_story_ch2b_stage = 0 }
+				}
+			}
+			sb_b_13_0_ch2b_west_harbor_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 1 }
+			}
+			sb_b_13_0_ch2b_west_harbor_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 2 }
+			}
+			sb_b_13_0_ch2b_west_harbor_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 3 }
+			}
+			sb_b_13_0_ch2b_west_harbor_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 4 }
+			}
+			sb_b_13_0_ch3b_east_shrine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3b_stage }
+					check_variable = { PAU_story_ch3b_stage = 0 }
+				}
+			}
+			sb_b_13_0_ch3b_east_shrine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 1 }
+			}
+			sb_b_13_0_ch3b_east_shrine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 2 }
+			}
+			sb_b_13_0_ch3b_east_shrine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 3 }
+			}
+			sb_b_13_0_ch3b_east_shrine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 4 }
+			}
+			sb_b_13_0_ch4_finale_homecoming_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch4_stage }
+					check_variable = { PAU_story_ch4_stage = 0 }
+				}
+			}
+			sb_b_13_0_ch4_finale_homecoming_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 1 }
+			}
+			sb_b_13_0_ch4_finale_homecoming_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 2 }
+			}
+			sb_b_13_0_ch4_finale_homecoming_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 3 }
+			}
+			sb_b_13_0_ch4_finale_homecoming_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 4 }
+			}
+			sb_b_13_0_ch1_valley_s0_visible = {
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch1_stage }
+					check_variable = { PAU_story_ch1_stage = 0 }
+				}
+			}
+			sb_b_13_0_ch1_valley_s1_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 1 }
+			}
+			sb_b_13_0_ch1_valley_s2_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 2 }
+			}
+			sb_b_13_0_ch1_valley_s3_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 3 }
+			}
+			sb_b_13_0_ch1_valley_s4_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 4 }
+			}
+			sb_b_13_0_spine_vine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_spine_stage }
+					check_variable = { PAU_story_spine_stage = 0 }
+				}
+			}
+			sb_b_13_0_spine_vine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 1 }
+			}
+			sb_b_13_0_spine_vine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 2 }
+			}
+			sb_b_13_0_spine_vine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 3 }
+			}
+			sb_b_13_0_spine_vine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 4 }
+			}
+		}
+	}
+
+	PAU_focus_storybook_b_14_m2_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_b_14_m2_win"
+		parent_window_name = "pau_focus_storybook_underlay"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			NOT = { check_variable = { PAU_book_view_mode = 2 } }
+			NOT = { has_country_flag = has_PAU_xiaoyao2 }
+			OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } }
+		}
+		ai_enabled = { always = no }
+		triggers = {
+			sb_b_14_m2_base_r0_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r0_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r0_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r0_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r0_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r0_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r0_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r0_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r1_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r1_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r1_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r1_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r1_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r1_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_base_r1_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_m2_base_r1_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_m2_wing_mil_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_14_m2_wing_mil_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_14_m2_wing_mil_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_14_m2_wing_mil_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_14_m2_wing_mil_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_14_m2_wing_eco_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_14_m2_wing_eco_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_14_m2_wing_eco_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_14_m2_wing_eco_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_14_m2_wing_eco_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_14_m2_wing_mil_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_14_m2_wing_mil_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_14_m2_wing_mil_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_14_m2_wing_mil_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_14_m2_wing_mil_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_14_m2_wing_eco_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_14_m2_wing_eco_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_14_m2_wing_eco_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_14_m2_wing_eco_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_14_m2_wing_eco_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_14_m2_ch2a_west_exile_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2a_stage }
+					check_variable = { PAU_story_ch2a_stage = 0 }
+				}
+			}
+			sb_b_14_m2_ch2a_west_exile_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 1 }
+			}
+			sb_b_14_m2_ch2a_west_exile_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 2 }
+			}
+			sb_b_14_m2_ch2a_west_exile_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 3 }
+			}
+			sb_b_14_m2_ch2a_west_exile_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 4 }
+			}
+			sb_b_14_m2_ch3a_east_festival_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3a_stage }
+					check_variable = { PAU_story_ch3a_stage = 0 }
+				}
+			}
+			sb_b_14_m2_ch3a_east_festival_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 1 }
+			}
+			sb_b_14_m2_ch3a_east_festival_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 2 }
+			}
+			sb_b_14_m2_ch3a_east_festival_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 3 }
+			}
+			sb_b_14_m2_ch3a_east_festival_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 4 }
+			}
+			sb_b_14_m2_ch2b_west_harbor_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2b_stage }
+					check_variable = { PAU_story_ch2b_stage = 0 }
+				}
+			}
+			sb_b_14_m2_ch2b_west_harbor_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 1 }
+			}
+			sb_b_14_m2_ch2b_west_harbor_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 2 }
+			}
+			sb_b_14_m2_ch2b_west_harbor_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 3 }
+			}
+			sb_b_14_m2_ch2b_west_harbor_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 4 }
+			}
+			sb_b_14_m2_ch3b_east_shrine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3b_stage }
+					check_variable = { PAU_story_ch3b_stage = 0 }
+				}
+			}
+			sb_b_14_m2_ch3b_east_shrine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 1 }
+			}
+			sb_b_14_m2_ch3b_east_shrine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 2 }
+			}
+			sb_b_14_m2_ch3b_east_shrine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 3 }
+			}
+			sb_b_14_m2_ch3b_east_shrine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 4 }
+			}
+			sb_b_14_m2_ch4_finale_homecoming_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch4_stage }
+					check_variable = { PAU_story_ch4_stage = 0 }
+				}
+			}
+			sb_b_14_m2_ch4_finale_homecoming_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 1 }
+			}
+			sb_b_14_m2_ch4_finale_homecoming_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 2 }
+			}
+			sb_b_14_m2_ch4_finale_homecoming_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 3 }
+			}
+			sb_b_14_m2_ch4_finale_homecoming_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 4 }
+			}
+			sb_b_14_m2_ch1_valley_s0_visible = {
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch1_stage }
+					check_variable = { PAU_story_ch1_stage = 0 }
+				}
+			}
+			sb_b_14_m2_ch1_valley_s1_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 1 }
+			}
+			sb_b_14_m2_ch1_valley_s2_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 2 }
+			}
+			sb_b_14_m2_ch1_valley_s3_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 3 }
+			}
+			sb_b_14_m2_ch1_valley_s4_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 4 }
+			}
+			sb_b_14_m2_spine_vine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_spine_stage }
+					check_variable = { PAU_story_spine_stage = 0 }
+				}
+			}
+			sb_b_14_m2_spine_vine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 1 }
+			}
+			sb_b_14_m2_spine_vine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 2 }
+			}
+			sb_b_14_m2_spine_vine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 3 }
+			}
+			sb_b_14_m2_spine_vine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 4 }
+			}
+		}
+	}
+
+	PAU_focus_storybook_b_14_0_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_b_14_0_win"
+		parent_window_name = "pau_focus_storybook_underlay"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			NOT = { check_variable = { PAU_book_view_mode = 2 } }
+			NOT = { has_country_flag = has_PAU_xiaoyao2 }
+			NOT = { OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } } }
+			NOT = { AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb NOT = { has_country_flag = PAU_xiaoyaoxian } NOT = { has_country_flag = has_PAU_xiaoyao4 } } }
+		}
+		ai_enabled = { always = no }
+		triggers = {
+			sb_b_14_0_base_early_c0_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_0_base_early_c0_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_0_base_early_c1_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_0_base_early_c1_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_0_base_early_c2_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_0_base_early_c2_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_0_base_early_c3_s0_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			sb_b_14_0_base_early_c3_s1_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			sb_b_14_0_wing_mil_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_14_0_wing_mil_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_14_0_wing_mil_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_14_0_wing_mil_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_14_0_wing_mil_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_14_0_wing_eco_early_s0_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_14_0_wing_eco_early_s1_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_14_0_wing_eco_early_s2_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_14_0_wing_eco_early_s3_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_14_0_wing_eco_early_s4_visible = {
+				NOT = { has_country_flag = has_PAU_xiaoyao4 }
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_14_0_wing_mil_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_mil_stage }
+					check_variable = { PAU_story_mil_stage = 0 }
+				}
+			}
+			sb_b_14_0_wing_mil_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 1 }
+			}
+			sb_b_14_0_wing_mil_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 2 }
+			}
+			sb_b_14_0_wing_mil_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 3 }
+			}
+			sb_b_14_0_wing_mil_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_mil_stage = 4 }
+			}
+			sb_b_14_0_wing_eco_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_eco_stage }
+					check_variable = { PAU_story_eco_stage = 0 }
+				}
+			}
+			sb_b_14_0_wing_eco_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 1 }
+			}
+			sb_b_14_0_wing_eco_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 2 }
+			}
+			sb_b_14_0_wing_eco_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 3 }
+			}
+			sb_b_14_0_wing_eco_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_eco_stage = 4 }
+			}
+			sb_b_14_0_ch2a_west_exile_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2a_stage }
+					check_variable = { PAU_story_ch2a_stage = 0 }
+				}
+			}
+			sb_b_14_0_ch2a_west_exile_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 1 }
+			}
+			sb_b_14_0_ch2a_west_exile_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 2 }
+			}
+			sb_b_14_0_ch2a_west_exile_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 3 }
+			}
+			sb_b_14_0_ch2a_west_exile_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao2
+				has_country_flag = has_PAU_xfzb
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2a_stage = 4 }
+			}
+			sb_b_14_0_ch3a_east_festival_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3a_stage }
+					check_variable = { PAU_story_ch3a_stage = 0 }
+				}
+			}
+			sb_b_14_0_ch3a_east_festival_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 1 }
+			}
+			sb_b_14_0_ch3a_east_festival_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 2 }
+			}
+			sb_b_14_0_ch3a_east_festival_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 3 }
+			}
+			sb_b_14_0_ch3a_east_festival_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3a_stage = 4 }
+			}
+			sb_b_14_0_ch2b_west_harbor_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch2b_stage }
+					check_variable = { PAU_story_ch2b_stage = 0 }
+				}
+			}
+			sb_b_14_0_ch2b_west_harbor_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 1 }
+			}
+			sb_b_14_0_ch2b_west_harbor_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 2 }
+			}
+			sb_b_14_0_ch2b_west_harbor_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 3 }
+			}
+			sb_b_14_0_ch2b_west_harbor_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao3
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch2b_stage = 4 }
+			}
+			sb_b_14_0_ch3b_east_shrine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch3b_stage }
+					check_variable = { PAU_story_ch3b_stage = 0 }
+				}
+			}
+			sb_b_14_0_ch3b_east_shrine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 1 }
+			}
+			sb_b_14_0_ch3b_east_shrine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 2 }
+			}
+			sb_b_14_0_ch3b_east_shrine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 3 }
+			}
+			sb_b_14_0_ch3b_east_shrine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao6
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch3b_stage = 4 }
+			}
+			sb_b_14_0_ch4_finale_homecoming_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch4_stage }
+					check_variable = { PAU_story_ch4_stage = 0 }
+				}
+			}
+			sb_b_14_0_ch4_finale_homecoming_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 1 }
+			}
+			sb_b_14_0_ch4_finale_homecoming_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 2 }
+			}
+			sb_b_14_0_ch4_finale_homecoming_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 3 }
+			}
+			sb_b_14_0_ch4_finale_homecoming_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao7
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch4_stage = 4 }
+			}
+			sb_b_14_0_ch1_valley_s0_visible = {
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_ch1_stage }
+					check_variable = { PAU_story_ch1_stage = 0 }
+				}
+			}
+			sb_b_14_0_ch1_valley_s1_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 1 }
+			}
+			sb_b_14_0_ch1_valley_s2_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 2 }
+			}
+			sb_b_14_0_ch1_valley_s3_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 3 }
+			}
+			sb_b_14_0_ch1_valley_s4_visible = {
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_ch1_stage = 4 }
+			}
+			sb_b_14_0_spine_vine_s0_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = {
+					check_variable = { PAU_book_view_mode = 1 }
+					NOT = { has_variable = PAU_story_spine_stage }
+					check_variable = { PAU_story_spine_stage = 0 }
+				}
+			}
+			sb_b_14_0_spine_vine_s1_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 1 }
+			}
+			sb_b_14_0_spine_vine_s2_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 2 }
+			}
+			sb_b_14_0_spine_vine_s3_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 3 }
+			}
+			sb_b_14_0_spine_vine_s4_visible = {
+				has_country_flag = has_PAU_xiaoyao4
+				OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+				check_variable = { PAU_story_spine_stage = 4 }
+			}
+		}
+	}
+
+	PAU_focus_storybook_fg_b_12_m2_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_fg_b_12_m2_win"
+		parent_window_name = "pau_focus_storybook_fg"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+			has_country_flag = has_PAU_xiaoyao7
+			has_completed_focus = PAU_ldwm
+			has_country_flag = has_PAU_xiaoyao2
+			has_country_flag = has_PAU_xiaoyao4
+			OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } }
+		}
+		ai_enabled = { always = no }
+	}
+
+	PAU_focus_storybook_fg_b_13_m2_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_fg_b_13_m2_win"
+		parent_window_name = "pau_focus_storybook_fg"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+			has_country_flag = has_PAU_xiaoyao7
+			has_completed_focus = PAU_ldwm
+			has_country_flag = has_PAU_xiaoyao2
+			NOT = { has_country_flag = has_PAU_xiaoyao4 }
+			OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } }
+		}
+		ai_enabled = { always = no }
+	}
+
+	PAU_focus_storybook_fg_b_13_m1_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_fg_b_13_m1_win"
+		parent_window_name = "pau_focus_storybook_fg"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+			has_country_flag = has_PAU_xiaoyao7
+			has_completed_focus = PAU_ldwm
+			has_country_flag = has_PAU_xiaoyao2
+			NOT = { has_country_flag = has_PAU_xiaoyao4 }
+			AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb NOT = { has_country_flag = PAU_xiaoyaoxian } NOT = { has_country_flag = has_PAU_xiaoyao4 } }
+		}
+		ai_enabled = { always = no }
+	}
+
+	PAU_focus_storybook_fg_b_13_0_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_fg_b_13_0_win"
+		parent_window_name = "pau_focus_storybook_fg"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+			has_country_flag = has_PAU_xiaoyao7
+			has_completed_focus = PAU_ldwm
+			has_country_flag = has_PAU_xiaoyao2
+			NOT = { has_country_flag = has_PAU_xiaoyao4 }
+			NOT = { OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } } }
+			NOT = { AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb NOT = { has_country_flag = PAU_xiaoyaoxian } NOT = { has_country_flag = has_PAU_xiaoyao4 } } }
+		}
+		ai_enabled = { always = no }
+	}
+
+	PAU_focus_storybook_fg_b_14_m2_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_fg_b_14_m2_win"
+		parent_window_name = "pau_focus_storybook_fg"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+			has_country_flag = has_PAU_xiaoyao7
+			has_completed_focus = PAU_ldwm
+			NOT = { has_country_flag = has_PAU_xiaoyao2 }
+			OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } }
+		}
+		ai_enabled = { always = no }
+	}
+
+	PAU_focus_storybook_fg_b_14_0_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_fg_b_14_0_win"
+		parent_window_name = "pau_focus_storybook_fg"
+		visible = {
+			original_tag = PAU
+			has_focus_tree = PAU_focus
+			OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } }
+			has_country_flag = has_PAU_xiaoyao7
+			has_completed_focus = PAU_ldwm
+			NOT = { has_country_flag = has_PAU_xiaoyao2 }
+			NOT = { OR = { has_country_flag = has_PAU_xiaoyao4 AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb has_country_flag = PAU_xiaoyaoxian } } }
+			NOT = { AND = { has_country_flag = has_PAU_xiaoyao2 has_country_flag = has_PAU_xfzb NOT = { has_country_flag = PAU_xiaoyaoxian } NOT = { has_country_flag = has_PAU_xiaoyao4 } } }
+		}
+		ai_enabled = { always = no }
+	}
+
+	PAU_focus_storybook_toolbar_sgui = {
+		context_type = player_context
+		window_name = "pau_focus_storybook_toolbar_win"
+		parent_window_name = "pau_focus_storybook_toolbar"
+		visible = { original_tag = PAU has_focus_tree = PAU_focus }
+		ai_enabled = { always = no }
+		effects = {
+			btn_pau_book_mode_0_click = {
+				set_variable = { PAU_book_view_mode = 1 }
+				PAU_refresh_focus_storybook = yes
+			}
+			btn_pau_book_mode_1_click = {
+				set_variable = { PAU_book_view_mode = 2 }
+				PAU_refresh_focus_storybook = yes
+			}
+			btn_pau_book_mode_2_click = {
+				set_variable = { PAU_book_view_mode = 0 }
+				PAU_refresh_focus_storybook = yes
+			}
+		}
+		triggers = {
+			btn_pau_book_mode_0_visible = { OR = { NOT = { has_variable = PAU_book_view_mode } check_variable = { PAU_book_view_mode = 0 } } }
+			btn_pau_book_mode_1_visible = { check_variable = { PAU_book_view_mode = 1 } }
+			btn_pau_book_mode_2_visible = { check_variable = { PAU_book_view_mode = 2 } }
+		}
+	}
 }
