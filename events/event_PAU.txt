@@ -9,6 +9,11 @@ country_event = {
     picture = GFX_event_PAU_tw
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "First Snow"
+        }
+    }
 
     option = {
         name = PAU.1.a
@@ -738,6 +743,7 @@ country_event = {
                             wangling = { x = 0 y = 0 }
                             wangling = { x = 0 y = 1 }
                             wangling = { x = 1 y = 0 }
+                            wangling = { x = 1 y = 1 }
                         }
                     }
                 }
@@ -750,7 +756,7 @@ country_event = {
                     }
                     create_unit = {
                         division = "name = \"游荡尸群\" division_template = \"游荡尸群\" start_experience_factor = 0.1 start_equipment_factor = 0.1"
-                        count = 3
+                        count = 4
                         owner = ZDW
                     }
                 }
@@ -898,6 +904,42 @@ country_event = {
         name = PAU.188.a
         hidden_effect = {
             scoped_play_song = "声"
+            set_country_flag = PAU_undead_war
+            set_country_flag = PAU_counterattack_started
+            PAU_ensure_militia_template = yes
+            PAU_ensure_vanguard_template = yes
+            579 = {
+                set_state_flag = PAU_zdw_retaken_bonus
+            }
+            add_ideas = PAU_counterattack_zdw_buff
+            set_variable = { PAU_liberation_tiers = 1 }
+            PAU_refresh_liberation_surge_vars = yes
+            if = {
+                limit = { NOT = { has_dynamic_modifier = { modifier = PAU_liberation_surge } } }
+                add_dynamic_modifier = { modifier = PAU_liberation_surge }
+            }
+            PAU_grant_vanguard_armor_cache = yes
+            ZDW = {
+                remove_ideas = ZDW_unstoppable_tide
+                add_timed_idea = {
+                    idea = ZDW_solana_backlash
+                    days = 180
+                }
+                set_variable = { ZDW_decay_progress = 10 }
+                if = {
+                    limit = { PAU = { check_variable = { PAU_grail_gunnery_prep_count = 1 compare = greater_than_or_equals } } }
+                    add_to_variable = { ZDW_decay_progress = 10 }
+                }
+                if = {
+                    limit = { PAU = { check_variable = { PAU_grail_gunnery_prep_count = 2 compare = greater_than_or_equals } } }
+                    add_to_variable = { ZDW_decay_progress = 10 }
+                }
+                PAU_sync_zdw_decay_vars = yes
+                if = {
+                    limit = { NOT = { has_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } } }
+                    add_dynamic_modifier = { modifier = ZDW_solana_backlash_decay }
+                }
+            }
         }
         if = {
             limit = {
@@ -908,6 +950,24 @@ country_event = {
         }
         579 = {
             set_state_controller_to = PAU
+            add_building_construction = {
+                type = infrastructure
+                level = 2
+                instant_build = yes
+            }
+            add_building_construction = {
+                type = naval_base
+                level = 3
+                province = 14814
+                instant_build = yes
+            }
+        }
+        custom_effect_tooltip = PAU_landing_assault_tt
+        add_fuel = 2000
+        add_equipment_to_stockpile = {
+            type = convoy
+            amount = 300
+            producer = PAU
         }
         hidden_effect = {
             299 = {
@@ -916,34 +976,25 @@ country_event = {
                     to_state = 579
                 }
             }
-            add_ideas = PAU_counterattack_zdw_buff
-            ZDW = {
-                remove_ideas = ZDW_unstoppable_tide
-                add_timed_idea = {
-                    idea = ZDW_solana_backlash
-                    days = 180
-                }
-            }
         }
         set_country_flag = PAU_fullscreen_rain
-        add_equipment_to_stockpile = {
-            type = convoy
-            amount = 200
-            producer = PAU
-        }
-        division_template = {
-            name = "白夜民兵"
-            is_locked = no
-            regiments = {
-                militia = { x = 0 y = 0 }
-                militia = { x = 0 y = 1 }
-                militia = { x = 1 y = 0 }
-                militia = { x = 1 y = 1 }
-                militia = { x = 2 y = 0 }
-                militia = { x = 2 y = 1 }
-            }
-            support = {
-                recon = { x = 0 y = 0 }
+        hidden_effect = {
+            579 = {
+                create_unit = {
+                    division = "name = \"白夜抢滩突击旅\" division_template = \"白夜抢滩突击旅\" start_experience_factor = 0.7 start_equipment_factor = 1.0"
+                    count = 2
+                    allow_spawning_on_enemy_provs = yes
+                    owner = PAU
+                }
+                if = {
+                    limit = { PAU = { check_variable = { PAU_grail_gunnery_prep_count = 2 compare = greater_than_or_equals } } }
+                    create_unit = {
+                        division = "name = \"白夜火力校准突击旅\" division_template = \"白夜抢滩突击旅\" start_experience_factor = 0.8 start_equipment_factor = 1.0"
+                        count = 1
+                        allow_spawning_on_enemy_provs = yes
+                        owner = PAU
+                    }
+                }
             }
         }
         every_state = {
@@ -998,6 +1049,11 @@ country_event = {
     picture = GFX_event_PAU_hy
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "楽しい冒険"
+        }
+    }
 
     option = {
         name = PAU.20.a
@@ -1051,34 +1107,71 @@ country_event = {
     major = no
     picture = GFX_event_PAU_sln
     fire_only_once = yes
-    trigger = {
-        TAG = PAU
-        PAO = {
-            or = {
-                exists = no
-                is_subject_of = PAU
-            }
-        }
-    }
-    mean_time_to_happen = {
-        days = 1
-    }
+    is_triggered_only = yes
     option = {
         name = PAU.22.a
-        annex_country = {
-            target = PAO
-            transfer_troops = no
+        if = {
+            limit = { country_exists = PAO }
+            annex_country = {
+                target = PAO
+                transfer_troops = no
+            }
         }
         set_country_flag = has_PAU_xiaoyao4
         custom_effect_tooltip = jiesuoguoce
         mark_focus_tree_layout_dirty = yes
         hidden_effect = {
-            annex_country = {
-                target = WL1
-                transfer_troops = no
+            if = {
+                limit = { country_exists = WL1 }
+                annex_country = {
+                    target = WL1
+                    transfer_troops = no
+                }
             }
         }
 
+    }
+}
+
+country_event = {
+    id = PAU.221
+    title = PAU.221.t
+    desc = PAU.221.d
+    major = no
+    picture = GFX_event_yeying7
+    fire_only_once = yes
+    is_triggered_only = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "雨"
+        }
+    }
+    option = {
+        name = PAU.221.a
+        country_event = PAU.2211
+
+    }
+}
+
+country_event = {
+    id = PAU.2211
+    title = PAU.2211.t
+    desc = PAU.2211.d
+    major = no
+    picture = GFX_event_PAU_wsgz
+    fire_only_once = yes
+    is_triggered_only = yes
+    option = {
+        name = PAU.2211.a
+        add_to_variable = {
+            var = PAU_axia_mil
+            value = 20
+            tooltip = PAU_axia_mil_tt
+        }
+        hidden_effect = {
+            PAU_refresh_mil_reform_tiers = yes
+            scoped_sound_effect = "燃烧"
+        }
     }
 }
 
@@ -1143,6 +1236,11 @@ country_event = {
     picture = GFX_event_PAU_xy4
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "ドジっ子マーチ"
+        }
+    }
 
     option = {
         name = PAU.25.a
@@ -1439,11 +1537,15 @@ country_event = {
                         is_in_faction = yes
                         is_faction_leader = yes
                     }
+                    set_country_flag = PAU_faction_transition_in_progress
+                    set_country_flag = leave_faction_happily_flag
                     every_faction_member = {
-                        limit = { NOT = { tag = PAU } }
+                        limit = { NOT = { tag = PAU } is_subject = no }
                         set_country_flag = PAU_bytm_faction_transfer
+                        set_country_flag = leave_faction_happily_flag
                     }
                     leave_faction = yes
+                    clr_country_flag = leave_faction_happily_flag
 
                     create_faction_from_template = faction_template_bytm
                     set_faction_name = PAU_white_night_alliance
@@ -1458,6 +1560,7 @@ country_event = {
                     }
                     PAU = { add_to_faction = PREV }
                     clr_country_flag = PAU_bytm_faction_transfer
+                    clr_country_flag = leave_faction_happily_flag
                 }
                 every_country = {
                     limit = {
@@ -1470,6 +1573,9 @@ country_event = {
                         }
                     }
                 }
+                clr_country_flag = PAU_faction_transition_in_progress
+                PAU_recover_dev_program_loop = yes
+                PAU_refresh_south_america_development = yes
             }
             add_faction_initiative = 3
             add_faction_goal_slot = { category = long_term value = 1 }
@@ -1575,6 +1681,11 @@ country_event = {
     picture = GFX_event_PAU_ax3
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "重い足取り"
+        }
+    }
 
     option = {
         name = PAU.32.a
@@ -1639,11 +1750,25 @@ country_event = {
             days = 1
             value = 1
         }
-        PAU_Nymph = {
-            demote_leader = yes
+        if = {
+            limit = { has_character = PAU_Nymph }
+            PAU_Nymph = {
+                demote_leader = yes
+                if = {
+                    limit = { NOT = { has_trait = PAU_trial_unpromotable } }
+                    add_unit_leader_trait = PAU_trial_unpromotable
+                }
+            }
         }
-        LHS_Nymph = {
-            demote_leader = yes
+        if = {
+            limit = { has_character = LHS_Nymph }
+            LHS_Nymph = {
+                demote_leader = yes
+                if = {
+                    limit = { NOT = { has_trait = PAU_trial_unpromotable } }
+                    add_unit_leader_trait = PAU_trial_unpromotable
+                }
+            }
         }
 
     }
@@ -1663,7 +1788,23 @@ country_event = {
 
         add_stability = 0.05
         PAU_baiye = {
-            add_unit_leader_trait = PAU_baiye_chubby
+            if = {
+                limit = {
+                    NOT = { has_trait = PAU_baiye_chubby }
+                    NOT = { has_trait = PAU_baiye_fit }
+                }
+                add_unit_leader_trait = PAU_baiye_chubby
+                set_portraits = {
+                    army = {
+                        large = "gfx/leaders/PAU/baiye2.png"
+                        small = "gfx/leaders/PAU/small/baiye2_small.png"
+                    }
+                    civilian = {
+                        large = "gfx/leaders/PAU/baiye2.png"
+                        small = "gfx/leaders/PAU/small/baiye2_small.png"
+                    }
+                }
+            }
         }
         custom_effect_tooltip = PAU_34_morning_run_unlock_tt
         PAU_gwl = {
@@ -1774,6 +1915,11 @@ country_event = {
     picture = GFX_event_PAU_xy9
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "遠い港の夜景"
+        }
+    }
 
     option = {
         name = PAU.37.a
@@ -1890,6 +2036,11 @@ country_event = {
     picture = GFX_event_PAU_xy10
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "望郷"
+        }
+    }
 
     option = {
         name = PAU.40.a
@@ -1908,6 +2059,11 @@ country_event = {
     picture = GFX_event_PAU_hy
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "燃え落ちる桜"
+        }
+    }
 
     option = {
         name = PAU.41.a
@@ -1971,10 +2127,16 @@ country_event = {
     major = no
     picture = GFX_event_taiyang
     trigger = {
-        TAG = PAU
-        282 = {
-            is_controlled_by = PAU
+        tag = PAU
+        OR = {
+            282 = {
+                is_controlled_by = PAU
+            }
+            controls_province = 1182
         }
+    }
+    mean_time_to_happen = {
+        days = 1
     }
     fire_only_once = yes
     immediate = {
@@ -2044,6 +2206,11 @@ country_event = {
     picture = GFX_event_PAU_hy
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "帰り道"
+        }
+    }
 
     option = {
         name = PAU.44.c
@@ -2082,12 +2249,12 @@ country_event = {
             base = 25
         }
         set_politics = { ruling_party = communism elections_allowed = no }
-        set_country_leader_ideology = syndicalism
+        set_country_leader_ideology = Spartacus
         PAU_xiaoyao = {
             add_country_leader_role = {
                 country_leader = {
                     expire = "1999.1.1"
-                    ideology = syndicalism
+                    ideology = Spartacus
                     traits = {
                         PAU_xiaoyao_leader_autonomy
                         PAU_summer_festival_trait
@@ -2133,12 +2300,12 @@ country_event = {
             base = 25
         }
         set_politics = { ruling_party = communism elections_allowed = no }
-        set_country_leader_ideology = warm_syndicalism_group
+        set_country_leader_ideology = syndicalism
         PAU_xiaoyao = {
             add_country_leader_role = {
                 country_leader = {
                     expire = "1999.1.1"
-                    ideology = warm_syndicalism_group
+                    ideology = syndicalism
                     traits = {
                         PAU_xiaoyao_leader_union
                         PAU_summer_festival_trait
@@ -2274,6 +2441,75 @@ country_event = {
             }
         }
 
+    }
+}
+
+country_event = {
+    id = PAU.451
+    title = PAU.451.t
+    desc = PAU.451.d
+    major = no
+    picture = GFX_event_PAU_hy
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.451.a
+        country_event = PAU.4511
+        hidden_effect = {
+            scoped_sound_effect = "翻书"
+        }
+    }
+}
+
+country_event = {
+    id = PAU.4511
+    title = PAU.4511.t
+    desc = PAU.4511.d
+    major = no
+    picture = GFX_event_PAU_hy
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.4511.a
+        country_event = PAU.45111
+        hidden_effect = {
+            scoped_sound_effect = "翻书"
+        }
+    }
+}
+
+country_event = {
+    id = PAU.45111
+    title = PAU.45111.t
+    desc = PAU.45111.d
+    major = no
+    picture = GFX_event_PAU_xp
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = PAU.45111.a
+        add_political_power = 50
+        if = {
+            limit = { has_stability < 0.85 }
+            add_stability = 0.05
+        }
+        else = {
+            add_political_power = 20
+        }
+        every_controlled_state = {
+            limit = {
+                is_core_of = JAP
+                NOT = { is_core_of = ROOT }
+            }
+            add_compliance = 20
+            add_resistance = -20
+        }
+        hidden_effect = {
+            scoped_sound_effect = "燃烧"
+        }
     }
 }
 
@@ -3029,6 +3265,11 @@ country_event = {
     picture = GFX_event_woshou
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "Марш защитников Москвы"
+        }
+    }
 
     option = {
         name = PAU.511.a
@@ -3044,16 +3285,21 @@ country_event = {
         }
 
         hidden_effect = {
+            set_country_flag = PAU_faction_transition_in_progress
             if = {
                 limit = { is_in_faction = yes }
+                set_country_flag = leave_faction_happily_flag
                 every_country = {
                     limit = {
                         is_in_faction_with = ROOT
                         NOT = { tag = ROOT }
+                        is_subject = no
                     }
                     set_country_flag = PAU_comintern_faction_transfer
+                    set_country_flag = leave_faction_happily_flag
                 }
                 leave_faction = yes
+                clr_country_flag = leave_faction_happily_flag
             }
 
             create_faction_from_template = faction_template_comintern
@@ -3068,6 +3314,7 @@ country_event = {
                 }
                 ROOT = { add_to_faction = PREV }
                 clr_country_flag = PAU_comintern_faction_transfer
+                clr_country_flag = leave_faction_happily_flag
             }
 
             if = {
@@ -3097,6 +3344,9 @@ country_event = {
                     modifier = faction_traitor
                 }
             }
+            clr_country_flag = PAU_faction_transition_in_progress
+            PAU_recover_dev_program_loop = yes
+            PAU_refresh_south_america_development = yes
         }
 
         add_faction_initiative = 3
@@ -3237,6 +3487,7 @@ country_event = {
             }
             hidden_effect = {
                 add_to_variable = { PAU_176_reform_count = 1 }
+                PAU_refresh_eco_reform_tiers = yes
             }
         }
         else = {
@@ -3504,6 +3755,11 @@ country_event = {
     picture = GFX_event_PAU_xy16
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "3月の澄んだ空"
+        }
+    }
 
     option = {
         name = PAU.56.a
@@ -3533,6 +3789,9 @@ country_event = {
 
     option = {
         name = PAU.566.a
+        hidden_effect = {
+            scoped_sound_effect = "PAU_congress_applause"
+        }
         set_country_flag = PAU_zkdh_done  #第一次全国大会召开标记
         capital_scope = {
             add_extra_state_shared_building_slots = 2
@@ -3651,7 +3910,7 @@ country_event = {
         add_daily_mastery = {
             amount = 0.2
             days = 180
-            name = PAU_sa_study_operations
+            name = PAU_sa_study_combat_support
             folder = land
             track = combat_support
         }
@@ -3663,7 +3922,7 @@ country_event = {
             add_daily_mastery = {
                 amount = 0.1
                 days = 180
-                name = PAU_sa_study_operations_member
+                name = PAU_sa_study_combat_support_member
                 folder = land
                 track = combat_support
             }
@@ -3782,8 +4041,9 @@ country_event = {
             value = 20
             tooltip = PAU_xfxy_mil_tt
         }
-
-
+        hidden_effect = {
+            PAU_refresh_mil_reform_tiers = yes
+        }
     }
 }
 
@@ -3803,8 +4063,9 @@ country_event = {
             value = 20
             tooltip = PAU_xiaoyao_mil_tt
         }
-
-
+        hidden_effect = {
+            PAU_refresh_mil_reform_tiers = yes
+        }
     }
 }
 
@@ -3824,8 +4085,9 @@ country_event = {
             value = 20
             tooltip = PAU_xiaoyao_eco_tt
         }
-
-
+        hidden_effect = {
+            PAU_refresh_eco_reform_tiers = yes
+        }
     }
 }
 
@@ -3909,7 +4171,7 @@ country_event = {
     picture = GFX_event_PAU_hy
     is_triggered_only = yes
     option = {
-        name = PAU.521.a
+        name = PAU.5211.a
         ai_chance = {
             base = 60
         }
@@ -3922,6 +4184,10 @@ country_event = {
             var = PAU_xiaoyao_mil
             value = 20
             tooltip = PAU_xiaoyao_mil_tt
+        }
+        hidden_effect = {
+            PAU_refresh_eco_reform_tiers = yes
+            PAU_refresh_mil_reform_tiers = yes
         }
     }
 }
@@ -4313,6 +4579,7 @@ country_event = {
         hidden_effect = {
             clr_country_flag = PAU_pending_emma_rescue
             set_country_flag = PAU_7005_fired
+            set_country_flag = PAU_7005_done
         }
     }
 }
@@ -4402,9 +4669,14 @@ country_event = {
     title = PAU.7012.t
     desc = PAU.7012.d
     major = no
-    picture = GFX_event_PAO_xingkong
+    picture = GFX_event_PAU_baiye_nightmarket
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "お地蔵様のいる小道"
+        }
+    }
 
     option = {
         name = PAU.7012.a
@@ -4418,6 +4690,7 @@ country_event = {
         add_political_power = 50
         add_ideas = PAU_baiye_sakura_homecoming_idea
         hidden_effect = {
+            scoped_sound_effect = "PAU_cat_mew"
             if = {
                 limit = {
                     has_character = PAU_baiye
@@ -4437,15 +4710,23 @@ country_event = {
     title = PAU.7013.t
     desc = PAU.7013.d
     major = no
-    picture = GFX_event_PAU_xy6
+    picture = GFX_event_PAU_baiye_morningrun
     is_triggered_only = yes
     fire_only_once = yes
+    immediate = {
+        hidden_effect = {
+            scoped_play_song = "長靴でお出かけ"
+        }
+    }
 
     option = {
         name = PAU.7013.a
         army_experience = 10
         add_command_power = 15
         custom_effect_tooltip = PAU_7013_done_tt
+        hidden_effect = {
+            scoped_sound_effect = "PAU_cat_mew"
+        }
     }
 }
 
@@ -4454,7 +4735,7 @@ country_event = {
     id = PAU.7014
     title = PAU.7014.t
     desc = PAU.7014.d
-    picture = GFX_PAU_xy8
+    picture = GFX_event_PAU_xy8
 
     is_triggered_only = yes
 
@@ -4471,8 +4752,21 @@ country_event = {
                 remove_trait = { trait = PAU_baiye_fit }
             }
             add_trait = { trait = PAU_baiye_chubby }
+            set_portraits = {
+                army = {
+                    large = "gfx/leaders/PAU/baiye2.png"
+                    small = "gfx/leaders/PAU/small/baiye2_small.png"
+                }
+                civilian = {
+                    large = "gfx/leaders/PAU/baiye2.png"
+                    small = "gfx/leaders/PAU/small/baiye2_small.png"
+                }
+            }
         }
         custom_effect_tooltip = PAU_34_morning_run_unlock_tt
+        hidden_effect = {
+            scoped_sound_effect = "PAU_cat_hungry"
+        }
     }
 }
 
@@ -4787,7 +5081,7 @@ country_event = {
     }
 }
 
-#经济改革首次达到上限（36）：流域水电与大坝工程总局成立
+#经济改革首次达到上限（36）
 country_event = {
     id = PAU.702
     title = PAU.702.t
@@ -4806,7 +5100,7 @@ country_event = {
     }
 }
 
-#向正与樱花交战的国家请求军事通行与港口停泊权
+#向正与樱花交战的国家请求军事通行
 country_event = {
     id = PAU.181
     title = PAU.181.t

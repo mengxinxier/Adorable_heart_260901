@@ -458,6 +458,7 @@ PAU_mainline = {
     winter_attrition_factor = PAU_ml_raw_winter_attrition_factor  #冬季损耗（主线动态修正原始值）
     production_speed_infrastructure_factor = PAU_ml_raw_production_speed_infrastructure_factor  #基建建造速度（主线动态修正原始值）
     local_resources_factor = PAU_ml_raw_local_resources_factor  #战略资源获取率（主线动态修正原始值）
+    global_building_slots_factor = PAU_ml_raw_global_building_slots_factor
     custom_modifier_tooltip = modifier_pau_wmdwl_buff_tt
 
 }
@@ -540,4 +541,36 @@ PAU_harbor_trade_state = {
     local_building_slots_factor = 0.15  #当地建筑槽位
     local_resources_factor = 0.15  #当地资源获取
     local_supplies = 0.15  #当地补给能力
+}
+
+#ZDW_solana_backlash_decay：索拉娜反噬退潮（随时间推移与失地扩大持续恶化）
+ZDW_solana_backlash_decay = {
+    enable = { always = yes }
+    remove_trigger = {
+        OR = {
+            exists = no
+            PAU = { has_country_flag = PAU_undead_defeated }
+        }
+    }
+    icon = GFX_idea_ZDW_solana_backlash
+    army_org_factor = ZDW_decay_org  #组织度随退潮逐日衰减
+    army_defence_factor = ZDW_decay_def  #防御随退潮逐日衰减
+    army_attack_factor = ZDW_decay_atk  #攻击随退潮逐日衰减
+    army_speed_factor = ZDW_decay_spd  #机动随退潮逐日衰减
+    land_reinforce_rate = ZDW_decay_reinf  #增援率随退潮逐日衰减
+    attrition = ZDW_decay_attr  #损耗随退潮逐日抬升
+    supply_consumption_factor = ZDW_decay_sup  #补给恶化随退潮扩大
+    breakthrough_factor = ZDW_decay_bt  #突破随退潮逐日衰减
+}
+
+#PAU_liberation_surge：白夜解放浪潮（随重夺沦陷州持续滚雪球叠加）
+PAU_liberation_surge = {
+    enable = { always = yes }
+    remove_trigger = { has_country_flag = PAU_undead_defeated }
+    icon = GFX_idea_PAU_counterattack_zdw_buff
+    army_attack_factor = PAU_lib_atk  #反攻陆军攻击加成
+    breakthrough_factor = PAU_lib_bt  #反攻突破加成
+    army_speed_factor = PAU_lib_spd  #推进速度加成
+    army_org_regain = PAU_lib_org_rec  #组织度恢复加成
+    supply_consumption_factor = PAU_lib_sup  #补给消耗减免
 }

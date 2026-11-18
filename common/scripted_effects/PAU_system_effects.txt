@@ -21,6 +21,57 @@ PAU_end_settlement = {
     }
 }
 
+PAU_sync_desk_plum_frame = {
+    set_temp_variable = { PAU_plum_total = 0 }
+    if = {
+        limit = { has_variable = PAU_mil_reform_progress }
+        add_to_temp_variable = { PAU_plum_total = PAU_mil_reform_progress }
+    }
+    if = {
+        limit = { has_variable = PAU_eco_reform_progress }
+        add_to_temp_variable = { PAU_plum_total = PAU_eco_reform_progress }
+    }
+    set_variable = { PAU_desk_plum_frame = 1 }
+    if = {
+        limit = { check_variable = { PAU_plum_total > 49 } }
+        set_variable = { PAU_desk_plum_frame = 5 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_plum_total > 29 } }
+        set_variable = { PAU_desk_plum_frame = 4 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_plum_total > 13 } }
+        set_variable = { PAU_desk_plum_frame = 3 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_plum_total > 0 } }
+        set_variable = { PAU_desk_plum_frame = 2 }
+    }
+}
+
+PAU_trigger_desk_stamp_burst = {
+    set_country_flag = PAU_desk_stamp_armed
+    if = {
+        limit = { has_country_flag = PAU_desk_stamp_parity }
+        clr_country_flag = PAU_desk_stamp_parity
+    }
+    else = {
+        set_country_flag = PAU_desk_stamp_parity
+    }
+}
+
+PAU_trigger_nb_stamp_burst = {
+    set_country_flag = PAU_nb_stamp_armed
+    if = {
+        limit = { has_country_flag = PAU_nb_stamp_parity }
+        clr_country_flag = PAU_nb_stamp_parity
+    }
+    else = {
+        set_country_flag = PAU_nb_stamp_parity
+    }
+}
+
 PAU_refresh_mil_reform_tiers = {
     if = {
         limit = { NOT = { has_country_flag = PAU_reform_reset_initialized } }
@@ -141,6 +192,7 @@ PAU_refresh_mil_reform_tiers = {
 
     set_variable = { PAU_mil_reform_defence = PAU_mil_base_val }
     add_to_variable = { PAU_mil_reform_defence = PAU_mil_reform_bonus_defence }
+    PAU_sync_desk_plum_frame = yes
 }
 
 PAU_refresh_eco_reform_tiers = {
@@ -251,6 +303,7 @@ PAU_refresh_eco_reform_tiers = {
 
     set_variable = { PAU_eco_reform_supply = PAU_eco_base_neg }
     add_to_variable = { PAU_eco_reform_supply = PAU_eco_reform_bonus_supply }
+    PAU_sync_desk_plum_frame = yes
 }
 PAU_refresh_harbor_spillover_states = {
     if = {
@@ -358,53 +411,56 @@ PAU_sync_south_america_all = {
         }
         add_dynamic_modifier = { modifier = PAU_south_america_unity }
     }
-    every_faction_member = {
-        limit = {
-            NOT = { tag = PAU }
-            capital_scope = { is_on_continent = south_america }
+    if = {
+        limit = { is_in_faction = yes }
+        every_faction_member = {
+            limit = {
+                NOT = { tag = PAU }
+                capital_scope = { is_on_continent = south_america }
+            }
+            if = {
+                limit = { NOT = {
+                    tag = PAU
+                    has_dynamic_modifier = { modifier = PAU_south_america_unity }
+                }
+            }
+            add_dynamic_modifier = { modifier = PAU_south_america_unity }
         }
         if = {
-            limit = { NOT = {
-                tag = PAU
-                has_dynamic_modifier = { modifier = PAU_south_america_unity }
+            limit = {
+                PAU = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
+                NOT = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
             }
+            add_dynamic_modifier = { modifier = PAU_state_council_tier }
         }
-        add_dynamic_modifier = { modifier = PAU_south_america_unity }
-    }
-    if = {
-        limit = {
-            PAU = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
-            NOT = { has_dynamic_modifier = { modifier = PAU_state_council_tier } }
-        }
-        add_dynamic_modifier = { modifier = PAU_state_council_tier }
-    }
-    set_variable = { PAU_south_america_development = PAU.PAU_south_america_development }
+        set_variable = { PAU_south_america_development = PAU.PAU_south_america_development }
 
-    set_variable = { PAU_sc_political = PAU.PAU_sc_political }
-    set_variable = { PAU_sc_improve_relations = PAU.PAU_sc_improve_relations }
-    set_variable = { PAU_sc_industry = PAU.PAU_sc_industry }
-    set_variable = { PAU_sc_research = PAU.PAU_sc_research }
-    set_variable = { PAU_sc_buildings = PAU.PAU_sc_buildings }
-    set_variable = { PAU_sc_consumer = PAU.PAU_sc_consumer }
-    set_variable = { PAU_sc_trade = PAU.PAU_sc_trade }
+        set_variable = { PAU_sc_political = PAU.PAU_sc_political }
+        set_variable = { PAU_sc_improve_relations = PAU.PAU_sc_improve_relations }
+        set_variable = { PAU_sc_industry = PAU.PAU_sc_industry }
+        set_variable = { PAU_sc_research = PAU.PAU_sc_research }
+        set_variable = { PAU_sc_buildings = PAU.PAU_sc_buildings }
+        set_variable = { PAU_sc_consumer = PAU.PAU_sc_consumer }
+        set_variable = { PAU_sc_trade = PAU.PAU_sc_trade }
 
-    set_variable = { pau_unity_production_speed_industrial_complex_factor = PAU.pau_unity_production_speed_industrial_complex_factor }
-    set_variable = { pau_unity_production_speed_arms_factory_factor = PAU.pau_unity_production_speed_arms_factory_factor }
-    set_variable = { pau_unity_production_speed_infrastructure_factor = PAU.pau_unity_production_speed_infrastructure_factor }
-    set_variable = { pau_unity_production_speed_rail_way_factor = PAU.pau_unity_production_speed_rail_way_factor }
-    set_variable = { pau_unity_production_speed_supply_node_factor = PAU.pau_unity_production_speed_supply_node_factor }
-    set_variable = { pau_unity_production_speed_naval_base_factor = PAU.pau_unity_production_speed_naval_base_factor }
-    set_variable = { pau_unity_cic_construction_boost = PAU.pau_unity_cic_construction_boost }
-    set_variable = { pau_unity_cic_construction_boost_factor = PAU.pau_unity_cic_construction_boost_factor }
-    set_variable = { pau_unity_experience_loss_factor = PAU.pau_unity_experience_loss_factor }
-    set_variable = { pau_unity_casualty_trickleback = PAU.pau_unity_casualty_trickleback }
-    set_variable = { pau_unity_training_time_factor = PAU.pau_unity_training_time_factor }
-    set_variable = { pau_unity_weekly_manpower = PAU.pau_unity_weekly_manpower }
-    set_variable = { pau_unity_consumer_goods_factor = PAU.pau_unity_consumer_goods_factor }
-    set_variable = { pau_unity_industrial_capacity_factory = PAU.pau_unity_industrial_capacity_factory }
-    set_variable = { pau_unity_hcp_income_factor_monthly = PAU.pau_unity_hcp_income_factor_monthly }
-    set_variable = { pau_unity_research_speed_factor = PAU.pau_unity_research_speed_factor }
-}
+        set_variable = { pau_unity_production_speed_industrial_complex_factor = PAU.pau_unity_production_speed_industrial_complex_factor }
+        set_variable = { pau_unity_production_speed_arms_factory_factor = PAU.pau_unity_production_speed_arms_factory_factor }
+        set_variable = { pau_unity_production_speed_infrastructure_factor = PAU.pau_unity_production_speed_infrastructure_factor }
+        set_variable = { pau_unity_production_speed_rail_way_factor = PAU.pau_unity_production_speed_rail_way_factor }
+        set_variable = { pau_unity_production_speed_supply_node_factor = PAU.pau_unity_production_speed_supply_node_factor }
+        set_variable = { pau_unity_production_speed_naval_base_factor = PAU.pau_unity_production_speed_naval_base_factor }
+        set_variable = { pau_unity_cic_construction_boost = PAU.pau_unity_cic_construction_boost }
+        set_variable = { pau_unity_cic_construction_boost_factor = PAU.pau_unity_cic_construction_boost_factor }
+        set_variable = { pau_unity_experience_loss_factor = PAU.pau_unity_experience_loss_factor }
+        set_variable = { pau_unity_casualty_trickleback = PAU.pau_unity_casualty_trickleback }
+        set_variable = { pau_unity_training_time_factor = PAU.pau_unity_training_time_factor }
+        set_variable = { pau_unity_weekly_manpower = PAU.pau_unity_weekly_manpower }
+        set_variable = { pau_unity_consumer_goods_factor = PAU.pau_unity_consumer_goods_factor }
+        set_variable = { pau_unity_industrial_capacity_factory = PAU.pau_unity_industrial_capacity_factory }
+        set_variable = { pau_unity_hcp_income_factor_monthly = PAU.pau_unity_hcp_income_factor_monthly }
+        set_variable = { pau_unity_research_speed_factor = PAU.pau_unity_research_speed_factor }
+    }
+    }
 }
 }
 
@@ -459,6 +515,193 @@ PAU_refresh_south_america_development = {
 PAU_refresh_south_america_members = { PAU_refresh_south_america_development = yes }
 PAU_call_state_council_missions = { PAU_refresh_south_america_development = yes }
 PAU_refresh_state_council = { PAU_refresh_south_america_development = yes }
+
+# 清除当前作用域国家的全部联合发展计划轮值民族精神
+PAU_clear_dev_program_ideas = {
+    remove_ideas = PAU_south_america_development_program_ideaPAU
+    remove_ideas = PAU_south_america_development_program_ideaPA1
+    remove_ideas = PAU_south_america_development_program_ideaPAQ
+    remove_ideas = PAU_south_america_development_program_ideaELF
+    remove_ideas = PAU_south_america_development_program_ideaLFC
+    remove_ideas = PAU_south_america_development_program_ideaMGU
+    remove_ideas = PAU_south_america_development_program_ideaPGM
+    remove_ideas = PAU_south_america_development_program_ideaAHM
+}
+
+# 须在当前轮值主导国作用域内调用：为阵营内其他南美成员分发对应联合发展计划民族精神
+PAU_distribute_dev_program_idea_from_scope = {
+    if = {
+        limit = { is_in_faction = yes }
+        if = {
+            limit = { tag = PAU }
+            every_faction_member = {
+                limit = {
+                    not = { tag = PAU }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaPAU } }
+                    add_ideas = PAU_south_america_development_program_ideaPAU
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = PA1 }
+            every_faction_member = {
+                limit = {
+                    not = { tag = PA1 }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaPA1 } }
+                    add_ideas = PAU_south_america_development_program_ideaPA1
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = PAQ }
+            every_faction_member = {
+                limit = {
+                    not = { tag = PAQ }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaPAQ } }
+                    add_ideas = PAU_south_america_development_program_ideaPAQ
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = ELF }
+            every_faction_member = {
+                limit = {
+                    not = { tag = ELF }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaELF } }
+                    add_ideas = PAU_south_america_development_program_ideaELF
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = LFC }
+            every_faction_member = {
+                limit = {
+                    not = { tag = LFC }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaLFC } }
+                    add_ideas = PAU_south_america_development_program_ideaLFC
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = MGU }
+            every_faction_member = {
+                limit = {
+                    not = { tag = MGU }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaMGU } }
+                    add_ideas = PAU_south_america_development_program_ideaMGU
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = PGM }
+            every_faction_member = {
+                limit = {
+                    not = { tag = PGM }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaPGM } }
+                    add_ideas = PAU_south_america_development_program_ideaPGM
+                }
+            }
+        }
+        else_if = {
+            limit = { tag = AHM }
+            every_faction_member = {
+                limit = {
+                    not = { tag = AHM }
+                    capital_scope = { is_on_continent = south_america }
+                }
+                if = {
+                    limit = { NOT = { has_idea = PAU_south_america_development_program_ideaAHM } }
+                    add_ideas = PAU_south_america_development_program_ideaAHM
+                }
+            }
+        }
+    }
+}
+
+# 进入第三国际或切换阵营后，保证已启用的联合发展计划任务与轮值民族精神正常保持/恢复
+PAU_recover_dev_program_loop = {
+    PAU = {
+        if = {
+            limit = {
+                has_country_flag = PAU_south_america_super_fired
+                has_country_flag = PAU_dev_program_auto_loop
+                is_subject = no
+            }
+            if = {
+                limit = { NOT = { has_active_mission = PAU_south_america_development_program_loop } }
+                activate_mission = PAU_south_america_development_program_loop
+            }
+            if = {
+                limit = { is_in_faction = yes }
+                if = {
+                    limit = { has_variable = PAU_dev_program_current_leader }
+                    var:PAU.PAU_dev_program_current_leader = {
+                        if = {
+                            limit = {
+                                exists = yes
+                                OR = {
+                                    tag = PAU
+                                    is_in_faction_with = PAU
+                                }
+                            }
+                            PAU_distribute_dev_program_idea_from_scope = yes
+                        }
+                        else = {
+                            PAU = {
+                                set_variable = { PAU_dev_program_current_leader = PAU }
+                                PAU_distribute_dev_program_idea_from_scope = yes
+                            }
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = {
+                            any_other_country = {
+                                is_in_faction_with = PAU
+                                capital_scope = { is_on_continent = south_america }
+                                OR = {
+                                    has_idea = PAU_south_america_development_program_ideaPAU
+                                    has_idea = PAU_south_america_development_program_ideaPA1
+                                    has_idea = PAU_south_america_development_program_ideaPAQ
+                                    has_idea = PAU_south_america_development_program_ideaELF
+                                    has_idea = PAU_south_america_development_program_ideaLFC
+                                    has_idea = PAU_south_america_development_program_ideaMGU
+                                    has_idea = PAU_south_america_development_program_ideaPGM
+                                    has_idea = PAU_south_america_development_program_ideaAHM
+                                }
+                            }
+                        }
+                    }
+                    set_country_flag = pau_development_program_leader
+                    set_variable = { PAU_dev_program_current_leader = PAU }
+                    PAU_distribute_dev_program_idea_from_scope = yes
+                }
+            }
+        }
+    }
+}
 
 PAU_advance_baiye_story = {
     if = { limit = { NOT = { has_variable = PAU_baiye_patrol_count } } set_variable = { PAU_baiye_patrol_count = 0 } }  #白夜巡游计数=每巡游一个州+1
@@ -727,7 +970,12 @@ PAU_reset_current_reform_branch = {
 
 #PAU每日改革进度结算
 PAU_daily_reform_tick = {
+    if = {
+        limit = { NOT = { has_variable = PAU_desk_plum_frame } }
+        PAU_sync_desk_plum_frame = yes
+    }
     PAU_daily_baiye_tick = yes
+    PAU_tick_zdw_decay_daily = yes
     #山地侦察
     if = {
         limit = { check_variable = { PAU_timer_axia_recon > 0 } }
@@ -1466,7 +1714,7 @@ PAU_clear_mercenary_tracking = {
 PAU_reduce_mil_focus_cost_step = {
     if = {
         limit = { check_variable = { PAU_mil_focus_reduced_days < 28 } }
-        add_to_variable = { var = PAU_mil_focus_reduced_days value = 2 }
+        add_to_variable = { var = PAU_mil_focus_reduced_days value = 1 }
         reduce_focus_completion_cost = {
             focus = PAM_xbhm
             focus = PAM_nzdt
@@ -1492,7 +1740,7 @@ PAU_reduce_mil_focus_cost_step = {
             focus = PAM_xy_ydjs
             focus = PAM_xy_zsjs
             focus = PAM_xy_sjjs
-            cost = 2
+            cost = 1
         }
     }
 }
@@ -1597,7 +1845,7 @@ PAU_check_baiye_snack_overflow = {
 PAU_reduce_eco_focus_cost_step = {
     if = {
         limit = { check_variable = { PAU_eco_focus_reduced_days < 28 } }
-        add_to_variable = { var = PAU_eco_focus_reduced_days value = 2 }
+        add_to_variable = { var = PAU_eco_focus_reduced_days value = 1 }
         reduce_focus_completion_cost = {
             focus = PAM_bxsb
             focus = PAM_jxbs
@@ -1623,7 +1871,7 @@ PAU_reduce_eco_focus_cost_step = {
             focus = PAM_xy_ydjj
             focus = PAM_xy_mdtz
             focus = PAM_xy_sjjj
-            cost = 2
+            cost = 1
         }
     }
 }
@@ -1774,114 +2022,138 @@ PAU_refresh_targeted_spirit_visibility = {
     hidden_effect = {
         if = {
             limit = {
-                NOT = { has_war_with = LHS }
-                LHS = {
-                    OR = {
-                        exists = no
-                        is_subject_of = PAU
-                        is_in_faction_with = PAU
+                OR = {
+                    has_idea = PAU_divided_legion
+                    has_idea = PAU_divided_legion1
+                    has_idea = PAU_divided_legion2
+                    has_idea = PAU_divided_legion_no_lhs
+                    has_idea = PAU_divided_legion1_no_lhs
+                    has_idea = PAU_divided_legion2_no_lhs
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_war_with = LHS }
+                    LHS = {
+                        OR = {
+                            exists = no
+                            is_subject_of = PAU
+                            is_in_faction_with = PAU
+                        }
+                    }
+                }
+                if = {
+                    limit = { has_idea = PAU_divided_legion }
+                    swap_ideas = {
+                        remove_idea = PAU_divided_legion
+                        add_idea = PAU_divided_legion_no_lhs
+                    }
+                }
+                if = {
+                    limit = { has_idea = PAU_divided_legion1 }
+                    swap_ideas = {
+                        remove_idea = PAU_divided_legion1
+                        add_idea = PAU_divided_legion1_no_lhs
+                    }
+                }
+                if = {
+                    limit = { has_idea = PAU_divided_legion2 }
+                    swap_ideas = {
+                        remove_idea = PAU_divided_legion2
+                        add_idea = PAU_divided_legion2_no_lhs
                     }
                 }
             }
-            if = {
-                limit = { has_idea = PAU_divided_legion }
-                swap_ideas = {
-                    remove_idea = PAU_divided_legion
-                    add_idea = PAU_divided_legion_no_lhs
+            else = {
+                if = {
+                    limit = { has_idea = PAU_divided_legion_no_lhs }
+                    swap_ideas = {
+                        remove_idea = PAU_divided_legion_no_lhs
+                        add_idea = PAU_divided_legion
+                    }
                 }
-            }
-            if = {
-                limit = { has_idea = PAU_divided_legion1 }
-                swap_ideas = {
-                    remove_idea = PAU_divided_legion1
-                    add_idea = PAU_divided_legion1_no_lhs
+                if = {
+                    limit = { has_idea = PAU_divided_legion1_no_lhs }
+                    swap_ideas = {
+                        remove_idea = PAU_divided_legion1_no_lhs
+                        add_idea = PAU_divided_legion1
+                    }
                 }
-            }
-            if = {
-                limit = { has_idea = PAU_divided_legion2 }
-                swap_ideas = {
-                    remove_idea = PAU_divided_legion2
-                    add_idea = PAU_divided_legion2_no_lhs
-                }
-            }
-        }
-        else = {
-            if = {
-                limit = { has_idea = PAU_divided_legion_no_lhs }
-                swap_ideas = {
-                    remove_idea = PAU_divided_legion_no_lhs
-                    add_idea = PAU_divided_legion
-                }
-            }
-            if = {
-                limit = { has_idea = PAU_divided_legion1_no_lhs }
-                swap_ideas = {
-                    remove_idea = PAU_divided_legion1_no_lhs
-                    add_idea = PAU_divided_legion1
-                }
-            }
-            if = {
-                limit = { has_idea = PAU_divided_legion2_no_lhs }
-                swap_ideas = {
-                    remove_idea = PAU_divided_legion2_no_lhs
-                    add_idea = PAU_divided_legion2
+                if = {
+                    limit = { has_idea = PAU_divided_legion2_no_lhs }
+                    swap_ideas = {
+                        remove_idea = PAU_divided_legion2_no_lhs
+                        add_idea = PAU_divided_legion2
+                    }
                 }
             }
         }
 
         if = {
             limit = {
-                NOT = { has_war_with = JAP }
-                JAP = {
-                    OR = {
-                        exists = no
-                        is_subject_of = PAU
-                        is_in_faction_with = PAU
+                OR = {
+                    has_idea = PAU_zgjd_idea
+                    has_idea = PAU_zgjd_idea1
+                    has_idea = PAU_zgjd_idea2
+                    has_idea = PAU_zgjd_idea_no_jap
+                    has_idea = PAU_zgjd_idea1_no_jap
+                    has_idea = PAU_zgjd_idea2_no_jap
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_war_with = JAP }
+                    JAP = {
+                        OR = {
+                            exists = no
+                            is_subject_of = PAU
+                            is_in_faction_with = PAU
+                        }
+                    }
+                }
+                if = {
+                    limit = { has_idea = PAU_zgjd_idea }
+                    swap_ideas = {
+                        remove_idea = PAU_zgjd_idea
+                        add_idea = PAU_zgjd_idea_no_jap
+                    }
+                }
+                if = {
+                    limit = { has_idea = PAU_zgjd_idea1 }
+                    swap_ideas = {
+                        remove_idea = PAU_zgjd_idea1
+                        add_idea = PAU_zgjd_idea1_no_jap
+                    }
+                }
+                if = {
+                    limit = { has_idea = PAU_zgjd_idea2 }
+                    swap_ideas = {
+                        remove_idea = PAU_zgjd_idea2
+                        add_idea = PAU_zgjd_idea2_no_jap
                     }
                 }
             }
-            if = {
-                limit = { has_idea = PAU_zgjd_idea }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea
-                    add_idea = PAU_zgjd_idea_no_jap
+            else = {
+                if = {
+                    limit = { has_idea = PAU_zgjd_idea_no_jap }
+                    swap_ideas = {
+                        remove_idea = PAU_zgjd_idea_no_jap
+                        add_idea = PAU_zgjd_idea
+                    }
                 }
-            }
-            if = {
-                limit = { has_idea = PAU_zgjd_idea1 }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea1
-                    add_idea = PAU_zgjd_idea1_no_jap
+                if = {
+                    limit = { has_idea = PAU_zgjd_idea1_no_jap }
+                    swap_ideas = {
+                        remove_idea = PAU_zgjd_idea1_no_jap
+                        add_idea = PAU_zgjd_idea1
+                    }
                 }
-            }
-            if = {
-                limit = { has_idea = PAU_zgjd_idea2 }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea2
-                    add_idea = PAU_zgjd_idea2_no_jap
-                }
-            }
-        }
-        else = {
-            if = {
-                limit = { has_idea = PAU_zgjd_idea_no_jap }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea_no_jap
-                    add_idea = PAU_zgjd_idea
-                }
-            }
-            if = {
-                limit = { has_idea = PAU_zgjd_idea1_no_jap }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea1_no_jap
-                    add_idea = PAU_zgjd_idea1
-                }
-            }
-            if = {
-                limit = { has_idea = PAU_zgjd_idea2_no_jap }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea2_no_jap
-                    add_idea = PAU_zgjd_idea2
+                if = {
+                    limit = { has_idea = PAU_zgjd_idea2_no_jap }
+                    swap_ideas = {
+                        remove_idea = PAU_zgjd_idea2_no_jap
+                        add_idea = PAU_zgjd_idea2
+                    }
                 }
             }
         }
@@ -1936,6 +2208,24 @@ PAU_sync_baiye_gui_vars = {
         set_country_flag = PAU_baiye_sakura_done
         clr_country_flag = PAU_baiye_sakura_active
     }
+
+    set_variable = { PAU_baiye_plum_frame = 1 }
+    if = {
+        limit = { check_variable = { PAU_baiye_story_stage > 3 } }
+        set_variable = { PAU_baiye_plum_frame = 5 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_baiye_story_stage > 2 } }
+        set_variable = { PAU_baiye_plum_frame = 4 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_baiye_story_stage > 1 } }
+        set_variable = { PAU_baiye_plum_frame = 3 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_baiye_story_stage > 0 } }
+        set_variable = { PAU_baiye_plum_frame = 2 }
+    }
 }
 
 PAU_daily_baiye_tick = {
@@ -1961,6 +2251,16 @@ PAU_daily_baiye_tick = {
                 PAU_baiye = {
                     remove_unit_leader_trait = PAU_baiye_chubby
                     add_unit_leader_trait = PAU_baiye_fit
+                    set_portraits = {
+                        army = {
+                            large = "gfx/leaders/PAU/baiye3.png"
+                            small = "gfx/leaders/PAU/small/baiye3_small.png"
+                        }
+                        civilian = {
+                            large = "gfx/leaders/PAU/baiye3.png"
+                            small = "gfx/leaders/PAU/small/baiye3_small.png"
+                        }
+                    }
                     add_attack = 1
                     add_defense = 1
                     add_planning = 1
@@ -2007,7 +2307,32 @@ PAU_daily_baiye_tick = {
         }
     }
 
-    PAU_sync_baiye_gui_vars = yes
+    if = {
+        limit = { check_variable = { PAU_baiye_flare_active > 0 } }
+        subtract_from_variable = { PAU_baiye_flare_active = 1 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_baiye_flare_cooldown > 0 } }
+        subtract_from_variable = { PAU_baiye_flare_cooldown = 1 }
+    }
+
+    if = {
+        limit = { has_variable = PAU_baiye_pet_bubble_timer }
+        if = {
+            limit = { check_variable = { PAU_baiye_pet_bubble_timer > 0 } }
+            subtract_from_variable = { PAU_baiye_pet_bubble_timer = 1 }
+        }
+        if = {
+            limit = { check_variable = { PAU_baiye_pet_bubble_timer < 1 } }
+            clear_variable = PAU_baiye_pet_bubble_timer
+            clear_variable = PAU_baiye_pet_egg_mode
+        }
+    }
+
+    if = {
+        limit = { is_ai = no }
+        PAU_sync_baiye_gui_vars = yes
+    }
 }
 
 PAU_try_fire_grail_war_news = {
@@ -2027,4 +2352,410 @@ PAU_try_fire_grail_war_news = {
             }
         }
     }
+}
+
+# Project #4: Focus Tree Live Storybook state refresher (104 focuses across 8 regions + spine)
+PAU_refresh_focus_storybook = {
+	if = {
+		limit = {
+			original_tag = PAU
+			is_ai = no
+		}
+		if = { limit = { NOT = { has_variable = PAU_book_view_mode } } set_variable = { PAU_book_view_mode = 0 } }
+		set_variable = { PAU_story_done_count = 0 }
+		set_variable = { PAU_sb_tmp = 0 }
+		if = { limit = { has_completed_focus = PAU_tx } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAU_qxjd } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAU_sdft } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAU_sdjt } add_to_variable = { PAU_sb_tmp = 1 } }
+		add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+		if = { limit = { check_variable = { PAU_sb_tmp = 4 compare = greater_than_or_equals } } set_variable = { PAU_story_ch1_stage = 4 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 3 compare = greater_than_or_equals } } set_variable = { PAU_story_ch1_stage = 3 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 2 compare = greater_than_or_equals } } set_variable = { PAU_story_ch1_stage = 2 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_ch1_stage = 1 } }
+		else = { set_variable = { PAU_story_ch1_stage = 0 } }
+		if = {
+			limit = { has_country_flag = has_PAU_xiaoyao2 }
+			set_variable = { PAU_sb_tmp = 0 }
+			if = { limit = { has_completed_focus = PAU_ddjr } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zbgk } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_jmyx } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zjwyj } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zmxx } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_jjka } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_wcka } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_dsyq } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_bzwtp } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_msbf } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_gydj } add_to_variable = { PAU_sb_tmp = 1 } }
+			add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+			if = { limit = { check_variable = { PAU_sb_tmp = 11 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2a_stage = 4 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 7 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2a_stage = 3 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 4 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2a_stage = 2 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2a_stage = 1 } }
+			else = { set_variable = { PAU_story_ch2a_stage = 0 } }
+			set_variable = { PAU_sb_tmp = 0 }
+			if = { limit = { has_completed_focus = PAU_zhyk } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_wrcr } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_tyzz } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_mzyy } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_gxzp } add_to_variable = { PAU_sb_tmp = 1 } }
+			add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+			if = { limit = { check_variable = { PAU_sb_tmp = 5 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2b_stage = 4 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 3 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2b_stage = 3 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 2 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2b_stage = 2 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_ch2b_stage = 1 } }
+			else = { set_variable = { PAU_story_ch2b_stage = 0 } }
+		}
+		else = {
+			set_variable = { PAU_story_ch2a_stage = 0 }
+			set_variable = { PAU_story_ch2b_stage = 0 }
+		}
+		if = {
+			limit = { has_country_flag = has_PAU_xiaoyao4 }
+			set_variable = { PAU_sb_tmp = 0 }
+			if = { limit = { has_completed_focus = PAU_mfsn } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_sbtxd } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zxd } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_sztytz } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_xkst } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zjpb } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_bndlsg } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zdgj } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zszz } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_sbzq } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_byq } add_to_variable = { PAU_sb_tmp = 1 } }
+			add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+			if = { limit = { check_variable = { PAU_sb_tmp = 11 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3a_stage = 4 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 7 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3a_stage = 3 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 4 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3a_stage = 2 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3a_stage = 1 } }
+			else = { set_variable = { PAU_story_ch3a_stage = 0 } }
+		}
+		else = {
+			set_variable = { PAU_story_ch3a_stage = 0 }
+		}
+		if = {
+			limit = { has_country_flag = has_PAU_xiaoyao6 }
+			set_variable = { PAU_sb_tmp = 0 }
+			if = { limit = { has_completed_focus = PAU_yjl } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_bycx } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_mgsh } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zgjd } add_to_variable = { PAU_sb_tmp = 1 } }
+			add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+			if = { limit = { check_variable = { PAU_sb_tmp = 4 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3b_stage = 4 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 3 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3b_stage = 3 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 2 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3b_stage = 2 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_ch3b_stage = 1 } }
+			else = { set_variable = { PAU_story_ch3b_stage = 0 } }
+		}
+		else = {
+			set_variable = { PAU_story_ch3b_stage = 0 }
+		}
+		if = {
+			limit = { has_country_flag = has_PAU_xiaoyao7 }
+			set_variable = { PAU_sb_tmp = 0 }
+			if = { limit = { has_completed_focus = PAU_ldwm } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_llbg } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_byzc } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zxlk } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_thsg } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_blsm } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_wdct } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_els } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zg } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zg_fd } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_mdg } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_sbwg } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_bm_hp } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_bm_kz } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_sjgm } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_hpgc } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zdbf } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_cxzm } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_fby } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_zkdh } add_to_variable = { PAU_sb_tmp = 1 } }
+			if = { limit = { has_completed_focus = PAU_end } add_to_variable = { PAU_sb_tmp = 1 } }
+			add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+			if = { limit = { OR = { check_variable = { PAU_sb_tmp = 21 compare = greater_than_or_equals } has_completed_focus = PAU_end } } set_variable = { PAU_story_ch4_stage = 4 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 14 compare = greater_than_or_equals } } set_variable = { PAU_story_ch4_stage = 3 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 7 compare = greater_than_or_equals } } set_variable = { PAU_story_ch4_stage = 2 } }
+			else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_ch4_stage = 1 } }
+			else = { set_variable = { PAU_story_ch4_stage = 0 } }
+		}
+		else = {
+			set_variable = { PAU_story_ch4_stage = 0 }
+		}
+		set_variable = { PAU_sb_tmp = 0 }
+		if = { limit = { has_completed_focus = PAM_xbhm } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_nzdt } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_jzbx } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_nlwq } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_jzbx2 } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_nlwq2 } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_jsgz } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_bz } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_fy } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_nyjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_nyjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_nyjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_nytjjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_nyfy } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_tltx } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_ycdd } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_jhdd } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_ydjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_zsjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_zsjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_zsjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_sjjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_sjjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_sjjs } add_to_variable = { PAU_sb_tmp = 1 } }
+		add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+		if = { limit = { check_variable = { PAU_sb_tmp = 24 compare = greater_than_or_equals } } set_variable = { PAU_story_mil_stage = 4 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 16 compare = greater_than_or_equals } } set_variable = { PAU_story_mil_stage = 3 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 8 compare = greater_than_or_equals } } set_variable = { PAU_story_mil_stage = 2 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_mil_stage = 1 } }
+		else = { set_variable = { PAU_story_mil_stage = 0 } }
+		set_variable = { PAU_sb_tmp = 0 }
+		if = { limit = { has_completed_focus = PAM_bxsb } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_jxbs } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_jjcl } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_nljj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_jjcl2 } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_nljj2 } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_jjhf } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_jt } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_sc } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_nyjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_nyjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_nyjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_nykf } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_nyxx } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_zjdq } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_hybd } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_hyjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_ydjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_zsjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_zsjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_mdtz } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xfxy_sjmy } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_ax_sjjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		if = { limit = { has_completed_focus = PAM_xy_sjjj } add_to_variable = { PAU_sb_tmp = 1 } }
+		add_to_variable = { PAU_story_done_count = PAU_sb_tmp }
+		if = { limit = { check_variable = { PAU_sb_tmp = 24 compare = greater_than_or_equals } } set_variable = { PAU_story_eco_stage = 4 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 16 compare = greater_than_or_equals } } set_variable = { PAU_story_eco_stage = 3 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 8 compare = greater_than_or_equals } } set_variable = { PAU_story_eco_stage = 2 } }
+		else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_eco_stage = 1 } }
+		else = { set_variable = { PAU_story_eco_stage = 0 } }
+		# Central plum-vine spine progresses along story milestones from valley to PAU_end
+		if = { limit = { has_completed_focus = PAU_end } set_variable = { PAU_story_spine_stage = 4 } }
+		else_if = { limit = { OR = { has_completed_focus = PAU_sbwg has_completed_focus = PAU_els } } set_variable = { PAU_story_spine_stage = 3 } }
+		else_if = { limit = { OR = { has_completed_focus = PAU_ldwm has_country_flag = has_PAU_xiaoyao7 } } set_variable = { PAU_story_spine_stage = 2 } }
+		else_if = { limit = { has_completed_focus = PAU_sdjt } set_variable = { PAU_story_spine_stage = 1 } }
+		else = { set_variable = { PAU_story_spine_stage = 0 } }
+		set_variable = { PAU_story_done_pct = PAU_story_done_count }
+		multiply_variable = { PAU_story_done_pct = 100 }
+		divide_variable = { PAU_story_done_pct = 104 }
+		round_variable = PAU_story_done_pct
+		clamp_variable = { var = PAU_story_done_pct min = 0 max = 100 }
+		clear_variable = PAU_sb_tmp
+	}
+}
+
+# =========================================================================
+# 亡灵返岛反攻：索拉娜反噬退潮（日度衰减）与白夜解放浪潮（叠层增益）
+# =========================================================================
+
+#在 ZDW 作用域内同步索拉娜反噬退潮动态修正数值
+PAU_sync_zdw_decay_vars = {
+	clamp_variable = { var = ZDW_decay_progress min = 0 max = 180 }
+
+	#使用 0.001 定点乘法步长，确保早期每日推进不丢失精度
+	set_variable = { ZDW_decay_org = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_org = -0.003 }
+	add_to_variable = { ZDW_decay_org = -0.10 }
+	clamp_variable = { var = ZDW_decay_org min = -0.70 max = 0.0 }
+
+	set_variable = { ZDW_decay_def = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_def = -0.003 }
+	add_to_variable = { ZDW_decay_def = -0.08 }
+	clamp_variable = { var = ZDW_decay_def min = -0.65 max = 0.0 }
+
+	set_variable = { ZDW_decay_atk = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_atk = -0.003 }
+	add_to_variable = { ZDW_decay_atk = -0.05 }
+	clamp_variable = { var = ZDW_decay_atk min = -0.60 max = 0.0 }
+
+	set_variable = { ZDW_decay_spd = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_spd = -0.002 }
+	add_to_variable = { ZDW_decay_spd = -0.05 }
+	clamp_variable = { var = ZDW_decay_spd min = -0.45 max = 0.0 }
+
+	set_variable = { ZDW_decay_reinf = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_reinf = -0.002 }
+	add_to_variable = { ZDW_decay_reinf = -0.05 }
+	clamp_variable = { var = ZDW_decay_reinf min = -0.45 max = 0.0 }
+
+	set_variable = { ZDW_decay_attr = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_attr = 0.003 }
+	clamp_variable = { var = ZDW_decay_attr min = 0.0 max = 0.60 }
+
+	set_variable = { ZDW_decay_sup = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_sup = 0.002 }
+	clamp_variable = { var = ZDW_decay_sup min = 0.0 max = 0.40 }
+
+	set_variable = { ZDW_decay_bt = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_bt = -0.003 }
+	add_to_variable = { ZDW_decay_bt = -0.05 }
+	clamp_variable = { var = ZDW_decay_bt min = -0.60 max = 0.0 }
+
+	set_variable = { ZDW_decay_pct = ZDW_decay_progress }
+	multiply_variable = { ZDW_decay_pct = 100 }
+	divide_variable = { ZDW_decay_pct = 180 }
+	round_variable = ZDW_decay_pct
+	clamp_variable = { var = ZDW_decay_pct min = 0 max = 100 }
+}
+
+#PAU 每日推进索拉娜反噬退潮（返岛登陆后每日 +1，上限 180）
+PAU_tick_zdw_decay_daily = {
+	if = {
+		limit = {
+			country_exists = ZDW
+			NOT = { has_country_flag = PAU_undead_defeated }
+			ZDW = { has_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } }
+		}
+		ZDW = {
+			if = {
+				limit = { check_variable = { ZDW_decay_progress < 180 } }
+				add_to_variable = { ZDW_decay_progress = 1 }
+			}
+			PAU_sync_zdw_decay_vars = yes
+		}
+	}
+}
+
+#在 PAU 作用域内按解放沦陷州层数（0..12）刷新白夜解放浪潮修正
+PAU_refresh_liberation_surge_vars = {
+	clamp_variable = { var = PAU_liberation_tiers min = 0 max = 12 }
+
+	set_variable = { PAU_lib_atk = PAU_liberation_tiers }
+	multiply_variable = { PAU_lib_atk = 0.04 }
+	clamp_variable = { var = PAU_lib_atk min = 0.0 max = 0.50 }
+
+	set_variable = { PAU_lib_bt = PAU_liberation_tiers }
+	multiply_variable = { PAU_lib_bt = 0.04 }
+	clamp_variable = { var = PAU_lib_bt min = 0.0 max = 0.50 }
+
+	set_variable = { PAU_lib_spd = PAU_liberation_tiers }
+	multiply_variable = { PAU_lib_spd = 0.025 }
+	clamp_variable = { var = PAU_lib_spd min = 0.0 max = 0.35 }
+
+	set_variable = { PAU_lib_org_rec = PAU_liberation_tiers }
+	multiply_variable = { PAU_lib_org_rec = 0.03 }
+	clamp_variable = { var = PAU_lib_org_rec min = 0.0 max = 0.40 }
+
+	set_variable = { PAU_lib_sup = PAU_liberation_tiers }
+	multiply_variable = { PAU_lib_sup = -0.02 }
+	clamp_variable = { var = PAU_lib_sup min = -0.30 max = 0.0 }
+}
+
+#统一创建“白夜民兵”编制（使用 has_template 防止重命名/删除后生成失败）
+PAU_ensure_militia_template = {
+	if = {
+		limit = { NOT = { has_template = "白夜民兵" } }
+		division_template = {
+			name = "白夜民兵"
+			is_locked = no
+			regiments = {
+				militia = { x = 0 y = 0 }
+				militia = { x = 0 y = 1 }
+				militia = { x = 1 y = 0 }
+				militia = { x = 1 y = 1 }
+				militia = { x = 2 y = 0 }
+				militia = { x = 2 y = 1 }
+			}
+			support = {
+				recon = { x = 0 y = 0 }
+			}
+		}
+	}
+}
+
+#统一创建“白夜抢滩突击旅”编制（避免多处重复声明与模板缺失）
+PAU_ensure_vanguard_template = {
+	if = {
+		limit = { NOT = { has_template = "白夜抢滩突击旅" } }
+		division_template = {
+			name = "白夜抢滩突击旅"
+			is_locked = no
+			priority = 2
+			regiments = {
+				light_armor = { x = 0 y = 0 }
+				light_armor = { x = 0 y = 1 }
+				light_armor = { x = 1 y = 0 }
+				light_armor = { x = 1 y = 1 }
+				motorized = { x = 2 y = 0 }
+				motorized = { x = 2 y = 1 }
+				motorized = { x = 3 y = 0 }
+				motorized = { x = 3 y = 1 }
+			}
+			support = {
+				engineer = { x = 0 y = 0 }
+				artillery = { x = 0 y = 1 }
+				recon = { x = 0 y = 2 }
+			}
+		}
+	}
+}
+
+#发放轻装甲反攻补给包（兼容有无 No Step Back DLC，含完整必需底盘槽位）
+PAU_grant_vanguard_armor_cache = {
+	if = {
+		limit = { has_dlc = "No Step Back" }
+		if = {
+			limit = { NOT = { has_country_flag = PAU_vanguard_tank_variant_ready } }
+			set_country_flag = PAU_vanguard_tank_variant_ready
+			create_equipment_variant = {
+				name = "白夜抢滩轻战车"
+				type = light_tank_chassis_1
+				parent_version = 0
+				modules = {
+					main_armament_slot = tank_heavy_machine_gun
+					turret_type_slot = tank_light_three_man_tank_turret
+					suspension_type_slot = tank_bogie_suspension
+					armor_type_slot = tank_riveted_armor
+					engine_type_slot = tank_gasoline_engine
+					special_type_slot_3 = secondary_turret_hmg
+				}
+				upgrades = {
+					tank_nsb_engine_upgrade = 4
+					tank_nsb_armor_upgrade = 3
+				}
+			}
+		}
+		add_equipment_to_stockpile = {
+			type = light_tank_chassis_1
+			variant_name = "白夜抢滩轻战车"
+			amount = 60
+			producer = PAU
+		}
+	}
+	else = {
+		add_equipment_to_stockpile = {
+			type = light_tank_equipment_1
+			amount = 60
+			producer = PAU
+		}
+	}
+	add_equipment_to_stockpile = {
+		type = motorized_equipment
+		amount = 150
+		producer = PAU
+	}
+	add_equipment_to_stockpile = {
+		type = artillery_equipment
+		amount = 100
+		producer = PAU
+	}
 }
