@@ -305,8 +305,120 @@ on_actions = {
 						PAU_sync_zdw_decay_vars = yes
 					}
 				}
+				# 4阶《不过夜》白夜轻甲快反：轻坦亲自冲进敌战略州即场连夜夺油抢车与续命突击
+				if = {
+					limit = {
+						ROOT = {
+							tag = PAU
+							has_doctrine = PAU_no_overnight_light_armor
+							has_mastery_level = {
+								amount = 4
+								sub_doctrine = PAU_no_overnight_light_armor
+							}
+						}
+						FROM = { has_war_with = ROOT }
+						OR = {
+							divisions_in_state = { unit = light_armor size > 0 state = FROM.FROM }
+							divisions_in_state = { unit = PAU_airborne_light_armor size > 0 state = FROM.FROM }
+						}
+						FROM.FROM = {
+							NOT = { has_state_flag = PAU_raid_looted_state }
+							OR = {
+								is_capital = yes
+								industrial_complex > 0
+								arms_factory > 0
+								naval_base > 0
+							}
+						}
+					}
+					FROM.FROM = { set_state_flag = PAU_raid_looted_state }
+					ROOT = {
+						army_experience = 5
+						add_fuel = 500
+						add_equipment_to_stockpile = {
+							type = motorized_equipment
+							amount = 30
+							producer = PAU
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 150
+							producer = PAU
+						}
+						if = {
+							limit = { has_dlc = "No Step Back" }
+							add_equipment_to_stockpile = {
+								type = light_tank_chassis_1
+								amount = 8
+								producer = PAU
+							}
+						}
+						else = {
+							add_equipment_to_stockpile = {
+								type = light_tank_equipment_1
+								amount = 8
+								producer = PAU
+							}
+						}
+						if = {
+							limit = { has_idea = PAU_no_overnight_momentum }
+							remove_ideas = PAU_no_overnight_momentum
+						}
+						add_timed_idea = {
+							idea = PAU_no_overnight_momentum
+							days = 15
+						}
+					}
+				}
         }
     }
+	# 5阶《白夜王牌》：伞降轻坦空投敌后时当场震慑守军组织度并破坏交通雷达
+	on_units_paradropped_in_state = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						tag = PAU
+						has_doctrine = PAU_no_overnight_light_armor
+						has_mastery_level = {
+							amount = 5
+							sub_doctrine = PAU_no_overnight_light_armor
+						}
+						divisions_in_state = {
+							unit = PAU_airborne_light_armor
+							size > 0
+							state = PREV
+						}
+					}
+					CONTROLLER = { has_war_with = FROM }
+					NOT = { has_state_flag = PAU_airborne_armor_drop_cd }
+				}
+				set_state_flag = {
+					flag = PAU_airborne_armor_drop_cd
+					days = 30
+					value = 1
+				}
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = radar_station
+					damage = 1
+				}
+				every_state_division = {
+					limit = {
+						OWNER = { has_war_with = FROM }
+					}
+					set_unit_organization = 0.70
+				}
+				FROM = {
+					add_command_power = 10
+					army_experience = 5
+				}
+			}
+		}
+	}
 	#PAU每日逻辑
 	on_daily_PAU = {
 		effect = {

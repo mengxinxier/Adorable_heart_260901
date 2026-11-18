@@ -2120,6 +2120,112 @@
                 }
             }
             custom_effect_tooltip = PAU_thsg_tt
+            if = {
+                limit = {
+                    OR = {
+                        KOR = { is_subject_of = ROOT }
+                        any_state = {
+                            OR = {
+                                is_core_of = KOR
+                                is_claimed_by = KOR
+                            }
+                            OR = {
+                                is_owned_by = ROOT
+                                is_controlled_by = ROOT
+                                owner = { is_subject_of = ROOT }
+                                controller = { is_subject_of = ROOT }
+                            }
+                        }
+                    }
+                }
+                custom_effect_tooltip = PAU_thsg_kor_tt
+                hidden_effect = {
+                    every_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = KOR
+                                is_claimed_by = KOR
+                            }
+                            OR = {
+                                is_owned_by = ROOT
+                                is_controlled_by = ROOT
+                                owner = { is_subject_of = ROOT }
+                                controller = { is_subject_of = ROOT }
+                            }
+                        }
+                        if = {
+                            limit = { NOT = { is_core_of = KOR } }
+                            add_core_of = KOR
+                        }
+                        transfer_state_to = KOR
+                    }
+                    KOR = {
+                        if = {
+                            limit = { has_war_with = ROOT }
+                            white_peace = ROOT
+                        }
+                        if = {
+                            limit = { is_subject_of = ROOT }
+                            ROOT = { end_puppet = KOR }
+                        }
+                        else_if = {
+                            limit = {
+                                is_subject = yes
+                                OVERLORD = { is_subject_of = ROOT }
+                            }
+                            OVERLORD = { end_puppet = PREV }
+                        }
+                        set_politics = {
+                            ruling_party = communism
+                            elections_allowed = no
+                        }
+                        if = {
+                            limit = { ROOT = { has_country_leader_ideology = Spartacus } }
+                            set_country_leader_ideology = Spartacus
+                        }
+                        else_if = {
+                            limit = { ROOT = { has_country_leader_ideology = syndicalism } }
+                            set_country_leader_ideology = syndicalism
+                        }
+                        else_if = {
+                            limit = { ROOT = { has_country_leader_ideology = leninism } }
+                            set_country_leader_ideology = leninism
+                        }
+                        else = {
+                            set_country_leader_ideology = Radical_socialism
+                        }
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.55
+                        }
+                        if = {
+                            limit = { has_idea = nuhuasixiang }
+                            remove_ideas = nuhuasixiang
+                        }
+                        if = {
+                            limit = { has_idea = kor_gemingpai }
+                            remove_ideas = kor_gemingpai
+                        }
+                        if = {
+                            limit = {
+                                is_in_faction = yes
+                                NOT = { is_in_faction_with = ROOT }
+                            }
+                            set_country_flag = leave_faction_happily_flag
+                            leave_faction = yes
+                            clr_country_flag = leave_faction_happily_flag
+                        }
+                    }
+                    if = {
+                        limit = { is_in_faction = no }
+                        create_faction_from_template = faction_template_bytm
+                        set_faction_name = PAU_white_night_alliance
+                    }
+                    faction_leader = {
+                        add_to_faction = KOR
+                    }
+                }
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_political_power_gain  #主线动态修正原始值：政治点获取=国策/决议累加
@@ -2394,6 +2500,19 @@
                 var = PAU_ml_raw_political_power_factor  #主线动态修正原始值：政治点获取=国策/决议累加
                 value = 0.05
                 tooltip = political_power_factor_tt
+            }
+            if = {
+                limit = {
+                    PRC = {
+                        exists = yes
+                        has_character = JAP_shana
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                        NOT = { has_government = fascism }
+                    }
+                    NOT = { has_global_flag = PAU_shana_sent_to_pau }
+                }
+                custom_effect_tooltip = PAU_zg_prc_shana_tt
             }
             custom_effect_tooltip = PAU_hp_effect_tt
         }
@@ -3076,12 +3195,71 @@
                 PAU_refresh_south_america_development = yes
                 country_event = { id = PAU.521 days = 15 }
             }
+            add_ideas = PAU_world_revolution
+            if = {
+                limit = {
+                    is_in_faction = yes
+                    any_other_country = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
+                every_other_country = {
+                    limit = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                    army_experience = 25
+                    navy_experience = 15
+                    add_timed_idea = {
+                        idea = PAU_joint_drill_partner_buff
+                        days = 180
+                    }
+                    add_opinion_modifier = {
+                        modifier = non_aggression_pact_pau
+                        target = ROOT
+                    }
+                    ROOT = {
+                        add_opinion_modifier = {
+                            modifier = non_aggression_pact_pau
+                            target = PREV
+                        }
+                    }
+                }
+                army_experience = 25
+                navy_experience = 15
+                add_timed_idea = {
+                    idea = PAU_joint_drill_partner_buff
+                    days = 180
+                }
+            }
+            if = {
+                limit = {
+                    OR = {
+                        check_variable = { PAU_china_refusals > 0 }
+                        check_variable = { PAU_north_america_refusals > 0 }
+                        has_country_flag = PAU_grail_refused
+                    }
+                }
+                add_war_support = 0.05
+                add_command_power = 30
+                add_tech_bonus = {
+                    name = "PAU_sjgm"
+                    bonus = 1.0
+                    uses = 1
+                    category = tp_tech
+                }
+                custom_effect_tooltip = PAU_sjgm_mutual_front_tt
+            }
             custom_effect_tooltip = PAU_sjgm_tt
             set_country_flag = PAU_world_revolution
             set_country_flag = PAU_revolution_network_active
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_export_revolution
+            unlock_decision_tooltip = PAU_comrade_joint_drills
         }
     }
 
@@ -3121,11 +3299,103 @@
 
         completion_reward = {
             add_ideas = PAU_hpgc_idea
+            add_political_power = 50
+            add_stability = 0.05
+            if = {
+                limit = {
+                    any_other_country = {
+                        exists = yes
+                        NOT = { has_war_with = ROOT }
+                        OR = {
+                            has_country_flag = PAU_china_partner_flag
+                            has_country_flag = PAU_na_partner_flag
+                            is_in_faction_with = ROOT
+                        }
+                    }
+                }
+                every_other_country = {
+                    limit = {
+                        exists = yes
+                        NOT = { has_war_with = ROOT }
+                        OR = {
+                            has_country_flag = PAU_china_partner_flag
+                            has_country_flag = PAU_na_partner_flag
+                            is_in_faction_with = ROOT
+                        }
+                    }
+                    add_timed_idea = {
+                        idea = PAU_pacific_partner_prosperity
+                        days = 365
+                    }
+                    if = {
+                        limit = { NOT = { has_non_aggression_pact_with = ROOT } }
+                        diplomatic_relation = {
+                            country = ROOT
+                            relation = non_aggression_pact
+                            active = yes
+                        }
+                    }
+                    add_opinion_modifier = {
+                        modifier = non_aggression_pact_pau
+                        target = ROOT
+                    }
+                    ROOT = {
+                        add_opinion_modifier = {
+                            modifier = non_aggression_pact_pau
+                            target = PREV
+                        }
+                    }
+                }
+                add_to_variable = {
+                    var = PAU_trade_partner_boost_trade_opinion_factor
+                    value = 0.05
+                    tooltip = trade_opinion_factor_tt
+                }
+                add_to_variable = {
+                    var = PAU_trade_partner_boost_production_speed_buildings_factor
+                    value = 0.03
+                    tooltip = production_speed_buildings_factor_tt
+                }
+                add_to_variable = {
+                    var = PAU_trade_partner_boost_production_speed_infrastructure_factor
+                    value = 0.03
+                    tooltip = production_speed_infrastructure_factor_tt
+                }
+                if = {
+                    limit = { NOT = { has_dynamic_modifier = { modifier = PAU_trade_partner_boost } } }
+                    add_dynamic_modifier = { modifier = PAU_trade_partner_boost }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU_grail_peace
+                    country_exists = ENG
+                    NOT = { has_war_with = ENG }
+                }
+                ENG = {
+                    add_timed_idea = {
+                        idea = PAU_pacific_partner_prosperity
+                        days = 365
+                    }
+                    add_opinion_modifier = {
+                        modifier = non_aggression_pact_pau
+                        target = ROOT
+                    }
+                    ROOT = {
+                        add_opinion_modifier = {
+                            modifier = non_aggression_pact_pau
+                            target = ENG
+                        }
+                    }
+                }
+            }
             custom_effect_tooltip = PAU_hpgc_tt
             set_country_flag = PAU_peaceful_coexistence  #和平共处路线标记
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_peace_trade_mission
+            unlock_decision_tooltip = PAU_peace_humanitarian_aid
+            unlock_decision_tooltip = PAU_pacific_grain_relief_convoy
         }
     }
 
@@ -3179,6 +3449,14 @@
                     type = annex_everything
                 }
             }
+            add_ideas = PAU_armed_neutrality
+            navy_experience = 25
+            add_tech_bonus = {
+                name = "PAU_zdbf"
+                bonus = 1.0
+                uses = 1
+                category = naval_equipment
+            }
             custom_effect_tooltip = PAU_zdbf_tt
             set_country_flag = PAU_armed_neutrality
             set_country_flag = PAU_coastal_network_active
@@ -3193,9 +3471,34 @@
                 value = 0.1
                 tooltip = coastal_bunker_effectiveness_factor_tt
             }
+            if = {
+                limit = {
+                    is_in_faction = yes
+                    any_other_country = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
+                every_other_country = {
+                    limit = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                    add_command_power = 20
+                    navy_experience = 20
+                    add_timed_idea = {
+                        idea = PAU_counter_blockade_shield
+                        days = 365
+                    }
+                }
+            }
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_coastal_fortification
+            unlock_decision_tooltip = PAU_counter_blockade_pact
+            unlock_decision_tooltip = PAU_maritime_hedgehog_alert
         }
     }
 

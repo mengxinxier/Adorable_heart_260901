@@ -365,17 +365,30 @@ PAU_pull_into_white_night_faction = {
             if = {
                 limit = {
                     ROOT = {
-                        NOT = { has_country_flag = PAU_allow_major_faction_pull }
                         OR = {
-                            faction_leader = { OR = { tag = GER tag = DVL tag = ENG tag = SOV } }
-                            has_faction_template = faction_template_axis
-                            has_faction_template = faction_template_allies
-                            has_faction_template = faction_template_comintern
+                            has_country_flag = PAU_pull_single_country_only
+                            tag = MGU
+                            tag = LFC
+                            AND = {
+                                NOT = { has_country_flag = PAU_allow_major_faction_pull }
+                                OR = {
+                                    faction_leader = { OR = { tag = GER tag = DVL tag = ENG tag = SOV } }
+                                    has_faction_template = faction_template_axis
+                                    has_faction_template = faction_template_allies
+                                    has_faction_template = faction_template_comintern
+                                }
+                            }
                         }
                     }
                 }
+                hidden_effect = {
+                    ROOT = { set_country_flag = leave_faction_happily_flag }
+                }
                 ROOT = { leave_faction = yes }
                 PAU = { faction_leader = { add_to_faction = ROOT } }
+                hidden_effect = {
+                    ROOT = { clr_country_flag = leave_faction_happily_flag }
+                }
             }
             else = {
                 ROOT = {
@@ -395,7 +408,10 @@ PAU_pull_into_white_night_faction = {
             PAU = { faction_leader = { add_to_faction = ROOT } }
         }
     }
-    ROOT = { clr_country_flag = PAU_allow_major_faction_pull }
+    ROOT = {
+        clr_country_flag = PAU_allow_major_faction_pull
+        clr_country_flag = PAU_pull_single_country_only
+    }
 }
 
 

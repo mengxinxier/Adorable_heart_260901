@@ -32,9 +32,10 @@ VertexShader =
 		{
 			VS_OUTPUT Out;
 			float3 pos = v.vPosition;
-			// Anchor paws at vTexCoord.y == 1.0f; gently lift upper body & ears
+			// Anchor feet at vTexCoord.y == 1.0f; keep vertex position stationary so
+			// GPU Time phase never beats against the 20-24fps 32-frame baked strip.
 			float footWeight = saturate( 1.0f - v.vTexCoord.y );
-			float lift = ( 0.5f + 0.5f * sin( Time * 2.4f ) ) * 1.4f * footWeight;
+			float lift = 0.0f * footWeight;
 			pos.y += lift;
 			Out.vPosition = mul( WorldViewProjectionMatrix, float4( pos, 1.0f ) );
 			// Preserve frame strip UV offset for frameAnimatedSpriteType
