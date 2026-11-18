@@ -402,4 +402,58 @@ on_actions = {
 			}
 		}
 	}
+	# 胡宗南上台后至完成个人线首个国策《三民主义最高统帅》前：作为将领战败累计次数并随战败次数提高战死触发事件概率
+	on_army_leader_lost_combat = {
+		effect = {
+			if = {
+				limit = {
+					is_character = ROC_Hu_Zongnan
+					NOT = { has_unit_leader_flag = ROC_hu_combat_loss_cd }
+					FROM = {
+						tag = ROC
+						has_country_leader = { character = ROC_Hu_Zongnan ruling_only = yes }
+						NOT = { has_completed_focus = ROC_focus_supreme_commander_of_three_principles }
+						NOT = { has_country_flag = ROC_hu_kia_event_fired }
+					}
+				}
+				# 防抖：避免单次败退多格在数日内连续计次与掷骰
+				set_unit_leader_flag = { flag = ROC_hu_combat_loss_cd value = 1 days = 5 }
+				FROM = {
+					add_to_variable = { ROC_hu_defeat_count = 1 }
+					if = {
+						limit = { check_variable = { ROC_hu_defeat_count > 2 } }
+						random_list = {
+							10 = {
+								modifier = {
+									add = 15
+									check_variable = { ROC_hu_defeat_count > 3 }
+								}
+								modifier = {
+									add = 25
+									check_variable = { ROC_hu_defeat_count > 4 }
+								}
+								modifier = {
+									add = 50
+									check_variable = { ROC_hu_defeat_count > 5 }
+								}
+								modifier = {
+									add = 100
+									check_variable = { ROC_hu_defeat_count > 6 }
+								}
+								modifier = {
+									add = 200
+									check_variable = { ROC_hu_defeat_count > 8 }
+								}
+								set_country_flag = ROC_hu_kia_event_fired
+								country_event = { id = roc.405 }
+							}
+							100 = {
+								# 此次战败幸免
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
