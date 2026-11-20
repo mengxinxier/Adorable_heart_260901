@@ -44,13 +44,14 @@ on_actions = {
 						limit = { check_variable = { ROC_lunar_months > 12 } }
 						set_variable = { ROC_lunar_months = 1 }
 						add_to_variable = { ROC_lunar_era = 1 }
-						#统一后第 2 个新年：纪年归元
+						#统一后次年新年（第 1 个 1 月 1 日）：纪年归元为民国元年
 						if = {
 							limit = { has_variable = ROC_reunit_years }
 							add_to_variable = { ROC_reunit_years = 1 }
 							if = {
-								limit = { check_variable = { ROC_reunit_years = 2 } }
+								limit = { check_variable = { ROC_reunit_years = 1 } }
 								set_variable = { ROC_lunar_era = 1 }
+								clear_variable = ROC_reunit_years
 							}
 						}
 					}
@@ -407,8 +408,6 @@ on_actions = {
 		effect = {
 			if = {
 				limit = {
-					is_character = ROC_Hu_Zongnan
-					NOT = { has_unit_leader_flag = ROC_hu_combat_loss_cd }
 					FROM = {
 						tag = ROC
 						has_country_leader = { character = ROC_Hu_Zongnan ruling_only = yes }
@@ -416,39 +415,55 @@ on_actions = {
 						NOT = { has_country_flag = ROC_hu_kia_event_fired }
 					}
 				}
-				# 防抖：避免单次败退多格在数日内连续计次与掷骰
-				set_unit_leader_flag = { flag = ROC_hu_combat_loss_cd value = 1 days = 5 }
 				FROM = {
-					add_to_variable = { ROC_hu_defeat_count = 1 }
 					if = {
-						limit = { check_variable = { ROC_hu_defeat_count > 2 } }
-						random_list = {
-							10 = {
-								modifier = {
-									add = 15
-									check_variable = { ROC_hu_defeat_count > 3 }
+						limit = {
+							has_character = ROC_Hu_Zongnan
+							ROC_Hu_Zongnan = { NOT = { has_character_flag = ROC_hu_zongnan_combat_track } }
+						}
+						ROC_Hu_Zongnan = { set_character_flag = ROC_hu_zongnan_combat_track }
+					}
+				}
+				if = {
+					limit = {
+						has_character_flag = ROC_hu_zongnan_combat_track
+					}
+					FROM = {
+						add_to_variable = { ROC_hu_defeat_count = 1 }
+						if = {
+							limit = { check_variable = { ROC_hu_defeat_count > 2 } }
+							random_list = {
+								10 = {
+									modifier = {
+										add = 15
+										check_variable = { ROC_hu_defeat_count > 3 }
+									}
+									modifier = {
+										add = 25
+										check_variable = { ROC_hu_defeat_count > 4 }
+									}
+									modifier = {
+										add = 50
+										check_variable = { ROC_hu_defeat_count > 5 }
+									}
+									modifier = {
+										add = 100
+										check_variable = { ROC_hu_defeat_count > 6 }
+									}
+									modifier = {
+										add = 200
+										check_variable = { ROC_hu_defeat_count > 8 }
+									}
+									set_country_flag = ROC_hu_kia_event_fired
+									country_event = { id = roc.405 }
 								}
-								modifier = {
-									add = 25
-									check_variable = { ROC_hu_defeat_count > 4 }
+								100 = {
+									# 此次战败幸免；第10次战败起必死
+									modifier = {
+										factor = 0
+										check_variable = { ROC_hu_defeat_count > 9 }
+									}
 								}
-								modifier = {
-									add = 50
-									check_variable = { ROC_hu_defeat_count > 5 }
-								}
-								modifier = {
-									add = 100
-									check_variable = { ROC_hu_defeat_count > 6 }
-								}
-								modifier = {
-									add = 200
-									check_variable = { ROC_hu_defeat_count > 8 }
-								}
-								set_country_flag = ROC_hu_kia_event_fired
-								country_event = { id = roc.405 }
-							}
-							100 = {
-								# 此次战败幸免
 							}
 						}
 					}
