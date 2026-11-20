@@ -27,7 +27,6 @@ scripted_gui = {
 		}
 	}
 
-
 	GRE_Iuno_Tarot_map_gui_window = {
 		window_name = "GRE_Iuno_Tarot_gui_window"
 		visible = {
@@ -370,7 +369,80 @@ scripted_gui = {
 			}
 		}
 	}
+}
 
-
-
+scripted_gui = {
+	GRE_TDT_map_gui = {
+		window_name = "GRE_TDT_map_ui"
+		context_type = decision_category
+		dirty = GRE_TDT_map_gui_refresh_var
+		
+		visible = {
+			tag = GRE
+		}
+		
+		dynamic_lists = {
+			state_gridbox = {
+				entry_container = "GRE_TDT_map_state_container"
+				array = GRE_TDT_map_state_array
+				index = si
+				value = sv
+				change_scope = yes
+			}
+		}
+		properties = {
+			GRE_TDT_map_state = {
+				image = GFX_GRE_TDT_map_state_[?si]
+				frame = sv
+			}
+			GRE_TDT_category_map = {
+				frame = GRE_TDT_category_map_frame
+			}
+			GRE_TDT_category_type = {
+				frame = GRE_TDT_category_type_frame
+			}
+		}
+		effects = {
+			GRE_TDT_map_state_click = {
+				ROOT = {
+					add_political_power = 2
+					for_each_loop = {
+						array = GRE_TDT_map_state_array
+						index = i
+						value = v
+						break = b
+						
+						set_variable = { GRE_TDT_map_state_array^i = 1 }
+						if = {
+							limit = {
+								check_variable = { i = si }
+							}
+							set_variable = { GRE_TDT_map_state_array^i = 2 }
+						}
+					}
+					GRE_TDT_state_id_from_map_to_decision = yes
+					GRE_TDT_refresh_map = yes
+				}
+			}
+			GRE_TDT_category_map_click = {
+				ROOT = {
+					set_variable = { GRE_TDT_category = 1 }
+					set_variable = { GRE_TDT_category_map_frame = 2 }
+					set_variable = { GRE_TDT_category_type_frame = 1 }
+					GRE_TDT_refresh_map = yes
+				}
+			}
+			GRE_TDT_category_type_click = {
+				ROOT = {
+					set_variable = { GRE_TDT_category = 2 }
+					set_variable = { GRE_TDT_category_map_frame = 1 }
+					set_variable = { GRE_TDT_category_type_frame = 2 }
+					GRE_TDT_refresh_map = yes
+				}
+			}
+		}
+		triggers = {
+			GRE_TDT_map_visible = { always = no }
+		}
+	}
 }
