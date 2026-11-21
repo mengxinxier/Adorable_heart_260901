@@ -1,5 +1,5 @@
 ELF_start1 = {
-    enable = {
+    allowed = {
         OR = {
             original_tag = ELF
             original_tag = ELW
@@ -9,6 +9,9 @@ ELF_start1 = {
             original_tag = EDW
             original_tag = EBS
         }
+    }
+    enable = {
+        always = yes
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -30,16 +33,11 @@ ELF_start1 = {
             is_coastal = yes
             FROM = { has_war_with = FROM.FROM }
         }
-        priority = 120
+        priority = 25
         ordertype = front
         execution_type = rush
         manual_attack = no
         execute_order  = yes
-    }
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 200
     }
     ai_strategy = {
         type = research_weight_factor	#重坦
@@ -78,7 +76,7 @@ ELF_start1 = {
     }
 }
 
-More_Infantry_focus = {#多产枪
+ELF_More_Infantry_focus = {#多产枪
     allowed = {
         or = {
             original_tag = ELF
@@ -108,7 +106,7 @@ More_Infantry_focus = {#多产枪
 }
 ELF_stop_disbanding_your_army = {#ai部署陆军倾向
     allowed = {
-        or = {
+        OR = {
             original_tag = ELF
             original_tag = ELW
             original_tag = EWW
@@ -119,13 +117,14 @@ ELF_stop_disbanding_your_army = {#ai部署陆军倾向
         }
     }
     enable = {
-        num_divisions < 800
+        num_divisions < 280
+        check_variable = { Debt_ratio < 0.85 }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 1000
+        value = 240
     }
 }
 ELF_stop_disbanding_your_army2 = {#ai部署陆军倾向2
@@ -141,13 +140,13 @@ ELF_stop_disbanding_your_army2 = {#ai部署陆军倾向2
         }
     }
     enable = {
-        num_divisions > 800
+        num_divisions > 320
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = -2000
+        value = -400
     }
 }
 #1939年研究
@@ -444,9 +443,9 @@ ELF_train_production = { #缺火车
         value = 8
     }
 }
-ELF_train_production = { #缺运输船
+ELF_convoy_production = {#缺运输船
     allowed = {
-        or = {
+        OR = {
             original_tag = ELF
             original_tag = ELW
             original_tag = EWW
@@ -455,20 +454,19 @@ ELF_train_production = { #缺运输船
             original_tag = EDW
             original_tag = EBS
         }
-
     }
     enable = {
+        num_of_naval_factories > 0
         has_equipment = {
-            convoy  < 500
+            convoy < 500
         }
     }
-
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = equipment_production_min_factories
         id = convoy
-        value = 10
+        value = 6
     }
 }
 
@@ -849,7 +847,7 @@ ELF_unit= { #单位倾向
 
     ai_strategy = {
         type = role_ratio
-        id = mountaineers_ELF
+        id = mountaineer
         value = 0
     }
 
@@ -872,13 +870,13 @@ ELF_unit= { #单位倾向
 
     ai_strategy = {
         type = template_prio
-        id = infantry_ELF2
+        id = infantry
         value = 0
 
     }
     ai_strategy = {
         type = role_ratio
-        id = infantry_ELF2
+        id = infantry
         value = 0
 
     }
@@ -1078,7 +1076,7 @@ ELF_air_production = { #空军生产
 
 }
 
-always_prioritize_our_core = {
+ELF_always_prioritize_our_core = {
     allowed={
         or = {
             original_tag = ELF
@@ -1137,7 +1135,7 @@ ELF_state_is_zhanlue = {#老爷爷，我给你踩地来咯
             controller = { has_war_with = ELF }
         }
         ratio = 0.2
-        priority = 20000
+        priority = 60
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1152,7 +1150,7 @@ ELF_state_is_zhanlue = {#老爷爷，我给你踩地来咯
                 divisions_in_state = { state = PREV size = 0 }
             }
         }
-        priority = 9000
+        priority = 50
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1169,7 +1167,7 @@ ELF_state_is_zhanlue = {#老爷爷，我给你踩地来咯
 
         ratio = 0.8
 
-        priority = 5000
+        priority = 35
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1189,7 +1187,7 @@ ELF_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         }
 
 
-        priority = 8000
+        priority = 45
         ordertype = front
         execution_type = rush
     }
@@ -1234,7 +1232,7 @@ ELF_end_pocket = {#包围快速歼灭
             }
         }
         ratio = 0.0
-        priority = 9999
+        priority = 190
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1506,9 +1504,9 @@ ELF_recruit_air_scientist_faster = {#招募空战科学家
         value = 1000
     }
 }
-ELF_check_omega_lul = { #部队逻辑
+ELF_check_omega_lul = {
     allowed = {
-        or = {
+        OR = {
             original_tag = ELF
             original_tag = ELW
             original_tag = EWW
@@ -1522,74 +1520,35 @@ ELF_check_omega_lul = { #部队逻辑
         has_war = yes
     }
     abort_when_not_enabled = yes
+
+    #低基建非核心内陆荒地采取谨慎姿态并减少屯兵
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
         execution_type = careful
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
-
+    #加强首都保卫
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1598,11 +1557,10 @@ ELF_check_omega_lul = { #部队逻辑
         }
         value = 50
     }
-
-    ai_strategy = { #登陆更有价值的地块
+    #登陆优先高价值与有港口沿海州
+    ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             check_variable = { state_strategic_value < 3 }
         }
         value = -5
@@ -1610,69 +1568,33 @@ ELF_check_omega_lul = { #部队逻辑
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 8 }
         }
-        value = -3
+        value = -6
     }
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-        }
-        value = -3
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
+            is_coastal = yes
+            any_province_building_level = {
+                province = {
+                    all_provinces = yes
+                    limit_to_coastal = yes
                 }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-        }
-        value = -15
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            OR = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
+                building = naval_base
+                level > 0
             }
         }
         value = 15
     }
-
 }
 
 
 
-ELF_zhunbei_PAQ = { #提前准备进攻帝国
-    enable = {
-        or = {
+ELF_zhunbei_PAQ = {#提前准备进攻帝国
+    allowed = {
+        OR = {
             original_tag = ELF
             original_tag = ELW
             original_tag = EWW
@@ -1681,6 +1603,8 @@ ELF_zhunbei_PAQ = { #提前准备进攻帝国
             original_tag = EDW
             original_tag = EBS
         }
+    }
+    enable = {
         EWW = {
             OR = {
                 focus_progress = {
@@ -1705,22 +1629,20 @@ ELF_zhunbei_PAQ = { #提前准备进攻帝国
 #要军通
 ELF_ask_for_access = {
     reversed = yes
-
     allowed = {
-        or = {
-            original_tag = ELF
-            original_tag = ELW
-            original_tag = EWW
-            original_tag = EFC
-            original_tag = ELG
-            original_tag = EDW
-            original_tag = EBS
-        }
+        NOT = { original_tag = ELF }
     }
-
+    enable_reverse = {
+        ELF = { exists = yes }
+    }
     enable = {
-        OR = {
-            has_war_together_with = ELF
+        has_war_together_with = ELF
+        NOT = {
+            OR = {
+                is_in_faction_with = ELF
+                has_military_access_to = ELF
+                has_war_with = ELF
+            }
         }
     }
     abort_when_not_enabled = yes
@@ -1814,21 +1736,13 @@ ELF_diplomacy_with_PAQ = { #对抗帝国
 #防止军通杀
 
 ELF_no_military_access = {
-
     reversed = yes
-
     allowed = {
-        or = {
-            original_tag = ELF
-            original_tag = ELW
-            original_tag = EWW
-            original_tag = EFC
-            original_tag = ELG
-            original_tag = EDW
-            original_tag = EBS
-        }
+        NOT = { original_tag = ELF }
     }
-
+    enable_reverse = {
+        ELF = { exists = yes }
+    }
     enable = {
         is_ai = no
         NOT = {
@@ -1842,7 +1756,6 @@ ELF_no_military_access = {
         target = military_access
         value = -1000
     }
-
 }
 
 

@@ -114,7 +114,7 @@ PAU_refresh_mil_reform_tiers = {
     if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
     if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
 
-    #按进度阶梯提供规整的 2.5% / 5.0% / 7.5% / 10.0% / 12.5% 全属性基础加成
+    #军事改革总进度基础加成
     set_variable = { PAU_mil_base_val = 0 }
     if = {
         limit = { check_variable = { PAU_mil_reform_progress > 31 } }
@@ -237,7 +237,7 @@ PAU_refresh_eco_reform_tiers = {
     if = { limit = { check_variable = { PAU_xfxy_eco > 0 } } set_country_flag = PAU_economy_reform_xfxy_unlocked }
     if = { limit = { check_variable = { PAU_xiaoyao_eco > 0 } } set_country_flag = PAU_economy_reform_xiaoyao_unlocked }
 
-    #按进度阶梯提供规整的 2.5% / 5.0% / 7.5% / 10.0% / 12.5% 全属性基础加成
+    #经济改革总进度基础加成
     set_variable = { PAU_eco_base_val = 0 }
     if = {
         limit = { check_variable = { PAU_eco_reform_progress > 31 } }
@@ -415,7 +415,7 @@ PAU_pull_into_white_night_faction = {
 }
 
 
-#将发展度（0~100封顶）与【南美大陆的共识】实时同步给所有南美阵营成员
+#同步发展度与南美大陆共识
 PAU_sync_south_america_all = {
     PAU = {
         clamp_variable = { var = PAU_south_america_development min = 0 max = 100 }
@@ -485,7 +485,7 @@ PAU_refresh_south_america_development = {
         clamp_variable = { var = PAU_south_america_development min = 0 max = 100 }
         if = {
             limit = { has_country_flag = PAU_south_america_super_fired }
-            #按发展度 25 / 50 / 100 解锁一、二、三级委员会修正
+            #按发展度刷新委员会等级修正
             if = {
                 limit = {
                     check_variable = { PAU_south_america_development > 24 }
@@ -532,7 +532,7 @@ PAU_refresh_south_america_members = { PAU_refresh_south_america_development = ye
 PAU_call_state_council_missions = { PAU_refresh_south_america_development = yes }
 PAU_refresh_state_council = { PAU_refresh_south_america_development = yes }
 
-# 清除当前作用域国家的全部联合发展计划轮值民族精神
+#清除联合发展计划轮值精神
 PAU_clear_dev_program_ideas = {
     remove_ideas = PAU_south_america_development_program_ideaPAU
     remove_ideas = PAU_south_america_development_program_ideaPA1
@@ -544,7 +544,7 @@ PAU_clear_dev_program_ideas = {
     remove_ideas = PAU_south_america_development_program_ideaAHM
 }
 
-# 须在当前轮值主导国作用域内调用：为阵营内其他南美成员分发对应联合发展计划民族精神
+#分发联合发展计划轮值精神
 PAU_distribute_dev_program_idea_from_scope = {
     if = {
         limit = { is_in_faction = yes }
@@ -655,7 +655,7 @@ PAU_distribute_dev_program_idea_from_scope = {
     }
 }
 
-# 进入第三国际或切换阵营后，保证已启用的联合发展计划任务与轮值民族精神正常保持/恢复
+#切换阵营保持联合发展计划
 PAU_recover_dev_program_loop = {
     PAU = {
         if = {
@@ -1356,7 +1356,7 @@ PAU_daily_reform_tick = {
         }
     }
 }
-#雇佣系统：记录签约/参战前 PAU 及同阵营盟友、附庸的既有敌国，避免撤军白和波及非雇佣战争
+#雇佣系统：记录既有敌国
 PAU_record_pre_mercenary_wars = {
     if = {
         limit = { NOT = { PAU = { has_country_flag = PAU_guyong_tracking_active } } }
@@ -1380,7 +1380,7 @@ PAU_record_pre_mercenary_wars = {
     }
 }
 
-#雇佣系统：在当前目标国作用域登记雇佣目标敌国（含其同战阵营友军/附庸/宗主）
+#雇佣系统：登记雇佣目标敌国
 PAU_record_mercenary_enemy = {
     set_country_flag = PAU_will_guyonged_touxiang_flag
     if = {
@@ -1434,7 +1434,7 @@ PAU_record_mercenary_enemy = {
         clr_country_flag = PAU_mercenary_enemy_seed_tmp
     }
 }
-#雇佣系统：开战后自动补录中途加入战争的雇佣敌国同盟/附庸/共同交战方，避免遗漏或被误判为原敌国
+#雇佣系统：补录中途参战敌国
 PAU_sync_contract_enemies = {
     if = {
         limit = {
@@ -1492,7 +1492,7 @@ PAU_sync_contract_enemies = {
     }
 }
 
-#雇佣系统：提前跑路/撤退时仅令 PAU 及其盟友/附庸与雇佣敌国无条件停战，保留各自其余战争
+#雇佣系统：撤军白和雇佣敌国
 PAU_mercenary_retreat_peace = {
     PAU_sync_contract_enemies = yes
     every_country = {
@@ -1553,7 +1553,7 @@ PAU_mercenary_retreat_peace = {
         limit = { has_country_flag = PAU_contract_enemy_side_tmp }
         clr_country_flag = PAU_contract_enemy_side_tmp
     }
-    #先处理 PAU 本体白和（先宗主/独立国，后附庸国），避免被盟友循环顺序打乱
+    #处理PAU本体白和
     PAU = {
         every_country = {
             limit = {
@@ -1593,7 +1593,7 @@ PAU_mercenary_retreat_peace = {
             clr_country_flag = PAU_ally_keep_war_tmp
         }
     }
-    #再处理 PAU 同阵营盟友与附庸的白和
+    #处理盟友与附庸白和
     every_country = {
         limit = {
             NOT = { tag = PAU }
@@ -1653,7 +1653,7 @@ PAU_mercenary_retreat_peace = {
 }
 
 
-#雇佣系统：取消合同期间与雇佣国互予的军事通行权
+#雇佣系统：取消双方军事通行权
 PAU_revoke_mercenary_military_access = {
     if = {
         limit = {
@@ -1707,7 +1707,7 @@ PAU_revoke_mercenary_military_access = {
     }
 }
 
-#雇佣系统：清理一次雇佣合同的战争与通行权追踪数据
+#雇佣系统：清理合同追踪数据
 PAU_clear_mercenary_tracking = {
     PAU = {
         clr_country_flag = PAU_guyong_tracking_active
@@ -1760,9 +1760,9 @@ PAU_reduce_mil_focus_cost_step = {
         }
     }
 }
-#白夜巡游进度 <-> 「白夜券（PAU_byq_hb）」信用
+#白夜巡游与白夜券联动
 PAU_check_baiye_byq_credit_bonus = {
-    #永久经济信用奖励（分别在 12 / 24 / 36 州触发一次）
+    #巡游里程碑经济奖励
     if = {
         limit = {
             check_variable = { PAU_baiye_patrol_count > 11 }
@@ -1803,7 +1803,7 @@ PAU_check_baiye_byq_credit_bonus = {
         }
     }
 
-    #无论先巡游还是先印白夜券，只要PAU_byq_hb处于激活状态就补扣任务时间
+    #巡游抵扣白夜券任务时间
     if = {
         limit = {
             has_active_mission = PAU_byq_hb
@@ -1891,7 +1891,7 @@ PAU_reduce_eco_focus_cost_step = {
         }
     }
 }
-#雇佣系统：雇佣期间同步阵营/附庸新增非合同敌国到各自豁免列表，防止撤军白和波及雇佣外战争
+#雇佣系统：同步新增非合同敌国
 PAU_sync_active_ally_pre_contract_wars = {
     if = {
         limit = { PAU = { has_country_flag = PAU_guyong_tracking_active } }
@@ -2033,7 +2033,7 @@ PAU_sync_active_ally_pre_contract_wars = {
     }
 }
 
-#击败目标国后隐藏对应民族精神上的对特定国家特攻词条（保留主体增益与升级链）
+#隐藏已击败国家的特攻修正
 PAU_refresh_targeted_spirit_visibility = {
     hidden_effect = {
         if = {
@@ -2176,7 +2176,7 @@ PAU_refresh_targeted_spirit_visibility = {
     }
 }
 
-# ==================== 白夜决议栏 GUI 变量同步与每日计时 ====================
+#白夜决议栏GUI变量同步
 PAU_sync_baiye_gui_vars = {
     if = {
         limit = { NOT = { has_variable = PAU_baiye_patrol_count } }
@@ -2370,7 +2370,7 @@ PAU_try_fire_grail_war_news = {
     }
 }
 
-# Project #4: Focus Tree Live Storybook state refresher (104 focuses across 8 regions + spine)
+#刷新国策树背景进度
 PAU_refresh_focus_storybook = {
 	if = {
 		limit = {
@@ -2564,7 +2564,7 @@ PAU_refresh_focus_storybook = {
 		else_if = { limit = { check_variable = { PAU_sb_tmp = 8 compare = greater_than_or_equals } } set_variable = { PAU_story_eco_stage = 2 } }
 		else_if = { limit = { check_variable = { PAU_sb_tmp = 1 compare = greater_than_or_equals } } set_variable = { PAU_story_eco_stage = 1 } }
 		else = { set_variable = { PAU_story_eco_stage = 0 } }
-		# Central plum-vine spine progresses along story milestones from valley to PAU_end
+		#更新国策树主干进度
 		if = { limit = { has_completed_focus = PAU_end } set_variable = { PAU_story_spine_stage = 4 } }
 		else_if = { limit = { OR = { has_completed_focus = PAU_sbwg has_completed_focus = PAU_els } } set_variable = { PAU_story_spine_stage = 3 } }
 		else_if = { limit = { OR = { has_completed_focus = PAU_ldwm has_country_flag = has_PAU_xiaoyao7 } } set_variable = { PAU_story_spine_stage = 2 } }
@@ -2579,15 +2579,13 @@ PAU_refresh_focus_storybook = {
 	}
 }
 
-# =========================================================================
-# 亡灵返岛反攻：索拉娜反噬退潮（日度衰减）与白夜解放浪潮（叠层增益）
-# =========================================================================
+#亡灵反攻动态修正
 
-#在 ZDW 作用域内同步索拉娜反噬退潮动态修正数值
+#同步索拉娜反噬退潮数值
 PAU_sync_zdw_decay_vars = {
 	clamp_variable = { var = ZDW_decay_progress min = 0 max = 180 }
 
-	#使用 0.001 定点乘法步长，确保早期每日推进不丢失精度
+	#按0.001步长计算修正
 	set_variable = { ZDW_decay_org = ZDW_decay_progress }
 	multiply_variable = { ZDW_decay_org = -0.003 }
 	add_to_variable = { ZDW_decay_org = -0.10 }
@@ -2633,7 +2631,7 @@ PAU_sync_zdw_decay_vars = {
 	clamp_variable = { var = ZDW_decay_pct min = 0 max = 100 }
 }
 
-#PAU 每日推进索拉娜反噬退潮（返岛登陆后每日 +1，上限 180）
+#每日推进索拉娜反噬退潮
 PAU_tick_zdw_decay_daily = {
 	if = {
 		limit = {
@@ -2651,7 +2649,7 @@ PAU_tick_zdw_decay_daily = {
 	}
 }
 
-#在 PAU 作用域内按解放沦陷州层数（0..12）刷新白夜解放浪潮修正
+#刷新白夜解放浪潮修正
 PAU_refresh_liberation_surge_vars = {
 	clamp_variable = { var = PAU_liberation_tiers min = 0 max = 12 }
 
@@ -2676,7 +2674,7 @@ PAU_refresh_liberation_surge_vars = {
 	clamp_variable = { var = PAU_lib_sup min = -0.30 max = 0.0 }
 }
 
-#统一创建“白夜民兵”编制（使用 has_template 防止重命名/删除后生成失败）
+#创建白夜民兵编制
 PAU_ensure_militia_template = {
 	if = {
 		limit = { NOT = { has_template = "白夜民兵" } }
@@ -2698,7 +2696,7 @@ PAU_ensure_militia_template = {
 	}
 }
 
-#统一创建“白夜抢滩突击旅”编制（避免多处重复声明与模板缺失）
+#创建白夜抢滩突击旅编制
 PAU_ensure_vanguard_template = {
 	if = {
 		limit = { NOT = { has_template = "白夜抢滩突击旅" } }
@@ -2725,7 +2723,7 @@ PAU_ensure_vanguard_template = {
 	}
 }
 
-#发放轻装甲反攻补给包（兼容有无 No Step Back DLC，含完整必需底盘槽位）
+#发放轻装甲补给
 PAU_grant_vanguard_armor_cache = {
 	if = {
 		limit = { has_dlc = "No Step Back" }

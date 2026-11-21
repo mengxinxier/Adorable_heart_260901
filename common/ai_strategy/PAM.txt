@@ -1,6 +1,9 @@
 PAM_start1 = {
+    allowed = {
+        original_tag = PAM
+    }
     enable = {
-        tag = PAM
+        always = yes
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -53,16 +56,11 @@ PAM_start1 = {
             is_coastal = yes
             FROM = { has_war_with = FROM.FROM }
         }
-        priority = 120
+        priority = 25
         ordertype = front
         execution_type = rush
         manual_attack = no
         execute_order  = yes
-    }
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 200
     }
     ai_strategy = {
         type = research_weight_factor	#重坦
@@ -86,6 +84,21 @@ PAM_start1 = {
     }
 }
 NANMEI_management_stop = {
+    allowed = {
+        OR = {
+            original_tag = PAM
+            original_tag = PAO
+            original_tag = LHS
+            original_tag = PAU
+            original_tag = ELF
+            original_tag = ELW
+            original_tag = EWW
+            original_tag = EFC
+            original_tag = ELG
+            original_tag = EDW
+            original_tag = EBS
+        }
+    }
     enable = {
         has_war = yes
         has_manpower < 500
@@ -368,13 +381,14 @@ PAM_stop_disbanding_your_army = {#ai部署陆军倾向
         original_tag = PAM
     }
     enable = {
-        num_divisions < 800
+        num_divisions < 300
+        check_variable = { Debt_ratio < 0.85 }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 1000
+        value = 250
     }
 }
 PAM_stop_disbanding_your_army2 = {#ai部署陆军倾向2
@@ -382,13 +396,13 @@ PAM_stop_disbanding_your_army2 = {#ai部署陆军倾向2
         original_tag = PAM
     }
     enable = {
-        num_divisions > 800
+        num_divisions > 350
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = -2000
+        value = -400
     }
 }
 PAMMore_Infantry_focus_2 = {
@@ -746,23 +760,22 @@ PAM_train_production = { #缺火车
         value = 8
     }
 }
-PAM_train_production = { #缺运输船
+PAM_convoy_production = {#缺运输船
     allowed = {
         original_tag = PAM
-
     }
     enable = {
+        num_of_naval_factories > 0
         has_equipment = {
-            convoy  < 500
+            convoy < 500
         }
     }
-
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = equipment_production_min_factories
         id = convoy
-        value = 10
+        value = 6
     }
 }
 
@@ -1087,7 +1100,7 @@ PAM_unit= { #单位倾向
 
     ai_strategy = {
         type = role_ratio
-        id = mountaineers_PAM
+        id = mountaineer
         value = 0
     }
 
@@ -1264,7 +1277,7 @@ PAM_air_production = { #空军生产
 }
 
 
-always_prioritize_our_core = {
+PAM_always_prioritize_our_core = {
     allowed={
         or = {
             original_tag = PAM
@@ -1299,29 +1312,28 @@ PAM_avoid_thin_lines = {
     enable = {
         has_war = yes
     }
-
     abort_when_not_enabled = yes
 
+    #前线被敌渗透的防线优先增援
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = PAM
-            check_variable = {
-                num_enemy_neighbor_states > 2
+            NOT = { is_fully_controlled_by = PAM }
+            any_neighbor_state = {
+                controller = { has_war_with = PAM }
             }
         }
-        value = 100
+        value = 80
     }
-
-
     ai_strategy = {
         type = front_control
         state_trigger = {
-            NOT = { is_core_of = FROM } #
+            NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 10 }
         }
         execution_type = careful
-        priority = -50
+        priority = 10
     }
 }
 PAM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
@@ -1348,7 +1360,7 @@ PAM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
             controller = { has_war_with = PAM }
         }
         ratio = 0.2
-        priority = 20000
+        priority = 60
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1363,7 +1375,7 @@ PAM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
                 divisions_in_state = { state = PREV size = 0 }
             }
         }
-        priority = 9000
+        priority = 50
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1380,7 +1392,7 @@ PAM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
 
         ratio = 0.8
 
-        priority = 5000
+        priority = 35
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1400,7 +1412,7 @@ PAM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         }
 
 
-        priority = 8000
+        priority = 45
         ordertype = front
         execution_type = rush
     }
@@ -1438,7 +1450,7 @@ PAM_end_pocket = {#包围快速歼灭
             }
         }
         ratio = 0.0
-        priority = 9999
+        priority = 190
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1659,7 +1671,7 @@ PAM_war_with_PAU = { #与军团开战
     ai_strategy = {
         type = front_control
         tag = PAU
-        priority = 10000
+        priority = 180
         execution_type = careful
         #occupation_policy = 3
         execute_order = yes
@@ -1672,7 +1684,7 @@ PAM_war_with_PAU = { #与军团开战
 
 
 
-PAM_check_omega_lul = { #部队逻辑
+PAM_check_omega_lul = {
     allowed = {
         original_tag = PAM
     }
@@ -1680,74 +1692,35 @@ PAM_check_omega_lul = { #部队逻辑
         has_war = yes
     }
     abort_when_not_enabled = yes
+
+    #低基建非核心内陆荒地采取谨慎姿态并减少屯兵
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
         execution_type = careful
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
-
+    #加强首都保卫
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1756,11 +1729,10 @@ PAM_check_omega_lul = { #部队逻辑
         }
         value = 50
     }
-
-    ai_strategy = { #登陆更有价值的地块
+    #登陆优先高价值与有港口沿海州
+    ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             check_variable = { state_strategic_value < 3 }
         }
         value = -5
@@ -1768,68 +1740,32 @@ PAM_check_omega_lul = { #部队逻辑
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 8 }
         }
-        value = -3
+        value = -6
     }
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-        }
-        value = -3
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
+            is_coastal = yes
+            any_province_building_level = {
+                province = {
+                    all_provinces = yes
+                    limit_to_coastal = yes
                 }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-        }
-        value = -15
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            OR = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
+                building = naval_base
+                level > 0
             }
         }
         value = 15
     }
-
 }
 
 
 
 
-PAM_war_with_LHS = { #与野火
+PAM_war_with_LHS_player = { #与野火
     allowed = {
         original_tag = PAM
     }
@@ -1852,7 +1788,7 @@ PAM_war_with_LHS = { #与野火
         type = front_control
         tag = LHS
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = no
         execution_type = rush_weak
@@ -1883,7 +1819,7 @@ PAM_war_with_LHS = { #与野火
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -1923,7 +1859,7 @@ PAM_war_with_LHS = { #与野火
 
 
 }
-PAM_war_with_LHS = { #与野火
+PAM_war_with_LHS_ai = { #与野火
     allowed = {
         original_tag = PAM
     }
@@ -1946,7 +1882,7 @@ PAM_war_with_LHS = { #与野火
         type = front_control
         tag = LHS
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = no
         execution_type = rush_weak
@@ -1977,7 +1913,7 @@ PAM_war_with_LHS = { #与野火
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2042,7 +1978,7 @@ PAM_war_with_MS1 = { #与魔女之夜开战
         type = front_control
         tag = MS1
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2080,7 +2016,7 @@ PAM_war_with_WL1 = { #与躁动的亡灵开战
         type = front_control
         tag = WL1
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2140,7 +2076,7 @@ PAM_war_with_BRA = { #与妖精开战
         type = front_control
         tag = ELF
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2229,7 +2165,7 @@ PAM_war_with_MGU = { #与魔法少女联盟开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2239,7 +2175,7 @@ PAM_war_with_MGU = { #与魔法少女联盟开战
         type = front_control
         tag = MGU
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2308,7 +2244,7 @@ PAM_war_with_BRA_MGU = { #与妖精和魔法少女联盟开战
         type = front_control
         tag = ELF
 
-        priority = 75
+        priority = 140
         ordertype = front
         manual_attack = no
         execution_type = rush
@@ -2369,7 +2305,7 @@ PAM_war_with_PAQ = { #与阿德莱希开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2380,61 +2316,7 @@ PAM_war_with_PAQ = { #与阿德莱希开战
         type = front_control
         tag = PAQ
 
-        priority = 75
-        ordertype = front
-        execution_type = careful
-        #occupation_policy = 3
-        execute_order = yes
-    }
-    ai_strategy = {
-        type = front_armor_score
-        id = PAQ
-        value = 100
-    }
-    ai_strategy = {
-        type = garrison
-        value = -100                   # 驻军需求（默认70-100）
-    }
-}
-PAM_war_with_PAQ = { #与阿德莱希开战
-    allowed = {
-        original_tag = PAM
-    }
-    enable = {
-        AND = {
-            has_war_with = PAQ
-        }
-
-    }
-    abort_when_not_enabled = yes
-
-    ai_strategy = {
-        type = invade		#入侵
-        id = "PAQ"
-        value = 200
-    }
-
-    ai_strategy = { #注重船坞
-        type = front_control
-        state_trigger = {
-            is_controlled_by = PAQ
-            OR = {
-                is_coastal = yes
-            }
-        }
-        ratio = 0.2
-        priority = 120
-        ordertype = front
-        execution_type = rush
-        manual_attack = no
-        execute_order  = yes
-        #occupation_policy = 3
-    }
-    ai_strategy = {
-        type = front_control
-        tag = PAQ
-
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2480,7 +2362,7 @@ PAM_war_with_PAY = { #与魔女之树开战
             }
         }
 
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2497,7 +2379,7 @@ PAM_war_with_PAY = { #与魔女之树开战
         type = front_control
         tag = PAY
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2518,12 +2400,14 @@ PAM_war_with_PAY = { #与魔女之树开战
 
 
 PAM_zhunbei_LHS = { #提前准备攻打野火
+    allowed = {
+        original_tag = PAM
+    }
     enable = {
-        tag = PAM
         date > 1938.1.1
     }
     abort = {
-        not = { country_exists = PAM }
+        not = { country_exists = LHS }
     }
 
     ai_strategy = {
@@ -2533,8 +2417,10 @@ PAM_zhunbei_LHS = { #提前准备攻打野火
     }
 }
 PAM_zhunbei_MS1 = { #提前准备攻打魔女之夜
+    allowed = {
+        original_tag = PAM
+    }
     enable = {
-        tag = PAM
         always = no
         # OR = {
         # focus_progress = {
@@ -2564,8 +2450,10 @@ PAM_zhunbei_MS1 = { #提前准备攻打魔女之夜
 
 
 PAM_zhunbei_WL1 = { #提前准备攻打躁动亡灵
+    allowed = {
+        original_tag = PAM
+    }
     enable = {
-        tag = PAM
         OR = {
             focus_progress = {
                 focus = PAM_cztm
@@ -2593,8 +2481,10 @@ PAM_zhunbei_WL1 = { #提前准备攻打躁动亡灵
 }
 
 PAM_zhunbei_ELF = { #提前准备攻打妖精
+    allowed = {
+        original_tag = PAM
+    }
     enable = {
-        tag = PAM
         always = no
         # OR = {
         # focus_progress = {

@@ -9,7 +9,7 @@ KFL_start1 = {
             is_coastal = yes
             FROM = { has_war_with = FROM.FROM }
         }
-        priority = 9000
+        priority = 25
         ratio = 0.10
         ordertype = front
         execution_type = rush
@@ -38,11 +38,6 @@ KFL_start1 = {
         value = -99
     }
 
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 200
-    }
     ai_strategy = {
         type = research_tech
         id = concentrated_industry
@@ -87,12 +82,12 @@ KFL_start1 = {
 
 KFL_stop_disbanding_your_army = {
     allowed = { original_tag = KFL }
-    enable = { num_divisions < 700 }
-    abort_when_not_enabled = yes
-    ai_strategy = {
-        type = ai_wanted_divisions_factor
-        value = 600
+    enable = {
+        num_divisions < 300
+        check_variable = { Debt_ratio < 0.85 }
     }
+    abort_when_not_enabled = yes
+    ai_strategy = { type = ai_wanted_divisions_factor value = 240 }
 }
 
 
@@ -112,7 +107,7 @@ KFL_push_enemy_capital = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = KFL }
         }
-        priority = 55000
+        priority = 60
         ratio = 0.05
         ordertype = front
         execution_type = rush
@@ -167,7 +162,7 @@ KFL_target_enemy_supply_hubs = {
                 level > 0
             }
         }
-        priority = 32000
+        priority = 50
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -188,7 +183,7 @@ KFL_target_enemy_supply_hubs = {
                 level > 0
             }
         }
-        priority = 15000
+        priority = 35
         ordertype = front
         execution_type = balanced
         execute_order = yes
@@ -237,7 +232,7 @@ KFL_state_is_zhanlue = {
             FROM = { has_war_with = FROM.FROM }
             FROM = { divisions_in_state = { state = PREV size = 0 } }
         }
-        priority = 46000
+        priority = 60
         ratio = 0.02
         ordertype = front
         execution_type = rush_weak
@@ -257,7 +252,7 @@ KFL_state_is_zhanlue = {
                 level > 0
             }
         }
-        priority = 30000
+        priority = 50
         ratio = 0.05
         ordertype = front
         execution_type = rush
@@ -272,7 +267,7 @@ KFL_state_is_zhanlue = {
             FROM = { has_war_with = FROM.FROM }
             FROM = { divisions_in_state = { state = PREV size < 3 } }
         }
-        priority = 18000
+        priority = 40
         ratio = 0.30
         ordertype = front
         execution_type = rush
@@ -287,7 +282,7 @@ KFL_state_is_zhanlue = {
             is_coastal = yes
             controller = { has_war_with = KFL }
         }
-        priority = 10000
+        priority = 30
         ratio = 0.10
         ordertype = front
         execution_type = rush
@@ -301,11 +296,13 @@ KFL_avoid_thin_lines = {
     allowed = { original_tag = KFL }
     enable = { has_war = yes }
     abort_when_not_enabled = yes
+    #前线被敌渗透的防线优先增援
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = KFL
-            check_variable = { num_enemy_neighbor_states > 2 }
+            NOT = { is_fully_controlled_by = KFL }
+            any_neighbor_state = { controller = { has_war_with = KFL } }
         }
         value = 60
     }
@@ -325,13 +322,16 @@ KFL_encirclement_hunter = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            controller = { has_war_with = KFL }
+            controller = {
+                has_war_with = KFL
+                divisions_in_state = { state = PREV size < 2 }
+            }
             NOT = { is_coastal = yes }
             NOT = { is_capital = yes }
+            NOT = { is_fully_controlled_by = FROM }
             any_neighbor_state = { is_controlled_by = KFL }
-            check_variable = { num_enemy_neighbor_states < 2 }
         }
-        priority = 28000
+        priority = 60
         ratio = 0.05
         ordertype = front
         execution_type = rush_weak
@@ -341,11 +341,14 @@ KFL_encirclement_hunter = {
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            controller = { has_war_with = KFL }
+            controller = {
+                has_war_with = KFL
+                divisions_in_state = { state = PREV size < 2 }
+            }
             NOT = { is_coastal = yes }
             NOT = { is_capital = yes }
+            NOT = { is_fully_controlled_by = FROM }
             any_neighbor_state = { is_controlled_by = KFL }
-            check_variable = { num_enemy_neighbor_states < 2 }
         }
         value = 40
     }
@@ -370,7 +373,7 @@ KFL_end_pocket = {
                 controller = { NOT = { has_war_with = FROM.FROM } }
             }
         }
-        priority = 70000
+        priority = 190
         ratio = 0.02
         ordertype = front
         execution_type = rush_weak
@@ -425,7 +428,7 @@ KFL_victory_acceleration = {
                 surrender_progress > 0.20
             }
         }
-        priority = 36000
+        priority = 45
         ratio = 0.10
         ordertype = front
         execution_type = rush_weak
@@ -460,7 +463,7 @@ KFL_victory_phase1_crack = {
                 level > 0
             }
         }
-        priority = 24000
+        priority = 45
         ratio = 0.05
         ordertype = front
         execution_type = rush
@@ -494,7 +497,7 @@ KFL_victory_phase2_exploit = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = KFL }
         }
-        priority = 45000
+        priority = 55
         ratio = 0.02
         ordertype = front
         execution_type = rush
@@ -509,7 +512,7 @@ KFL_victory_phase2_exploit = {
                 surrender_progress > 0.20
             }
         }
-        priority = 22000
+        priority = 45
         ratio = 0.10
         ordertype = front
         execution_type = rush_weak
@@ -537,7 +540,7 @@ KFL_victory_phase3_annihilate = {
                 surrender_progress > 0.45
             }
         }
-        priority = 60000
+        priority = 65
         ratio = 0.20
         ordertype = front
         execution_type = rush_weak
@@ -546,7 +549,6 @@ KFL_victory_phase3_annihilate = {
     }
     ai_strategy = { type = spare_unit_factor value = -60 }
     ai_strategy = { type = garrison value = -200 }
-    ai_strategy = { type = ai_wanted_divisions_factor value = 300 }
 }
 
 KFL_crisis_iron_wall = {
@@ -576,7 +578,7 @@ KFL_crisis_iron_wall = {
                 }
             }
         }
-        priority = 100000
+        priority = 195
         ratio = 0.05
         ordertype = front
         execution_type = careful
@@ -611,7 +613,7 @@ KFL_crisis_iron_wall = {
     ai_strategy = { type = equipment_production_factor id = artillery value = 150 }
     ai_strategy = { type = equipment_production_factor id = armor value = -150 }
     ai_strategy = { type = garrison value = 75 }
-    ai_strategy = { type = ai_wanted_divisions_factor value = 1500 }
+    ai_strategy = { type = ai_wanted_divisions_factor value = 180 }
 }
 
 KFL_capital_shield = {
@@ -647,7 +649,7 @@ KFL_capital_shield = {
             is_controlled_by = KFL
             any_neighbor_state = { controller = { has_war_with = KFL } }
         }
-        priority = 36000
+        priority = 185
         ratio = 0.05
         ordertype = front
         execution_type = careful
@@ -709,7 +711,7 @@ KFL_strategic_withdrawal = {
             is_controlled_by = FROM.FROM
             any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        priority = 40000
+        priority = 55
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -717,78 +719,42 @@ KFL_strategic_withdrawal = {
 }
 
 KFL_check_omega_lul = {
-    allowed = { original_tag = KFL }
-    enable = { has_war = yes }
+    allowed = {
+        original_tag = KFL
+    }
+    enable = {
+        has_war = yes
+    }
     abort_when_not_enabled = yes
 
+    #低基建非核心内陆荒地采取谨慎姿态并减少屯兵
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
         execution_type = careful
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
-
+    #加强首都保卫
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -797,11 +763,10 @@ KFL_check_omega_lul = {
         }
         value = 50
     }
-
-    ai_strategy = { #登陆更有价值的地块
+    #登陆优先高价值与有港口沿海州
+    ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             check_variable = { state_strategic_value < 3 }
         }
         value = -5
@@ -809,57 +774,22 @@ KFL_check_omega_lul = {
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 8 }
         }
-        value = -3
+        value = -6
     }
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-        }
-        value = -3
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
+            is_coastal = yes
+            any_province_building_level = {
+                province = {
+                    all_provinces = yes
+                    limit_to_coastal = yes
                 }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-        }
-        value = -15
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            OR = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
+                building = naval_base
+                level > 0
             }
         }
         value = 15
@@ -874,7 +804,7 @@ KFL_war_with_KMK = {
     ai_strategy = {
         type = front_control
         tag = KMK
-        priority = 12000
+        priority = 160
         ratio = 0.10
         manual_attack = yes
         execution_type = rush_weak
@@ -891,7 +821,7 @@ KFL_war_with_DVL = {
     ai_strategy = {
         type = front_control
         tag = DVL
-        priority = 8000
+        priority = 150
         ratio = 0.10
         ordertype = front
         manual_attack = yes
@@ -913,7 +843,7 @@ KFL_war_with_ENG = {
         type = front_control
         state_trigger = { is_controlled_by = ENG is_coastal = yes }
         ratio = 0.10
-        priority = 13000
+        priority = 170
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -922,7 +852,7 @@ KFL_war_with_ENG = {
     ai_strategy = {
         type = front_control
         tag = ENG
-        priority = 7000
+        priority = 150
         ordertype = front
         execution_type = careful
         execute_order = yes
@@ -941,7 +871,7 @@ KFL_war_with_USA = {
         type = front_control
         state_trigger = { is_controlled_by = USA is_coastal = yes }
         ratio = 0.10
-        priority = 13000
+        priority = 170
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -950,7 +880,7 @@ KFL_war_with_USA = {
     ai_strategy = {
         type = front_control
         tag = USA
-        priority = 7000
+        priority = 150
         ordertype = front
         execution_type = careful
         execute_order = yes
@@ -969,7 +899,7 @@ KFL_war_with_NGD = {
         type = front_control
         state_trigger = { is_controlled_by = NGD is_coastal = yes }
         ratio = 0.10
-        priority = 13000
+        priority = 170
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -978,7 +908,7 @@ KFL_war_with_NGD = {
     ai_strategy = {
         type = front_control
         tag = NGD
-        priority = 7000
+        priority = 150
         ordertype = front
         execution_type = careful
         execute_order = yes
@@ -997,7 +927,7 @@ KFL_war_with_NFA = {
         type = front_control
         state_trigger = { is_controlled_by = NFA is_coastal = yes }
         ratio = 0.10
-        priority = 13000
+        priority = 170
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1006,7 +936,7 @@ KFL_war_with_NFA = {
     ai_strategy = {
         type = front_control
         tag = NFA
-        priority = 7000
+        priority = 150
         ordertype = front
         execution_type = careful
         execute_order = yes
@@ -1025,7 +955,7 @@ KFL_war_with_FRG = {
         type = front_control
         state_trigger = { is_controlled_by = FRG is_coastal = yes }
         ratio = 0.10
-        priority = 13000
+        priority = 170
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1034,7 +964,7 @@ KFL_war_with_FRG = {
     ai_strategy = {
         type = front_control
         tag = FRG
-        priority = 7000
+        priority = 150
         ordertype = front
         execution_type = careful
         execute_order = yes
@@ -1053,7 +983,7 @@ KFL_war_with_JAP = {
         type = front_control
         state_trigger = { is_controlled_by = JAP is_coastal = yes }
         ratio = 0.10
-        priority = 13000
+        priority = 170
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1062,7 +992,7 @@ KFL_war_with_JAP = {
     ai_strategy = {
         type = front_control
         tag = JAP
-        priority = 7000
+        priority = 150
         ordertype = front
         execution_type = careful
         execute_order = yes
@@ -1093,11 +1023,11 @@ KFL_unit = {
     ai_strategy = { type = air_factory_balance value = 10 }
     ai_strategy = { type = role_ratio id = garrison value = 0 }
     ai_strategy = { type = role_ratio id = paratroopers value = 0 }
-    ai_strategy = { type = role_ratio id = mountaineers_KFL value = 0 }
+    ai_strategy = { type = role_ratio id = mountaineer value = 0 }
     ai_strategy = { type = role_ratio id = magic_assault value = 0 }
     ai_strategy = { type = role_ratio id = cavalry value = 0 }
 
-    ai_strategy = { type = template_prio id = infantry_KFL value = 100 }
+    ai_strategy = { type = template_prio id = KFL_infantry value = 100 }
     ai_strategy = { type = build_army id = KFL_infantry value = 100 }
     ai_strategy = { type = role_ratio id = KFL_infantry value = 100 }
     ai_strategy = { type = railway_gun_divisions_ratio value = 5 }
@@ -1119,7 +1049,7 @@ KFL_protect_supply_lines = {
             }
             any_neighbor_state = { controller = { has_war_with = KFL } }
         }
-        priority = 14000
+        priority = 30
         ratio = 0.05
         ordertype = front
         execution_type = careful

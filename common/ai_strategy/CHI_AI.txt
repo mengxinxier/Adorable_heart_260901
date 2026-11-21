@@ -10,11 +10,6 @@ CHI_generic_combat_base_setup = {
     }
     abort_when_not_enabled = yes
 
-    #防止有枪有人却不下兵
-    ai_strategy = {
-        type = force_build_armies
-        value = 100
-    }
     #忽略陆军无能修正，保持作战积极性
     ai_strategy = {
         type = ignore_army_incompetence
@@ -30,12 +25,6 @@ CHI_generic_combat_base_setup = {
         type = pp_spend_priority
         id = relation
         value = -9999
-    }
-    #优先修建补给节点
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 200
     }
     #基础科研倾向：优先步枪、集中工业、电子工程
     ai_strategy = {
@@ -78,6 +67,24 @@ CHI_generic_combat_base_setup = {
         type = intelligence_agency_branch_desire_factor
         id = branch_crypto
         value = 2000
+    }
+}
+
+#债务安全阈值内维持积极下兵
+CHI_force_build_armies_debt_safe = {
+    allowed = {
+        OR = {
+            is_chinese_country = yes
+        }
+    }
+    enable = {
+        num_divisions < 280
+        check_variable = { Debt_ratio < 0.85 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = force_build_armies
+        value = 100
     }
 }
 
@@ -303,7 +310,7 @@ CHI_unit_production_late = {
     }
     ai_strategy = {
         type = template_prio
-        id = medium_armor
+        id = armor
         value = 100
     }
     ai_strategy = {
@@ -345,13 +352,14 @@ CHI_generic_stop_disbanding_army = {
         }
     }
     enable = {
-        num_divisions < 400
+        num_divisions < 280
+        check_variable = { Debt_ratio < 0.85 }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 500
+        value = 220
     }
 }
 
@@ -781,7 +789,7 @@ CHI_generic_crisis_iron_wall = {
         state_trigger = {
             is_controlled_by = FROM.FROM
         }
-        priority = 90000
+        priority = 195
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -824,7 +832,7 @@ CHI_generic_crisis_iron_wall = {
     }
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 1000
+        value = 160
     }
 }
 
@@ -878,7 +886,7 @@ CHI_generic_capital_shield = {
                 controller = { has_war_with = FROM.FROM }
             }
         }
-        priority = 70000
+        priority = 185
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -913,7 +921,7 @@ CHI_generic_end_pocket = {
                 is_controlled_by = FROM.FROM
             }
         }
-        priority = 80000
+        priority = 190
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -955,13 +963,16 @@ CHI_generic_encirclement_hunter = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            controller = { has_war_with = FROM.FROM }
+            controller = {
+                has_war_with = FROM.FROM
+                divisions_in_state = { state = PREV size < 2 }
+            }
             NOT = { is_coastal = yes }
             NOT = { is_capital = yes }
+            NOT = { is_fully_controlled_by = FROM }
             any_neighbor_state = { is_controlled_by = FROM.FROM }
-            check_variable = { num_enemy_neighbor_states < 2 }
         }
-        priority = 40000
+        priority = 60
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -970,11 +981,14 @@ CHI_generic_encirclement_hunter = {
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            controller = { has_war_with = FROM.FROM }
+            controller = {
+                has_war_with = FROM.FROM
+                divisions_in_state = { state = PREV size < 2 }
+            }
             NOT = { is_coastal = yes }
             NOT = { is_capital = yes }
+            NOT = { is_fully_controlled_by = FROM }
             any_neighbor_state = { is_controlled_by = FROM.FROM }
-            check_variable = { num_enemy_neighbor_states < 2 }
         }
         value = 45
     }
@@ -992,12 +1006,14 @@ CHI_generic_avoid_thin_lines = {
     }
     abort_when_not_enabled = yes
 
+    #前线被敌渗透的防线优先增援
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
-            check_variable = {
-                num_enemy_neighbor_states > 2
+            NOT = { is_fully_controlled_by = FROM.FROM }
+            any_neighbor_state = {
+                controller = { has_war_with = FROM.FROM }
             }
         }
         value = 80
@@ -1065,7 +1081,7 @@ CHI_generic_strategic_withdrawal = {
             is_controlled_by = FROM.FROM
             any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        priority = 40000
+        priority = 55
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -1100,7 +1116,7 @@ CHI_generic_target_enemy_supply_hubs = {
                 level > 0
             }
         }
-        priority = 32000
+        priority = 50
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1121,7 +1137,7 @@ CHI_generic_target_enemy_supply_hubs = {
                 level > 0
             }
         }
-        priority = 15000
+        priority = 35
         ordertype = front
         execution_type = balanced
         execute_order = yes
@@ -1167,7 +1183,7 @@ CHI_generic_protect_own_supply_lines = {
                 controller = { has_war_with = FROM.FROM }
             }
         }
-        priority = 16000
+        priority = 30
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -1207,28 +1223,9 @@ CHI_generic_avoid_unsupplied_wasteland = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
@@ -1240,30 +1237,9 @@ CHI_generic_avoid_unsupplied_wasteland = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
@@ -1299,7 +1275,7 @@ CHI_generic_frontline_opportunism = {
             }
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
-        priority = 65000
+        priority = 60
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1314,7 +1290,7 @@ CHI_generic_frontline_opportunism = {
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
         ratio = 0.15
-        priority = 14000
+        priority = 40
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1331,7 +1307,7 @@ CHI_generic_frontline_opportunism = {
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
         ratio = 0.4
-        priority = 18000
+        priority = 45
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1360,7 +1336,7 @@ CHI_generic_push_enemy_capital = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
-        priority = 55000
+        priority = 60
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1416,7 +1392,7 @@ CHI_generic_victory_phase1_crack = {
             }
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
-        priority = 26000
+        priority = 45
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1458,7 +1434,7 @@ CHI_generic_victory_phase2_exploit = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
-        priority = 45000
+        priority = 55
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1472,7 +1448,7 @@ CHI_generic_victory_phase2_exploit = {
                 surrender_progress > 0.20
             }
         }
-        priority = 30000
+        priority = 45
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1506,7 +1482,7 @@ CHI_generic_victory_phase3_annihilate = {
                 surrender_progress > 0.45
             }
         }
-        priority = 60000
+        priority = 65
         ratio = 0.85
         ordertype = front
         execution_type = rush_weak
@@ -1742,116 +1718,122 @@ CHI_has_war_with_SHX = {
 
 #CHI向WUH派遣志愿军
 CHI_support_WUH = {
-    reversed = yes
     allowed = {
         original_tag = CHI
     }
     enable = {
-        tag = WUH
-        is_subject = no
-        has_war_with = ROC
+        WUH = {
+            exists = yes
+            is_subject = no
+            has_war_with = ROC
+        }
+        NOT = { has_war_with = WUH }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = send_volunteers_desire
-        id = "CHI"
+        id = "WUH"
         value = 1000
     }
 }
 
 #CHI向FUJ派遣志愿军
 CHI_support_FUJ = {
-    reversed = yes
     allowed = {
         original_tag = CHI
     }
     enable = {
-        tag = FUJ
-        is_subject = no
-        has_war_with = ROC
+        FUJ = {
+            exists = yes
+            is_subject = no
+            has_war_with = ROC
+        }
+        NOT = { has_war_with = FUJ }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = send_volunteers_desire
-        id = "CHI"
+        id = "FUJ"
         value = 1000
     }
 }
 
 #CHI向YUN派遣志愿军
 CHI_support_YUN = {
-    reversed = yes
     allowed = {
         original_tag = CHI
     }
     enable = {
-        tag = YUN
-        is_subject = no
-        has_war_with = PRC
+        YUN = {
+            exists = yes
+            is_subject = no
+            has_war_with = PRC
+        }
+        NOT = { has_war_with = YUN }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = send_volunteers_desire
-        id = "CHI"
+        id = "YUN"
         value = 1000
     }
 }
 
 #法国向ROC派遣志愿军
 FRA_support_ROC = {
-    reversed = yes
     allowed = {
         original_tag = FRA
     }
     enable = {
-        tag = ROC
         OR = {
             has_government = democratic
             has_government = neutrality
         }
-        FRA = {
+        ROC = {
+            exists = yes
             OR = {
                 has_government = democratic
                 has_government = neutrality
             }
         }
+        NOT = { has_war_with = ROC }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = send_volunteers_desire
-        id = "FRA"
+        id = "ROC"
         value = 1000
     }
 }
 
 #英国向ROC派遣志愿军
 ENG_support_ROC = {
-    reversed = yes
     allowed = {
         original_tag = ENG
     }
     enable = {
-        tag = ROC
         OR = {
             has_government = democratic
             has_government = neutrality
         }
-        ENG = {
+        ROC = {
+            exists = yes
             OR = {
                 has_government = democratic
                 has_government = neutrality
             }
         }
+        NOT = { has_war_with = ROC }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = send_volunteers_desire
-        id = "ENG"
+        id = "ROC"
         value = 1000
     }
 }
