@@ -5,9 +5,9 @@ scripted_gui = {
 		parent_window_token = politics_tab
 		visible = {
 			tag = GRE
-			#has_country_flag = GRE_Iuno_Tarot_open_visible
+			has_country_flag = GRE_Iuno_Tarot_open_visible
 			is_ai = no
-			always = no
+			#always = no
 		}
 		properties = {
 
@@ -26,7 +26,6 @@ scripted_gui = {
 			}
 		}
 	}
-
 
 	GRE_Iuno_Tarot_map_gui_window = {
 		window_name = "GRE_Iuno_Tarot_gui_window"
@@ -90,7 +89,10 @@ scripted_gui = {
 					}
 					while_loop_effect = {
 						limit = {
-							is_in_array = { GRE_Iuno_Tarot_tarot_array = GRE_Iuno_Tarot_temp_var }
+							OR = {
+								NOT = { is_in_array = { GRE_Iuno_Tarot_pie_chart_array = GRE_Iuno_Tarot_temp_var } } #can not use.
+								is_in_array = { GRE_Iuno_Tarot_tarot_array = GRE_Iuno_Tarot_temp_var } #already has.
+							}
 						}
 						set_variable_to_random = {
 							var = GRE_Iuno_Tarot_temp_var
@@ -176,6 +178,11 @@ scripted_gui = {
 						}
 					}
 				}
+				hidden_effect = {
+					country_event = GRE_hidden_focus.3
+				}
+				custom_effect_tooltip = GRE_enter_button_tt_4
+				set_country_flag = { flag = GRE_Iuno_Tarot_cooling_flag value = 1 days = 91 }
 				clr_country_flag = GRE_Iuno_Tarot_map_gui_visble 
 			}
 		}
@@ -196,11 +203,17 @@ scripted_gui = {
 					}
 				}
 			}
+			GRE_Iuno_Tarot_cover_visible = {
+				ROOT = {
+					has_country_flag = GRE_Iuno_Tarot_cooling_flag
+				}
+			}
 			GRE_Iuno_Tarot_frame_visible = {
 				ROOT = {
 					check_variable = {
 						GRE_Iuno_Tarot_exchange_array^ti = 1
 					}
+					NOT = { has_country_flag = GRE_Iuno_Tarot_cooling_flag }
 				}
 			}
 			GRE_Iuno_Tarot_gui_refresh_visible = {
@@ -213,31 +226,68 @@ scripted_gui = {
 					check_variable = {
 						GRE_Iuno_Tarot_tarot_array^ti > 0
 					}
+					NOT = { has_country_flag = GRE_Iuno_Tarot_cooling_flag }
 				}
 			}
 			GRE_divine_button_click_enabled = {
 				ROOT = {
-					has_idea = GRE_Vision_of_the_future
-					custom_trigger_tooltip = {
-						tooltip = GRE_divine_button_ttd_ttt
-					
-						always = no
+					if = {
+						limit = {
+							has_country_flag = GRE_Iuno_Tarot_cooling_flag
+						}
+						NOT = { has_country_flag = GRE_Iuno_Tarot_cooling_flag }
+					}
+					else = {
+						has_idea = GRE_deputy_Iuno
+						custom_trigger_tooltip = {
+							tooltip = GRE_divine_button_ttd_ttt
+						
+							ROOT = {
+								count_triggers = {
+									amount = 3
+									
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^0 = 1 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^1 = 2 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^2 = 3 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^3 = 4 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^4 = 5 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^5 = 6 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^6 = 7 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^7 = 8 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^8 = 9 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^9 = 10 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^10 = 11 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^11 = 12 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^12 = 13 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^13 = 14 }
+									check_variable = { GRE_Iuno_Tarot_pie_chart_array^14 = 15 }
+								}
+							}
+						}
 					}
 				}
 			}
 			GRE_enter_button_click_enabled = {
 				ROOT = {
-					custom_trigger_tooltip = {
-						tooltip = GRE_enter_button_click_enabled_tt_ttt
-					
-						check_variable = {
-							GRE_Iuno_Tarot_tarot_array^0 > 0
+					if = {
+						limit = {
+							has_country_flag = GRE_Iuno_Tarot_cooling_flag
 						}
-						check_variable = {
-							GRE_Iuno_Tarot_tarot_array^1 > 0
-						}
-						check_variable = {
-							GRE_Iuno_Tarot_tarot_array^2 > 0
+						NOT = { has_country_flag = GRE_Iuno_Tarot_cooling_flag }
+					}
+					else = {
+						custom_trigger_tooltip = {
+							tooltip = GRE_enter_button_click_enabled_tt_ttt
+						
+							check_variable = {
+								GRE_Iuno_Tarot_tarot_array^0 > 0
+							}
+							check_variable = {
+								GRE_Iuno_Tarot_tarot_array^1 > 0
+							}
+							check_variable = {
+								GRE_Iuno_Tarot_tarot_array^2 > 0
+							}
 						}
 					}
 				}
@@ -319,7 +369,80 @@ scripted_gui = {
 			}
 		}
 	}
+}
 
-
-
+scripted_gui = {
+	GRE_TDT_map_gui = {
+		window_name = "GRE_TDT_map_ui"
+		context_type = decision_category
+		dirty = GRE_TDT_map_gui_refresh_var
+		
+		visible = {
+			tag = GRE
+		}
+		
+		dynamic_lists = {
+			state_gridbox = {
+				entry_container = "GRE_TDT_map_state_container"
+				array = GRE_TDT_map_state_array
+				index = si
+				value = sv
+				change_scope = yes
+			}
+		}
+		properties = {
+			GRE_TDT_map_state = {
+				image = GFX_GRE_TDT_map_state_[?si]
+				frame = sv
+			}
+			GRE_TDT_category_map = {
+				frame = GRE_TDT_category_map_frame
+			}
+			GRE_TDT_category_type = {
+				frame = GRE_TDT_category_type_frame
+			}
+		}
+		effects = {
+			GRE_TDT_map_state_click = {
+				ROOT = {
+					add_political_power = 2
+					for_each_loop = {
+						array = GRE_TDT_map_state_array
+						index = i
+						value = v
+						break = b
+						
+						set_variable = { GRE_TDT_map_state_array^i = 1 }
+						if = {
+							limit = {
+								check_variable = { i = si }
+							}
+							set_variable = { GRE_TDT_map_state_array^i = 2 }
+						}
+					}
+					GRE_TDT_state_id_from_map_to_decision = yes
+					GRE_TDT_refresh_map = yes
+				}
+			}
+			GRE_TDT_category_map_click = {
+				ROOT = {
+					set_variable = { GRE_TDT_category = 1 }
+					set_variable = { GRE_TDT_category_map_frame = 2 }
+					set_variable = { GRE_TDT_category_type_frame = 1 }
+					GRE_TDT_refresh_map = yes
+				}
+			}
+			GRE_TDT_category_type_click = {
+				ROOT = {
+					set_variable = { GRE_TDT_category = 2 }
+					set_variable = { GRE_TDT_category_map_frame = 1 }
+					set_variable = { GRE_TDT_category_type_frame = 2 }
+					GRE_TDT_refresh_map = yes
+				}
+			}
+		}
+		triggers = {
+			GRE_TDT_map_visible = { always = no }
+		}
+	}
 }
