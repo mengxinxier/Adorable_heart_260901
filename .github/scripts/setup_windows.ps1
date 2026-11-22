@@ -1,7 +1,7 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$BaseUrl = "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1",
-    [string]$Model = "qwen3.8-flash",
+    [string]$BaseUrl = "https://api.deepseek.com/v1",
+    [string]$Model = "deepseek-chat",
     [switch]$SkipApiTest
 )
 

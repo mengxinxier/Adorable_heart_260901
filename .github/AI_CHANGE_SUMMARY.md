@@ -11,8 +11,8 @@
 
 - GitHub Actions Secret：`LLM_API_KEY`（加密保存，不在仓库里）
 - GitHub Actions Variables：
-  - `LLM_BASE_URL` = `https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1`
-  - `LLM_MODEL` = `qwen3.8-flash`
+  - `LLM_BASE_URL` = `https://api.deepseek.com/v1`
+  - `LLM_MODEL` = `deepseek-chat`
   - `SUMMARY_LANGUAGE` = `zh-CN`
   - `LLM_MAX_TOKENS` = `3000`
 - 本机用户环境变量已设置 `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL`
@@ -81,8 +81,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_window
 ```powershell
 # PowerShell：当前用户永久生效（把 <你的 key> 换成实际值，不要提交）
 [Environment]::SetEnvironmentVariable("LLM_API_KEY", "<你的 key>", "User")
-[Environment]::SetEnvironmentVariable("LLM_BASE_URL", "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1", "User")
-[Environment]::SetEnvironmentVariable("LLM_MODEL", "qwen3.8-flash", "User")
+[Environment]::SetEnvironmentVariable("LLM_BASE_URL", "https://api.deepseek.com/v1", "User")
+[Environment]::SetEnvironmentVariable("LLM_MODEL", "deepseek-chat", "User")
 ```
 
 设置后需要新开终端 / 重启 Git GUI 才会读到新环境变量。
@@ -132,8 +132,8 @@ PR 的 AI 区块使用标记保存，重复执行原地替换，人工写在区�
 | 名称 | 默认值 | 说明 |
 | --- | --- | --- |
 | `LLM_API_KEY` | 无 | 必填，只放环境变量/Secret |
-| `LLM_BASE_URL` | 本仓库默认千问兼容接口 | 模型 API 地址 |
-| `LLM_MODEL` | `qwen3.8-flash` | 模型名 |
+| `LLM_BASE_URL` | DeepSeek 官方接口 | 模型 API 地址 |
+| `LLM_MODEL` | `deepseek-chat` | 模型名 |
 | `SUMMARY_LANGUAGE` | `zh-CN` | 输出语言 |
 | `LLM_MAX_TOKENS` | `3000` | Action 最大输出 token |
 | `AI_COMMIT_MSG_MAX_TOKENS` | `1800` | 本地钩子最大输出 token |

@@ -704,7 +704,7 @@ def _chat_completions_url() -> str:
     """
     base = env(
         "LLM_BASE_URL",
-        "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1",
+        "https://api.deepseek.com/v1",
     ).rstrip("/")
     parsed = urllib.parse.urlparse(base)
     if "/chat/completions" in parsed.path:
@@ -744,7 +744,7 @@ def _chat_completion(
     api_key = env("LLM_API_KEY") or env("OPENAI_API_KEY")
     if not api_key:
         raise SummaryError("未配置 LLM_API_KEY 或 OPENAI_API_KEY")
-    model = env("LLM_MODEL") or env("OPENAI_MODEL") or "qwen3.8-flash"
+    model = env("LLM_MODEL") or env("OPENAI_MODEL") or "deepseek-chat"
     if max_tokens is None:
         max_tokens = env_int("LLM_MAX_TOKENS", 3000, minimum=256)
     request_body: dict[str, Any] = {
@@ -1078,7 +1078,7 @@ def apply_target(
 
 
 def _model_name() -> str:
-    return env("LLM_MODEL") or env("OPENAI_MODEL") or "qwen3.8-flash"
+    return env("LLM_MODEL") or env("OPENAI_MODEL") or "deepseek-chat"
 
 
 def main() -> int:
