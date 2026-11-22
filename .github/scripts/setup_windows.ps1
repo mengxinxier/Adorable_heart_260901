@@ -1,7 +1,8 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$BaseUrl = "https://api.deepseek.com/v1",
-    [string]$Model = "deepseek-chat",
+    [string]$Provider = "",
+    [string]$BaseUrl = "",
+    [string]$Model = "",
     [switch]$SkipApiTest
 )
 
@@ -16,6 +17,14 @@ catch {
 }
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 Set-Location $repoRoot
+
+$presets = [ordered]@{
+    "1" = @{ Key = "deepseek"; Name = "DeepSeek 官方"; BaseUrl = "https://api.deepseek.com/v1"; Model = "deepseek-chat" }
+    "2" = @{ Key = "qwen"; Name = "通义千问兼容模式"; BaseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1"; Model = "qwen-plus" }
+    "3" = @{ Key = "openai"; Name = "OpenAI 官方"; BaseUrl = "https://api.openai.com/v1"; Model = "gpt-4o-mini" }
+    "4" = @{ Key = "glm"; Name = "智谱 GLM 兼容接口"; BaseUrl = "https://open.bigmodel.cn/api/paas/v4"; Model = "glm-4-flash" }
+    "5" = @{ Key = "custom"; Name = "自定义 OpenAI 兼容接口"; BaseUrl = ""; Model = "" }
+}
 
 Write-Host ""
 Write-Host "=== AI 提交说明一键安装 ===" -ForegroundColor Cyan
@@ -34,6 +43,47 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Host "[1/4] 已启用 .githooks/prepare-commit-msg" -ForegroundColor Green
 
+$selected = $null
+if ($Provider) {
+    $selected = $presets.Values | Where-Object { $_.Key -eq $Provider.ToLower() } | Select-Object -First 1
+    if (-not $selected) {
+        throw "未知厂商：$Provider。可选 deepseek / qwen / openai / glm / custom"
+    }
+}
+elseif ($BaseUrl -and $Model) {
+    $selected = @{ Key = "custom"; Name = "自定义"; BaseUrl = $BaseUrl; Model = $Model }
+}
+else {
+    Write-Host ""
+    Write-Host "请选择 API 厂商：" -ForegroundColor Cyan
+    foreach ($entry in $presets.GetEnumerator()) {
+        Write-Host "  $($entry.Key). $($entry.Value.Name)"
+    }
+    $choice = Read-Host "输入编号 [1-5]，直接回车使用 1"
+    if (-not $choice) { $choice = "1" }
+    if (-not $presets.Contains($choice)) {
+        throw "无效的厂商编号：$choice"
+    }
+    $selected = $presets[$choice]
+}
+
+if ($selected.BaseUrl) { $BaseUrl = $selected.BaseUrl }
+if ($selected.Model) { $Model = $selected.Model }
+
+if (-not $BaseUrl) {
+    $BaseUrl = Read-Host "请输入 LLM_BASE_URL，例如 https://api.example.com/v1"
+}
+if (-not $Model) {
+    $Model = Read-Host "请输入 LLM_MODEL，例如 gpt-4o-mini"
+}
+if (-not $BaseUrl -or -not $Model) {
+    throw "LLM_BASE_URL 或 LLM_MODEL 为空，安装中止"
+}
+
+Write-Host "已选择：$($selected.Name)" -ForegroundColor Green
+Write-Host "  LLM_BASE_URL = $BaseUrl"
+Write-Host "  LLM_MODEL    = $Model"
+
 $existingKey = [Environment]::GetEnvironmentVariable("LLM_API_KEY", "User")
 if ($existingKey) {
     $replace = Read-Host "检测到已配置 LLM_API_KEY，是否替换？输入 y 替换，直接回车保留"
@@ -43,7 +93,7 @@ if ($existingKey) {
 }
 
 if (-not $existingKey) {
-    $secureKey = Read-Host "请粘贴团队共用的 LLM_API_KEY（输入不回显）" -AsSecureString
+    $secureKey = Read-Host "请粘贴该厂商的 LLM_API_KEY（输入不回显）" -AsSecureString
     $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
     try {
         $existingKey = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
@@ -64,8 +114,6 @@ $env:LLM_API_KEY = $existingKey
 $env:LLM_BASE_URL = $BaseUrl
 $env:LLM_MODEL = $Model
 Write-Host "[2/4] 已写入 Windows 用户环境变量（密钥不会进入 Git 仓库）" -ForegroundColor Green
-Write-Host "      LLM_BASE_URL = $BaseUrl"
-Write-Host "      LLM_MODEL    = $Model"
 
 $python = Get-Command python -ErrorAction SilentlyContinue
 if (-not $python) {
@@ -74,18 +122,24 @@ if (-not $python) {
 Write-Host "[3/4] Python：$($python.Source)" -ForegroundColor Green
 
 if (-not $SkipApiTest) {
-    try {
-        $headers = @{
-            Authorization = "Bearer $existingKey"
-            Accept = "application/json"
-            "User-Agent" = "ai-change-summary-setup"
-        }
-        $null = Invoke-RestMethod -Uri "$($BaseUrl.TrimEnd('/'))/models" -Headers $headers -TimeoutSec 30
-        Write-Host "[4/4] API 连接测试成功" -ForegroundColor Green
+    $testBase = $BaseUrl.TrimEnd('/')
+    if ($testBase -match "/chat/completions") {
+        Write-Host "[4/4] 自定义完整 chat/completions 地址，跳过 /models 测试" -ForegroundColor Yellow
     }
-    catch {
-        Write-Warning "[4/4] API 连接测试失败：$($_.Exception.Message)"
-        Write-Warning "环境变量已经写入；可以稍后检查网络、代理或 Key 是否有效"
+    else {
+        try {
+            $headers = @{
+                Authorization = "Bearer $existingKey"
+                Accept = "application/json"
+                "User-Agent" = "ai-change-summary-setup"
+            }
+            $null = Invoke-RestMethod -Uri "$testBase/models" -Headers $headers -TimeoutSec 30
+            Write-Host "[4/4] API 连接测试成功" -ForegroundColor Green
+        }
+        catch {
+            Write-Warning "[4/4] API 连接测试失败：$($_.Exception.Message)"
+            Write-Warning "环境变量已经写入；可以稍后检查网络、代理、Key 或模型权限"
+        }
     }
 }
 else {
