@@ -1004,6 +1004,7 @@
 
 # 露斯契亚边疆：窗口选州、真实任务目标和项目计时分别维护。
 LFC_frontier_open_map = {
+	LFC_frontier_refresh_map_frames = yes
 	set_country_flag = FLAG_LFC_frontier_open
 	clr_country_flag = FLAG_LFC_frontier_relic_page
 	if = {
@@ -1287,4 +1288,73 @@ LFC_frontier_probe_request = {
 			LFC_frontier_probe_pay = yes
 		}
 	}
+}
+
+# 露斯契亚边疆：从州修正派生界面帧号，一级是无更高开发修正时的默认。
+LFC_frontier_refresh_state_frame = {
+	if = {
+		limit = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd }
+		set_variable = { LFC_frontier_development_frame = 4 }
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd }
+		set_variable = { LFC_frontier_development_frame = 3 }
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq }
+		set_variable = { LFC_frontier_development_frame = 2 }
+	}
+	else = { set_variable = { LFC_frontier_development_frame = 1 } }
+}
+
+LFC_frontier_refresh_map_frames = {
+	1202 = { LFC_frontier_refresh_state_frame = yes }
+	1203 = { LFC_frontier_refresh_state_frame = yes }
+	1204 = { LFC_frontier_refresh_state_frame = yes }
+	1205 = { LFC_frontier_refresh_state_frame = yes }
+	1206 = { LFC_frontier_refresh_state_frame = yes }
+	1207 = { LFC_frontier_refresh_state_frame = yes }
+	1208 = { LFC_frontier_refresh_state_frame = yes }
+	280 = { LFC_frontier_refresh_state_frame = yes }
+	504 = { LFC_frontier_refresh_state_frame = yes }
+	505 = { LFC_frontier_refresh_state_frame = yes }
+	set_country_flag = FLAG_LFC_frontier_frames_ready
+}
+
+# 地图调试档位只覆盖贴图，从选中州的实际档位开始。
+LFC_frontier_step_preview_level = {
+	if = {
+		limit = {
+			is_debug = yes
+			NOT = { has_country_flag = FLAG_LFC_frontier_relic_page }
+			has_variable = LFC_frontier_selected_state
+			var:LFC_frontier_selected_state = { OR = { state = 1202 state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 1208 state = 280 state = 504 state = 505 } }
+		}
+		var:LFC_frontier_selected_state = {
+			if = {
+				limit = { NOT = { has_variable = LFC_frontier_preview_level } }
+				if = {
+					limit = { is_controlled_by = LFC }
+					LFC_frontier_refresh_state_frame = yes
+					set_variable = { LFC_frontier_preview_level = LFC_frontier_development_frame }
+				}
+				else = { set_variable = { LFC_frontier_preview_level = 0 } }
+			}
+			add_to_variable = { LFC_frontier_preview_level = LFC_frontier_preview_step }
+			clamp_variable = { var = LFC_frontier_preview_level min = 0 max = 4 }
+		}
+	}
+}
+
+LFC_frontier_clear_preview_levels = {
+	1202 = { clear_variable = LFC_frontier_preview_level }
+	1203 = { clear_variable = LFC_frontier_preview_level }
+	1204 = { clear_variable = LFC_frontier_preview_level }
+	1205 = { clear_variable = LFC_frontier_preview_level }
+	1206 = { clear_variable = LFC_frontier_preview_level }
+	1207 = { clear_variable = LFC_frontier_preview_level }
+	1208 = { clear_variable = LFC_frontier_preview_level }
+	280 = { clear_variable = LFC_frontier_preview_level }
+	504 = { clear_variable = LFC_frontier_preview_level }
+	505 = { clear_variable = LFC_frontier_preview_level }
 }
