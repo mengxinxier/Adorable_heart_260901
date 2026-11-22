@@ -1826,6 +1826,9 @@ focus_tree = {
 					days = 15
 				}
 			}
+			set_variable = { GRE_dark_tide_impact = 35 }
+			set_variable = { GRE_order_of_the_deep_influence = var:party_popularity_100@fascism }
+			round_variable = GRE_order_of_the_deep_influence
 		}
 	}
 	focus = {
@@ -1892,6 +1895,15 @@ focus_tree = {
 				set_variable = {
 					GRE_heavy_industry_war_stability_factor = -1
 				}
+				remove_ideas = GRE_change_agricultural_status
+				add_dynamic_modifier = {
+					modifier = GRE_change_agricultural_status_dynamic_modifier
+				}
+				set_variable = { GRE_CGS_hcp_Consumption_tax_factor_monthly = -0.05 }
+				set_variable = { GRE_CGS_production_speed_arms_factory_factor = -0.25 }
+				set_variable = { GRE_CGS_consumer_goods_expected_value = 0.05 }
+				set_variable = { GRE_CGS_consumer_goods_factor = 0.25 }
+				set_variable = { GRE_CGS_production_speed_industrial_complex_factor = 0.05 }
 			}
 			custom_effect_tooltip = "GRE_economy_4_tooltip"
 		}
@@ -1924,14 +1936,8 @@ focus_tree = {
 			add_to_variable = {
 				GRE_light_industry_production_speed_industrial_complex_factor = 0.10
 			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_8
-				cost = 7
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_11
-				cost = 7
-			}
+			
+			custom_effect_tooltip = available_industrial_concern
 		}
 	}
 	focus = {
@@ -2008,7 +2014,7 @@ focus_tree = {
 		relative_position_id = GRE_economy_4
 		x = -3
 		y = 1
-		cost = 5
+		cost = 8
 		available = { }
 		completion_reward = {
 			swap_ideas = {
@@ -2026,10 +2032,9 @@ focus_tree = {
 		relative_position_id = GRE_economy_7
 		x = -1
 		y = 1
-		cost = 5
+		cost = 7
 		available = { }
 		completion_reward = {
-			add_ideas = GRE_Workers_Union
 			effect_tooltip = {
 				swap_ideas = {
 					remove_idea = GRE_light_industry_idea
@@ -2045,19 +2050,7 @@ focus_tree = {
 			add_to_variable = {
 				GRE_light_industry_industrial_capacity_factory = 0.05
 			}
-			if = {
-				limit = {
-					has_completed_focus = GRE_economy_11
-				}
-				reduce_focus_completion_cost = {
-					focus = GRE_economy_9
-					cost = 7
-				}
-				reduce_focus_completion_cost = {
-					focus = GRE_economy_10
-					cost = 7
-				}
-			}
+			add_ideas = GRE_Workers_Union
 		}
 	}
 	focus = {
@@ -2153,23 +2146,23 @@ focus_tree = {
 		relative_position_id = GRE_economy_7
 		x = 1
 		y = 1
-		cost = 5
+		cost = 7
 		available = { }
 		completion_reward = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = GRE_change_agricultural_status
+					add_idea = GRE_change_agricultural_status_1
+				}
+			}
+			hidden_effect = {
+				add_to_variable = { GRE_CGS_hcp_Consumption_tax_factor_monthly = 0 }
+				add_to_variable = { production_speed_arms_factory_factor = 0.05 }
+				add_to_variable = { GRE_CGS_consumer_goods_expected_value = 0 }
+				add_to_variable = { GRE_CGS_consumer_goods_factor = -0.05 }
+				add_to_variable = { GRE_CGS_production_speed_industrial_complex_factor = 0 }
+			}
 			add_ideas = GRE_Farmers_Union
-			swap_ideas = {
-				remove_idea = GRE_change_agricultural_status
-				add_idea = GRE_change_agricultural_status_1
-			}
-			if = {
-				limit = {
-					has_completed_focus = GRE_economy_8
-				}
-				reduce_focus_completion_cost = {
-					focus = GRE_economy_12
-					cost = 7
-				}
-			}
 		}
 	}
 	focus = {
@@ -2189,6 +2182,13 @@ focus_tree = {
 				remove_idea = GRE_change_agricultural_status_1
 				add_idea = GRE_change_agricultural_status_2
 			}
+			hidden_effect = {
+				add_to_variable = { GRE_CGS_hcp_Consumption_tax_factor_monthly = 0.10 }
+				add_to_variable = { production_speed_arms_factory_factor = 0 }
+				add_to_variable = { GRE_CGS_consumer_goods_expected_value = -0.05 }
+				add_to_variable = { GRE_CGS_consumer_goods_factor = -0.05 }
+				add_to_variable = { GRE_CGS_production_speed_industrial_complex_factor = -0.10 }
+			}
 		}
 	}
 	focus = {
@@ -2207,14 +2207,17 @@ focus_tree = {
 		cost = 5
 		available = { }
 		completion_reward = {
-			remove_ideas = GRE_change_agricultural_status_3
+			effect_tooltip = {
+				remove_ideas = GRE_change_agricultural_status_3
+			}
+			hidden_effect = {
+				remove_dynamic_modifier = {
+					modifier = GRE_change_agricultural_status_dynamic_modifier
+				}
+			}
 			add_timed_idea = {
 				idea = GRE_change_agricultural_status_4
 				days = 365
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_18
-				cost = 7
 			}
 			random_owned_controlled_state = {
 				add_extra_state_shared_building_slots = 1
@@ -2245,12 +2248,12 @@ focus_tree = {
 		completion_reward = {
 			country_event = GRE_event.17
 			custom_effect_tooltip = GRE_economy_14_tooltip
-			hidden_effect = {
-				country_event = {
-					id = GRE_event.19
-					days = 21
-				}
-			}
+			#hidden_effect = {
+			#	country_event = {
+			#		id = GRE_event.19
+			#		days = 21
+			#	}
+			#}
 		}
 	}
 	focus = {
@@ -2295,42 +2298,9 @@ focus_tree = {
 				set_temp_variable = { temp_enable_tarot_id = 12 }
 				GRE_enable_new_tarot = yes
 			}
-			if = {
-				limit = {
-					NOT = {
-						has_completed_focus = GRE_economy_22
-					}
-				}
-				hidden_effect = {
-					add_dynamic_modifier = {
-						modifier = GRE_economic_recovery
-					}
-				}
-				effect_tooltip = {
-					add_ideas = GRE_economic_recovery_idea_2
-				}
-				add_to_variable = {
-					GRE_economic_recovery_consumer_goods_factor = -0.15
-				}
-				add_to_variable = {
-					GRE_economic_recovery_industrial_capacity_factory = 0.05
-				}
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_16
-				cost = 21
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_17
-				cost = 21
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_18
-				cost = 21
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_23
-				cost = 14
+			unlock_decision_tooltip = {
+				decision = GRE_TDT_economic_recovery_decision_1
+				show_effect_tooltip = yes
 			}
 			custom_effect_tooltip = available_political_advisor
 			show_ideas_tooltip = GRE_Cantarella_Fisalia
@@ -2386,13 +2356,18 @@ focus_tree = {
 		y = 1
 		cost = 4
 		available = {
-			has_completed_focus = GRE_economy_12
+			
 		}
 		completion_reward = {
 			swap_ideas = {
 				remove_idea = GRE_change_agricultural_status_2
 				add_idea = GRE_change_agricultural_status_3
 			}
+			add_to_variable = { GRE_CGS_hcp_Consumption_tax_factor_monthly = 0.15 }
+			add_to_variable = { production_speed_arms_factory_factor = 0 }
+			add_to_variable = { GRE_CGS_consumer_goods_expected_value = 0 }
+			add_to_variable = { GRE_CGS_consumer_goods_factor = -0.05 }
+			add_to_variable = { GRE_CGS_production_speed_industrial_complex_factor = -0.10 }
 		}
 	}
 	focus = {
@@ -2409,24 +2384,13 @@ focus_tree = {
 		available = { }
 		completion_reward = {
 			clr_country_flag = GRE_one_by_one
-			effect_tooltip = {
-				swap_ideas = {
-					remove_idea = GRE_economic_recovery_idea
-					add_idea = GRE_economic_recovery_idea_4
-				}
-			}
-			add_to_variable = {
-				GRE_economic_recovery_consumer_goods_factor = 0.05
-			}
-			add_to_variable = {
-				GRE_economic_recovery_monthly_population = 0.10
-			}
-			add_to_variable = {
-				GRE_economic_recovery_out_of_supply_factor = -0.10
+			unlock_decision_tooltip = {
+				decision = GRE_TDT_economic_recovery_decision_2
+				show_effect_tooltip = yes
 			}
 			reduce_focus_completion_cost = {
 				focus = GRE_economy_64
-				cost = 3
+				cost = 4
 			}
 		}
 	}
@@ -2465,26 +2429,12 @@ focus_tree = {
 			custom_override_tooltip = {
 				tooltip = {
 					localization_key = GRE_Iuno_Tarot_enable_tarot_tt
-					CHARACTER = GRE_Phoebe
-					TAROT = GRE_Iuno_Tarot_pie_text_3
-				}
-				
-				set_temp_variable = { temp_enable_tarot_id = 3 }
-				GRE_enable_new_tarot = yes
-			}
-			custom_override_tooltip = {
-				tooltip = {
-					localization_key = GRE_Iuno_Tarot_enable_tarot_tt
 					CHARACTER = GRE_Shorekeeper
 					TAROT = GRE_Iuno_Tarot_pie_text_4
 				}
 				
 				set_temp_variable = { temp_enable_tarot_id = 4 }
 				GRE_enable_new_tarot = yes
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_20
-				cost = 14
 			}
 		}
 	}
@@ -2498,7 +2448,7 @@ focus_tree = {
 		relative_position_id = GRE_economy_19
 		x = 0
 		y = 1
-		cost = 4
+		cost = 5
 		available = { }
 		completion_reward = {
 			custom_override_tooltip = {
@@ -2525,14 +2475,14 @@ focus_tree = {
 		relative_position_id = GRE_economy_20
 		x = 0
 		y = 1
-		cost = 1
+		cost = 5
 		available = { }
 		completion_reward = {
 			clr_country_flag = GRE_one_by_one
 			set_country_flag = GRE_Iuno_Tarot_Iuno_idea_add
 			reduce_focus_completion_cost = {
 				focus = GRE_economy_64
-				cost = 3
+				cost = 4
 			}
 			custom_effect_tooltip = GRE_Iuno_Tarot_Iuno_idea_add_tooltip
 		}
@@ -2579,43 +2529,9 @@ focus_tree = {
 				set_temp_variable = { temp_enable_tarot_id = 7 }
 				GRE_enable_new_tarot = yes
 			}
-			if = {
-				limit = {
-					NOT = {
-						has_completed_focus = GRE_economy_15
-					}
-				}
-				hidden_effect = {
-					add_dynamic_modifier = {
-						modifier = GRE_economic_recovery
-					}
-				}
-				effect_tooltip = {
-					add_ideas = GRE_economic_recovery_idea_1
-				}
-				add_to_variable = {
-					GRE_economic_recovery_production_speed_buildings_factor = 0.05
-				}
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_16
-				cost = 7
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_18
-				cost = 7
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_23
-				cost = 14
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_29
-				cost = 14
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_24
-				cost = 21
+			unlock_decision_tooltip = {
+				decision = GRE_TDT_economic_recovery_decision_3
+				show_effect_tooltip = yes
 			}
 			custom_effect_tooltip = available_political_advisor
 			show_ideas_tooltip = GRE_Carlotta_Montelli
@@ -2634,20 +2550,9 @@ focus_tree = {
 		cost = 5
 		available = { }
 		completion_reward = {
-			effect_tooltip = {
-				swap_ideas = {
-					remove_idea = GRE_economic_recovery_idea
-					add_idea = GRE_economic_recovery_idea_3
-				}
-			}
-			add_to_variable = {
-				GRE_economic_recovery_political_power_cost = -0.15
-			}
-			add_to_variable = {
-				GRE_economic_recovery_line_change_production_efficiency_factor = -0.10
-			}
-			add_to_variable = {
-				GRE_economic_recovery_production_factory_max_efficiency_factor = 0.10
+			unlock_decision_tooltip = {
+				decision = GRE_TDT_economic_recovery_decision_4
+				show_effect_tooltip = yes
 			}
 		}
 	}
@@ -2680,7 +2585,7 @@ focus_tree = {
 			show_ideas_tooltip = GRE_Zani
 			reduce_focus_completion_cost = {
 				focus = GRE_economy_64
-				cost = 3
+				cost = 4
 			}
 		}
 	}
@@ -2904,14 +2809,6 @@ focus_tree = {
 		cost = 3
 		available = { }
 		completion_reward = {
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_27
-				cost = 14
-			}
-			reduce_focus_completion_cost = {
-				focus = GRE_economy_29
-				cost = 14
-			}
 			effect_tooltip = {
 				swap_ideas = {
 					remove_idea = GRE_economic_recovery_idea
@@ -3328,14 +3225,14 @@ focus_tree = {
 	focus = {
 		id = GRE_economy_39
 		icon = GFX_focus_generic_road_investment
-
+		overlay = GFX_focus_fast_overlay_generic_clock
 		prerequisite = {
 			focus = GRE_economy_38
 		}
 		relative_position_id = GRE_economy_38
 		x = -2
 		y = 1
-		cost = 5
+		cost = 6
 		available = { }
 		completion_reward = {
 			custom_effect_tooltip = GRE_economy_39_tt
@@ -3439,7 +3336,7 @@ focus_tree = {
 	focus = {
 		id = GRE_economy_41
 		icon = GFX_focus_generic_electrification
-
+		overlay = GFX_focus_fast_overlay_generic_clock
 		prerequisite = {
 			focus = GRE_economy_40
 		}
@@ -3480,14 +3377,14 @@ focus_tree = {
 	focus = {
 		id = GRE_economy_42
 		icon = GFX_AUS_Information_on_Hesse
-
+		overlay = GFX_focus_fast_overlay_generic_clock
 		prerequisite = {
 			focus = GRE_economy_38
 		}
 		relative_position_id = GRE_economy_38
 		x = 0
 		y = 1
-		cost = 5
+		cost = 6
 		available = { }
 		completion_reward = {
 			custom_effect_tooltip = GRE_economy_42_tt
@@ -3511,7 +3408,7 @@ focus_tree = {
 		relative_position_id = GRE_economy_42
 		x = 0
 		y = 1
-		cost = 5
+		cost = 6
 		available = { }
 		completion_reward = {
 			if = {
@@ -3546,7 +3443,7 @@ focus_tree = {
 		relative_position_id = GRE_economy_43
 		x = 0
 		y = 1
-		cost = 7
+		cost = 6
 		available = { }
 		completion_reward = {
 			add_research_slot = 1
@@ -3555,14 +3452,14 @@ focus_tree = {
 	focus = {
 		id = GRE_economy_45
 		icon = GFX_focus_generic_monetary_union
-
+		overlay = GFX_focus_fast_overlay_generic_clock
 		prerequisite = {
 			focus = GRE_economy_38
 		}
 		relative_position_id = GRE_economy_38
 		x = 2
 		y = 1
-		cost = 5
+		cost = 6
 		available = { }
 		completion_reward = {
 			country_event = GRE_event.43
@@ -3578,7 +3475,7 @@ focus_tree = {
 		relative_position_id = GRE_economy_45
 		x = 0
 		y = 1
-		cost = 5
+		cost = 6
 		available = { }
 		completion_reward = {
 			effect_tooltip = {
@@ -3611,7 +3508,7 @@ focus_tree = {
 		relative_position_id = GRE_economy_46
 		x = 0
 		y = 1
-		cost = 8
+		cost = 6
 		available = { }
 		completion_reward = {
 			add_ideas = GRE_Economic_internal_circulation
@@ -4024,7 +3921,11 @@ focus_tree = {
 		y = 1
 		cost = 5
 		available = {
-			always = no
+			any_owned_state = {
+				has_dynamic_modifier = {
+					modifier = GRE_state_dynamic_modifier_Startorch_Academy
+				}
+			}
 		}
 		completion_reward = {
 			custom_effect_tooltip = GRE_unlock_high_school_tt
@@ -4058,6 +3959,7 @@ focus_tree = {
 		y = 1
 		cost = 5
 		available = {
+			always = no
 		}
 		completion_reward = {
 			
@@ -4085,6 +3987,7 @@ focus_tree = {
 	focus = {
 		id = GRE_economy_64
 		icon = GFX_GRE_Kuroshio_Augusta_focus_icon
+		overlay = GFX_focus_fast_overlay_generic_clock
 		prerequisite = {
 			focus = GRE_economy_18
 		}
