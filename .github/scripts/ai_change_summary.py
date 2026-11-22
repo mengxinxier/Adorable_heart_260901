@@ -204,8 +204,29 @@ class UpdateTarget:
     pr_number: int | None = None
 
 
+def _windows_user_env(name: str) -> str:
+    """读取 HKCU 的 Environment，兼容已经打开的 VS Code/GitHub Desktop。
+
+    Windows 的 SetEnvironmentVariable(..., "User") 会写注册表，但已经启动的
+    进程不会自动刷新自己的环境块；这里兜底读最新值。
+    """
+    if os.name != "nt":
+        return ""
+    try:
+        import winreg
+
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
+            value, _ = winreg.QueryValueEx(key, name)
+        return str(value) if value is not None else ""
+    except (OSError, ImportError, TypeError):
+        return ""
+
+
 def env(name: str, default: str = "") -> str:
-    return (os.environ.get(name) or default).strip()
+    raw = os.environ.get(name)
+    if not raw and os.name == "nt":
+        raw = _windows_user_env(name)
+    return (raw or default).strip()
 
 
 def env_bool(name: str, default: bool = False) -> bool:
