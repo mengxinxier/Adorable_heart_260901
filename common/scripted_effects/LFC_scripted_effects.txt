@@ -192,6 +192,7 @@
 	}
 
 	LFC_yulin_xuanxiang_effect = { #雨林事件选项判定是否触发成功
+		LFC_frontier_update_expedition_report = yes
 		if = {
 			limit = {
 				check_variable = {
@@ -1003,7 +1004,10 @@
 #
 
 #露斯契亚边疆
+ #地图入口与旧版筹备
 	LFC_frontier_open_map = { #打开地图并刷新帧号
+		LFC_frontier_initialize_expedition_draft = yes
+		LFC_frontier_update_expedition_report = yes
 		LFC_frontier_refresh_map_frames = yes
 		set_country_flag = FLAG_LFC_frontier_open
 		clr_country_flag = FLAG_LFC_frontier_relic_page
@@ -1067,55 +1071,13 @@
 	}
 
 	#旧决议和地图按钮共用远征州
-	LFC_frontier_begin_expedition = { #锁定目标州并筹备远征
-		if = {
-			limit = {
-				NOT = {
-					has_country_flag = FLAG_LFC_Rainforest_Acting
-				}
-				NOT = {
-					has_country_flag = FLAG_LFC_frontier_preparing
-				}
-				check_variable = {
-					ubs_save > 100
-				}
-				has_equipment = {
-					infantry_equipment > 1000
-				}
-				has_equipment = {
-					support_equipment > 40
-				}
-				has_manpower > 2000
-				var:LFC_frontier_request_state = {
-					OR = {
-						state = 1203
-						state = 1204
-						state = 1205
-						state = 1206
-						state = 1207
-						state = 1208
-						state = 280
-					}
-					has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
-					any_neighbor_state = {
-						is_core_of = LFC
-					}
-				}
-			}
-			set_variable = {
-				VAR_LFC_Rainforest_state = LFC_frontier_request_state
-			}
-			set_country_flag = FLAG_LFC_frontier_preparing
-			country_event = LFC_event_forest.1
-		}
-	}
-
 	LFC_frontier_cancel_preparation = { #取消筹备并释放目标
 		clr_country_flag = FLAG_LFC_frontier_preparing
 		clear_variable = VAR_LFC_Rainforest_state
 	}
 
-	#地区开发（州运行标记防止重复扣费）
+ #地区开发（州运行标记防止重复扣费）
+  #地区基础建设
 	LFC_frontier_infrastructure_pay = { #地区基础建设扣费
 		if = {
 			limit = {
@@ -1196,6 +1158,7 @@
 		}
 	}
 
+  #鼓励移民
 	LFC_frontier_settlement_pay = { #鼓励移民扣费
 		if = {
 			limit = {
@@ -1274,6 +1237,7 @@
 		}
 	}
 
+  #地区城市化
 	LFC_frontier_urbanization_pay = { #地区城市化扣费
 		if = {
 			limit = {
@@ -1349,6 +1313,7 @@
 		}
 	}
 
+  #遗迹勘探
 	LFC_frontier_survey_pay = { #遗迹勘探扣费
 		if = {
 			limit = {
@@ -1426,7 +1391,7 @@
 		}
 	}
 
-	#遗物应用（全国项目）
+ #遗物应用（全国项目）
 	LFC_frontier_research_pay = { #破译遗物扣费
 		if = {
 			limit = {
@@ -1679,7 +1644,7 @@
 		}
 	}
 
-	#正式开发档位（按州修正，默认一级）
+ #正式开发档位（按州修正，默认一级）
 	LFC_frontier_refresh_state_frame = {
 		if = {
 			limit = {
@@ -1745,7 +1710,7 @@
 		}
 	}
 
-	#调试预览（从正式档位起步）
+ #调试预览（从正式档位起步）
 	LFC_frontier_step_preview_level = { #预览升降档
 		if = {
 			limit = {
@@ -1833,5 +1798,243 @@
 		}
 		505 = {
 			clear_variable = LFC_frontier_preview_level
+		}
+	}
+
+ #远征筹备
+	LFC_frontier_initialize_expedition_draft = { #默认标准补给、普通装备、小型队伍
+		if = {
+			limit = {
+				NOT = {
+					has_variable = LFC_frontier_draft_size
+				}
+			}
+			set_variable = {
+				LFC_frontier_draft_supply = 100
+			}
+			set_variable = {
+				LFC_frontier_draft_equipment = 1
+			}
+			set_variable = {
+				LFC_frontier_draft_size = 1
+			}
+		}
+		LFC_frontier_update_expedition_cost = yes
+	}
+
+	LFC_frontier_update_expedition_cost = { #同一套出库量供界面显示和扣费
+		set_temp_variable = {
+			LFC_frontier_expedition_scale = LFC_frontier_draft_size
+		}
+		add_to_temp_variable = {
+			LFC_frontier_expedition_scale = 1
+		}
+		set_variable = {
+			LFC_frontier_cost_manpower = LFC_frontier_expedition_scale
+		}
+		multiply_variable = {
+			LFC_frontier_cost_manpower = 1000
+		}
+		set_variable = {
+			LFC_frontier_cost_rifles = LFC_frontier_expedition_scale
+		}
+		multiply_variable = {
+			LFC_frontier_cost_rifles = 500
+		}
+		set_variable = {
+			LFC_frontier_cost_support = LFC_frontier_expedition_scale
+		}
+		multiply_variable = {
+			LFC_frontier_cost_support = 20
+		}
+		set_variable = {
+			LFC_frontier_cost_trucks = 0
+		}
+		set_variable = {
+			LFC_frontier_cost_knights = 0
+		}
+		if = {
+			limit = {
+				check_variable = { LFC_frontier_draft_equipment = 2 }
+			}
+			set_variable = {
+				LFC_frontier_cost_support = LFC_frontier_expedition_scale
+			}
+			multiply_variable = {
+				LFC_frontier_cost_support = 30
+			}
+			set_variable = {
+				LFC_frontier_cost_trucks = LFC_frontier_expedition_scale
+			}
+			multiply_variable = {
+				LFC_frontier_cost_trucks = 50
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { LFC_frontier_draft_equipment = 3 }
+			}
+			set_variable = {
+				LFC_frontier_cost_knights = LFC_frontier_expedition_scale
+			}
+			multiply_variable = {
+				LFC_frontier_cost_knights = 6
+			}
+		}
+	}
+
+	LFC_frontier_begin_expedition = { #确认派遣并进入原遭遇事件
+		LFC_frontier_initialize_expedition_draft = yes
+		if = {
+			limit = {
+				LFC_frontier_expedition_can_depart = yes
+			}
+			set_variable = {
+				VAR_LFC_Rainforest_state = LFC_frontier_selected_state
+			}
+			set_variable = {
+				VAR_LFC_Rainforest_equipment = LFC_frontier_draft_equipment
+			}
+			set_variable = {
+				LFC_VAR_Rainforest_supply = LFC_frontier_draft_supply
+			}
+			set_variable = {
+				LFC_VAR_Rainforest_manpower = LFC_frontier_cost_manpower
+			}
+			set_variable = {
+				LFC_VAR_Rainforest_progress = 0
+			}
+			set_variable = {
+				LFC_frontier_departure_supply = LFC_frontier_draft_supply
+			}
+			set_variable = {
+				LFC_frontier_departure_manpower = LFC_frontier_cost_manpower
+			}
+			set_temp_variable = {
+				LFC_frontier_expedition_payment = LFC_frontier_draft_supply
+			}
+			multiply_temp_variable = {
+				LFC_frontier_expedition_payment = -1
+			}
+			add_to_variable = {
+				ubs_save = LFC_frontier_expedition_payment
+			}
+			set_temp_variable = {
+				LFC_frontier_expedition_payment = LFC_frontier_cost_manpower
+			}
+			multiply_temp_variable = {
+				LFC_frontier_expedition_payment = -1
+			}
+			add_manpower = LFC_frontier_expedition_payment
+			set_temp_variable = {
+				LFC_frontier_expedition_payment = LFC_frontier_cost_rifles
+			}
+			multiply_temp_variable = {
+				LFC_frontier_expedition_payment = -1
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = LFC_frontier_expedition_payment
+			}
+			set_temp_variable = {
+				LFC_frontier_expedition_payment = LFC_frontier_cost_support
+			}
+			multiply_temp_variable = {
+				LFC_frontier_expedition_payment = -1
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = LFC_frontier_expedition_payment
+			}
+			if = {
+				limit = {
+					check_variable = { LFC_frontier_cost_trucks > 0 }
+				}
+				set_temp_variable = {
+					LFC_frontier_expedition_payment = LFC_frontier_cost_trucks
+				}
+				multiply_temp_variable = {
+					LFC_frontier_expedition_payment = -1
+				}
+				add_equipment_to_stockpile = {
+					type = motorized_equipment
+					amount = LFC_frontier_expedition_payment
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { LFC_frontier_cost_knights > 0 }
+				}
+				set_temp_variable = {
+					LFC_frontier_expedition_payment = LFC_frontier_cost_knights
+				}
+				multiply_temp_variable = {
+					LFC_frontier_expedition_payment = -1
+				}
+				add_equipment_to_stockpile = {
+					type = construct_knight_equipment
+					amount = LFC_frontier_expedition_payment
+				}
+			}
+			set_country_flag = FLAG_LFC_Rainforest_Acting
+			LFC_frontier_update_expedition_report = yes
+			LFC_Preset_yulin_event_effect_0 = yes
+		}
+	}
+
+ #远征报告
+	LFC_frontier_update_expedition_report = { #远征报告的仪表帧
+		if = {
+			limit = {
+				has_country_flag = FLAG_LFC_Rainforest_Acting
+			}
+			set_variable = {
+				LFC_frontier_report_progress = LFC_VAR_Rainforest_progress
+			}
+			clamp_variable = {
+				var = LFC_frontier_report_progress
+				min = 0
+				max = 100
+			}
+			if = {
+				limit = {
+					has_variable = LFC_frontier_departure_manpower
+					check_variable = { LFC_frontier_departure_manpower > 0 }
+				}
+				set_variable = {
+					LFC_frontier_report_manpower = LFC_VAR_Rainforest_manpower
+				}
+				multiply_variable = {
+					LFC_frontier_report_manpower = 100
+				}
+				divide_variable = {
+					LFC_frontier_report_manpower = LFC_frontier_departure_manpower
+				}
+				clamp_variable = {
+					var = LFC_frontier_report_manpower
+					min = 0
+					max = 100
+				}
+			}
+			if = {
+				limit = {
+					has_variable = LFC_frontier_departure_supply
+					check_variable = { LFC_frontier_departure_supply > 0 }
+				}
+				set_variable = {
+					LFC_frontier_report_supply = LFC_VAR_Rainforest_supply
+				}
+				multiply_variable = {
+					LFC_frontier_report_supply = 100
+				}
+				divide_variable = {
+					LFC_frontier_report_supply = LFC_frontier_departure_supply
+				}
+				clamp_variable = {
+					var = LFC_frontier_report_supply
+					min = 0
+					max = 100
+				}
+			}
 		}
 	}

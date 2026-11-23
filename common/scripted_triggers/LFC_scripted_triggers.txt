@@ -1,0 +1,113 @@
+#露斯契亚边疆
+ #远征目标与页面
+	LFC_frontier_expedition_target = { #远征目标州
+		NOT = {
+			is_controlled_by = LFC
+		}
+		has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
+		OR = {
+			state = 1203
+			state = 1204
+			state = 1205
+			state = 1206
+			state = 1207
+			state = 1208
+			state = 280
+		}
+	}
+
+	LFC_frontier_expedition_show_report = { #当前选中的是正在远征的州
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_relic_page
+		}
+		has_country_flag = FLAG_LFC_Rainforest_Acting
+		has_variable = LFC_frontier_selected_state
+		has_variable = VAR_LFC_Rainforest_state
+		check_variable = {
+			LFC_frontier_selected_state = VAR_LFC_Rainforest_state
+		}
+	}
+
+	LFC_frontier_expedition_show_form = { #远征筹备页
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_relic_page
+		}
+		has_variable = LFC_frontier_selected_state
+		var:LFC_frontier_selected_state = {
+			LFC_frontier_expedition_target = yes
+		}
+		NOT = {
+			AND = {
+				OR = {
+					has_country_flag = FLAG_LFC_frontier_preparing
+					has_country_flag = FLAG_LFC_Rainforest_Acting
+				}
+				check_variable = { LFC_frontier_selected_state = VAR_LFC_Rainforest_state }
+			}
+		}
+	}
+
+	LFC_frontier_expedition_show_page = { #远征页公共控件
+		OR = {
+			LFC_frontier_expedition_show_form = yes
+			LFC_frontier_expedition_show_report = yes
+		}
+	}
+
+ #派遣条件
+	LFC_frontier_expedition_idle = { #没有其他远征
+		NOR = {
+			has_country_flag = FLAG_LFC_frontier_preparing
+			has_country_flag = FLAG_LFC_Rainforest_Acting
+		}
+	}
+
+	LFC_frontier_expedition_adjacent = { #已与核心领土接壤
+		var:LFC_frontier_selected_state = {
+			any_neighbor_state = {
+				is_core_of = LFC
+			}
+		}
+	}
+
+  #库存不足
+	LFC_frontier_expedition_short_funds = { #资金不足
+		check_variable = { ubs_save < LFC_frontier_draft_supply }
+	}
+
+	LFC_frontier_expedition_short_manpower = { #人力不足
+		has_manpower < var:LFC_frontier_cost_manpower
+	}
+
+	LFC_frontier_expedition_short_rifles = { #步兵装备不足
+		check_variable = { num_equipment@infantry_equipment < LFC_frontier_cost_rifles }
+	}
+
+	LFC_frontier_expedition_short_support = { #支援装备不足
+		check_variable = { num_equipment@support_equipment < LFC_frontier_cost_support }
+	}
+
+	LFC_frontier_expedition_short_trucks = { #卡车不足
+		check_variable = { LFC_frontier_cost_trucks > 0 }
+		check_variable = { num_equipment@motorized_equipment < LFC_frontier_cost_trucks }
+	}
+
+	LFC_frontier_expedition_short_knights = { #构装骑士不足
+		check_variable = { LFC_frontier_cost_knights > 0 }
+		check_variable = { num_equipment@construct_knight_equipment < LFC_frontier_cost_knights }
+	}
+
+  #派遣校验
+	LFC_frontier_expedition_can_depart = { #派遣前核对地区、队伍与实际出库量
+		LFC_frontier_expedition_show_form = yes
+		LFC_frontier_expedition_idle = yes
+		LFC_frontier_expedition_adjacent = yes
+		NOR = {
+			LFC_frontier_expedition_short_funds = yes
+			LFC_frontier_expedition_short_manpower = yes
+			LFC_frontier_expedition_short_rifles = yes
+			LFC_frontier_expedition_short_support = yes
+			LFC_frontier_expedition_short_trucks = yes
+			LFC_frontier_expedition_short_knights = yes
+		}
+	}
