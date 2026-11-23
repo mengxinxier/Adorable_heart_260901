@@ -2919,6 +2919,261 @@ ROC_policy_delete_card = {  ##删除某个政策卡
 	}
 }
 
+ROC_policy_toast_refresh_frame = {
+	if = {
+		limit = { check_variable = { ROC_policy_toast_current < 31 } }
+		set_variable = { ROC_policy_toast_frame = 2 }
+	}
+	else_if = {
+		limit = { check_variable = { ROC_policy_toast_current < 61 } }
+		set_variable = { ROC_policy_toast_frame = 3 }
+	}
+	else_if = {
+		limit = { check_variable = { ROC_policy_toast_current < 91 } }
+		set_variable = { ROC_policy_toast_frame = 4 }
+	}
+	else = { set_variable = { ROC_policy_toast_frame = 5 } }
+	set_variable = { ROC_policy_toast_remaining = ROC_policy_toast_queue^num }
+}
+
+ROC_policy_toast_next_or_close = {
+	if = {
+		limit = { check_variable = { ROC_policy_toast_queue^num > 0 } }
+		set_variable = { ROC_policy_toast_current = ROC_policy_toast_queue^0 }
+		remove_from_array = { array = ROC_policy_toast_queue index = 0 }
+		set_variable = { ROC_policy_toast_timer = 15 }
+		ROC_policy_toast_refresh_frame = yes
+	}
+	else = {
+		clear_variable = ROC_policy_toast_current
+		clear_variable = ROC_policy_toast_frame
+		clear_variable = ROC_policy_toast_timer
+		clear_variable = ROC_policy_toast_remaining
+	}
+}
+
+ROC_policy_unlock_card_with_toast = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { ROC_policy_unlock_card_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Military_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Economy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Diplomacy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Generic_array_true = card_to_unlock } }
+		}
+		add_to_array = { ROC_policy_unlock_card_array_true = card_to_unlock }
+		if = {
+			limit = { has_country_flag = ROC_policy_window_visible }
+			add_to_array = { ROC_policy_unlock_card_array = card_to_unlock }
+		}
+		if = {
+			limit = { is_ai = no }
+			if = {
+				limit = { NOT = { check_variable = { ROC_policy_toast_current > 0 } } }
+				set_variable = { ROC_policy_toast_current = card_to_unlock }
+				set_variable = { ROC_policy_toast_timer = 15 }
+			}
+			else = { add_to_array = { ROC_policy_toast_queue = card_to_unlock } }
+			ROC_policy_toast_refresh_frame = yes
+		}
+	}
+}
+
+ROC_check_generic_policy_card_unlocks = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_4 }
+			num_of_naval_factories > 4
+		}
+		set_country_flag = ROC_gpcard_unlocked_4
+		set_temp_variable = { card_to_unlock = 4 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_25 }
+			OR = { has_tech = tech_logistics_company has_tech = motorised_infantry }
+		}
+		set_country_flag = ROC_gpcard_unlocked_25
+		set_temp_variable = { card_to_unlock = 25 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_26 }
+			OR = { has_tech = artillery1 num_of_military_factories > 19 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_26
+		set_temp_variable = { card_to_unlock = 26 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_27 }
+			OR = { has_tech = landing_craft has_tech = mtg_landing_craft num_of_naval_factories > 9 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_27
+		set_temp_variable = { card_to_unlock = 27 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_58 }
+			OR = { has_global_flag = ROC_establishment_of_the_capital_at_nanjing AND = { has_war = no num_of_civilian_factories > 29 } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_58
+		set_temp_variable = { card_to_unlock = 58 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_59 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_59
+		set_temp_variable = { card_to_unlock = 59 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_60 }
+			has_tech = excavation1
+		}
+		set_country_flag = ROC_gpcard_unlocked_60
+		set_temp_variable = { card_to_unlock = 60 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_64 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_64
+		set_temp_variable = { card_to_unlock = 64 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_66 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_66
+		set_temp_variable = { card_to_unlock = 66 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_67 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_67
+		set_temp_variable = { card_to_unlock = 67 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_68 }
+			OR = { is_in_faction = yes AND = { has_war = no num_divisions > 23 } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_68
+		set_temp_variable = { card_to_unlock = 68 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_69 }
+			num_subjects > 0
+		}
+		set_country_flag = ROC_gpcard_unlocked_69
+		set_temp_variable = { card_to_unlock = 69 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_70 }
+			OR = { is_in_faction = yes any_enemy_country = { is_major = yes } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_70
+		set_temp_variable = { card_to_unlock = 70 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_71 }
+			OR = { has_global_flag = ROC_establishment_of_the_capital_at_nanjing num_of_civilian_factories > 39 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_71
+		set_temp_variable = { card_to_unlock = 71 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_72 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_72
+		set_temp_variable = { card_to_unlock = 72 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_94 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_94
+		set_temp_variable = { card_to_unlock = 94 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_105 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_105
+		set_temp_variable = { card_to_unlock = 105 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_107 }
+			OR = { has_tech = tech_field_hospital has_war = yes }
+		}
+		set_country_flag = ROC_gpcard_unlocked_107
+		set_temp_variable = { card_to_unlock = 107 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_109 }
+			OR = { has_global_flag = CHI_REUNIT any_controlled_state = { NOT = { is_core_of = ROOT } } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_109
+		set_temp_variable = { card_to_unlock = 109 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_110 }
+			OR = { has_global_flag = CHI_REUNIT amount_research_slots > 3 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_110
+		set_temp_variable = { card_to_unlock = 110 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+}
+
+ROC_policy_toast_daily_tick = {
+	ROC_check_generic_policy_card_unlocks = yes
+	if = {
+		limit = { check_variable = { ROC_policy_toast_current > 0 } }
+		subtract_from_variable = { ROC_policy_toast_timer = 1 }
+		if = {
+			limit = { NOT = { check_variable = { ROC_policy_toast_timer > 0 } } }
+			ROC_policy_toast_next_or_close = yes
+		}
+	}
+}
+
 ROC_factional_influence_calculation = {  ##计算广府派系影响力
 	set_variable = { ROC_total_influence_var = 0 }
 	if = {
