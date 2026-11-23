@@ -2348,6 +2348,32 @@ PAU_daily_baiye_tick = {
     if = {
         limit = { is_ai = no }
         PAU_sync_baiye_gui_vars = yes
+        #白夜贴身副官主动播报（带冷却防刷屏：优先预警BOP失衡，其次温柔催办可盖章提案）
+        if = {
+            limit = {
+                has_character = PAU_baiye
+                NOT = { has_variable = PAU_baiye_pet_bubble_timer }
+                NOT = { has_country_flag = PAU_pet_advisor_cd }
+            }
+            if = {
+                limit = {
+                    has_completed_focus = PAU_tyzz
+                    OR = {
+                        power_balance_value = { id = PAU_bop value < -0.65 }
+                        power_balance_value = { id = PAU_bop value > 0.65 }
+                    }
+                }
+                set_country_flag = { flag = PAU_pet_advisor_cd days = 35 value = 1 }
+                set_variable = { PAU_baiye_pet_egg_mode = 8 }
+                set_variable = { PAU_baiye_pet_bubble_timer = 15 }
+            }
+            else_if = {
+                limit = { PAU_has_actionable_reform_card = yes }
+                set_country_flag = { flag = PAU_pet_advisor_cd days = 45 value = 1 }
+                set_variable = { PAU_baiye_pet_egg_mode = 9 }
+                set_variable = { PAU_baiye_pet_bubble_timer = 15 }
+            }
+        }
     }
 }
 

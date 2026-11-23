@@ -19,6 +19,20 @@ sys.modules[SPEC.name] = ai
 SPEC.loader.exec_module(ai)
 
 
+class EnvTests(unittest.TestCase):
+    def test_env_falls_back_to_windows_user_environment(self) -> None:
+        with patch.dict(os.environ, {}, clear=True), patch.object(
+            ai, "_windows_user_env", return_value="from-registry"
+        ):
+            self.assertEqual(ai.env("LLM_API_KEY"), "from-registry")
+
+    def test_env_uses_process_environment_first(self) -> None:
+        with patch.dict(os.environ, {"LLM_API_KEY": "from-process"}, clear=True), patch.object(
+            ai, "_windows_user_env", return_value="from-registry"
+        ):
+            self.assertEqual(ai.env("LLM_API_KEY"), "from-process")
+
+
 class RedactionTests(unittest.TestCase):
     def test_redacts_common_tokens(self) -> None:
         text = (

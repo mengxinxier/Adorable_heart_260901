@@ -21,7 +21,7 @@
 2. 已安装 Git
 3. 已安装 Python 3.10 或更高版本，并且 `python` 命令可用
 4. 先拉取仓库最新代码
-5. 向希尔私聊获取团队共用的 `LLM_API_KEY`，不要发到群文件或提交到仓库
+5. 准备 API Key：可以找希尔要团队共用的 DeepSeek Key，也可以用自己的其他厂商 Key；不要发到群文件或提交到仓库
 
 ### 步骤
 
@@ -49,15 +49,30 @@ cd "C:\1\HOI MOD\Paradox Interactive\Hearts of Iron IV\mod\Adorable_heart_260901
 powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_windows.ps1
 ```
 
-脚本会依次：
+脚本会先显示 API 厂商菜单：
+
+```text
+1. DeepSeek 官方
+2. 通义千问兼容模式
+3. OpenAI 官方
+4. 智谱 GLM 兼容接口
+5. 自定义 OpenAI 兼容接口
+```
+
+默认直接回车就是 `1. DeepSeek 官方`。
+
+然后脚本会依次：
 
 1. 启用仓库里的 Git 钩子
 2. 检查 Python
-3. 提示你粘贴团队 API Key，输入内容不会显示
-4. 把 Key 和接口地址写入当前 Windows 用户环境变量
+3. 提示你粘贴所选厂商的 API Key，输入内容不会显示
+4. 把 Key、接口地址和模型名写入当前 Windows 用户环境变量
 5. 测试接口是否可用
 
 Key 只会存在你的电脑上，不会进入 Git 仓库。
+
+如果团队统一用希尔的 DeepSeek Key，就选 `1` 并粘贴团队 Key。  
+如果想用自己的 API，就选对应厂商，或者选 `5` 自己填 Base URL 和模型名。
 
 #### 3. 新开终端
 
@@ -98,7 +113,37 @@ git log -1
 
 ---
 
-## 二、日常使用
+## 二、选择 API 厂商
+
+本地提交钩子支持多个 OpenAI 兼容厂商：
+
+| 选项 | 厂商 | 默认接口 | 默认模型 |
+|---|---|---|---|
+| 1 | DeepSeek 官方 | `https://api.deepseek.com/v1` | `deepseek-chat` |
+| 2 | 通义千问兼容模式 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-plus` |
+| 3 | OpenAI 官方 | `https://api.openai.com/v1` | `gpt-4o-mini` |
+| 4 | 智谱 GLM 兼容接口 | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash` |
+| 5 | 自定义 | 自己填写 | 自己填写 |
+
+也可以不进入菜单，直接指定：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_windows.ps1 -Provider deepseek
+```
+
+可选 `Provider`：`deepseek`、`qwen`、`openai`、`glm`、`custom`。
+
+自定义厂商示例：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_windows.ps1 -Provider custom -BaseUrl "https://api.example.com/v1" -Model "my-model"
+```
+
+注意：GitHub Actions 用的是仓库统一配置，不是每个人本地的厂商选择。
+
+---
+
+## 三、日常使用
 
 ### 正常提交
 
@@ -159,7 +204,7 @@ git commit -m "111"
 
 ---
 
-## 三、GitHub 网页提交和 PR
+## 四、GitHub 网页提交和 PR
 
 - GitHub 网页上直接提交会绕过本地钩子，**不会自动改 commit message**
 - 本地钩子只能管本机 `git commit`
@@ -168,7 +213,7 @@ git commit -m "111"
 
 ---
 
-## 四、常见问题
+## 五、常见问题
 
 ### 1. 提示“未配置 LLM_API_KEY”
 
@@ -232,7 +277,7 @@ python .github/scripts/install_hooks.py
 
 ---
 
-## 五、安全要求
+## 六、安全要求
 
 1. **不要把 API Key 提交到仓库**
 2. **不要发到公开群、Issue、PR 或截图里**
@@ -243,14 +288,15 @@ python .github/scripts/install_hooks.py
 
 ---
 
-## 六、最短流程
+## 七、最短流程
 
 ```text
 1. git pull
 2. 双击 .github\scripts\setup_windows.cmd
-3. 粘贴团队 API Key
-4. 新开终端
-5. 正常 git add / git commit
+3. 选择 API 厂商（默认 DeepSeek）
+4. 粘贴对应厂商的 API Key
+5. 新开终端
+6. 正常 git add / git commit
 ```
 
 有问题直接找希尔。

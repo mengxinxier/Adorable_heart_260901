@@ -204,8 +204,29 @@ class UpdateTarget:
     pr_number: int | None = None
 
 
+def _windows_user_env(name: str) -> str:
+    """读取 HKCU 的 Environment，兼容已经打开的 VS Code/GitHub Desktop。
+
+    Windows 的 SetEnvironmentVariable(..., "User") 会写注册表，但已经启动的
+    进程不会自动刷新自己的环境块；这里兜底读最新值。
+    """
+    if os.name != "nt":
+        return ""
+    try:
+        import winreg
+
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
+            value, _ = winreg.QueryValueEx(key, name)
+        return str(value) if value is not None else ""
+    except (OSError, ImportError, TypeError):
+        return ""
+
+
 def env(name: str, default: str = "") -> str:
-    return (os.environ.get(name) or default).strip()
+    raw = os.environ.get(name)
+    if not raw and os.name == "nt":
+        raw = _windows_user_env(name)
+    return (raw or default).strip()
 
 
 def env_bool(name: str, default: bool = False) -> bool:
@@ -704,7 +725,7 @@ def _chat_completions_url() -> str:
     """
     base = env(
         "LLM_BASE_URL",
-        "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1",
+        "https://api.deepseek.com/v1",
     ).rstrip("/")
     parsed = urllib.parse.urlparse(base)
     if "/chat/completions" in parsed.path:
@@ -744,7 +765,7 @@ def _chat_completion(
     api_key = env("LLM_API_KEY") or env("OPENAI_API_KEY")
     if not api_key:
         raise SummaryError("未配置 LLM_API_KEY 或 OPENAI_API_KEY")
-    model = env("LLM_MODEL") or env("OPENAI_MODEL") or "qwen3.8-flash"
+    model = env("LLM_MODEL") or env("OPENAI_MODEL") or "deepseek-chat"
     if max_tokens is None:
         max_tokens = env_int("LLM_MAX_TOKENS", 3000, minimum=256)
     request_body: dict[str, Any] = {
@@ -1078,7 +1099,7 @@ def apply_target(
 
 
 def _model_name() -> str:
-    return env("LLM_MODEL") or env("OPENAI_MODEL") or "qwen3.8-flash"
+    return env("LLM_MODEL") or env("OPENAI_MODEL") or "deepseek-chat"
 
 
 def main() -> int:

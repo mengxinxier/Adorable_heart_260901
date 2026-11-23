@@ -278,8 +278,12 @@ scripted_gui = {
 					}
 					set_country_flag = ROC_policy_window_visible
 					ROC_policy_window_button_open_effect = yes
+					scoped_sound_effect = "menu_open_window"
 				}
-				else = { clr_country_flag = ROC_policy_window_visible }
+				else = {
+					clr_country_flag = ROC_policy_window_visible
+					scoped_sound_effect = "click_close"
+				}
 				if = {
 					limit = {
 						not = { has_country_flag = ROC_policy_button_arrows_alert_unvisible }
@@ -300,6 +304,37 @@ scripted_gui = {
 		properties = {
 		}
 		effects = {
+		}
+	}
+	ROC_policy_unlock_toast_window = {
+		context_type = player_context
+		window_name = "ROC_policy_unlock_toast_window"
+		visible = {
+			tag = ROC
+			is_ai = no
+			check_variable = { ROC_policy_toast_current > 0 }
+		}
+		properties = {
+			ROC_policy_toast_card_icon = {
+				frame = ROC_policy_toast_frame
+			}
+		}
+		effects = {
+			ROC_policy_toast_open_btn_click = {
+				if = {
+					limit = { NOT = { has_country_flag = ROC_policy_window_visible } }
+					set_country_flag = ROC_policy_window_visible
+					ROC_policy_window_button_open_effect = yes
+				}
+				clear_array = ROC_policy_toast_queue
+				clear_variable = ROC_policy_toast_current
+				clear_variable = ROC_policy_toast_frame
+				clear_variable = ROC_policy_toast_timer
+				clear_variable = ROC_policy_toast_remaining
+			}
+			ROC_policy_toast_close_btn_click = {
+				ROC_policy_toast_next_or_close = yes
+			}
 		}
 	}
 }
@@ -495,6 +530,7 @@ scripted_gui = {
 				scoped_sound_effect = "ROC_collection_change_ui"
 			}
 			ROC_collection_tab_click = {
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 				set_variable = { ROC_sisuitai_tab_var = 2 }
 				set_variable = { ROC_collection_tab_var = 1 }
 				set_variable = { ROC_coin_tab_var = 2 }
@@ -503,6 +539,7 @@ scripted_gui = {
 				scoped_sound_effect = "ROC_collection_change_ui"
 			}
 			ROC_coin_tab_click = {
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 				set_variable = { ROC_sisuitai_tab_var = 2 }
 				set_variable = { ROC_collection_tab_var = 2 }
 				set_variable = { ROC_coin_tab_var = 1 }
@@ -510,6 +547,7 @@ scripted_gui = {
 				scoped_sound_effect = "ROC_collection_change_ui"
 			}
 			ROC_shop_tab_click = {
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 				set_variable = { ROC_sisuitai_tab_var = 2 }
 				set_variable = { ROC_collection_tab_var = 2 }
 				set_variable = { ROC_coin_tab_var = 2 }
@@ -518,6 +556,7 @@ scripted_gui = {
 			}
 			close_button_click = {
 				clr_country_flag = ROC_collection_window_visible
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 			}
 		}
 	}
@@ -1781,9 +1820,14 @@ scripted_gui = {
 		context_type = player_context
 		parent_window_name = ROC_collection_container
 		window_name = "ROC_sisuitai_window"
-		visible = {	
+		visible = {
 			tag = ROC
 			check_variable = { ROC_sisuitai_tab_var = 1 }
+		}
+		properties = {
+			ROC_sisuitai_spoiler_button = {
+				frame = ROC_sisuitai_spoiler_btn_frame
+			}
 		}
 		triggers = {
 			unlock_bg_visible = {
@@ -1792,6 +1836,195 @@ scripted_gui = {
 			unlock_title_visible = {
 				not = { has_completed_focus = ROC_focus_rebuild_sisuitai }
 			}
+			ROC_sisuitai_spoiler_button_visible = {
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			ROC_sisuitai_guide_bar_bg_visible = {
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			ROC_sisuitai_guide_bar_text_visible = {
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			suipian_unlock_fx_1_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 503 }
+			}
+			suipian_unlock_fx_2_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 503 }
+			}
+			suipian_unlock_fx_3_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 502 }
+			}
+			suipian_unlock_fx_6_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 504 }
+			}
+			suipian_unlock_fx_9_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 501 }
+			}
+			suipian_unlock_fx_11_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 501 }
+			}
+			suipian_unlock_fx_12_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 504 }
+			}
+			# 7位已有立绘岁片：未招募显剪影，招募后显彩色
+			suipian_picture_1_visible = {
+				has_country_flag = ROC_sisuitai_recruited_chongyue
+			}
+			suipian_picture_1_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_chongyue }
+			}
+			suipian_picture_2_visible = {
+				has_country_flag = ROC_sisuitai_recruited_wang
+			}
+			suipian_picture_2_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_wang }
+			}
+			suipian_picture_3_visible = {
+				has_country_flag = ROC_sisuitai_recruited_ling
+			}
+			suipian_picture_3_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_ling }
+			}
+			suipian_picture_6_visible = {
+				has_country_flag = ROC_sisuitai_recruited_shu
+			}
+			suipian_picture_6_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_shu }
+			}
+			suipian_picture_9_visible = {
+				has_country_flag = ROC_sisuitai_recruited_nian
+			}
+			suipian_picture_9_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_nian }
+			}
+			suipian_picture_11_visible = {
+				has_country_flag = ROC_sisuitai_recruited_xi
+			}
+			suipian_picture_11_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_xi }
+			}
+			suipian_picture_12_visible = {
+				has_country_flag = ROC_sisuitai_recruited_yu
+			}
+			suipian_picture_12_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_yu }
+			}
+			# 5个未知问号格：隐藏顶层防叠绘
+			suipian_picture_4_visible = { always = no }
+			suipian_picture_5_visible = { always = no }
+			suipian_picture_7_visible = { always = no }
+			suipian_picture_8_visible = { always = no }
+			suipian_picture_10_visible = { always = no }
+		}
+		effects = {
+			ROC_sisuitai_spoiler_button_click = {
+				if = {
+					limit = { has_country_flag = ROC_sisuitai_spoiler_on }
+					clr_country_flag = ROC_sisuitai_spoiler_on
+					set_variable = { ROC_sisuitai_spoiler_btn_frame = 1 }
+				}
+				else = {
+					set_country_flag = ROC_sisuitai_spoiler_on
+					set_variable = { ROC_sisuitai_spoiler_btn_frame = 2 }
+				}
+			}
+		}
+	}
+
+	#司岁台：省份详情面板右上角视察按钮
+	ROC_sisuitai_state_inspect_window = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "ROC_sisuitai_state_inspect_window"
+		visible = {
+			ROOT = {
+				tag = ROC
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			THIS = {
+				is_controlled_by = ROOT
+				is_core_of = ROOT
+			}
+		}
+		properties = {
+			ROC_sisuitai_inspect_button = {
+				frame = ROC_sisuitai_inspect_btn_frame
+			}
+		}
+		triggers = {
+			ROC_sisuitai_inspect_button_click_enabled = {
+				THIS = {
+					NOT = { has_state_flag = ROC_sisuitai_inspected_state }
+				}
+				ROOT = {
+					NOT = { check_variable = { ubs_save < 10 } }
+				}
+			}
+			ROC_sisuitai_key_state_badge_visible = {
+				ROOT = { has_country_flag = ROC_sisuitai_spoiler_on }
+				THIS = {
+					NOT = { has_state_flag = ROC_sisuitai_inspected_state }
+					OR = {
+						state = 326
+						state = 858
+						state = 596
+						state = 605
+					}
+				}
+			}
+		}
+		effects = {
+			ROC_sisuitai_inspect_button_click = {
+				ROOT = {
+					subtract_from_variable = { ubs_save = 10 }
+					set_country_flag = ROC_sisuitai_inspect_arrow_dismissed
+				}
+				THIS = {
+					set_state_flag = ROC_sisuitai_inspected_state
+					set_variable = { ROC_sisuitai_inspect_btn_frame = 2 }
+					save_event_target_as = ROC_sisuitai_inspected_state
+				}
+				if = {
+					limit = { state = 326 }
+					ROOT = { country_event = { id = roc.501 } }
+				}
+				else_if = {
+					limit = { state = 858 }
+					ROOT = { country_event = { id = roc.502 } }
+				}
+				else_if = {
+					limit = { state = 596 }
+					ROOT = { country_event = { id = roc.503 } }
+				}
+				else_if = {
+					limit = { state = 605 }
+					ROOT = { country_event = { id = roc.504 } }
+				}
+				else = {
+					ROOT = { country_event = { id = roc.505 } }
+				}
+			}
+		}
+	}
+	ROC_sisuitai_state_inspect_arrows_alert = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "ROC_sisuitai_state_inspect_arrows_alert"
+		visible = {
+			ROOT = {
+				tag = ROC
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+				NOT = { has_country_flag = ROC_sisuitai_inspect_arrow_dismissed }
+			}
+			THIS = {
+				is_controlled_by = ROOT
+				is_core_of = ROOT
+				NOT = { has_state_flag = ROC_sisuitai_inspected_state }
+			}
+		}
+		properties = {
+		}
+		effects = {
 		}
 	}
 }
@@ -1896,7 +2129,7 @@ scripted_gui = {
 					}
 					ROC_social_reform_init_effect = yes
 					set_country_flag = ROC_social_reform_window_visible
-					scoped_sound_effect = "click_default"
+					scoped_sound_effect = "翻书"
 				}
 				else = {
 					clr_country_flag = ROC_social_reform_window_visible
@@ -2100,7 +2333,7 @@ scripted_gui = {
 					}
 					ROC_whampoa_tutelage_init_effect = yes
 					set_country_flag = ROC_whampoa_window_visible
-					scoped_sound_effect = "click_default"
+					scoped_sound_effect = "翻书"
 				}
 				else = {
 					clr_country_flag = ROC_whampoa_window_visible
@@ -2425,7 +2658,7 @@ scripted_gui = {
 					else = {
 						set_country_flag = ROC_ca_burst_parity
 					}
-					scoped_sound_effect = "open_ui_collection"
+					scoped_sound_effect = "menu_open_window"
 				}
 			}
 			ca_pendant_sky_btn_click = {

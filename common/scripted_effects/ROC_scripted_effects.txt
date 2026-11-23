@@ -2919,6 +2919,261 @@ ROC_policy_delete_card = {  ##删除某个政策卡
 	}
 }
 
+ROC_policy_toast_refresh_frame = {
+	if = {
+		limit = { check_variable = { ROC_policy_toast_current < 31 } }
+		set_variable = { ROC_policy_toast_frame = 2 }
+	}
+	else_if = {
+		limit = { check_variable = { ROC_policy_toast_current < 61 } }
+		set_variable = { ROC_policy_toast_frame = 3 }
+	}
+	else_if = {
+		limit = { check_variable = { ROC_policy_toast_current < 91 } }
+		set_variable = { ROC_policy_toast_frame = 4 }
+	}
+	else = { set_variable = { ROC_policy_toast_frame = 5 } }
+	set_variable = { ROC_policy_toast_remaining = ROC_policy_toast_queue^num }
+}
+
+ROC_policy_toast_next_or_close = {
+	if = {
+		limit = { check_variable = { ROC_policy_toast_queue^num > 0 } }
+		set_variable = { ROC_policy_toast_current = ROC_policy_toast_queue^0 }
+		remove_from_array = { array = ROC_policy_toast_queue index = 0 }
+		set_variable = { ROC_policy_toast_timer = 15 }
+		ROC_policy_toast_refresh_frame = yes
+	}
+	else = {
+		clear_variable = ROC_policy_toast_current
+		clear_variable = ROC_policy_toast_frame
+		clear_variable = ROC_policy_toast_timer
+		clear_variable = ROC_policy_toast_remaining
+	}
+}
+
+ROC_policy_unlock_card_with_toast = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { ROC_policy_unlock_card_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Military_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Economy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Diplomacy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Generic_array_true = card_to_unlock } }
+		}
+		add_to_array = { ROC_policy_unlock_card_array_true = card_to_unlock }
+		if = {
+			limit = { has_country_flag = ROC_policy_window_visible }
+			add_to_array = { ROC_policy_unlock_card_array = card_to_unlock }
+		}
+		if = {
+			limit = { is_ai = no }
+			if = {
+				limit = { NOT = { check_variable = { ROC_policy_toast_current > 0 } } }
+				set_variable = { ROC_policy_toast_current = card_to_unlock }
+				set_variable = { ROC_policy_toast_timer = 15 }
+			}
+			else = { add_to_array = { ROC_policy_toast_queue = card_to_unlock } }
+			ROC_policy_toast_refresh_frame = yes
+		}
+	}
+}
+
+ROC_check_generic_policy_card_unlocks = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_4 }
+			num_of_naval_factories > 4
+		}
+		set_country_flag = ROC_gpcard_unlocked_4
+		set_temp_variable = { card_to_unlock = 4 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_25 }
+			OR = { has_tech = tech_logistics_company has_tech = motorised_infantry }
+		}
+		set_country_flag = ROC_gpcard_unlocked_25
+		set_temp_variable = { card_to_unlock = 25 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_26 }
+			OR = { has_tech = artillery1 num_of_military_factories > 19 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_26
+		set_temp_variable = { card_to_unlock = 26 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_27 }
+			OR = { has_tech = landing_craft has_tech = mtg_landing_craft num_of_naval_factories > 9 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_27
+		set_temp_variable = { card_to_unlock = 27 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_58 }
+			OR = { has_global_flag = ROC_establishment_of_the_capital_at_nanjing AND = { has_war = no num_of_civilian_factories > 29 } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_58
+		set_temp_variable = { card_to_unlock = 58 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_59 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_59
+		set_temp_variable = { card_to_unlock = 59 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_60 }
+			has_tech = excavation1
+		}
+		set_country_flag = ROC_gpcard_unlocked_60
+		set_temp_variable = { card_to_unlock = 60 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_64 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_64
+		set_temp_variable = { card_to_unlock = 64 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_66 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_66
+		set_temp_variable = { card_to_unlock = 66 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_67 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_67
+		set_temp_variable = { card_to_unlock = 67 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_68 }
+			OR = { is_in_faction = yes AND = { has_war = no num_divisions > 23 } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_68
+		set_temp_variable = { card_to_unlock = 68 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_69 }
+			num_subjects > 0
+		}
+		set_country_flag = ROC_gpcard_unlocked_69
+		set_temp_variable = { card_to_unlock = 69 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_70 }
+			OR = { is_in_faction = yes any_enemy_country = { is_major = yes } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_70
+		set_temp_variable = { card_to_unlock = 70 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_71 }
+			OR = { has_global_flag = ROC_establishment_of_the_capital_at_nanjing num_of_civilian_factories > 39 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_71
+		set_temp_variable = { card_to_unlock = 71 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_72 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_72
+		set_temp_variable = { card_to_unlock = 72 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_94 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_94
+		set_temp_variable = { card_to_unlock = 94 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_105 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_105
+		set_temp_variable = { card_to_unlock = 105 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_107 }
+			OR = { has_tech = tech_field_hospital has_war = yes }
+		}
+		set_country_flag = ROC_gpcard_unlocked_107
+		set_temp_variable = { card_to_unlock = 107 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_109 }
+			OR = { has_global_flag = CHI_REUNIT any_controlled_state = { NOT = { is_core_of = ROOT } } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_109
+		set_temp_variable = { card_to_unlock = 109 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_110 }
+			OR = { has_global_flag = CHI_REUNIT amount_research_slots > 3 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_110
+		set_temp_variable = { card_to_unlock = 110 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+}
+
+ROC_policy_toast_daily_tick = {
+	ROC_check_generic_policy_card_unlocks = yes
+	if = {
+		limit = { check_variable = { ROC_policy_toast_current > 0 } }
+		subtract_from_variable = { ROC_policy_toast_timer = 1 }
+		if = {
+			limit = { NOT = { check_variable = { ROC_policy_toast_timer > 0 } } }
+			ROC_policy_toast_next_or_close = yes
+		}
+	}
+}
+
 ROC_factional_influence_calculation = {  ##计算广府派系影响力
 	set_variable = { ROC_total_influence_var = 0 }
 	if = {
@@ -4153,6 +4408,7 @@ ROC_collection_gain_random_one = {
 		100 = {
 			modifier = {
 				or = {
+					NOT = { has_country_flag = ROC_sisuitai_recruited_nian }
 					is_in_array = { KMT_collection_using_array = 3 }
 					is_in_array = { KMT_collection_unusing_array = 3 }
 					is_in_array = { KMT_spnode_shop_goods_array = 3 }
@@ -4187,6 +4443,7 @@ ROC_collection_gain_random_one = {
 		100 = {
 			modifier = {
 				or = {
+					NOT = { has_country_flag = ROC_sisuitai_recruited_ling }
 					is_in_array = { KMT_collection_using_array = 5 }
 					is_in_array = { KMT_collection_unusing_array = 5 }
 					is_in_array = { KMT_spnode_shop_goods_array = 5 }
@@ -4238,6 +4495,7 @@ ROC_collection_gain_random_one = {
 		100 = {
 			modifier = {
 				or = {
+					NOT = { has_country_flag = ROC_sisuitai_recruited_chongyue }
 					is_in_array = { KMT_collection_using_array = 8 }
 					is_in_array = { KMT_collection_unusing_array = 8 }
 					is_in_array = { KMT_spnode_shop_goods_array = 8 }
@@ -8669,4 +8927,211 @@ ROC_wt_btn_hos_3_effect = {
 	add_to_variable = { ROC_wt_hos_m1 = 10 }
 	set_country_flag = ROC_wt_hos_awakened
 	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 司岁台：岁片加入后安全入库专属藏品（#3 古旧铸物 / #5 酿山河 / #8 《拳经三问》）
+ROC_sisuitai_grant_collection_3 = {
+	custom_effect_tooltip = ROC_sisuitai_gain_collection_3_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { KMT_collection_using_array = 3 } }
+				NOT = { is_in_array = { KMT_collection_unusing_array = 3 } }
+			}
+			add_to_array = { KMT_collection_unusing_array = 3 }
+			set_variable = { ROC_collection_new_id_var = 3 }
+			ROC_collection_gain_effect = yes
+			ROC_collection_passive_idea_check = yes
+			ROC_collection_active_bonus_calc = yes
+			ROC_collection_coin_bonus_calc = yes
+			ROC_collection_8_bonus_calc = yes
+		}
+	}
+}
+ROC_sisuitai_grant_collection_5 = {
+	custom_effect_tooltip = ROC_sisuitai_gain_collection_5_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { KMT_collection_using_array = 5 } }
+				NOT = { is_in_array = { KMT_collection_unusing_array = 5 } }
+			}
+			add_to_array = { KMT_collection_unusing_array = 5 }
+			set_variable = { ROC_collection_new_id_var = 5 }
+			ROC_collection_gain_effect = yes
+			ROC_collection_passive_idea_check = yes
+			ROC_collection_active_bonus_calc = yes
+			ROC_collection_coin_bonus_calc = yes
+			ROC_collection_8_bonus_calc = yes
+		}
+	}
+}
+ROC_sisuitai_grant_collection_8 = {
+	custom_effect_tooltip = ROC_sisuitai_gain_collection_8_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { KMT_collection_using_array = 8 } }
+				NOT = { is_in_array = { KMT_collection_unusing_array = 8 } }
+			}
+			add_to_array = { KMT_collection_unusing_array = 8 }
+			set_variable = { ROC_collection_new_id_var = 8 }
+			ROC_collection_gain_effect = yes
+			ROC_collection_passive_idea_check = yes
+			ROC_collection_active_bonus_calc = yes
+			ROC_collection_coin_bonus_calc = yes
+			ROC_collection_8_bonus_calc = yes
+		}
+	}
+}
+
+ROC_sisuitai_force_open_ui = {
+	set_country_flag = ROC_collection_window_visible
+	set_variable = { ROC_sisuitai_tab_var = 1 }
+	set_variable = { ROC_collection_tab_var = 2 }
+	set_variable = { ROC_coin_tab_var = 2 }
+	set_variable = { ROC_shop_tab_var = 2 }
+	scoped_sound_effect = "ROC_collection_change_ui"
+}
+
+# 将附庸国 FROM 的子意识形态转化为与宗主国 ROOT 相同
+ROC_sync_FROM_subideology_to_ROOT_effect = {
+	custom_effect_tooltip = ROC_sync_FROM_subideology_to_ROOT_tt
+	hidden_effect = {
+		if = {
+			limit = { NOT = { FROM = { has_government = ROOT } } }
+			if = { limit = { ROOT = { has_government = communism } } FROM = { set_politics = { ruling_party = communism } } }
+			else_if = { limit = { ROOT = { has_government = democratic } } FROM = { set_politics = { ruling_party = democratic } } }
+			else_if = { limit = { ROOT = { has_government = neutrality } } FROM = { set_politics = { ruling_party = neutrality } } }
+			else_if = { limit = { ROOT = { has_government = fascism } } FROM = { set_politics = { ruling_party = fascism } } }
+		}
+		if = { limit = { ROOT = { has_country_leader_ideology = Three_Principles_of_the_People_c } } FROM = { set_country_leader_ideology = Three_Principles_of_the_People_c } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Monarchical_socialism } } FROM = { set_country_leader_ideology = Monarchical_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Military_socialism } } FROM = { set_country_leader_ideology = Military_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Radical_socialism } } FROM = { set_country_leader_ideology = Radical_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = marxism } } FROM = { set_country_leader_ideology = marxism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = leninism } } FROM = { set_country_leader_ideology = leninism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = stalinism } } FROM = { set_country_leader_ideology = stalinism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = anti_revisionism } } FROM = { set_country_leader_ideology = anti_revisionism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = anarchist_communism } } FROM = { set_country_leader_ideology = anarchist_communism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = syndicalism } } FROM = { set_country_leader_ideology = syndicalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Madokaism } } FROM = { set_country_leader_ideology = Madokaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Spartacus } } FROM = { set_country_leader_ideology = Spartacus } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Farsighted_socialism } } FROM = { set_country_leader_ideology = Farsighted_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = quantum_Farsighted_socialism } } FROM = { set_country_leader_ideology = quantum_Farsighted_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Left_wing_nationalism } } FROM = { set_country_leader_ideology = Left_wing_nationalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = warm_syndicalism_group } } FROM = { set_country_leader_ideology = warm_syndicalism_group } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = YukiNoaism } } FROM = { set_country_leader_ideology = YukiNoaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_communism_subtype } } FROM = { set_country_leader_ideology = astraea_route_communism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = popular_front_subtype } } FROM = { set_country_leader_ideology = popular_front_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Jacobins } } FROM = { set_country_leader_ideology = Jacobins } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Utopian_Socialism } } FROM = { set_country_leader_ideology = Utopian_Socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Maoist_subideology } } FROM = { set_country_leader_ideology = Maoist_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Istinaist } } FROM = { set_country_leader_ideology = Istinaist } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Market_socialism } } FROM = { set_country_leader_ideology = Market_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Socialist_Technocracy } } FROM = { set_country_leader_ideology = Socialist_Technocracy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Security_socialism } } FROM = { set_country_leader_ideology = Security_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Agrarian_socialism } } FROM = { set_country_leader_ideology = Agrarian_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype_c } } FROM = { set_country_leader_ideology = interim_government_subtype_c } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = AI_Centralizationist_C } } FROM = { set_country_leader_ideology = AI_Centralizationist_C } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Hakureiism } } FROM = { set_country_leader_ideology = Hakureiism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = communism_subtype } } FROM = { set_country_leader_ideology = communism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Fairytale_Communism_subideology } } FROM = { set_country_leader_ideology = Fairytale_Communism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Mumian_Communism_subideology } } FROM = { set_country_leader_ideology = Mumian_Communism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Liberation_Theology_subideology } } FROM = { set_country_leader_ideology = Liberation_Theology_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Enrages } } FROM = { set_country_leader_ideology = Enrages } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Storer } } FROM = { set_country_leader_ideology = Storer } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Trailblaze_Leftism } } FROM = { set_country_leader_ideology = Trailblaze_Leftism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Three_Principles_of_the_People_d } } FROM = { set_country_leader_ideology = Three_Principles_of_the_People_d } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = socialism } } FROM = { set_country_leader_ideology = socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = liberalism } } FROM = { set_country_leader_ideology = liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = conservatism } } FROM = { set_country_leader_ideology = conservatism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = KVO_EIG } } FROM = { set_country_leader_ideology = KVO_EIG } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = KVO_government } } FROM = { set_country_leader_ideology = KVO_government } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = RED_market_liberalism } } FROM = { set_country_leader_ideology = RED_market_liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = ABY_committee } } FROM = { set_country_leader_ideology = ABY_committee } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = SCH_schale } } FROM = { set_country_leader_ideology = SCH_schale } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = aristocratic_conservatism_subtype } } FROM = { set_country_leader_ideology = aristocratic_conservatism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_democratic_subtype } } FROM = { set_country_leader_ideology = astraea_route_democratic_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = welfare_enterprise_government_subtype } } FROM = { set_country_leader_ideology = welfare_enterprise_government_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = one_party_system_subtype } } FROM = { set_country_leader_ideology = one_party_system_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Merchant_Republic } } FROM = { set_country_leader_ideology = Merchant_Republic } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Technical_Officer_Republic } } FROM = { set_country_leader_ideology = Technical_Officer_Republic } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = kemalism_subtype } } FROM = { set_country_leader_ideology = kemalism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Guided_democracy } } FROM = { set_country_leader_ideology = Guided_democracy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Trade_liberalism } } FROM = { set_country_leader_ideology = Trade_liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Four_Principles_of_the_People_d } } FROM = { set_country_leader_ideology = Four_Principles_of_the_People_d } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Progressive_Confucianism } } FROM = { set_country_leader_ideology = Progressive_Confucianism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Christian_Democracy } } FROM = { set_country_leader_ideology = Christian_Democracy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Chinese_federalism } } FROM = { set_country_leader_ideology = Chinese_federalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype_d } } FROM = { set_country_leader_ideology = interim_government_subtype_d } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Gensokyo_liberalism } } FROM = { set_country_leader_ideology = Gensokyo_liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ongfalos_Harmonism } } FROM = { set_country_leader_ideology = Ongfalos_Harmonism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Viennese_Humanism } } FROM = { set_country_leader_ideology = Viennese_Humanism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Three_Principles_of_the_People_n } } FROM = { set_country_leader_ideology = Three_Principles_of_the_People_n } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Chiang_Kai_shekism_subtype } } FROM = { set_country_leader_ideology = Chiang_Kai_shekism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Absolute_monarchy } } FROM = { set_country_leader_ideology = Absolute_monarchy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = oligarchism } } FROM = { set_country_leader_ideology = oligarchism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = bandit_state_subideology } } FROM = { set_country_leader_ideology = bandit_state_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = despotism } } FROM = { set_country_leader_ideology = despotism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = anarchism } } FROM = { set_country_leader_ideology = anarchism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = moderatism } } FROM = { set_country_leader_ideology = moderatism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = centrism } } FROM = { set_country_leader_ideology = centrism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = military_politicism } } FROM = { set_country_leader_ideology = military_politicism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = taoism_ideology } } FROM = { set_country_leader_ideology = taoism_ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = buddhism_ideology } } FROM = { set_country_leader_ideology = buddhism_ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Gestalt } } FROM = { set_country_leader_ideology = Gestalt } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Nightingale_Heart_Ideology } } FROM = { set_country_leader_ideology = Nightingale_Heart_Ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Nightingale2_Heart_Ideology } } FROM = { set_country_leader_ideology = Nightingale2_Heart_Ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = mikado_conference } } FROM = { set_country_leader_ideology = mikado_conference } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = enlightened_despotism } } FROM = { set_country_leader_ideology = enlightened_despotism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = TRY_oligarch } } FROM = { set_country_leader_ideology = TRY_oligarch } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = GEH_despotism } } FROM = { set_country_leader_ideology = GEH_despotism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = MIL_auto_technocrats } } FROM = { set_country_leader_ideology = MIL_auto_technocrats } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = RED_cherinoism } } FROM = { set_country_leader_ideology = RED_cherinoism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = AKK_society_union } } FROM = { set_country_leader_ideology = AKK_society_union } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = TRY_mikaism } } FROM = { set_country_leader_ideology = TRY_mikaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = religious_technocracy_subtype } } FROM = { set_country_leader_ideology = religious_technocracy_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_neutrality_subtype } } FROM = { set_country_leader_ideology = astraea_route_neutrality_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype } } FROM = { set_country_leader_ideology = interim_government_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = left_wing_corporatism_subtype } } FROM = { set_country_leader_ideology = left_wing_corporatism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Conservative_Confucianism } } FROM = { set_country_leader_ideology = Conservative_Confucianism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Four_Principles_of_the_People_n } } FROM = { set_country_leader_ideology = Four_Principles_of_the_People_n } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Theocracy_subideology } } FROM = { set_country_leader_ideology = Theocracy_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = autocracy_subideology } } FROM = { set_country_leader_ideology = autocracy_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Swarm_subideology } } FROM = { set_country_leader_ideology = Swarm_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ameliorated_nazism } } FROM = { set_country_leader_ideology = Ameliorated_nazism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Sunflower_annihilationism_subideology } } FROM = { set_country_leader_ideology = Sunflower_annihilationism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Sanaeism_subideology } } FROM = { set_country_leader_ideology = Sanaeism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Homura_subideology } } FROM = { set_country_leader_ideology = Homura_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ainzism_Utopian_subideology } } FROM = { set_country_leader_ideology = Ainzism_Utopian_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = techno_authoritarianism_subtype } } FROM = { set_country_leader_ideology = techno_authoritarianism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Predatory_Anarchism_subtype } } FROM = { set_country_leader_ideology = Predatory_Anarchism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Reactionary_Confucianism } } FROM = { set_country_leader_ideology = Reactionary_Confucianism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Right_populism_subideology } } FROM = { set_country_leader_ideology = Right_populism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = militarism_subtype } } FROM = { set_country_leader_ideology = militarism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = digital_fascism } } FROM = { set_country_leader_ideology = digital_fascism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = nazism } } FROM = { set_country_leader_ideology = nazism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = gen_nazism } } FROM = { set_country_leader_ideology = gen_nazism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = fascism_ideology } } FROM = { set_country_leader_ideology = fascism_ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = falangism } } FROM = { set_country_leader_ideology = falangism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = rexism } } FROM = { set_country_leader_ideology = rexism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = lisha_xierism } } FROM = { set_country_leader_ideology = lisha_xierism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Strasserism } } FROM = { set_country_leader_ideology = Strasserism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = occultism } } FROM = { set_country_leader_ideology = occultism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = kazumaism } } FROM = { set_country_leader_ideology = kazumaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_fascism_subtype } } FROM = { set_country_leader_ideology = astraea_route_fascism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astral_autocracy_subtype } } FROM = { set_country_leader_ideology = astral_autocracy_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = lovecraftianism_subtype } } FROM = { set_country_leader_ideology = lovecraftianism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Lunar_purification_subideology } } FROM = { set_country_leader_ideology = Lunar_purification_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Crimson_Idealism } } FROM = { set_country_leader_ideology = Crimson_Idealism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ainzism_subideology } } FROM = { set_country_leader_ideology = Ainzism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = AI_Centralizationist } } FROM = { set_country_leader_ideology = AI_Centralizationist } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = ABY_color_subideology } } FROM = { set_country_leader_ideology = ABY_color_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype_f } } FROM = { set_country_leader_ideology = interim_government_subtype_f } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Chaos_Emissary } } FROM = { set_country_leader_ideology = Chaos_Emissary } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = wolfpack_survivalism } } FROM = { set_country_leader_ideology = wolfpack_survivalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = yuki_idealism } } FROM = { set_country_leader_ideology = yuki_idealism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Annihilationism_subideology } } FROM = { set_country_leader_ideology = Annihilationism_subideology } }
+	}
 }
