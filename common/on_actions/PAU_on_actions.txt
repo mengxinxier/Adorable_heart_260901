@@ -170,6 +170,11 @@ on_actions = {
                             id = PAU.43
                             hours = 6
                         }
+                        if = {
+                            limit = { has_character = PAU_baiye }
+                            set_variable = { PAU_baiye_pet_egg_mode = 7 }
+                            set_variable = { PAU_baiye_pet_bubble_timer = 20 }
+                        }
                     }
             }
 				if = {
@@ -282,6 +287,11 @@ on_actions = {
 							add_political_power = 50
 							PAU_grant_vanguard_armor_cache = yes
 							PAU_ensure_militia_template = yes
+							if = {
+								limit = { has_character = PAU_baiye }
+								set_variable = { PAU_baiye_pet_egg_mode = 7 }
+								set_variable = { PAU_baiye_pet_bubble_timer = 20 }
+							}
 						}
 						278 = {
 							create_unit = {
@@ -372,17 +382,22 @@ on_actions = {
 				}
         }
     }
-	#伞降轻装甲空投破坏
+	#伞降轻装甲空投破坏与白夜奇袭王牌联队授勋
 	on_units_paradropped_in_state = {
 		effect = {
 			if = {
 				limit = {
 					FROM = {
 						tag = PAU
-						has_doctrine = PAU_no_overnight_light_armor
-						has_mastery_level = {
-							amount = 5
-							sub_doctrine = PAU_no_overnight_light_armor
+						OR = {
+							has_idea = PAU_airborne_white_night_raid_idea
+							AND = {
+								has_doctrine = PAU_no_overnight_light_armor
+								has_mastery_level = {
+									amount = 5
+									sub_doctrine = PAU_no_overnight_light_armor
+								}
+							}
 						}
 						divisions_in_state = {
 							unit = PAU_airborne_light_armor
@@ -406,6 +421,10 @@ on_actions = {
 					type = radar_station
 					damage = 1
 				}
+				damage_building = {
+					type = anti_air_building
+					damage = 1
+				}
 				every_state_division = {
 					limit = {
 						OWNER = { has_war_with = FROM }
@@ -414,7 +433,17 @@ on_actions = {
 				}
 				FROM = {
 					add_command_power = 10
-					army_experience = 5
+					army_experience = 8
+					if = {
+						limit = { has_character = PAU_baiye }
+						set_variable = { PAU_baiye_pet_egg_mode = 5 }
+						set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+					}
+					if = {
+						limit = { NOT = { has_country_flag = PAU_airborne_ace_awarded } }
+						set_country_flag = PAU_airborne_ace_awarded
+						country_event = { id = PAU.7050 hours = 4 }
+					}
 				}
 			}
 		}
