@@ -3531,6 +3531,90 @@ PAU_baiye_category = {
             }
         }
     }
+
+    #工人委员会·和平轮班建设令（中度偏左专属爆发：大基建提速并继续左推，注意别推过头）
+    PAU_bop_peace_five_year_shift = {
+        icon = GFX_PAU_dec_production_drive
+        allowed = { original_tag = PAU }
+        visible = { has_completed_focus = PAU_tyzz }
+        available = {
+            power_balance_value = { id = PAU_bop value < -0.09 }
+            power_balance_value = { id = PAU_bop value > -0.60 }
+        }
+        cost = 20
+        fire_only_once = no
+        days_re_enable = 75
+        days_remove = 60
+        modifier = {
+            production_speed_buildings_factor = 0.15
+            production_speed_industrial_complex_factor = 0.15
+            industrial_capacity_factory = 0.08
+            local_resources_factor = 0.10
+        }
+        complete_effect = {
+            add_power_balance_value = {
+                id = PAU_bop
+                value = -0.12
+                tooltip_side = PAU_bop_left_side
+            }
+        }
+        remove_effect = {
+            add_to_variable = {
+                var = ubs_save
+                value = 35
+                tooltip = ubs_save_tt
+            }
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 18
+                has_war = no
+                power_balance_value = { id = PAU_bop value < -0.12 }
+                power_balance_value = { id = PAU_bop value > -0.45 }
+            }
+        }
+    }
+
+    #老兵评议会·战备突击整备令（中度偏右专属爆发：伞降与主力突击强化并继续右推，战后记得踩刹车）
+    PAU_bop_veteran_shock_readiness = {
+        icon = GFX_PAU_dec_military_req
+        allowed = { original_tag = PAU }
+        visible = { has_completed_focus = PAU_tyzz }
+        available = {
+            power_balance_value = { id = PAU_bop value > 0.09 }
+            power_balance_value = { id = PAU_bop value < 0.60 }
+        }
+        cost = 20
+        fire_only_once = no
+        days_re_enable = 75
+        days_remove = 45
+        modifier = {
+            breakthrough_factor = 0.12
+            army_org_regain = 0.12
+            planning_speed = 0.15
+            extra_paratrooper_supply_grace = 48
+            special_forces_attack_factor = 0.10
+        }
+        complete_effect = {
+            add_command_power = 15
+            army_experience = 10
+            add_power_balance_value = {
+                id = PAU_bop
+                value = 0.12
+                tooltip_side = PAU_bop_right_side
+            }
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 20
+                has_war = yes
+                power_balance_value = { id = PAU_bop value > 0.12 }
+                power_balance_value = { id = PAU_bop value < 0.45 }
+            }
+        }
+    }
 }
 PAU_late_doctrine = {
 
@@ -3633,7 +3717,6 @@ PAU_late_doctrine = {
         cost = 25
         days_remove = 30
         fire_only_once = no
-        cancel_if_invalid = no
         cancel_trigger = {
             FROM = {
                 OR = {
@@ -3773,7 +3856,6 @@ PAU_late_doctrine = {
         cost = 15
         days_remove = 20
         fire_only_once = no
-        cancel_if_invalid = no
         cancel_trigger = {
             FROM = {
                 OR = {
@@ -3890,7 +3972,6 @@ PAU_late_doctrine = {
         cost = 30
         days_remove = 30
         fire_only_once = no
-        cancel_if_invalid = no
         cancel_trigger = {
             FROM = {
                 OR = {
@@ -4101,7 +4182,6 @@ PAU_late_doctrine = {
         cost = 25
         days_remove = 20
         fire_only_once = no
-        cancel_if_invalid = no
         cancel_trigger = {
             FROM = {
                 OR = {
@@ -5173,6 +5253,48 @@ PAU_national_unification = {
         }
         ai_will_do = { factor = 15 }
     }
+
+    #白夜奇袭空降行动（战时主动高空装甲突袭指令）
+    PAU_airborne_white_night_raid = {
+        icon = GFX_PAU_dec_airborne_pod
+        allowed = { original_tag = PAU }
+        visible = {
+            has_country_flag = PAU_mil_reform_cap_reward_claimed
+            has_tech = PAU_airborne_light_armor_tech
+        }
+        available = {
+            has_war = yes
+            has_command_power > 24
+            has_equipment = { transport_plane_equipment > 9 }
+        }
+        cost = 15
+        fire_only_once = no
+        days_remove = 14
+        days_re_enable = 60
+        complete_effect = {
+            add_command_power = -25
+            add_timed_idea = {
+                idea = PAU_airborne_white_night_raid_idea
+                days = 14
+            }
+            custom_effect_tooltip = PAU_airborne_white_night_raid_tt
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 5 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 20
+                has_war = yes
+                has_command_power > 45
+            }
+        }
+    }
 }
 
     PAU_hydro_dam_projects = {
@@ -5218,6 +5340,13 @@ PAU_national_unification = {
             clr_country_flag = PAU_constructing_dam_flag
             set_country_flag = PAU_parana_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 6 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
             510 = {
                 add_building_construction = {
                     type = dam
@@ -5277,6 +5406,13 @@ PAU_national_unification = {
             clr_country_flag = PAU_constructing_dam_flag
             set_country_flag = PAU_negro_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 6 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
             300 = {
                 add_building_construction = {
                     type = dam
@@ -5336,6 +5472,13 @@ PAU_national_unification = {
             clr_country_flag = PAU_constructing_dam_flag
             set_country_flag = PAU_cordoba_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 6 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
             902 = {
                 add_building_construction = {
                     type = dam
@@ -5395,6 +5538,13 @@ PAU_national_unification = {
             clr_country_flag = PAU_constructing_dam_flag
             set_country_flag = PAU_patagonia_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 6 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
             1029 = {
                 add_building_construction = {
                     type = dam
@@ -5454,6 +5604,13 @@ PAU_national_unification = {
             clr_country_flag = PAU_constructing_dam_flag
             set_country_flag = PAU_corrientes_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 6 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
             1074 = {
                 add_building_construction = {
                     type = dam
@@ -5513,6 +5670,13 @@ PAU_national_unification = {
             clr_country_flag = PAU_constructing_dam_flag
             set_country_flag = PAU_mendoza_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
+            hidden_effect = {
+                if = {
+                    limit = { has_character = PAU_baiye }
+                    set_variable = { PAU_baiye_pet_egg_mode = 6 }
+                    set_variable = { PAU_baiye_pet_bubble_timer = 18 }
+                }
+            }
             1144 = {
                 add_building_construction = {
                     type = dam
