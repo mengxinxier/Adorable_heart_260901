@@ -1002,359 +1002,836 @@
 
 #
 
-# 露斯契亚边疆：窗口选州、真实任务目标和项目计时分别维护。
-LFC_frontier_open_map = {
-	LFC_frontier_refresh_map_frames = yes
-	set_country_flag = FLAG_LFC_frontier_open
-	clr_country_flag = FLAG_LFC_frontier_relic_page
-	if = {
-		limit = { OR = { has_country_flag = FLAG_LFC_frontier_preparing has_country_flag = FLAG_LFC_Rainforest_Acting } has_variable = VAR_LFC_Rainforest_state check_variable = { VAR_LFC_Rainforest_state > 0 } }
-		set_variable = { LFC_frontier_selected_state = VAR_LFC_Rainforest_state }
-	}
-	else_if = {
-		# 露斯契亚边疆：旧存档可能还选着已移出大窗的沿海州。
-		limit = {
-			NOT = {
+#露斯契亚边疆
+	LFC_frontier_open_map = { #打开地图并刷新帧号
+		LFC_frontier_refresh_map_frames = yes
+		set_country_flag = FLAG_LFC_frontier_open
+		clr_country_flag = FLAG_LFC_frontier_relic_page
+		if = {
+			limit = {
 				OR = {
-					check_variable = { LFC_frontier_selected_state = 1202 }
-					check_variable = { LFC_frontier_selected_state = 1203 }
-					check_variable = { LFC_frontier_selected_state = 1204 }
-					check_variable = { LFC_frontier_selected_state = 1205 }
-					check_variable = { LFC_frontier_selected_state = 1206 }
-					check_variable = { LFC_frontier_selected_state = 1207 }
-					check_variable = { LFC_frontier_selected_state = 1208 }
-					check_variable = { LFC_frontier_selected_state = 280 }
-					check_variable = { LFC_frontier_selected_state = 504 }
-					check_variable = { LFC_frontier_selected_state = 505 }
+					has_country_flag = FLAG_LFC_frontier_preparing
+					has_country_flag = FLAG_LFC_Rainforest_Acting
+				}
+				has_variable = VAR_LFC_Rainforest_state
+				check_variable = {
+					VAR_LFC_Rainforest_state > 0
 				}
 			}
+			set_variable = {
+				LFC_frontier_selected_state = VAR_LFC_Rainforest_state
+			}
 		}
-		set_variable = { LFC_frontier_selected_state = 1202 }
-	}
-}
-
-# 旧决议和新按钮传入同一个州参数；必须先锁定目标，再触发第一条筹备事件。
-LFC_frontier_begin_expedition = {
-	if = {
-		limit = {
-			NOT = { has_country_flag = FLAG_LFC_Rainforest_Acting }
-			NOT = { has_country_flag = FLAG_LFC_frontier_preparing }
-			check_variable = { ubs_save > 100 }
-			has_equipment = { infantry_equipment > 1000 }
-			has_equipment = { support_equipment > 40 }
-			has_manpower > 2000
-			var:LFC_frontier_request_state = { OR = { state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 1208 state = 280 } has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq any_neighbor_state = { is_core_of = LFC } }
+		else_if = {
+			#旧档选中州不在图内时回到棘冠山谷
+			limit = {
+				NOT = {
+					OR = {
+						check_variable = {
+							LFC_frontier_selected_state = 1202
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 1203
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 1204
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 1205
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 1206
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 1207
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 1208
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 280
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 504
+						}
+						check_variable = {
+							LFC_frontier_selected_state = 505
+						}
+					}
+				}
+			}
+			set_variable = {
+				LFC_frontier_selected_state = 1202
+			}
 		}
-		set_variable = { VAR_LFC_Rainforest_state = LFC_frontier_request_state }
-		set_country_flag = FLAG_LFC_frontier_preparing
-		country_event = LFC_event_forest.1
 	}
-}
 
-# 筹备可以在任意一页取消；进队后仅由远征结局释放该目标。
-LFC_frontier_cancel_preparation = {
-	clr_country_flag = FLAG_LFC_frontier_preparing
-	clear_variable = VAR_LFC_Rainforest_state
-}
-
-# 发起扣费由开始效果统一处理。原版决议负责占用民工、计时与结束效果。
-# 强制启动可能也执行开始效果，所以借助目标州的运行标记保证扣费只发生一次。
-LFC_frontier_infrastructure_pay = {
-	if = {
-		limit = { var:LFC_frontier_request_state = { NOT = { has_state_flag = LFC_frontier_infrastructure_running } } }
-		add_political_power = -50
-		COST_200_UBS_LOAD = yes
-		var:LFC_frontier_request_state = { set_state_flag = LFC_frontier_infrastructure_running }
-	}
-}
-
-LFC_frontier_infrastructure_request = {
-	if = {
-		limit = {
-			NOT = { has_political_power < 50 }
-			num_of_civilian_factories_available_for_projects > 3
-			OR = { NOT = { has_decision = LFC_decision_forest_tjjj } any_owned_state = { has_state_flag = LFC_frontier_infrastructure_running } }
-			var:LFC_frontier_selected_state = { is_core_of = LFC is_controlled_by = LFC OR = { state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 1208 state = 504 state = 505 state = 280 state = 1202 } NOT = { has_state_flag = LFC_frontier_infrastructure_running } NOT = { has_state_flag = LFC_frontier_infrastructure_complete } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd } }
-		}
-		set_temp_variable = { LFC_frontier_request_state = LFC_frontier_selected_state }
-		activate_targeted_decision = { target = var:LFC_frontier_request_state decision = LFC_decision_forest_tjjj }
+	#旧决议和地图按钮共用远征州
+	LFC_frontier_begin_expedition = { #锁定目标州并筹备远征
 		if = {
-			limit = { has_decision = LFC_decision_forest_tjjj }
-			LFC_frontier_infrastructure_pay = yes
+			limit = {
+				NOT = {
+					has_country_flag = FLAG_LFC_Rainforest_Acting
+				}
+				NOT = {
+					has_country_flag = FLAG_LFC_frontier_preparing
+				}
+				check_variable = {
+					ubs_save > 100
+				}
+				has_equipment = {
+					infantry_equipment > 1000
+				}
+				has_equipment = {
+					support_equipment > 40
+				}
+				has_manpower > 2000
+				var:LFC_frontier_request_state = {
+					OR = {
+						state = 1203
+						state = 1204
+						state = 1205
+						state = 1206
+						state = 1207
+						state = 1208
+						state = 280
+					}
+					has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
+					any_neighbor_state = {
+						is_core_of = LFC
+					}
+				}
+			}
+			set_variable = {
+				VAR_LFC_Rainforest_state = LFC_frontier_request_state
+			}
+			set_country_flag = FLAG_LFC_frontier_preparing
+			country_event = LFC_event_forest.1
 		}
 	}
-}
 
-LFC_frontier_settlement_pay = {
-	if = {
-		limit = { var:LFC_frontier_request_state = { NOT = { has_state_flag = LFC_frontier_settlement_running } } }
-		add_political_power = -50
-		COST_200_UBS_LOAD = yes
-		var:LFC_frontier_request_state = { set_state_flag = LFC_frontier_settlement_running }
+	LFC_frontier_cancel_preparation = { #取消筹备并释放目标
+		clr_country_flag = FLAG_LFC_frontier_preparing
+		clear_variable = VAR_LFC_Rainforest_state
 	}
-}
 
-LFC_frontier_settlement_request = {
-	if = {
-		limit = {
-			NOT = { has_political_power < 50 }
-			num_of_civilian_factories_available_for_projects > 3
-			OR = { NOT = { has_decision = LFC_decision_forest_glym } any_owned_state = { has_state_flag = LFC_frontier_settlement_running } }
-			var:LFC_frontier_selected_state = { is_core_of = LFC is_controlled_by = LFC OR = { state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 1208 state = 504 state = 505 state = 280 state = 1202 } has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq NOT = { has_state_flag = LFC_frontier_settlement_running } NOT = { has_state_flag = LFC_frontier_settlement_complete } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd } }
-		}
-		set_temp_variable = { LFC_frontier_request_state = LFC_frontier_selected_state }
-		activate_targeted_decision = { target = var:LFC_frontier_request_state decision = LFC_decision_forest_glym }
+	#地区开发（州运行标记防止重复扣费）
+	LFC_frontier_infrastructure_pay = { #地区基础建设扣费
 		if = {
-			limit = { has_decision = LFC_decision_forest_glym }
-			LFC_frontier_settlement_pay = yes
+			limit = {
+				var:LFC_frontier_request_state = {
+					NOT = {
+						has_state_flag = LFC_frontier_infrastructure_running
+					}
+				}
+			}
+			add_political_power = -50
+			COST_200_UBS_LOAD = yes
+			var:LFC_frontier_request_state = {
+				set_state_flag = LFC_frontier_infrastructure_running
+			}
 		}
 	}
-}
 
-LFC_frontier_urbanization_pay = {
-	if = {
-		limit = { var:LFC_frontier_request_state = { NOT = { has_state_flag = LFC_frontier_urbanization_running } } }
-		add_political_power = -50
-		COST_300_UBS_LOAD = yes
-		var:LFC_frontier_request_state = { set_state_flag = LFC_frontier_urbanization_running }
-	}
-}
-
-LFC_frontier_urbanization_request = {
-	if = {
-		limit = {
-			NOT = { has_political_power < 50 }
-			num_of_civilian_factories_available_for_projects > 5
-			OR = { NOT = { has_decision = LFC_decision_forest_tjcsh } any_owned_state = { has_state_flag = LFC_frontier_urbanization_running } }
-			var:LFC_frontier_selected_state = { is_core_of = LFC is_controlled_by = LFC OR = { state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 1208 state = 504 state = 505 state = 280 state = 1202 } has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd NOT = { has_state_flag = LFC_frontier_urbanization_running } NOT = { has_state_flag = LFC_frontier_urbanization_complete } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd } }
-		}
-		set_temp_variable = { LFC_frontier_request_state = LFC_frontier_selected_state }
-		activate_targeted_decision = { target = var:LFC_frontier_request_state decision = LFC_decision_forest_tjcsh }
+	LFC_frontier_infrastructure_request = { #地区基础建设发起
 		if = {
-			limit = { has_decision = LFC_decision_forest_tjcsh }
-			LFC_frontier_urbanization_pay = yes
-		}
-	}
-}
-
-LFC_frontier_survey_pay = {
-	if = {
-		limit = { var:LFC_frontier_request_state = { NOT = { has_state_flag = LFC_frontier_survey_running } } }
-		add_political_power = -50
-		COST_100_UBS_LOAD = yes
-		var:LFC_frontier_request_state = { set_state_flag = LFC_frontier_survey_running }
-	}
-}
-
-LFC_frontier_survey_request = {
-	if = {
-		limit = {
-			NOT = { has_political_power < 50 }
-			num_of_civilian_factories_available_for_projects > 3
-			OR = { NOT = { has_decision = LFC_decision_forest_yjkt } any_owned_state = { has_state_flag = LFC_frontier_survey_running } }
-			var:LFC_frontier_selected_state = { is_core_of = LFC is_controlled_by = LFC OR = { state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 505 state = 280 state = 1202 } NOT = { has_state_flag = LFC_frontier_survey_running } NOT = { has_state_flag = LFC_frontier_survey_complete } NOT = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd } NOT = { check_variable = { VAR_LFC_Rainforest_yjktcs > 0 } } }
-		}
-		set_temp_variable = { LFC_frontier_request_state = LFC_frontier_selected_state }
-		activate_targeted_decision = { target = var:LFC_frontier_request_state decision = LFC_decision_forest_yjkt }
-		if = {
-			limit = { has_decision = LFC_decision_forest_yjkt }
-			LFC_frontier_survey_pay = yes
-		}
-	}
-}
-
-# 全国遗物项目使用独立的国家运行标记，不依赖右栏选中的州。
-LFC_frontier_research_pay = {
-	if = {
-		limit = { NOT = { has_country_flag = LFC_frontier_research_running } }
-		add_political_power = -10
-		add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-		set_country_flag = LFC_frontier_research_running
-		custom_effect_tooltip = LFC_tooltip_var_product_jian_100
-	}
-}
-
-LFC_frontier_research_request = {
-	if = {
-		limit = { NOT = { has_decision = LFC_decision_ywyy_pyyw } NOT = { has_country_flag = LFC_frontier_research_running } NOT = { has_political_power < 10 } check_variable = { LFC_VAR_Rainforest_product > 100 } }
-		activate_decision = LFC_decision_ywyy_pyyw
-		if = {
-			limit = { has_decision = LFC_decision_ywyy_pyyw }
-			LFC_frontier_research_pay = yes
-		}
-	}
-}
-
-LFC_frontier_solar_pay = {
-	if = {
-		limit = { NOT = { has_country_flag = LFC_frontier_solar_running } }
-		add_political_power = -10
-		add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-		set_country_flag = LFC_frontier_solar_running
-		custom_effect_tooltip = LFC_tooltip_var_product_jian_100
-	}
-}
-
-LFC_frontier_solar_request = {
-	if = {
-		limit = { NOT = { has_decision = LFC_decision_ywyy_pftyfd } NOT = { has_country_flag = LFC_frontier_solar_running } NOT = { has_political_power < 10 } check_variable = { LFC_VAR_Rainforest_product > 100 } }
-		activate_decision = LFC_decision_ywyy_pftyfd
-		if = {
-			limit = { has_decision = LFC_decision_ywyy_pftyfd }
-			LFC_frontier_solar_pay = yes
-		}
-	}
-}
-
-LFC_frontier_field_pay = {
-	if = {
-		limit = { NOT = { has_country_flag = LFC_frontier_field_running } }
-		add_political_power = -10
-		add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-		set_country_flag = LFC_frontier_field_running
-		custom_effect_tooltip = LFC_tooltip_var_product_jian_100
-	}
-}
-
-LFC_frontier_field_request = {
-	if = {
-		limit = { NOT = { has_decision = LFC_decision_ywyy_bsxpg } NOT = { has_country_flag = LFC_frontier_field_running } NOT = { has_political_power < 10 } check_variable = { LFC_VAR_Rainforest_product > 100 } }
-		activate_decision = LFC_decision_ywyy_bsxpg
-		if = {
-			limit = { has_decision = LFC_decision_ywyy_bsxpg }
-			LFC_frontier_field_pay = yes
-		}
-	}
-}
-
-LFC_frontier_network_pay = {
-	if = {
-		limit = { NOT = { has_country_flag = LFC_frontier_network_running } }
-		add_political_power = -10
-		add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-		set_country_flag = LFC_frontier_network_running
-		custom_effect_tooltip = LFC_tooltip_var_product_jian_100
-	}
-}
-
-LFC_frontier_network_request = {
-	if = {
-		limit = { NOT = { has_decision = LFC_decision_ywyy_gmlmjw } NOT = { has_country_flag = LFC_frontier_network_running } NOT = { has_political_power < 10 } check_variable = { LFC_VAR_Rainforest_product > 100 } }
-		activate_decision = LFC_decision_ywyy_gmlmjw
-		if = {
-			limit = { has_decision = LFC_decision_ywyy_gmlmjw }
-			LFC_frontier_network_pay = yes
-		}
-	}
-}
-
-LFC_frontier_command_pay = {
-	if = {
-		limit = { NOT = { has_country_flag = LFC_frontier_command_running } }
-		add_political_power = -10
-		add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-		set_country_flag = LFC_frontier_command_running
-		custom_effect_tooltip = LFC_tooltip_var_product_jian_100
-	}
-}
-
-LFC_frontier_command_request = {
-	if = {
-		limit = { NOT = { has_decision = LFC_decision_ywyy_xzzh } NOT = { has_country_flag = LFC_frontier_command_running } NOT = { has_political_power < 10 } check_variable = { LFC_VAR_Rainforest_product > 100 } }
-		activate_decision = LFC_decision_ywyy_xzzh
-		if = {
-			limit = { has_decision = LFC_decision_ywyy_xzzh }
-			LFC_frontier_command_pay = yes
-		}
-	}
-}
-
-LFC_frontier_probe_pay = {
-	if = {
-		limit = { NOT = { has_country_flag = LFC_frontier_probe_running } }
-		add_political_power = -10
-		add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-		set_country_flag = LFC_frontier_probe_running
-		custom_effect_tooltip = LFC_tooltip_var_product_jian_100
-	}
-}
-
-LFC_frontier_probe_request = {
-	if = {
-		limit = { NOT = { has_decision = LFC_decision_ywyy_gpzt } NOT = { has_country_flag = LFC_frontier_probe_running } NOT = { has_political_power < 10 } check_variable = { LFC_VAR_Rainforest_product > 100 } }
-		activate_decision = LFC_decision_ywyy_gpzt
-		if = {
-			limit = { has_decision = LFC_decision_ywyy_gpzt }
-			LFC_frontier_probe_pay = yes
-		}
-	}
-}
-
-# 露斯契亚边疆：从州修正派生界面帧号，一级是无更高开发修正时的默认。
-LFC_frontier_refresh_state_frame = {
-	if = {
-		limit = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd }
-		set_variable = { LFC_frontier_development_frame = 4 }
-	}
-	else_if = {
-		limit = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd }
-		set_variable = { LFC_frontier_development_frame = 3 }
-	}
-	else_if = {
-		limit = { has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq }
-		set_variable = { LFC_frontier_development_frame = 2 }
-	}
-	else = { set_variable = { LFC_frontier_development_frame = 1 } }
-}
-
-LFC_frontier_refresh_map_frames = {
-	1202 = { LFC_frontier_refresh_state_frame = yes }
-	1203 = { LFC_frontier_refresh_state_frame = yes }
-	1204 = { LFC_frontier_refresh_state_frame = yes }
-	1205 = { LFC_frontier_refresh_state_frame = yes }
-	1206 = { LFC_frontier_refresh_state_frame = yes }
-	1207 = { LFC_frontier_refresh_state_frame = yes }
-	1208 = { LFC_frontier_refresh_state_frame = yes }
-	280 = { LFC_frontier_refresh_state_frame = yes }
-	504 = { LFC_frontier_refresh_state_frame = yes }
-	505 = { LFC_frontier_refresh_state_frame = yes }
-	set_country_flag = FLAG_LFC_frontier_frames_ready
-}
-
-# 地图调试档位只覆盖贴图，从选中州的实际档位开始。
-LFC_frontier_step_preview_level = {
-	if = {
-		limit = {
-			is_debug = yes
-			NOT = { has_country_flag = FLAG_LFC_frontier_relic_page }
-			has_variable = LFC_frontier_selected_state
-			var:LFC_frontier_selected_state = { OR = { state = 1202 state = 1203 state = 1204 state = 1205 state = 1206 state = 1207 state = 1208 state = 280 state = 504 state = 505 } }
-		}
-		var:LFC_frontier_selected_state = {
+			limit = {
+				NOT = {
+					has_political_power < 50
+				}
+				num_of_civilian_factories_available_for_projects > 3
+				OR = {
+					NOT = {
+						has_decision = LFC_decision_forest_tjjj
+					}
+					any_owned_state = {
+						has_state_flag = LFC_frontier_infrastructure_running
+					}
+				}
+				var:LFC_frontier_selected_state = {
+					is_core_of = LFC
+					is_controlled_by = LFC
+					OR = {
+						state = 1203
+						state = 1204
+						state = 1205
+						state = 1206
+						state = 1207
+						state = 1208
+						state = 504
+						state = 505
+						state = 280
+						state = 1202
+					}
+					NOT = {
+						has_state_flag = LFC_frontier_infrastructure_running
+					}
+					NOT = {
+						has_state_flag = LFC_frontier_infrastructure_complete
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
+					}
+				}
+			}
+			set_temp_variable = {
+				LFC_frontier_request_state = LFC_frontier_selected_state
+			}
+			activate_targeted_decision = {
+				target = var:LFC_frontier_request_state
+				decision = LFC_decision_forest_tjjj
+			}
 			if = {
-				limit = { NOT = { has_variable = LFC_frontier_preview_level } }
-				if = {
-					limit = { is_controlled_by = LFC }
-					LFC_frontier_refresh_state_frame = yes
-					set_variable = { LFC_frontier_preview_level = LFC_frontier_development_frame }
+				limit = {
+					has_decision = LFC_decision_forest_tjjj
 				}
-				else = { set_variable = { LFC_frontier_preview_level = 0 } }
+				LFC_frontier_infrastructure_pay = yes
 			}
-			add_to_variable = { LFC_frontier_preview_level = LFC_frontier_preview_step }
-			clamp_variable = { var = LFC_frontier_preview_level min = 0 max = 4 }
 		}
 	}
-}
 
-LFC_frontier_clear_preview_levels = {
-	1202 = { clear_variable = LFC_frontier_preview_level }
-	1203 = { clear_variable = LFC_frontier_preview_level }
-	1204 = { clear_variable = LFC_frontier_preview_level }
-	1205 = { clear_variable = LFC_frontier_preview_level }
-	1206 = { clear_variable = LFC_frontier_preview_level }
-	1207 = { clear_variable = LFC_frontier_preview_level }
-	1208 = { clear_variable = LFC_frontier_preview_level }
-	280 = { clear_variable = LFC_frontier_preview_level }
-	504 = { clear_variable = LFC_frontier_preview_level }
-	505 = { clear_variable = LFC_frontier_preview_level }
-}
+	LFC_frontier_settlement_pay = { #鼓励移民扣费
+		if = {
+			limit = {
+				var:LFC_frontier_request_state = {
+					NOT = {
+						has_state_flag = LFC_frontier_settlement_running
+					}
+				}
+			}
+			add_political_power = -50
+			COST_200_UBS_LOAD = yes
+			var:LFC_frontier_request_state = {
+				set_state_flag = LFC_frontier_settlement_running
+			}
+		}
+	}
+
+	LFC_frontier_settlement_request = { #鼓励移民发起
+		if = {
+			limit = {
+				NOT = {
+					has_political_power < 50
+				}
+				num_of_civilian_factories_available_for_projects > 3
+				OR = {
+					NOT = {
+						has_decision = LFC_decision_forest_glym
+					}
+					any_owned_state = {
+						has_state_flag = LFC_frontier_settlement_running
+					}
+				}
+				var:LFC_frontier_selected_state = {
+					is_core_of = LFC
+					is_controlled_by = LFC
+					OR = {
+						state = 1203
+						state = 1204
+						state = 1205
+						state = 1206
+						state = 1207
+						state = 1208
+						state = 504
+						state = 505
+						state = 280
+						state = 1202
+					}
+					has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+					NOT = {
+						has_state_flag = LFC_frontier_settlement_running
+					}
+					NOT = {
+						has_state_flag = LFC_frontier_settlement_complete
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
+					}
+				}
+			}
+			set_temp_variable = {
+				LFC_frontier_request_state = LFC_frontier_selected_state
+			}
+			activate_targeted_decision = {
+				target = var:LFC_frontier_request_state
+				decision = LFC_decision_forest_glym
+			}
+			if = {
+				limit = {
+					has_decision = LFC_decision_forest_glym
+				}
+				LFC_frontier_settlement_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_urbanization_pay = { #地区城市化扣费
+		if = {
+			limit = {
+				var:LFC_frontier_request_state = {
+					NOT = {
+						has_state_flag = LFC_frontier_urbanization_running
+					}
+				}
+			}
+			add_political_power = -50
+			COST_300_UBS_LOAD = yes
+			var:LFC_frontier_request_state = {
+				set_state_flag = LFC_frontier_urbanization_running
+			}
+		}
+	}
+
+	LFC_frontier_urbanization_request = { #地区城市化发起
+		if = {
+			limit = {
+				NOT = {
+					has_political_power < 50
+				}
+				num_of_civilian_factories_available_for_projects > 5
+				OR = {
+					NOT = {
+						has_decision = LFC_decision_forest_tjcsh
+					}
+					any_owned_state = {
+						has_state_flag = LFC_frontier_urbanization_running
+					}
+				}
+				var:LFC_frontier_selected_state = {
+					is_core_of = LFC
+					is_controlled_by = LFC
+					OR = {
+						state = 1203
+						state = 1204
+						state = 1205
+						state = 1206
+						state = 1207
+						state = 1208
+						state = 504
+						state = 505
+						state = 280
+						state = 1202
+					}
+					has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+					NOT = {
+						has_state_flag = LFC_frontier_urbanization_running
+					}
+					NOT = {
+						has_state_flag = LFC_frontier_urbanization_complete
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
+					}
+				}
+			}
+			set_temp_variable = {
+				LFC_frontier_request_state = LFC_frontier_selected_state
+			}
+			activate_targeted_decision = {
+				target = var:LFC_frontier_request_state
+				decision = LFC_decision_forest_tjcsh
+			}
+			if = {
+				limit = {
+					has_decision = LFC_decision_forest_tjcsh
+				}
+				LFC_frontier_urbanization_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_survey_pay = { #遗迹勘探扣费
+		if = {
+			limit = {
+				var:LFC_frontier_request_state = {
+					NOT = {
+						has_state_flag = LFC_frontier_survey_running
+					}
+				}
+			}
+			add_political_power = -50
+			COST_100_UBS_LOAD = yes
+			var:LFC_frontier_request_state = {
+				set_state_flag = LFC_frontier_survey_running
+			}
+		}
+	}
+
+	LFC_frontier_survey_request = { #遗迹勘探发起
+		if = {
+			limit = {
+				NOT = {
+					has_political_power < 50
+				}
+				num_of_civilian_factories_available_for_projects > 3
+				OR = {
+					NOT = {
+						has_decision = LFC_decision_forest_yjkt
+					}
+					any_owned_state = {
+						has_state_flag = LFC_frontier_survey_running
+					}
+				}
+				var:LFC_frontier_selected_state = {
+					is_core_of = LFC
+					is_controlled_by = LFC
+					OR = {
+						state = 1203
+						state = 1204
+						state = 1205
+						state = 1206
+						state = 1207
+						state = 505
+						state = 280
+						state = 1202
+					}
+					NOT = {
+						has_state_flag = LFC_frontier_survey_running
+					}
+					NOT = {
+						has_state_flag = LFC_frontier_survey_complete
+					}
+					NOT = {
+						has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+					}
+					NOT = {
+						check_variable = {
+							VAR_LFC_Rainforest_yjktcs > 0
+						}
+					}
+				}
+			}
+			set_temp_variable = {
+				LFC_frontier_request_state = LFC_frontier_selected_state
+			}
+			activate_targeted_decision = {
+				target = var:LFC_frontier_request_state
+				decision = LFC_decision_forest_yjkt
+			}
+			if = {
+				limit = {
+					has_decision = LFC_decision_forest_yjkt
+				}
+				LFC_frontier_survey_pay = yes
+			}
+		}
+	}
+
+	#遗物应用（全国项目）
+	LFC_frontier_research_pay = { #破译遗物扣费
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = LFC_frontier_research_running
+				}
+			}
+			add_political_power = -10
+			add_to_variable = {
+				LFC_VAR_Rainforest_product = -100
+			}
+			set_country_flag = LFC_frontier_research_running
+			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+		}
+	}
+
+	LFC_frontier_research_request = { #破译遗物发起
+		if = {
+			limit = {
+				NOT = {
+					has_decision = LFC_decision_ywyy_pyyw
+				}
+				NOT = {
+					has_country_flag = LFC_frontier_research_running
+				}
+				NOT = {
+					has_political_power < 10
+				}
+				check_variable = {
+					LFC_VAR_Rainforest_product > 100
+				}
+			}
+			activate_decision = LFC_decision_ywyy_pyyw
+			if = {
+				limit = {
+					has_decision = LFC_decision_ywyy_pyyw
+				}
+				LFC_frontier_research_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_solar_pay = { #配发太阳引擎扣费
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = LFC_frontier_solar_running
+				}
+			}
+			add_political_power = -10
+			add_to_variable = {
+				LFC_VAR_Rainforest_product = -100
+			}
+			set_country_flag = LFC_frontier_solar_running
+			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+		}
+	}
+
+	LFC_frontier_solar_request = { #配发太阳引擎发起
+		if = {
+			limit = {
+				NOT = {
+					has_decision = LFC_decision_ywyy_pftyfd
+				}
+				NOT = {
+					has_country_flag = LFC_frontier_solar_running
+				}
+				NOT = {
+					has_political_power < 10
+				}
+				check_variable = {
+					LFC_VAR_Rainforest_product > 100
+				}
+			}
+			activate_decision = LFC_decision_ywyy_pftyfd
+			if = {
+				limit = {
+					has_decision = LFC_decision_ywyy_pftyfd
+				}
+				LFC_frontier_solar_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_field_pay = { #一次性偏导力场扣费
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = LFC_frontier_field_running
+				}
+			}
+			add_political_power = -10
+			add_to_variable = {
+				LFC_VAR_Rainforest_product = -100
+			}
+			set_country_flag = LFC_frontier_field_running
+			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+		}
+	}
+
+	LFC_frontier_field_request = { #一次性偏导力场发起
+		if = {
+			limit = {
+				NOT = {
+					has_decision = LFC_decision_ywyy_bsxpg
+				}
+				NOT = {
+					has_country_flag = LFC_frontier_field_running
+				}
+				NOT = {
+					has_political_power < 10
+				}
+				check_variable = {
+					LFC_VAR_Rainforest_product > 100
+				}
+			}
+			activate_decision = LFC_decision_ywyy_bsxpg
+			if = {
+				limit = {
+					has_decision = LFC_decision_ywyy_bsxpg
+				}
+				LFC_frontier_field_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_network_pay = { #共鸣灵脉巨网扣费
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = LFC_frontier_network_running
+				}
+			}
+			add_political_power = -10
+			add_to_variable = {
+				LFC_VAR_Rainforest_product = -100
+			}
+			set_country_flag = LFC_frontier_network_running
+			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+		}
+	}
+
+	LFC_frontier_network_request = { #共鸣灵脉巨网发起
+		if = {
+			limit = {
+				NOT = {
+					has_decision = LFC_decision_ywyy_gmlmjw
+				}
+				NOT = {
+					has_country_flag = LFC_frontier_network_running
+				}
+				NOT = {
+					has_political_power < 10
+				}
+				check_variable = {
+					LFC_VAR_Rainforest_product > 100
+				}
+			}
+			activate_decision = LFC_decision_ywyy_gmlmjw
+			if = {
+				limit = {
+					has_decision = LFC_decision_ywyy_gmlmjw
+				}
+				LFC_frontier_network_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_command_pay = { #谐振指挥节点扣费
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = LFC_frontier_command_running
+				}
+			}
+			add_political_power = -10
+			add_to_variable = {
+				LFC_VAR_Rainforest_product = -100
+			}
+			set_country_flag = LFC_frontier_command_running
+			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+		}
+	}
+
+	LFC_frontier_command_request = { #谐振指挥节点发起
+		if = {
+			limit = {
+				NOT = {
+					has_decision = LFC_decision_ywyy_xzzh
+				}
+				NOT = {
+					has_country_flag = LFC_frontier_command_running
+				}
+				NOT = {
+					has_political_power < 10
+				}
+				check_variable = {
+					LFC_VAR_Rainforest_product > 100
+				}
+			}
+			activate_decision = LFC_decision_ywyy_xzzh
+			if = {
+				limit = {
+					has_decision = LFC_decision_ywyy_xzzh
+				}
+				LFC_frontier_command_pay = yes
+			}
+		}
+	}
+
+	LFC_frontier_probe_pay = { #高频共振探针扣费
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = LFC_frontier_probe_running
+				}
+			}
+			add_political_power = -10
+			add_to_variable = {
+				LFC_VAR_Rainforest_product = -100
+			}
+			set_country_flag = LFC_frontier_probe_running
+			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+		}
+	}
+
+	LFC_frontier_probe_request = { #高频共振探针发起
+		if = {
+			limit = {
+				NOT = {
+					has_decision = LFC_decision_ywyy_gpzt
+				}
+				NOT = {
+					has_country_flag = LFC_frontier_probe_running
+				}
+				NOT = {
+					has_political_power < 10
+				}
+				check_variable = {
+					LFC_VAR_Rainforest_product > 100
+				}
+			}
+			activate_decision = LFC_decision_ywyy_gpzt
+			if = {
+				limit = {
+					has_decision = LFC_decision_ywyy_gpzt
+				}
+				LFC_frontier_probe_pay = yes
+			}
+		}
+	}
+
+	#正式开发档位（按州修正，默认一级）
+	LFC_frontier_refresh_state_frame = {
+		if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
+			}
+			set_variable = {
+				LFC_frontier_development_frame = 4
+			}
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+			}
+			set_variable = {
+				LFC_frontier_development_frame = 3
+			}
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+			}
+			set_variable = {
+				LFC_frontier_development_frame = 2
+			}
+		}
+		else = {
+			set_variable = {
+				LFC_frontier_development_frame = 1
+			}
+		}
+	}
+
+	LFC_frontier_refresh_map_frames = { #刷新十州开发帧
+		1202 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		1203 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		1204 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		1205 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		1206 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		1207 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		1208 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		280 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		504 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+		505 = {
+			LFC_frontier_refresh_state_frame = yes
+		}
+	}
+
+	#调试预览（从正式档位起步）
+	LFC_frontier_step_preview_level = { #预览升降档
+		if = {
+			limit = {
+				is_debug = yes
+				NOT = {
+					has_country_flag = FLAG_LFC_frontier_relic_page
+				}
+				has_variable = LFC_frontier_selected_state
+				var:LFC_frontier_selected_state = {
+					OR = {
+						state = 1202
+						state = 1203
+						state = 1204
+						state = 1205
+						state = 1206
+						state = 1207
+						state = 1208
+						state = 280
+						state = 504
+						state = 505
+					}
+				}
+			}
+			var:LFC_frontier_selected_state = {
+				if = {
+					limit = {
+						NOT = {
+							has_variable = LFC_frontier_preview_level
+						}
+					}
+					if = {
+						limit = {
+							is_controlled_by = LFC
+						}
+						LFC_frontier_refresh_state_frame = yes
+						set_variable = {
+							LFC_frontier_preview_level = LFC_frontier_development_frame
+						}
+					}
+					else = {
+						set_variable = {
+							LFC_frontier_preview_level = 0
+						}
+					}
+				}
+				add_to_variable = {
+					LFC_frontier_preview_level = LFC_frontier_preview_step
+				}
+				clamp_variable = {
+					var = LFC_frontier_preview_level
+					min = 0
+					max = 4
+				}
+			}
+		}
+	}
+
+	LFC_frontier_clear_preview_levels = { #关窗清除预览
+		1202 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		1203 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		1204 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		1205 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		1206 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		1207 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		1208 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		280 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		504 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+		505 = {
+			clear_variable = LFC_frontier_preview_level
+		}
+	}
