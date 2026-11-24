@@ -81,6 +81,61 @@ PAU_refresh_mil_reform_tiers = {
     clamp_variable = { var = PAU_mil_reform_progress min = 0 max = 36 }
     if = {
         limit = {
+            check_variable = { PAU_mil_reform_progress > 23 }
+            NOT = { has_country_flag = PAU_mil_reform_airborne_early_unlocked }
+        }
+        set_country_flag = PAU_mil_reform_airborne_early_unlocked
+        set_technology = {
+            paratroopers = 1
+            PAU_airborne_light_armor_tech = 1
+        }
+        if = {
+            limit = {
+                has_dlc = "No Step Back"
+                NOT = { has_country_flag = PAU_airborne_tank_variant_created }
+            }
+            set_country_flag = PAU_airborne_tank_variant_created
+            create_equipment_variant = {
+                name = "白夜空投轻战车"
+                type = light_tank_chassis_1
+                parent_version = 0
+                modules = {
+                    main_armament_slot = tank_small_cannon
+                    turret_type_slot = tank_light_two_man_tank_turret
+                    suspension_type_slot = tank_bogie_suspension
+                    armor_type_slot = tank_riveted_armor
+                    engine_type_slot = tank_gasoline_engine
+                    special_type_slot_1 = tank_radio_1
+                    special_type_slot_2 = smoke_launchers
+                }
+                upgrades = {
+                    tank_nsb_engine_upgrade = 6
+                    tank_nsb_armor_upgrade = 2
+                }
+            }
+        }
+        if = {
+            limit = { NOT = { has_template = "白夜伞降轻装甲旅" } }
+            division_template = {
+                name = "白夜伞降轻装甲旅"
+                regiments = {
+                    PAU_airborne_light_armor = { x = 0 y = 0 }
+                    PAU_airborne_light_armor = { x = 0 y = 1 }
+                    PAU_airborne_light_armor = { x = 1 y = 0 }
+                    PAU_airborne_light_armor = { x = 1 y = 1 }
+                    paratrooper = { x = 2 y = 0 }
+                    paratrooper = { x = 2 y = 1 }
+                }
+                support = {
+                    engineer = { x = 0 y = 0 }
+                    recon = { x = 0 y = 1 }
+                }
+                priority = 2
+            }
+        }
+    }
+    if = {
+        limit = {
             check_variable = { PAU_mil_reform_progress > 35 }
             NOT = { has_country_flag = PAU_mil_reform_cap_reward_claimed }
         }
@@ -192,6 +247,11 @@ PAU_refresh_mil_reform_tiers = {
 
     set_variable = { PAU_mil_reform_defence = PAU_mil_base_val }
     add_to_variable = { PAU_mil_reform_defence = PAU_mil_reform_bonus_defence }
+    if = {
+        limit = { has_country_flag = PAU_regime_vanguard }
+        add_to_variable = { PAU_mil_reform_org = 0.05 }
+        add_to_variable = { PAU_mil_reform_planning = 0.05 }
+    }
     PAU_sync_desk_plum_frame = yes
 }
 
@@ -202,6 +262,13 @@ PAU_refresh_eco_reform_tiers = {
         set_variable = { PAU_reform_reset_count = 1 }
     }
     clamp_variable = { var = PAU_eco_reform_progress min = 0 max = 36 }
+    if = {
+        limit = {
+            check_variable = { PAU_eco_reform_progress > 23 }
+            NOT = { has_country_flag = PAU_eco_reform_dam_early_unlocked }
+        }
+        set_country_flag = PAU_eco_reform_dam_early_unlocked
+    }
     if = {
         limit = {
             check_variable = { PAU_eco_reform_progress > 35 }
@@ -303,6 +370,28 @@ PAU_refresh_eco_reform_tiers = {
 
     set_variable = { PAU_eco_reform_supply = PAU_eco_base_neg }
     add_to_variable = { PAU_eco_reform_supply = PAU_eco_reform_bonus_supply }
+    if = {
+        limit = { check_variable = { PAU_built_dams_count > 5 } }
+        add_to_variable = { PAU_eco_reform_industry = 0.05 }
+        add_to_variable = { PAU_eco_reform_buildings = 0.05 }
+        add_to_variable = { PAU_eco_reform_consumer = -0.05 }
+    }
+    else_if = {
+        limit = { check_variable = { PAU_built_dams_count > 2 } }
+        add_to_variable = { PAU_eco_reform_industry = 0.025 }
+        add_to_variable = { PAU_eco_reform_buildings = 0.025 }
+        add_to_variable = { PAU_eco_reform_consumer = -0.025 }
+    }
+    if = {
+        limit = { has_country_flag = PAU_regime_autonomy }
+        add_to_variable = { PAU_eco_reform_political = 0.05 }
+        add_to_variable = { PAU_eco_reform_trade = 0.10 }
+    }
+    else_if = {
+        limit = { has_country_flag = PAU_regime_union }
+        add_to_variable = { PAU_eco_reform_industry = 0.05 }
+        add_to_variable = { PAU_eco_reform_efficiency = 0.05 }
+    }
     PAU_sync_desk_plum_frame = yes
 }
 PAU_refresh_harbor_spillover_states = {
@@ -2601,6 +2690,24 @@ PAU_refresh_focus_storybook = {
 		divide_variable = { PAU_story_done_pct = 104 }
 		round_variable = PAU_story_done_pct
 		clamp_variable = { var = PAU_story_done_pct min = 0 max = 100 }
+		#终局相册回翻模式：开启时按玩家选定画卷(1..5 -> stage 0..4)覆盖绘本显示
+		if = {
+			limit = {
+				has_country_flag = has_PAU_xiaoyao8
+				check_variable = { PAU_book_album_stage > 0 }
+			}
+			set_temp_variable = { PAU_album_lvl = PAU_book_album_stage }
+			subtract_from_temp_variable = { PAU_album_lvl = 1 }
+			set_variable = { PAU_story_ch1_stage = PAU_album_lvl }
+			set_variable = { PAU_story_ch2a_stage = PAU_album_lvl }
+			set_variable = { PAU_story_ch2b_stage = PAU_album_lvl }
+			set_variable = { PAU_story_ch3a_stage = PAU_album_lvl }
+			set_variable = { PAU_story_ch3b_stage = PAU_album_lvl }
+			set_variable = { PAU_story_ch4_stage = PAU_album_lvl }
+			set_variable = { PAU_story_mil_stage = PAU_album_lvl }
+			set_variable = { PAU_story_eco_stage = PAU_album_lvl }
+			set_variable = { PAU_story_spine_stage = PAU_album_lvl }
+		}
 		clear_variable = PAU_sb_tmp
 	}
 }
@@ -2661,8 +2768,8 @@ PAU_sync_zdw_decay_vars = {
 PAU_tick_zdw_decay_daily = {
 	if = {
 		limit = {
-			country_exists = ZDW
 			NOT = { has_country_flag = PAU_undead_defeated }
+			country_exists = ZDW
 			ZDW = { has_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } }
 		}
 		ZDW = {
@@ -2797,5 +2904,204 @@ PAU_grant_vanguard_armor_cache = {
 		type = artillery_equipment
 		amount = 100
 		producer = PAU
+	}
+}
+
+#AI专用周度自动军经改革推进器（严格遵守与人类玩家完全一致的前置国策、政治点、提案点、25天周期与5次上限）
+PAU_ai_weekly_auto_reform = {
+	if = {
+		limit = {
+			original_tag = PAU
+			is_ai = yes
+			has_political_power > 30
+			NOT = { has_country_flag = flower_pao_yield_lock }
+			PAU_reform_desk_unlocked = yes
+		}
+		#一、军事改革轨道自动批阅（当前无正在计时的军改提案时启动1项）
+		if = {
+			limit = {
+				check_variable = { PAU_mil_reform_progress < 36 }
+				PAU_no_mil_reform_in_progress = yes
+				OR = {
+					PAU_has_actionable_mil_axia = yes
+					PAU_has_actionable_mil_xfxy = yes
+					PAU_has_actionable_mil_xy = yes
+				}
+			}
+			if = {
+				limit = { has_completed_focus = PAM_ax_nyfy check_variable = { PAU_axia_mil > 19 } check_variable = { PAU_cnt_axia_armor < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_mil = -20 }
+				set_variable = { PAU_timer_axia_armor = 25 }
+				set_variable = { PAU_frame_axia_armor = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_nzdt check_variable = { PAU_axia_mil > 19 } check_variable = { PAU_cnt_axia_recon < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_mil = -20 }
+				set_variable = { PAU_timer_axia_recon = 25 }
+				set_variable = { PAU_frame_axia_recon = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_nlwq check_variable = { PAU_axia_mil > 19 } check_variable = { PAU_cnt_axia_supply < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_mil = -20 }
+				set_variable = { PAU_timer_axia_supply = 25 }
+				set_variable = { PAU_frame_axia_supply = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_nlwq2 check_variable = { PAU_axia_mil > 19 } check_variable = { PAU_cnt_axia_medics < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_mil = -20 }
+				set_variable = { PAU_timer_axia_medics = 25 }
+				set_variable = { PAU_frame_axia_medics = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_jsgz check_variable = { PAU_xfxy_mil > 19 } check_variable = { PAU_cnt_xfxy_command < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_mil = -20 }
+				set_variable = { PAU_timer_xfxy_command = 25 }
+				set_variable = { PAU_frame_xfxy_command = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_nyjs check_variable = { PAU_xfxy_mil > 19 } check_variable = { PAU_cnt_xfxy_signal < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_mil = -20 }
+				set_variable = { PAU_timer_xfxy_signal = 25 }
+				set_variable = { PAU_frame_xfxy_signal = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_nytjjs check_variable = { PAU_xfxy_mil > 19 } check_variable = { PAU_cnt_xfxy_winter < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_mil = -20 }
+				set_variable = { PAU_timer_xfxy_joint_defense = 25 }
+				set_variable = { PAU_frame_xfxy_joint_defense = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xy_fy check_variable = { PAU_xiaoyao_mil > 19 } check_variable = { PAU_cnt_xy_navy < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xiaoyao_mil = -20 }
+				set_variable = { PAU_timer_xy_navy = 25 }
+				set_variable = { PAU_frame_xy_navy = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xy_tltx check_variable = { PAU_xiaoyao_mil > 19 } check_variable = { PAU_cnt_xy_landing < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xiaoyao_mil = -20 }
+				set_variable = { PAU_timer_xy_landing = 25 }
+				set_variable = { PAU_frame_xy_landing = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xy_ydjs check_variable = { PAU_xiaoyao_mil > 19 } check_variable = { PAU_cnt_xy_expedition < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xiaoyao_mil = -20 }
+				set_variable = { PAU_timer_xy_expedition = 25 }
+				set_variable = { PAU_frame_xy_expedition = 0 }
+				PAU_reduce_mil_focus_cost_step = yes
+			}
+		}
+
+		#二、经济改革轨道自动批阅（政治点留足余量且当前无正在计时的经改提案时启动1项）
+		if = {
+			limit = {
+				has_political_power > 30
+				check_variable = { PAU_eco_reform_progress < 36 }
+				PAU_no_eco_reform_in_progress = yes
+				OR = {
+					PAU_has_actionable_eco_axia = yes
+					PAU_has_actionable_eco_xfxy = yes
+					PAU_has_actionable_eco_xy = yes
+				}
+			}
+			if = {
+				limit = { has_completed_focus = PAM_jjcl check_variable = { PAU_axia_eco > 19 } check_variable = { PAU_cnt_axia_workshop < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_eco = -20 }
+				set_variable = { PAU_timer_axia_workshop = 25 }
+				set_variable = { PAU_frame_axia_workshop = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_bxsb check_variable = { PAU_axia_eco > 19 } check_variable = { PAU_cnt_axia_granary < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_eco = -20 }
+				set_variable = { PAU_timer_axia_granary = 25 }
+				set_variable = { PAU_frame_axia_granary = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_nljj check_variable = { PAU_axia_eco > 19 } check_variable = { PAU_cnt_axia_trade < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_axia_eco = -20 }
+				set_variable = { PAU_timer_axia_trade = 25 }
+				set_variable = { PAU_frame_axia_trade = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_jjhf check_variable = { PAU_xfxy_eco > 19 } check_variable = { PAU_cnt_xfxy_audit < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_eco = -20 }
+				set_variable = { PAU_timer_xfxy_audit = 25 }
+				set_variable = { PAU_frame_xfxy_audit = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_nyjj check_variable = { PAU_xfxy_eco > 19 } check_variable = { PAU_cnt_xfxy_wages < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_eco = -20 }
+				set_variable = { PAU_timer_xfxy_wages = 25 }
+				set_variable = { PAU_frame_xfxy_wages = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_zsjj check_variable = { PAU_xfxy_eco > 19 } check_variable = { PAU_cnt_xfxy_currency < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_eco = -20 }
+				set_variable = { PAU_timer_xfxy_currency = 25 }
+				set_variable = { PAU_frame_xfxy_currency = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xfxy_hybd check_variable = { PAU_xfxy_eco > 19 } check_variable = { PAU_cnt_xfxy_procurement < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xfxy_eco = -20 }
+				set_variable = { PAU_timer_xfxy_procurement = 25 }
+				set_variable = { PAU_frame_xfxy_procurement = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xy_sc check_variable = { PAU_xiaoyao_eco > 19 } check_variable = { PAU_cnt_xy_market < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xiaoyao_eco = -20 }
+				set_variable = { PAU_timer_xy_market = 25 }
+				set_variable = { PAU_frame_xy_market = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xy_zjdq check_variable = { PAU_xiaoyao_eco > 19 } check_variable = { PAU_cnt_xy_land < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xiaoyao_eco = -20 }
+				set_variable = { PAU_timer_xy_land = 25 }
+				set_variable = { PAU_frame_xy_land = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+			else_if = {
+				limit = { has_completed_focus = PAM_xy_ydjj check_variable = { PAU_xiaoyao_eco > 19 } check_variable = { PAU_cnt_xy_food < 5 } }
+				add_political_power = -15
+				add_to_variable = { PAU_xiaoyao_eco = -20 }
+				set_variable = { PAU_timer_xy_food = 25 }
+				set_variable = { PAU_frame_xy_food = 0 }
+				PAU_reduce_eco_focus_cost_step = yes
+			}
+		}
 	}
 }

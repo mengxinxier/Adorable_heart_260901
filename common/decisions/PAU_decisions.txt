@@ -2481,6 +2481,7 @@ PAU_baiye_category = {
         days_remove = 15
         fire_only_once = yes
         complete_effect = {
+            set_country_flag = PAU_grail_shared_food
             add_to_variable = {
                 var = PAU_grail_rations
                 value = -20
@@ -2831,6 +2832,11 @@ PAU_baiye_category = {
                             value = 0.05
                             tooltip = consumer_goods_factor_tt
                         }
+                        add_to_variable = {
+                            var = PAU_safe_harbor_network_hcp_income
+                            value = -0.05
+                            tooltip = hcp_income_factor_monthly_tooltip
+                        }
                     }
                 }
                 else = {
@@ -2863,6 +2869,11 @@ PAU_baiye_category = {
                 var = PAU_safe_harbor_network_production_speed_dockyard_factor
                 value = 0.05
                 tooltip = production_speed_dockyard_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_safe_harbor_network_invasion_prep
+                value = -0.05
+                tooltip = invasion_preparation_tt
             }
         }
         ai_will_do = {
@@ -2922,6 +2933,11 @@ PAU_baiye_category = {
                             value = -0.05
                             tooltip = production_speed_dockyard_factor_tt
                         }
+                        add_to_variable = {
+                            var = PAU_safe_harbor_network_invasion_prep
+                            value = 0.05
+                            tooltip = invasion_preparation_tt
+                        }
                     }
                 }
                 else = {
@@ -2941,6 +2957,11 @@ PAU_baiye_category = {
                 var = PAU_safe_harbor_network_consumer_goods_factor
                 value = -0.05
                 tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_safe_harbor_network_hcp_income
+                value = 0.05
+                tooltip = hcp_income_factor_monthly_tooltip
             }
         }
         ai_will_do = {
@@ -5308,7 +5329,10 @@ PAU_national_unification = {
             }
         }
         visible = {
-            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            OR = {
+                has_country_flag = PAU_eco_reform_dam_early_unlocked
+                has_country_flag = PAU_eco_reform_cap_reward_claimed
+            }
             NOT = { has_country_flag = PAU_parana_dam_built }
         }
         available = {
@@ -5316,7 +5340,7 @@ PAU_national_unification = {
             num_of_civilian_factories_available_for_projects > 9
             custom_trigger_tooltip = {
                 tooltip = PAU_not_constructing_other_dam_tt
-                NOT = { has_country_flag = PAU_constructing_dam_flag }
+                check_variable = { PAU_constructing_dam_count < 2 }
             }
         }
         cost = 75
@@ -5328,19 +5352,22 @@ PAU_national_unification = {
             production_speed_buildings_factor = -0.05
         }
         complete_effect = {
-            set_country_flag = PAU_constructing_dam_flag
+            add_to_variable = { PAU_constructing_dam_count = 1 }
         }
         cancel_trigger = {
             NOT = { controls_state = 510 }
         }
         cancel_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
         }
         remove_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
             set_country_flag = PAU_parana_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
             hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
                 if = {
                     limit = { has_character = PAU_baiye }
                     set_variable = { PAU_baiye_pet_egg_mode = 6 }
@@ -5374,7 +5401,10 @@ PAU_national_unification = {
             }
         }
         visible = {
-            has_country_flag = PAU_eco_reform_cap_reward_claimed
+            OR = {
+                has_country_flag = PAU_eco_reform_dam_early_unlocked
+                has_country_flag = PAU_eco_reform_cap_reward_claimed
+            }
             NOT = { has_country_flag = PAU_negro_dam_built }
         }
         available = {
@@ -5382,7 +5412,7 @@ PAU_national_unification = {
             num_of_civilian_factories_available_for_projects > 9
             custom_trigger_tooltip = {
                 tooltip = PAU_not_constructing_other_dam_tt
-                NOT = { has_country_flag = PAU_constructing_dam_flag }
+                check_variable = { PAU_constructing_dam_count < 2 }
             }
         }
         cost = 75
@@ -5394,19 +5424,22 @@ PAU_national_unification = {
             production_speed_buildings_factor = -0.05
         }
         complete_effect = {
-            set_country_flag = PAU_constructing_dam_flag
+            add_to_variable = { PAU_constructing_dam_count = 1 }
         }
         cancel_trigger = {
             NOT = { controls_state = 300 }
         }
         cancel_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
         }
         remove_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
             set_country_flag = PAU_negro_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
             hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
                 if = {
                     limit = { has_character = PAU_baiye }
                     set_variable = { PAU_baiye_pet_egg_mode = 6 }
@@ -5448,7 +5481,7 @@ PAU_national_unification = {
             num_of_civilian_factories_available_for_projects > 9
             custom_trigger_tooltip = {
                 tooltip = PAU_not_constructing_other_dam_tt
-                NOT = { has_country_flag = PAU_constructing_dam_flag }
+                check_variable = { PAU_constructing_dam_count < 2 }
             }
         }
         cost = 75
@@ -5460,19 +5493,22 @@ PAU_national_unification = {
             production_speed_buildings_factor = -0.05
         }
         complete_effect = {
-            set_country_flag = PAU_constructing_dam_flag
+            add_to_variable = { PAU_constructing_dam_count = 1 }
         }
         cancel_trigger = {
             NOT = { controls_state = 902 }
         }
         cancel_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
         }
         remove_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
             set_country_flag = PAU_cordoba_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
             hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
                 if = {
                     limit = { has_character = PAU_baiye }
                     set_variable = { PAU_baiye_pet_egg_mode = 6 }
@@ -5514,7 +5550,7 @@ PAU_national_unification = {
             num_of_civilian_factories_available_for_projects > 9
             custom_trigger_tooltip = {
                 tooltip = PAU_not_constructing_other_dam_tt
-                NOT = { has_country_flag = PAU_constructing_dam_flag }
+                check_variable = { PAU_constructing_dam_count < 2 }
             }
         }
         cost = 75
@@ -5526,19 +5562,22 @@ PAU_national_unification = {
             production_speed_buildings_factor = -0.05
         }
         complete_effect = {
-            set_country_flag = PAU_constructing_dam_flag
+            add_to_variable = { PAU_constructing_dam_count = 1 }
         }
         cancel_trigger = {
             NOT = { controls_state = 1029 }
         }
         cancel_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
         }
         remove_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
             set_country_flag = PAU_patagonia_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
             hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
                 if = {
                     limit = { has_character = PAU_baiye }
                     set_variable = { PAU_baiye_pet_egg_mode = 6 }
@@ -5580,7 +5619,7 @@ PAU_national_unification = {
             num_of_civilian_factories_available_for_projects > 9
             custom_trigger_tooltip = {
                 tooltip = PAU_not_constructing_other_dam_tt
-                NOT = { has_country_flag = PAU_constructing_dam_flag }
+                check_variable = { PAU_constructing_dam_count < 2 }
             }
         }
         cost = 75
@@ -5592,19 +5631,22 @@ PAU_national_unification = {
             production_speed_buildings_factor = -0.05
         }
         complete_effect = {
-            set_country_flag = PAU_constructing_dam_flag
+            add_to_variable = { PAU_constructing_dam_count = 1 }
         }
         cancel_trigger = {
             NOT = { controls_state = 1074 }
         }
         cancel_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
         }
         remove_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
             set_country_flag = PAU_corrientes_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
             hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
                 if = {
                     limit = { has_character = PAU_baiye }
                     set_variable = { PAU_baiye_pet_egg_mode = 6 }
@@ -5646,7 +5688,7 @@ PAU_national_unification = {
             num_of_civilian_factories_available_for_projects > 9
             custom_trigger_tooltip = {
                 tooltip = PAU_not_constructing_other_dam_tt
-                NOT = { has_country_flag = PAU_constructing_dam_flag }
+                check_variable = { PAU_constructing_dam_count < 2 }
             }
         }
         cost = 75
@@ -5658,19 +5700,22 @@ PAU_national_unification = {
             production_speed_buildings_factor = -0.05
         }
         complete_effect = {
-            set_country_flag = PAU_constructing_dam_flag
+            add_to_variable = { PAU_constructing_dam_count = 1 }
         }
         cancel_trigger = {
             NOT = { controls_state = 1144 }
         }
         cancel_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
         }
         remove_effect = {
-            clr_country_flag = PAU_constructing_dam_flag
+            subtract_from_variable = { PAU_constructing_dam_count = 1 }
+            clamp_variable = { var = PAU_constructing_dam_count min = 0 }
             set_country_flag = PAU_mendoza_dam_built
             add_to_variable = { var = PAU_built_dams_count value = 1 tooltip = PAU_built_dams_count_tt }
             hidden_effect = {
+                PAU_refresh_eco_reform_tiers = yes
                 if = {
                     limit = { has_character = PAU_baiye }
                     set_variable = { PAU_baiye_pet_egg_mode = 6 }

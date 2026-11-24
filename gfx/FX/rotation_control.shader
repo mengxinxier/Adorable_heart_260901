@@ -1,5 +1,5 @@
 Includes = {
-    "buttonstate.fxh",
+    "buttonstate.fxh"
     "sprite_animation.fxh"
 }
 
@@ -171,10 +171,6 @@ BlendState BlendState
     SourceBlend = "src_alpha"
     DestBlend = "inv_src_alpha"
     BlendOp = "add"
-    AlphaBlendEnable = yes
-    SourceAlphaBlend = "src_alpha"
-    DestAlphaBlend = "inv_src_alpha"
-    AlphaBlendOp = "add"
 }
 
 Effect Up
