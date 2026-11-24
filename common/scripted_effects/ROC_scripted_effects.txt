@@ -1145,6 +1145,7 @@ ROC_policy_window_button_close_effect = {  ##保存并关闭UI
 		add_to_array = { ROC_policy_unlock_card_array_true = v }
 	}
 	ROC_policy_card_modifier = yes
+	ROC_recalc_policy_owned_count = yes
 }
 ROC_policy_card_modifier = {  ##添加buff
 	hidden_effect = {
@@ -2917,6 +2918,7 @@ ROC_policy_delete_card = {  ##删除某个政策卡
 		limit = { is_in_array = { ROC_policy_unlock_card_array = card_to_delete } }
 		remove_from_array = { ROC_policy_unlock_card_array = card_to_delete }
 	}
+	ROC_recalc_policy_owned_count = yes
 }
 
 ROC_policy_toast_refresh_frame = {
@@ -2962,6 +2964,7 @@ ROC_policy_unlock_card_with_toast = {
 			NOT = { is_in_array = { ROC_policy_select_card_Generic_array_true = card_to_unlock } }
 		}
 		add_to_array = { ROC_policy_unlock_card_array_true = card_to_unlock }
+		ROC_recalc_policy_owned_count = yes
 		if = {
 			limit = { has_country_flag = ROC_policy_window_visible }
 			add_to_array = { ROC_policy_unlock_card_array = card_to_unlock }
@@ -3162,8 +3165,45 @@ ROC_check_generic_policy_card_unlocks = {
 	}
 }
 
+ROC_recalc_policy_owned_count = {  ##统计累计已拥有的政策卡总数（未装备池 + 4类槽位非空卡）
+	set_variable = { ROC_policy_owned_card_count = ROC_policy_unlock_card_array_true^num }
+	for_each_loop = {
+		array = ROC_policy_select_card_Military_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+	for_each_loop = {
+		array = ROC_policy_select_card_Economy_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+	for_each_loop = {
+		array = ROC_policy_select_card_Diplomacy_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+	for_each_loop = {
+		array = ROC_policy_select_card_Generic_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+}
+
 ROC_policy_toast_daily_tick = {
 	ROC_check_generic_policy_card_unlocks = yes
+	ROC_recalc_policy_owned_count = yes
 	if = {
 		limit = { check_variable = { ROC_policy_toast_current > 0 } }
 		subtract_from_variable = { ROC_policy_toast_timer = 1 }

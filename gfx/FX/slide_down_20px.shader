@@ -19,7 +19,7 @@
 # ########
 
 Includes = {
-	"buttonstate.fxh"        // WorldViewProjectionMatrix / Color / Offset / NextOffset / Time / AnimationTime
+	"buttonstate.fxh"        # WorldViewProjectionMatrix / Color / Offset / NextOffset / Time / AnimationTime
 }
 
 PixelShader =

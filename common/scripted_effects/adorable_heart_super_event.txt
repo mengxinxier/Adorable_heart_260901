@@ -13,12 +13,14 @@ adorable_heart_fire_super_event = {
             limit = {
                 is_ai = no
             }
+            log = "AH_SE_LOG | FIRE | date=[GetDateText] | this=[THIS.GetTag] | root=[ROOT.GetTag] | ai=no | se_var=[?adorable_heart_super_event_var] | music_btn=[?adorable_heart_super_event_music_button_var] | note_cnt=[?global.superevents_note_array^num]"
             if = {
                 limit = {
                     not = { check_variable = { adorable_heart_super_event_music_button_var = 1 } }
                     not = { check_variable = { adorable_heart_super_event_music_button_var = 2 } }
                 }
                 set_variable = { adorable_heart_super_event_music_button_var = 2 }
+                log = "AH_SE_LOG | MUSIC_BTN_DEFAULT | date=[GetDateText] | this=[THIS.GetTag] | se_var=[?adorable_heart_super_event_var] | set_to=2"
             }
             if = {
                 limit = {
@@ -28,6 +30,13 @@ adorable_heart_fire_super_event = {
                 }
                 adorable_heart_fire_super_event_music = yes
             }
+            else = {
+                log = "AH_SE_LOG | MUSIC_SKIP | date=[GetDateText] | this=[THIS.GetTag] | se_var=[?adorable_heart_super_event_var] | music_btn=[?adorable_heart_super_event_music_button_var]"
+            }
+        }
+        else_if = {
+            limit = { is_in_array = { global.players = THIS } }
+            log = "AH_SE_LOG | FIRE_PLAYER_AS_AI | date=[GetDateText] | this=[THIS.GetTag] | root=[ROOT.GetTag] | ai=yes | se_var=[?adorable_heart_super_event_var] | music_btn=[?adorable_heart_super_event_music_button_var]"
         }
     }
 }
@@ -39,28 +48,40 @@ SOV_DVL_WAR_super_event = {
 
 #changable
 adorable_heart_clr_super_event_flag = {
+    hidden_effect = {
+        if = {
+            limit = { is_ai = no }
+            log = "AH_SE_LOG | CLOSE | date=[GetDateText] | this=[THIS.GetTag] | se_var=[?adorable_heart_super_event_var]"
+        }
+    }
     clear_variable = adorable_heart_super_event_var
 }
 
 ##USE SUPER_EVENT_MAKER_GUI IN USEFUL PYTHON PROGRAMS TO MAKE NEW SUPER EVENTS##
 adorable_heart_fire_super_event_music = {
     hidden_effect = {
+		log = "AH_SE_LOG | MUSIC_PRE | date=[GetDateText] | this=[THIS.GetTag] | root=[ROOT.GetTag] | se_var=[?adorable_heart_super_event_var] | music_btn=[?adorable_heart_super_event_music_button_var]"
 		meta_effect = {
 			text = {
+                log = "AH_SE_LOG | MUSIC_EXEC | this=[cur_tag] | song=super_event_[super_event_var]"
                 scoped_play_song = "super_event_[super_event_var]"
 			}
 			super_event_var = "[?adorable_heart_super_event_var]"
+			cur_tag = "[THIS.GetTag]"
 		}
     }
 }
 
 fire_super_event_note_music = {
     hidden_effect = {
+		log = "AH_SE_LOG | NOTE_MUSIC_PRE | date=[GetDateText] | this=[THIS.GetTag] | note_id=[?superevents_note_array_id]"
 		meta_effect = {
 			text = {
+                log = "AH_SE_LOG | NOTE_MUSIC_EXEC | this=[cur_tag] | song=super_event_[super_event_var]"
                 scoped_play_song = "super_event_[super_event_var]"
 			}
 			super_event_var = "[?superevents_note_array_id]"
+			cur_tag = "[THIS.GetTag]"
 		}
     }
 }
