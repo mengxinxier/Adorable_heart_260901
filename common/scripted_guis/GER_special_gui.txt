@@ -2,13 +2,17 @@ scripted_gui = {
 	GER_black_sun_window = {
 		context_type = decision_category
 		window_name = "GER_black_sun_window"
-		# visible = {
-		# 	always = yes
-		# }
 		properties = {
-			GER_black_sun_window_bar = {
-				frame = GER_b_s_progress
-			}
+			GER_black_sun_window_bar = { frame = GER_b_s_progress }
+			utena_mood_badge = { frame = GER_utena_mood_frame }
+			utena_star_1 = { frame = GER_utena_star_1_frame }
+			utena_star_2 = { frame = GER_utena_star_2_frame }
+			utena_star_3 = { frame = GER_utena_star_3_frame }
+			utena_star_4 = { frame = GER_utena_star_4_frame }
+			utena_star_5 = { frame = GER_utena_star_5_frame }
+		}
+		effects = {
+			utena_note_quick_btn_click = { GER_utena_toggle_note = yes }
 		}
 	}
 }
@@ -173,9 +177,16 @@ scripted_gui = {
 			has_variable = Hiiragi_Utena_note_frame
 		}
 		triggers = {
+			Utena_note_buff_bar_bg_visible = { check_variable = { Utena_note_page > 0 } }
+			Utena_note_buff_text_visible = { check_variable = { Utena_note_page > 0 } }
+			Utena_note_collect_text_visible = { check_variable = { Utena_note_page > 0 } }
 			Utena_note_open_visible = {
 				check_variable = { Utena_note_page = 0 }
 				check_variable = { Hiiragi_Utena_note_page_num > 0 }
+			}
+			Utena_note_empty_hint_visible = {
+				check_variable = { Utena_note_page = 0 }
+				check_variable = { Hiiragi_Utena_note_page_num = 0 }
 			}
 			Utena_note_icon_visible = { check_variable = { Utena_note_page > 0 } }
 			Utena_note_text_visible = { check_variable = { Utena_note_page > 0 } }
@@ -192,6 +203,10 @@ scripted_gui = {
 			}
 		}
 		effects = {
+			Utena_note_close_btn_click = {
+				clear_variable = Hiiragi_Utena_note_frame
+				clear_variable = Utena_note_page
+			}
 			Utena_note_open_click = {
 				scoped_sound_effect = "page_flip"
 				set_variable = { Hiiragi_Utena_note_new^Utena_note_page = 0 }
@@ -204,7 +219,7 @@ scripted_gui = {
 				clamp_variable = {
 					var = Utena_note_page
 					min = 0
-					max = 3
+					max = Hiiragi_Utena_note_page_num
 				}
 				set_variable = { Hiiragi_Utena_note_new^Utena_note_page = 0 }
 			}
@@ -259,18 +274,7 @@ scripted_gui = {
 		}
 		effects = {
 			Hiiragi_Utena_note_open_button_click = {
-				if = {
-					limit = {
-						not = { has_country_flag = Hiiragi_Utena_note_open_arrows_alert_unvisible }
-					}
-					set_country_flag = Hiiragi_Utena_note_open_arrows_alert_unvisible
-				}
-				if = {
-					limit = { has_variable = Hiiragi_Utena_note_frame }
-					clear_variable = Hiiragi_Utena_note_frame
-					clear_variable = Utena_note_page
-				}
-				else = { set_variable = { Hiiragi_Utena_note_frame = 1 } }
+				GER_utena_toggle_note = yes
 			}
 		}
 	}
@@ -281,6 +285,7 @@ scripted_gui = {
 		visible = {
 			tag = GER
 			has_country_flag = GER_himmler_01
+			check_variable = { Hiiragi_Utena_note_page_num > 0 }
 			not = { has_country_flag = Hiiragi_Utena_note_open_arrows_alert_unvisible }
 		}
 		properties = {
