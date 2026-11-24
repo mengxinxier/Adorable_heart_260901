@@ -190,10 +190,10 @@ on_actions = {
 				}
 				if = {
 					limit = {
-						NOT = { PAU = { has_country_flag = has_PAU_xiaoyao8 } }
 						FROM.FROM = {
 							state = 282
 						}
+						NOT = { PAU = { has_country_flag = has_PAU_xiaoyao8 } }
 						PAU = {
 							controls_province = 1182
 						}
@@ -212,6 +212,7 @@ on_actions = {
             }
 				if = {
 					limit = {
+						FROM = { tag = ZDW }
 						PAU = {
 							has_country_flag = PAU_counterattack_started
 							NOT = { has_country_flag = PAU_undead_defeated }
@@ -222,7 +223,6 @@ on_actions = {
 								is_in_faction_with = PAU
 							}
 						}
-						FROM = { tag = ZDW }
 						FROM.FROM = {
 							has_state_flag = is_lldy_state_flag
 							NOT = { has_state_flag = PAU_zdw_retaken_bonus }
@@ -485,13 +485,27 @@ on_actions = {
 			}
 		}
 	}
+	#PAU每周逻辑（手账背景低频同步 + AI军经改革自动批阅，替代高开销每日空转与失效GUI权重）
+	on_weekly_PAU = {
+		effect = {
+			if = {
+				limit = { original_tag = PAU }
+				if = {
+					limit = { is_ai = no }
+					PAU_refresh_focus_storybook = yes
+				}
+				else = {
+					PAU_ai_weekly_auto_reform = yes
+				}
+			}
+		}
+	}
 	#PAU每日逻辑
 	on_daily_PAU = {
 		effect = {
 			if = {
 				limit = { original_tag = PAU }
 				PAU_daily_reform_tick = yes
-				PAU_refresh_focus_storybook = yes
 				if = {
 					limit = {
 						NOT = { has_global_flag = PAU_grail_war_news_fired }
