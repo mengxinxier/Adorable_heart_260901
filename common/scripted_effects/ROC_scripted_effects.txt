@@ -3290,6 +3290,301 @@ ROC_unlock_all_policy_cards_debug_effect = {  ##Debug一键解锁全部88张已�
 	ROC_recalc_policy_owned_count = yes
 }
 
+ROC_policy_ai_refresh_cards = {  ##AI按全局优先级无消耗重排已解锁政策卡（专属槽优先、满则溢入通配槽）
+	if = {
+		limit = {
+			OR = {
+				check_variable = { ROC_policy_select_card_Military_array_true^num > 0 }
+				check_variable = { ROC_policy_select_card_Economy_array_true^num > 0 }
+				check_variable = { ROC_policy_select_card_Diplomacy_array_true^num > 0 }
+				check_variable = { ROC_policy_select_card_Generic_array_true^num > 0 }
+			}
+		}
+		# 1. 记录四类槽位当前容量（保持槽位总数严格不变）
+		set_temp_variable = { ai_rem_M = ROC_policy_select_card_Military_array_true^num }
+		set_temp_variable = { ai_rem_E = ROC_policy_select_card_Economy_array_true^num }
+		set_temp_variable = { ai_rem_D = ROC_policy_select_card_Diplomacy_array_true^num }
+		set_temp_variable = { ai_rem_G = ROC_policy_select_card_Generic_array_true^num }
+
+		# 2. 汇集全部已拥有卡片（未装备池 + 4类槽位）并去重，重建待分配池
+		clear_array = ROC_ai_owned_pool_temp
+		for_each_loop = {
+			array = ROC_policy_unlock_card_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Military_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Economy_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Diplomacy_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Generic_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+
+		clear_array = ROC_policy_unlock_card_array_true
+		for_each_loop = {
+			array = ROC_ai_owned_pool_temp
+			value = v
+			add_to_array = { ROC_policy_unlock_card_array_true = v }
+		}
+		clear_array = ROC_ai_owned_pool_temp
+		clear_array = ROC_policy_select_card_Military_array_true
+		clear_array = ROC_policy_select_card_Economy_array_true
+		clear_array = ROC_policy_select_card_Diplomacy_array_true
+		clear_array = ROC_policy_select_card_Generic_array_true
+
+		# 3. 构造全局优先级队列（前60张严格按指定顺位，后28张为未列出卡保底顺位）
+		clear_array = ROC_ai_policy_prio_temp
+		# --- 主优先级（1~60）---
+		add_to_array = { ROC_ai_policy_prio_temp = 14 }   # 1.  拖拉机产线转换 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 102 }  # 2.  安民告示牌 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 26 }   # 3.  炮火准备条例 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 104 }  # 4.  战后忠诚归档 [特] (=107)
+		add_to_array = { ROC_ai_policy_prio_temp = 107 }  # 5.  战地医疗与抚恤 [特] (=104)
+		add_to_array = { ROC_ai_policy_prio_temp = 109 }  # 6.  战后绥靖与重建 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 103 }  # 7.  全民灰档库 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 40 }   # 8.  混合经济 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 59 }   # 9.  战时三班倒 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 41 }   # 10. 五年计划 [经] (=52)
+		add_to_array = { ROC_ai_policy_prio_temp = 52 }   # 11. 国防重工四年计划 [经] (=41)
+		add_to_array = { ROC_ai_policy_prio_temp = 54 }   # 12. 首都经济圈规划 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 47 }   # 13. 三年计划 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 67 }   # 14. 驻外情报武官 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 51 }   # 15. 统制资源统筹令 [经] (=34/35/50/55)
+		add_to_array = { ROC_ai_policy_prio_temp = 34 }   # 16. 土木工程 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 35 }   # 17. 农会 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 50 }   # 18. 保甲保产协约 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 55 }   # 19. 官商协理条例 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 38 }   # 20. 集体农庄 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 36 }   # 21. 乡贤制 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 33 }   # 22. 军需优先 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 49 }   # 23. 平均地权赎买券 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 39 }   # 24. 公务员体系 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 56 }   # 25. 江湖行会契约 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 45 }   # 26. 工人宪法 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 46 }   # 27. 保障外资 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 66 }   # 28. 战时租借通道 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 91 }   # 29. 总理遗嘱 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 100 }  # 30. 保甲连坐治安 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 42 }   # 31. 市场经济 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 2 }    # 32. 清波寨子弟兵 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 25 }   # 33. 轻装急行军 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 20 }   # 34. 黄埔教导旅 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 22 }   # 35. 清波忠义营 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 3 }    # 36. 党军一体 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 24 }   # 37. 焦土与纵深防御 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 98 }   # 38. 新生活风纪督察 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 44 }   # 39. 引进先进产线 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 31 }   # 40. 生丝贸易协定 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 32 }   # 41. 土地改革 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 13 }   # 42. 战争的经验 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 97 }   # 43. 以党治国训政法统 [特] (=101)
+		add_to_array = { ROC_ai_policy_prio_temp = 101 }  # 44. 训政参政花瓶 [特] (=97)
+		add_to_array = { ROC_ai_policy_prio_temp = 96 }   # 45. 监察委员会 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 53 }   # 46. 自然经济平抑 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 61 }   # 47. 以俄为师 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 21 }   # 48. 中正剑军纪 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 23 }   # 49. 特科暗桩网 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 95 }   # 50. 义务教育 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 8 }    # 51. 士兵训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 43 }   # 52. 中央指导队 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 105 }  # 53. 战时紧急动员令 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 99 }   # 54. 儒家训政纲领 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 92 }   # 55. 文官考试制度 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 106 }  # 56. 政务文书精简 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 27 }   # 57. 渡海登陆先锋 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 1 }    # 58. 黄埔遗训 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 15 }   # 59. 准军事组织训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 16 }   # 60. 皇家禁军 [军]
+		# --- 未列出卡保底顺位（61~88，仅当对应槽位尚空时补位）---
+		add_to_array = { ROC_ai_policy_prio_temp = 19 }   # 中央军教导旅 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 58 }   # 平战结合民工潮 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 71 }   # 国际金融信用 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 72 }   # 战地新闻公关 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 18 }   # 三青团军训纲领 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 70 }   # 反帝联合战线 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 60 }   # 资源普查与勘探 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 57 }   # 铁道与公路优先 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 110 }  # 全国统考与留洋潮 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 68 }   # 对外军事顾问团 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 62 }   # 扩大与圣杯合作 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 63 }   # 南洋侨务 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 5 }    # 产业协同 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 48 }   # 资本主义 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 37 }   # 电子战 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 69 }   # 宗主统筹条约 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 65 }   # 睦邻友善条约 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 108 }  # 财政紧缩与稽核 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 6 }    # 产学结合 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 7 }    # 产学结合 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 4 }    # 南海海军工业 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 10 }   # 飞行员训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 9 }    # 海员训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 11 }   # 制空权 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 12 }   # 制海权 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 93 }   # 党员忠诚档案 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 94 }   # 盗取经费 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 64 }   # 战争借口 [外]
+
+		# 4. 贪心装填：优先入专属槽，专属槽满则溢入通配符槽
+		for_each_loop = {
+			array = ROC_ai_policy_prio_temp
+			value = cid
+			break = ai_prio_break
+			if = {
+				limit = {
+					check_variable = { ai_rem_M < 1 }
+					check_variable = { ai_rem_E < 1 }
+					check_variable = { ai_rem_D < 1 }
+					check_variable = { ai_rem_G < 1 }
+				}
+				set_temp_variable = { ai_prio_break = 1 }
+			}
+			else_if = {
+				limit = {
+					is_in_array = { ROC_policy_unlock_card_array_true = cid }
+				}
+				if = {
+					limit = {
+						check_variable = { cid > 0 }
+						check_variable = { cid < 31 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_M > 0 } }
+						add_to_array = { ROC_policy_select_card_Military_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_M = -1 }
+					}
+					else_if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { cid > 30 }
+						check_variable = { cid < 61 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_E > 0 } }
+						add_to_array = { ROC_policy_select_card_Economy_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_E = -1 }
+					}
+					else_if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { cid > 60 }
+						check_variable = { cid < 91 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_D > 0 } }
+						add_to_array = { ROC_policy_select_card_Diplomacy_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_D = -1 }
+					}
+					else_if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { cid > 90 }
+						check_variable = { cid < 121 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+			}
+		}
+		clear_array = ROC_ai_policy_prio_temp
+
+		# 5. 若仍有空槽，补回 0 保持各槽位数组长度严格不变
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_M > 0 } }
+			add_to_array = { ROC_policy_select_card_Military_array_true = 0 }
+			add_to_temp_variable = { ai_rem_M = -1 }
+		}
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_E > 0 } }
+			add_to_array = { ROC_policy_select_card_Economy_array_true = 0 }
+			add_to_temp_variable = { ai_rem_E = -1 }
+		}
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_D > 0 } }
+			add_to_array = { ROC_policy_select_card_Diplomacy_array_true = 0 }
+			add_to_temp_variable = { ai_rem_D = -1 }
+		}
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_G > 0 } }
+			add_to_array = { ROC_policy_select_card_Generic_array_true = 0 }
+			add_to_temp_variable = { ai_rem_G = -1 }
+		}
+
+		# 6. 刷新生效民族精神与持卡统计
+		ROC_policy_card_modifier = yes
+		ROC_recalc_policy_owned_count = yes
+	}
+}
+
 ROC_factional_influence_calculation = {  ##计算广府派系影响力
 	set_variable = { ROC_total_influence_var = 0 }
 	if = {
