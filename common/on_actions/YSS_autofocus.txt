@@ -1,8 +1,63 @@
 on_actions = {
-	# ── YSS 大清洗善后党纪国策链：自动推进，玩家无需手动点 ──
-	# 每完成一环，下一环在 70 天后自动完成（相当于默认国策时长）
+	on_startup = {
+		effect = {
+			1410 = { set_state_flag = has_city_story } # 亚的斯亚贝巴城市故事
+		}
+	}
+
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+					FROM = { tag = YSS }
+					ROOT = { tag = ETH }
+				}
+				YSS = {
+					white_peace = {
+						tag = ETH
+						message = YSS_win_ETH
+					}
+					annex_country = { target = ETH transfer_troops = no }
+				}
+			}
+			if = {
+				limit = {
+					FROM = { tag = YSS }
+					ROOT = { tag = AOI }
+				}
+				YSS = {
+					white_peace = {
+						tag = AOI
+						message = YSS_win_AOI
+					}
+					annex_country = { target = AOI transfer_troops = no }
+				}
+			}
+		}
+	}
+
+	# ── YSS 每日检查：大清洗善后自动推进 + 崩溃/内战胜利事件触发 ──
 	on_daily_YSS = {
 		effect = {
+			if = {
+				limit = {
+					has_stability < 0.04
+					NOT = { has_country_flag = YSS_2_triggered }
+				}
+				set_country_flag = YSS_2_triggered
+				country_event = YSS.2
+			}
+			if = {
+				limit = {
+					has_country_flag = YSS_the_civil_war_of_YSS_launched
+					NOT = { has_country_flag = YSS_win_war }
+					NOT = { has_country_flag = YSS_90_triggered }
+					NOT = { has_war_with = ETH }
+					NOT = { has_war_with = AOI }
+				}
+				set_country_flag = YSS_90_triggered
+				country_event = YSS.90
+			}
 			if = {
 				limit = {
 					has_country_flag = YSS_daqingxi_jiaoting
@@ -108,6 +163,95 @@ on_actions = {
 						complete_national_focus = YSS_focus_45
 						clear_variable = YSS_af_45
 					}
+				}
+			}
+		}
+	}
+
+	# ── YSS 非洲革命内战胜利结算 ──
+	on_civil_war_end = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = YSS_launch_the_civil_war
+					}
+				}
+				set_country_flag = YSS_revoluntion_victory
+				clear_variable = ROOT.YSS_officer_factor
+				remove_dynamic_modifier = { modifier = YSS_officer_support_revoluntion }
+
+				if = {
+					limit = {
+						OR = {
+							has_country_flag = YSS_have_volunteer_to_this_country
+							has_country_flag = YSS_we_prepare_to_send_volunteer
+						}
+					}
+					clr_country_flag = YSS_have_volunteer_to_this_country
+					clr_country_flag = YSS_we_prepare_to_send_volunteer
+					add_to_variable = { YSS.YSS_volunteer_to_other_country_send_volunteer_size = -1 }
+				}
+
+				# 战后归还：清除宗主标记、归还外派将领、返还借出军工
+				random_country = {
+					limit = {
+						meta_trigger = {
+							text = {
+								has_country_flag = YSS_the_lord_of_[country_tag]
+							}
+							country_tag = "[ROOT.GetTag]"
+						}
+					}
+					meta_effect = {
+						text = {
+							clr_country_flag = YSS_the_lord_of_[country_tag]
+						}
+						country_tag = "[ROOT.GetTag]"
+					}
+				}
+
+				meta_effect = {
+					text = {
+						every_army_leader = {
+							limit = { has_character_flag = YSS_has_mission_to_aboard }
+							clr_character_flag = YSS_has_mission_to_aboard
+							clr_character_flag = go_to_[country_tag]
+							set_nationality = YSS
+						}
+					}
+					country_tag = "[ROOT.GetTag]"
+				}
+
+				meta_effect = {
+					text = {
+						set_temp_variable = { clear_num_of_factory = YSS.YSS_total_of_factory_[country_tag] }
+						set_variable = { YSS.YSS_total_of_factory_[country_tag] = 0 }
+					}
+					country_tag = "[ROOT.GetTag]"
+				}
+
+				meta_effect = {
+					text = {
+						set_temp_variable = { clean_num_of_factory = clear_num_of_factory }
+						YSS = {
+							add_offsite_building = {
+								type = arms_factory
+								level = clean_num_of_factory
+							}
+						}
+						multiply_temp_variable = { clean_num_of_factory = -1 }
+						add_to_variable = { YSS.YSS_the_num_of_send_factories = clean_num_of_factory }
+						add_offsite_building = {
+							type = arms_factory
+							level = clean_num_of_factory
+						}
+					}
+					test_number = "[?temp_var:clear_num_of_factory]"
+				}
+
+				YSS = {
+					add_to_faction = ROOT
 				}
 			}
 		}
