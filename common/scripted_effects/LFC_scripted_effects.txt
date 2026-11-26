@@ -392,7 +392,7 @@
 				}
             }
         }
-
+		LFC_frontier_refresh_map_frames = yes
 
 	}
 
@@ -1004,7 +1004,7 @@
 #
 
 #露斯契亚边疆
- #地图入口与旧版筹备
+ #地图入口
 	LFC_frontier_open_map = { #打开地图并刷新帧号
 		LFC_frontier_initialize_expedition_draft = yes
 		LFC_frontier_update_expedition_report = yes
@@ -1013,10 +1013,7 @@
 		clr_country_flag = FLAG_LFC_frontier_relic_page
 		if = {
 			limit = {
-				OR = {
-					has_country_flag = FLAG_LFC_frontier_preparing
-					has_country_flag = FLAG_LFC_Rainforest_Acting
-				}
+				has_country_flag = FLAG_LFC_Rainforest_Acting
 				has_variable = VAR_LFC_Rainforest_state
 				check_variable = {
 					VAR_LFC_Rainforest_state > 0
@@ -1027,7 +1024,7 @@
 			}
 		}
 		else_if = {
-			#旧档选中州不在图内时回到棘冠山谷
+			#未选中图内州时默认选棘冠山谷
 			limit = {
 				NOT = {
 					OR = {
@@ -1070,12 +1067,6 @@
 		}
 	}
 
-	#旧决议和地图按钮共用远征州
-	LFC_frontier_cancel_preparation = { #取消筹备并释放目标
-		clr_country_flag = FLAG_LFC_frontier_preparing
-		clear_variable = VAR_LFC_Rainforest_state
-	}
-
  #地区开发（州运行标记防止重复扣费）
   #地区基础建设
 	LFC_frontier_infrastructure_pay = { #地区基础建设扣费
@@ -1102,14 +1093,6 @@
 					has_political_power < 50
 				}
 				num_of_civilian_factories_available_for_projects > 3
-				OR = {
-					NOT = {
-						has_decision = LFC_decision_forest_tjjj
-					}
-					any_owned_state = {
-						has_state_flag = LFC_frontier_infrastructure_running
-					}
-				}
 				var:LFC_frontier_selected_state = {
 					is_core_of = LFC
 					is_controlled_by = LFC
@@ -1183,14 +1166,6 @@
 					has_political_power < 50
 				}
 				num_of_civilian_factories_available_for_projects > 3
-				OR = {
-					NOT = {
-						has_decision = LFC_decision_forest_glym
-					}
-					any_owned_state = {
-						has_state_flag = LFC_frontier_settlement_running
-					}
-				}
 				var:LFC_frontier_selected_state = {
 					is_core_of = LFC
 					is_controlled_by = LFC
@@ -1262,14 +1237,6 @@
 					has_political_power < 50
 				}
 				num_of_civilian_factories_available_for_projects > 5
-				OR = {
-					NOT = {
-						has_decision = LFC_decision_forest_tjcsh
-					}
-					any_owned_state = {
-						has_state_flag = LFC_frontier_urbanization_running
-					}
-				}
 				var:LFC_frontier_selected_state = {
 					is_core_of = LFC
 					is_controlled_by = LFC
@@ -1338,14 +1305,6 @@
 					has_political_power < 50
 				}
 				num_of_civilian_factories_available_for_projects > 3
-				OR = {
-					NOT = {
-						has_decision = LFC_decision_forest_yjkt
-					}
-					any_owned_state = {
-						has_state_flag = LFC_frontier_survey_running
-					}
-				}
 				var:LFC_frontier_selected_state = {
 					is_core_of = LFC
 					is_controlled_by = LFC
@@ -1644,9 +1603,19 @@
 		}
 	}
 
- #正式开发档位（按州修正，默认一级）
+ #正式开发档位（0未实控，1-4实控档位）
 	LFC_frontier_refresh_state_frame = {
 		if = {
+			limit = {
+				NOT = {
+					is_controlled_by = LFC
+				}
+			}
+			set_variable = {
+				LFC_frontier_development_frame = 0
+			}
+		}
+		else_if = {
 			limit = {
 				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
 			}
@@ -1710,94 +1679,171 @@
 		}
 	}
 
- #调试预览（从正式档位起步）
-	LFC_frontier_step_preview_level = { #预览升降档
+ #调试真调档（直接切换州归属、核心、开发修正与完成标记）
+	LFC_frontier_clear_development_modifiers = { #清理当前州所有开发阶段动态修正
 		if = {
 			limit = {
-				is_debug = yes
-				NOT = {
-					has_country_flag = FLAG_LFC_frontier_relic_page
-				}
-				has_variable = LFC_frontier_selected_state
-				var:LFC_frontier_selected_state = {
-					OR = {
-						state = 1202
-						state = 1203
-						state = 1204
-						state = 1205
-						state = 1206
-						state = 1207
-						state = 1208
-						state = 280
-						state = 504
-						state = 505
-					}
-				}
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
 			}
-			var:LFC_frontier_selected_state = {
-				if = {
-					limit = {
-						NOT = {
-							has_variable = LFC_frontier_preview_level
-						}
-					}
-					if = {
-						limit = {
-							is_controlled_by = LFC
-						}
-						LFC_frontier_refresh_state_frame = yes
-						set_variable = {
-							LFC_frontier_preview_level = LFC_frontier_development_frame
-						}
-					}
-					else = {
-						set_variable = {
-							LFC_frontier_preview_level = 0
-						}
-					}
-				}
-				add_to_variable = {
-					LFC_frontier_preview_level = LFC_frontier_preview_step
-				}
-				clamp_variable = {
-					var = LFC_frontier_preview_level
-					min = 0
-					max = 4
-				}
+			remove_dynamic_modifier = {
+				modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
+			}
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_yzjqs
+			}
+			remove_dynamic_modifier = {
+				modifier = LFC_state_dynamic_modifier_Rainforest_yzjqs
+			}
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+			}
+			remove_dynamic_modifier = {
+				modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+			}
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+			}
+			remove_dynamic_modifier = {
+				modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+			}
+		}
+		if = {
+			limit = {
+				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
+			}
+			remove_dynamic_modifier = {
+				modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
 			}
 		}
 	}
 
-	LFC_frontier_clear_preview_levels = { #关窗清除预览
-		1202 = {
-			clear_variable = LFC_frontier_preview_level
+	LFC_frontier_debug_level_up = { #选中州实际升一档
+		if = {
+			limit = {
+				LFC_frontier_debug_visible = yes
+			}
+			var:LFC_frontier_selected_state = {
+				LFC_frontier_refresh_state_frame = yes
+				if = { #未控制 -> 一级（远征军前哨站）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 0 }
+					}
+					transfer_state_to = LFC
+					add_core_of = LFC
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_yzjqs
+					}
+					clr_state_flag = LFC_frontier_infrastructure_complete
+					clr_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+				}
+				else_if = { #一级 -> 二级（早期定居点）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 1 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+					}
+					set_state_flag = LFC_frontier_infrastructure_complete
+					clr_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+				}
+				else_if = { #二级 -> 三级（发展中的殖民地）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 2 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+					}
+					set_state_flag = LFC_frontier_infrastructure_complete
+					set_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+				}
+				else_if = { #三级 -> 四级（雨林城市群）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 3 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
+					}
+					set_state_flag = LFC_frontier_infrastructure_complete
+					set_state_flag = LFC_frontier_settlement_complete
+					set_state_flag = LFC_frontier_urbanization_complete
+				}
+				LFC_frontier_refresh_state_frame = yes
+			}
 		}
-		1203 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		1204 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		1205 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		1206 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		1207 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		1208 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		280 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		504 = {
-			clear_variable = LFC_frontier_preview_level
-		}
-		505 = {
-			clear_variable = LFC_frontier_preview_level
+	}
+
+	LFC_frontier_debug_level_down = { #选中州实际降一档
+		if = {
+			limit = {
+				LFC_frontier_debug_visible = yes
+			}
+			var:LFC_frontier_selected_state = {
+				LFC_frontier_refresh_state_frame = yes
+				if = { #四级 -> 三级（发展中的殖民地）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 4 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
+					}
+					set_state_flag = LFC_frontier_infrastructure_complete
+					set_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+				}
+				else_if = { #三级 -> 二级（早期定居点）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 3 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
+					}
+					set_state_flag = LFC_frontier_infrastructure_complete
+					clr_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+				}
+				else_if = { #二级 -> 一级（远征军前哨站）
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 2 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_yzjqs
+					}
+					clr_state_flag = LFC_frontier_infrastructure_complete
+					clr_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+				}
+				else_if = { #一级 -> 未控制
+					limit = {
+						check_variable = { LFC_frontier_development_frame = 1 }
+					}
+					LFC_frontier_clear_development_modifiers = yes
+					add_dynamic_modifier = {
+						modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
+					}
+					clr_state_flag = LFC_frontier_infrastructure_complete
+					clr_state_flag = LFC_frontier_settlement_complete
+					clr_state_flag = LFC_frontier_urbanization_complete
+					remove_core_of = LFC
+					transfer_state_to = SAJ
+				}
+				LFC_frontier_refresh_state_frame = yes
+			}
 		}
 	}
 
@@ -1976,6 +2022,8 @@
 					amount = LFC_frontier_expedition_payment
 				}
 			}
+			clr_country_flag = FLAG_LFC_frontier_exp_reinforce_used
+			clr_country_flag = FLAG_LFC_frontier_exp_airdrop_used
 			set_country_flag = FLAG_LFC_Rainforest_Acting
 			LFC_frontier_update_expedition_report = yes
 			LFC_Preset_yulin_event_effect_0 = yes
@@ -1983,7 +2031,7 @@
 	}
 
  #远征报告
-	LFC_frontier_update_expedition_report = { #远征报告的仪表帧
+	LFC_frontier_update_expedition_report = { #远征报告的仪表帧与五格游标帧
 		if = {
 			limit = {
 				has_country_flag = FLAG_LFC_Rainforest_Acting
@@ -1995,6 +2043,45 @@
 				var = LFC_frontier_report_progress
 				min = 0
 				max = 100
+			}
+			if = { #五格游标低段 (0/20/40%) 与高段 (60/80/100%) 帧号映射
+				limit = {
+					check_variable = { LFC_frontier_report_progress < 20 }
+				}
+				set_variable = { LFC_frontier_report_progress_low_frame = 1 }
+				set_variable = { LFC_frontier_report_progress_high_frame = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { LFC_frontier_report_progress < 40 }
+				}
+				set_variable = { LFC_frontier_report_progress_low_frame = 2 }
+				set_variable = { LFC_frontier_report_progress_high_frame = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { LFC_frontier_report_progress < 60 }
+				}
+				set_variable = { LFC_frontier_report_progress_low_frame = 3 }
+				set_variable = { LFC_frontier_report_progress_high_frame = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { LFC_frontier_report_progress < 80 }
+				}
+				set_variable = { LFC_frontier_report_progress_low_frame = 3 }
+				set_variable = { LFC_frontier_report_progress_high_frame = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { LFC_frontier_report_progress < 100 }
+				}
+				set_variable = { LFC_frontier_report_progress_low_frame = 3 }
+				set_variable = { LFC_frontier_report_progress_high_frame = 2 }
+			}
+			else = {
+				set_variable = { LFC_frontier_report_progress_low_frame = 3 }
+				set_variable = { LFC_frontier_report_progress_high_frame = 3 }
 			}
 			if = {
 				limit = {
@@ -2036,5 +2123,74 @@
 					max = 100
 				}
 			}
+		}
+	}
+
+	LFC_frontier_expedition_reinforce = { #紧急增援（+500前线人力，不超出发上限，限1次）
+		if = {
+			limit = {
+				LFC_frontier_exp_can_reinforce = yes
+			}
+			add_manpower = -500
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = -500
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = -30
+			}
+			add_to_variable = {
+				ubs_save = -25
+			}
+			add_political_power = -25
+			add_to_variable = {
+				LFC_VAR_Rainforest_manpower = 500
+			}
+			if = {
+				limit = {
+					has_variable = LFC_frontier_departure_manpower
+					check_variable = { LFC_frontier_departure_manpower > 0 }
+				}
+				clamp_variable = {
+					var = LFC_VAR_Rainforest_manpower
+					min = 0
+					max = LFC_frontier_departure_manpower
+				}
+			}
+			set_country_flag = FLAG_LFC_frontier_exp_reinforce_used
+			LFC_frontier_update_expedition_report = yes
+		}
+	}
+
+	LFC_frontier_expedition_airdrop = { #空投补给（+30前线补给，不超出发上限，限1次）
+		if = {
+			limit = {
+				LFC_frontier_exp_can_airdrop = yes
+			}
+			add_to_variable = {
+				ubs_save = -100
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = -20
+			}
+			add_political_power = -25
+			add_to_variable = {
+				LFC_VAR_Rainforest_supply = 30
+			}
+			if = {
+				limit = {
+					has_variable = LFC_frontier_departure_supply
+					check_variable = { LFC_frontier_departure_supply > 0 }
+				}
+				clamp_variable = {
+					var = LFC_VAR_Rainforest_supply
+					min = 0
+					max = LFC_frontier_departure_supply
+				}
+			}
+			set_country_flag = FLAG_LFC_frontier_exp_airdrop_used
+			LFC_frontier_update_expedition_report = yes
 		}
 	}
