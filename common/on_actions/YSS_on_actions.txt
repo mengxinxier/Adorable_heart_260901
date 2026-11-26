@@ -1,0 +1,277 @@
+# 由 DeepSeek 写成
+# 从 91 库 common/on_actions/my_on_actions.txt 提取的 YSS 相关部分
+# 已剔除涉及 1010114 不存在 tag 的内容（本文件内所有块只引用 YSS / ETH / AOI，均存在）
+# 原 on_civil_war_end 中 remove_ideas = ZYX_Suddenly_attack 一行已删除：1010114 无 ZYX tag 也无该 idea
+on_actions = {
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+                    FROM = { tag = YSS }     
+                    ROOT = { tag = ETH }   
+                }
+				YSS = {
+					white_peace = {
+						tag = ETH
+						message = YSS_win_ETH
+					}
+					annex_country = { target = ETH transfer_troops = no }
+				}
+			}
+		}
+	}
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+                    FROM = { tag = YSS }     
+                    ROOT = { tag = AOI }   
+                }
+				YSS = {
+					white_peace = {
+						tag = AOI
+						message = YSS_win_AOI
+					}
+					annex_country = { target = AOI transfer_troops = no }
+				}
+			}
+		}
+	}
+	on_startup = {
+		effect = {
+			YSS = {
+				country_event = YSS.9999
+			}
+		}
+	}
+	on_daily_YSS = {
+        effect = {  
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_90
+                        progress > 0.25
+                    }
+				}
+				country_event = YSS.94
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_135
+                        progress > 0.25
+                    }
+				country_event = YSS.95
+				}
+            }
+
+            if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_154
+                        progress > 0.2
+                    }
+				}
+				country_event = YSS.96
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_134
+                        progress > 0.5
+                    }
+				}
+				country_event = YSS.97
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_61
+                        progress > 0.33
+                    }
+				}
+				country_event = YSS.98
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_166
+                        progress > 0.2
+                    }
+				}
+				country_event = YSS.99
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_79
+                        progress > 0.33
+                    }
+				}
+				country_event = YSS.100
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_97
+                        progress > 0.25
+                    }
+				}
+				country_event = YSS.101
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_54
+                        progress > 0.33
+                    }
+				}
+				country_event = YSS.102
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_105
+                        progress > 0.25
+                    }
+				}
+				country_event = YSS.103
+            }
+
+			if = {
+                limit = { 
+					focus_progress = {
+                        focus = YSS_focus_85
+                        progress > 0.33
+                    }
+				}
+				country_event = YSS.104
+            }
+
+			if = {
+                limit = { 
+					YSS = {
+						has_stability < 0.04 
+					}
+				}
+                country_event = YSS.2
+            }
+
+			if = {
+                limit = {
+                    has_country_flag = YSS_the_civil_war_of_YSS_launched
+                    NOT = { has_war_with = ETH }
+                    NOT = { has_war_with = AOI }
+                }
+                country_event = YSS.90
+            }
+        }
+    }
+	on_civil_war_end = {
+    effect = {
+        if = {
+            limit = {
+                ROOT = {
+					has_country_flag = YSS_launch_the_civil_war
+				}
+                # 可以根据需要加更多条件，比如确认是玩家赢的
+            }
+
+			set_country_flag = YSS_revoluntion_victory
+
+
+			clear_variable = ROOT.YSS_officer_factor
+
+			remove_dynamic_modifier = { modifier = YSS_officer_support_revoluntion }
+
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = YSS_have_volunteer_to_this_country
+						has_country_flag = YSS_we_prepare_to_send_volunteer
+					}
+				}
+				clr_country_flag = YSS_have_volunteer_to_this_country
+				clr_country_flag = YSS_we_prepare_to_send_volunteer
+				add_to_variable = { YSS.YSS_volunteer_to_other_country_send_volunteer_size = -1 }
+			}
+
+			#####战后归还
+
+			random_country = {
+				limit = {
+					meta_trigger = {
+						text = {
+							has_country_flag = YSS_the_lord_of_[country_tag]
+						}
+						country_tag = "[ROOT.GetTag]"
+					}
+				}
+
+				meta_effect = {
+					text = {
+						clr_country_flag = YSS_the_lord_of_[country_tag]
+					}
+					country_tag = "[ROOT.GetTag]"
+				}
+			}
+
+			meta_effect = {
+				text = {
+					every_army_leader = {
+						limit = { has_character_flag = YSS_has_mission_to_aboard }
+						clr_character_flag = YSS_has_mission_to_aboard
+						clr_character_flag = go_to_[country_tag]
+						set_nationality = YSS
+					}
+				}
+				country_tag = "[ROOT.GetTag]"
+			}
+
+			meta_effect = {
+				text = {
+					set_temp_variable = { clear_num_of_factory = YSS.YSS_total_of_factory_[country_tag] }
+
+					set_variable = { YSS.YSS_total_of_factory_[country_tag] = 0 }
+				}
+				country_tag = "[ROOT.GetTag]"
+			}
+
+			meta_effect = {
+				text = {
+					set_temp_variable = { clean_num_of_factory = clear_num_of_factory }
+
+					YSS = {
+						add_offsite_building = {
+							type = arms_factory
+							level = clean_num_of_factory
+						}
+					}
+
+					multiply_temp_variable = { clean_num_of_factory = -1 }
+
+					add_to_variable = { YSS.YSS_the_num_of_send_factories = clean_num_of_factory }
+
+					add_offsite_building = {
+						type = arms_factory
+						level = clean_num_of_factory
+					}
+				}
+				test_number = "[?temp_var:clear_num_of_factory]"
+			}
+            
+            YSS = {
+				add_to_faction = ROOT
+			}
+        }
+    }
+	}
+}
