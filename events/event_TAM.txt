@@ -1436,19 +1436,43 @@ country_event = {
             base = 10
         }
         name = TAM.111.a
-        country_event = {
-            days = 32
-            id = TAM.112 
+        # 没有玩家敌人、且所有敌国都没有阵营领袖时，无人能接收 TAM.113，直接不显示该选项
+        trigger = {
+            any_enemy_country = {
+                OR = {
+                    is_ai = no
+                    is_faction_leader = yes
+                }
+            }
         }
-        random_enemy_country = {
-            if = {
+        # 媾和对象优先级：敌国中的玩家 > 与特雷森相邻的敌国阵营领袖 > 任意敌国阵营领袖
+        if = {
+            limit = {
+                any_enemy_country = {
+                    is_ai = no
+                }
+            }
+            random_enemy_country = {
                 limit = {
                     is_ai = no
                 }
                 country_event = TAM.113
             }
-            else_if = {
-                limit = { 
+        }
+        else_if = {
+            limit = {
+                any_enemy_country = {
+                    is_faction_leader = yes
+                    OR = {
+                        is_neighbor_of = TAM
+                        any_allied_country = {
+                            is_neighbor_of = TAM
+                        }
+                    }
+                }
+            }
+            random_enemy_country = {
+                limit = {
                     is_faction_leader = yes
                     OR = {
                         is_neighbor_of = TAM
@@ -1459,8 +1483,15 @@ country_event = {
                 }
                 country_event = TAM.113
             }
-            else_if = {
-                limit = { 
+        }
+        else_if = {
+            limit = {
+                any_enemy_country = {
+                    is_faction_leader = yes
+                }
+            }
+            random_enemy_country = {
+                limit = {
                     is_faction_leader = yes
                 }
                 country_event = TAM.113
@@ -1489,14 +1520,6 @@ country_event = {
     is_triggered_only = yes
     immediate = {
         hidden_effect = {
-            #if = {
-            #    limit = { 
-            #        not = {
-            #            has_completed_focus = TAM_focus_start_12
-            #        }
-            #    }
-            #    complete_national_focus = TAM_focus_start_12
-            #}
             TAM_clr_head_of_government = yes
             remove_ideas = SOV_comecon_buff
             remove_ideas = SOV_comecon_buff2
@@ -1504,17 +1527,22 @@ country_event = {
     }
     option = {
         name = TAM.112.a
-        ai_chance = {
-            base = 15
-            modifier = {
+        # 已加入阵营且非附庸时，只保留与阵营领袖意识形态一致的选项
+        trigger = {
+            OR = {
+                is_in_faction = no
+                #AND = {
+                #    is_faction_leader = yes
+                #    has_government = fascism
+                #}
                 any_allied_country = {
                     is_faction_leader = yes
-                    NOT = {
-                        has_government = fascism
-                    }
+                    has_government = fascism
                 }
-                add = -15
             }
+        }
+        ai_chance = {
+            base = 15
         }
         hidden_effect = {
             set_politics = {
@@ -1584,17 +1612,21 @@ country_event = {
     }
     option = {
         name = TAM.112.b
-        ai_chance = {
-            base = 15
-            modifier = {
+        trigger = {
+            OR = {
+                is_in_faction = no
+                #AND = {
+                #    is_faction_leader = yes
+                #    has_government = democratic
+                #}
                 any_allied_country = {
                     is_faction_leader = yes
-                    NOT = {
-                        has_government = democratic
-                    }
+                    has_government = democratic
                 }
-                add = -15
             }
+        }
+        ai_chance = {
+            base = 15
         }
         hidden_effect = {
             set_politics = {
@@ -1622,17 +1654,21 @@ country_event = {
     }
     option = {
         name = TAM.112.c
-        ai_chance = {
-            base = 10
-            modifier = {
+        trigger = {
+            OR = {
+                is_in_faction = no
+                #AND = {
+                #    is_faction_leader = yes
+                #    has_government = communism
+                #}
                 any_allied_country = {
                     is_faction_leader = yes
-                    NOT = {
-                        has_government = communism
-                    }
+                    has_government = communism
                 }
-                add = -10
             }
+        }
+        ai_chance = {
+            base = 10
         }
         hidden_effect = {
             set_politics = {
@@ -1660,17 +1696,21 @@ country_event = {
     }
     option = {
         name = TAM.112.d
-        ai_chance = {
-            base = 10
-            modifier = {
+        trigger = {
+            OR = {
+                is_in_faction = no
+                #AND = {
+                #    is_faction_leader = yes
+                #    has_government = neutrality
+                #}
                 any_allied_country = {
                     is_faction_leader = yes
-                    NOT = {
-                        has_government = neutrality
-                    }
+                    has_government = neutrality
                 }
-                add = -10
             }
+        }
+        ai_chance = {
+            base = 10
         }
         hidden_effect = {
             set_politics = {
@@ -1698,8 +1738,12 @@ country_event = {
     }
     option = {
         name = TAM.112.e
+        # “没人胜出”只在 TAM 未加入任何阵营时可选
+        trigger = {
+            is_in_faction = no
+        }
         ai_chance = {
-            base = 0
+            base = 1
         }
     }
 }
@@ -1710,7 +1754,11 @@ country_event = {
     desc = TAM.113.desc
     picture = GFX_report_event_generic
     is_triggered_only = yes
-
+    immediate = {
+        TAM = {
+            set_major = yes
+        }
+    }
     option = {
         ai_chance = {
             base = 10
@@ -1727,10 +1775,28 @@ country_event = {
         }
         TAM = {
             country_event = TAM.116
+            set_major = no
         }
-        every_enemy_country = {
+		every_country = {
+			limit = {
+				has_war_with = TAM
+			}
 			white_peace = TAM
 		}
+        # 停战达成：TAM 退出原阵营，并进入 30 天“混乱期”（AI 参战意愿 -3000），到期后由 idea 的 on_remove 触发 TAM.112
+        TAM = {
+            if = {
+                limit = { is_in_faction = yes }
+                leave_faction = yes
+            }
+            if = {
+                limit = { NOT = { has_idea = TAM_idea_chaos_after_beg } }
+                add_timed_idea = {
+                    idea = TAM_idea_chaos_after_beg
+                    days = 30
+                }
+            }
+        }
     }
     option = {
         name = TAM.113.c
@@ -1740,9 +1806,23 @@ country_event = {
         TAM = {
             country_event = TAM.117
         }
-        every_enemy_country = {
-			white_peace = TAM
-		}
+    }
+    option = {
+        name = TAM.113.d
+        ai_chance = {
+            base = 10
+        }
+        trigger = {
+            is_subject = no
+        }
+        hidden_effect = {
+            ROOT = {
+                set_country_flag = TAM_flag_will_puppet_TAM
+            }
+        }
+        TAM = {
+            country_event = TAM.117
+        }
     }
 }
 country_event = {
@@ -1754,6 +1834,8 @@ country_event = {
 
     option = {
         name = TAM.115.a
+        add_stability = 0.05
+        add_war_support = 0.05
     }
 }
 country_event = {
@@ -1765,6 +1847,9 @@ country_event = {
 
     option = {
         name = TAM.116.a
+        leave_faction = yes
+        remove_ideas = SOV_comecon_buff
+        remove_ideas = SOV_comecon_buff2
     }
 }
 country_event = {
@@ -1778,7 +1863,30 @@ country_event = {
             base = 1
         }
         name = TAM.117.a
+        set_major = no
+        # 30 天“混乱期”：AI 参战意愿 -3000，到期后由 idea 的 on_remove 触发 TAM.112
+        if = {
+            limit = { NOT = { has_idea = TAM_idea_chaos_after_beg } }
+            add_timed_idea = {
+                idea = TAM_idea_chaos_after_beg
+                days = 30
+            }
+        }
         FROM = {
+            # 先让 TAM 脱离原阵营，避免停战后又被原阵营的战争拖回去
+            TAM = {
+                if = {
+                    limit = { is_in_faction = yes }
+                    leave_faction = yes
+                }
+            }
+		    every_country = {
+		    	limit = {
+		    		has_war_with = TAM
+		    		#is_in_faction_with = ROOT  #这里不要限制为本阵营，因为这可能会导致TAM变化阵营之后，意料之外的三方战争。
+		    	}
+		    	white_peace = TAM
+		    }
             if = {
                 limit = { 
                     is_ai = no
@@ -1849,6 +1957,13 @@ country_event = {
                 }
             }
         }
+        random_country = {
+            limit = {
+                has_country_flag = TAM_flag_will_puppet_TAM
+            }
+            puppet = TAM
+            clr_country_flag = TAM_flag_will_puppet_TAM
+        }
     }
     option = {
         ai_chance = {
@@ -1856,11 +1971,19 @@ country_event = {
         }
         name = TAM.117.b
         FROM = {
-            create_wargoal = {
-                target = TAM
-                type = annex_everything
-            }
+            country_event = TAM.119
         }
+    }
+}
+country_event = {
+    id = TAM.119
+    title = TAM.119.title
+    desc = TAM.119.desc
+    picture = GFX_report_event_generic
+    is_triggered_only = yes
+    option = {
+        name = option_name
+        add_war_support = 0.05
     }
 }
 ### 新政府 曼城茶座（极权主义政府）
