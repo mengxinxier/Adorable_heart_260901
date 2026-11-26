@@ -4,8 +4,8 @@
 - status: `needs_repair`
 - mod_root: `D:\SteamLibrary\steamapps\workshop\content\394360\Adorable_heart_260901`
 - game_root: `D:\SteamLibrary\steamapps\common\Hearts of Iron IV`
-- effective_errors: `6272`
-- effective_warnings: `49652`
+- effective_errors: `6276`
+- effective_warnings: `49654`
 - code_example_retrieval: `ok` (libraries: `1`)
 
 ## AI Rules
