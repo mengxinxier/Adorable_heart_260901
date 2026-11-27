@@ -571,7 +571,7 @@ SOV_disintegration_of_the_Soviet_Union = {
 
 #中亚
 
-	if = {	#如果特雷森存在，就移交领土
+	if = {	#如果特雷森存在，就移交领土，特雷森的停战不由此处触发
 		limit = { country_exists = TAM }
 		every_state = {
 			limit = { 
@@ -601,23 +601,23 @@ SOV_disintegration_of_the_Soviet_Union = {
 			
 		}
 	}
-	else = {	#特雷森不存在，创建特雷森
+	else_if = {	#特雷森不存在，检查中亚另外两国是否存在
+		limit = { country_exists = AFG }
 		every_state = {
 			limit = { 
 				has_state_flag = TAMZDQ
 				is_owned_by = SOV
 			}
-			transfer_state_to = TAM
+			transfer_state_to = AFG
 			remove_core_of = SOV
 		}
-		release = TAM
 		every_state = {
 			limit = { has_state_flag = TAMZDQ }
-			add_core_of = TAM
+			add_core_of = AFG
 		}
 		SOV = {
 			transfer_units_fraction = {
-				target = TAM
+				target = AFG
 				size = 0.2
 				stockpile_ratio = 0.2
 				army_ratio = 0.1
@@ -627,11 +627,57 @@ SOV_disintegration_of_the_Soviet_Union = {
 				}
 			}
 		}
-		inherit_technology = SOV
-		set_research_slots = 2
-		TAM = { #这里白和没问题
-			every_enemy_country = {
-				white_peace = PREV
+	}
+	else_if = {	#特雷森不存在，检查中亚另外两国是否存在
+		limit = { country_exists = PER }
+		every_state = {
+			limit = { 
+				has_state_flag = TAMZDQ
+				is_owned_by = SOV
+			}
+			transfer_state_to = PER
+			remove_core_of = SOV
+		}
+		every_state = {
+			limit = { has_state_flag = TAMZDQ }
+			add_core_of = PER
+		}
+		SOV = {
+			transfer_units_fraction = {
+				target = PER
+				size = 0.2
+				stockpile_ratio = 0.2
+				army_ratio = 0.1
+				air_ratio = 0.1
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	else = {	#中亚三国都不存在，那就给西伯利亚
+		every_state = {
+			limit = { 
+				has_state_flag = TAMZDQ
+				is_owned_by = SOV
+			}
+			transfer_state_to = SIB
+			remove_core_of = SOV
+		}
+		every_state = {
+			limit = { has_state_flag = TAMZDQ }
+			add_core_of = SIB
+		}
+		SOV = {
+			transfer_units_fraction = {
+				target = SIB
+				size = 0.2
+				stockpile_ratio = 0.2
+				army_ratio = 0.1
+				air_ratio = 0.1
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
 			}
 		}
 	}

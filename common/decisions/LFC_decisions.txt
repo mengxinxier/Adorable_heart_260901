@@ -2567,7 +2567,7 @@ LFC_decision_l_2_Rainforest_Exploration = {  #雨林探索
  #雨林勘探
  	LFC_decision_forest_yulinkantan = { #派出勘探队
 		icon = GFX_decision_generic_construction
-		fire_only_once = yes		
+		fire_only_once = no #取消或失败后可重试
 		days_remove = 0
 		cost = 0
 		on_map_mode = map_and_decisions_view
@@ -2577,7 +2577,7 @@ LFC_decision_l_2_Rainforest_Exploration = {  #雨林探索
 				any_neighbor_state = {
 					is_core_of = LFC				
 				}
-				has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
+				LFC_frontier_expedition_target = yes
 			}
 		}	
 		ai_will_do = {
@@ -2598,95 +2598,12 @@ LFC_decision_l_2_Rainforest_Exploration = {  #雨林探索
 				}			
 			}
 		}
-		available = {
-			not = {
-				has_country_flag = FLAG_LFC_Rainforest_Acting
+		complete_effect = { #打开目标州的远征筹备页
+			LFC_frontier_open_map = yes
+			set_variable = {
+				LFC_frontier_selected_state = FROM
 			}
-			custom_trigger_tooltip = {
-				tooltip = LFC_tooltip_var_hcp_dayu_100
-				check_variable = {
-					ubs_save > 100
-				}
-			}
-			has_equipment = {
-				infantry_equipment > 1000
-			}	
-			has_equipment = {
-				support_equipment > 40
-			}	
-			has_manpower > 2000 
 		}
-		complete_effect = {  
-			country_event = LFC_event_forest.1
-			#set_country_flag = FLAG_LFC_Rainforest_Acting
-			#设定省份
-				if = {
-					limit = {
-						FROM = {
-							state = 1203
-						}
-					}
-					set_variable = {
-						VAR_LFC_Rainforest_state = 1203
-					}
-				}
-
-				if = {
-					limit = {
-						FROM = {
-							state = 1204
-						}
-					}
-					set_variable = {
-						VAR_LFC_Rainforest_state = 1204
-					}
-				}
-
-				if = {
-					limit = {
-						FROM = {
-							state = 1205
-						}
-					}
-					set_variable = {
-						VAR_LFC_Rainforest_state = 1205
-					}
-				}
-
-				if = {
-					limit = {
-						FROM = {
-							state = 1207
-						}
-					}
-					set_variable = {
-						VAR_LFC_Rainforest_state = 1207
-					}
-				}
-				
-				if = {
-					limit = {
-						FROM = {
-							state = 1208
-						}
-					}
-					set_variable = {
-						VAR_LFC_Rainforest_state = 1208
-					}
-				}
-
-				if = {
-					limit = {
-						FROM = {
-							state = 280
-						}
-					}
-					set_variable = {
-						VAR_LFC_Rainforest_state = 280
-					}
-				}
-			######	
-		}	
 		modifier = {
 
 	   	}
@@ -2704,7 +2621,14 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		icon = GFX_decision_generic_construction
 		fire_only_once = yes		
 		days_remove = 120
-		cost = 50
+		#共用效果扣费，决议负责占用民工和计时
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 50
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_50_pp
 		on_map_mode = map_and_decisions_view
 		state_target = yes
 		visible = {   
@@ -2722,40 +2646,41 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		ai_will_do = {
 			factor = 0
 		}
-		target_trigger = {
-			FROM = {
-				OR = {
-					state = 1203
-					state = 1204
-					state = 1205
-					state = 1206
-					state = 1207
-					state = 1208
-					state = 504
-					state = 505
-					state = 280
-					state = 1202
-				}			
-			}
-		}
+		targets = { 1203 1204 1205 1206 1207 1208 504 505 280 1202 }
 		available = {
+			#排除进行中和已完成的项目
+			FROM = {
+				NOT = {
+					has_state_flag = LFC_frontier_infrastructure_running
+				}
+				NOT = {
+					has_state_flag = LFC_frontier_infrastructure_complete
+				}
+			}
 			num_of_civilian_factories_available_for_projects > 3
 
 		}
 		complete_effect = {  
-			COST_200_UBS_LOAD = yes
+			set_temp_variable = {
+				LFC_frontier_request_state = FROM
+			}
+			LFC_frontier_infrastructure_pay = yes
 		}	
 		modifier = {
 			civilian_factory_use = 3
 	   	}
 		remove_effect = {
 			FROM = {
+				#记录目标州项目完成
+				clr_state_flag = LFC_frontier_infrastructure_running
+				set_state_flag = LFC_frontier_infrastructure_complete
 				remove_dynamic_modifier = {
 					modifier = LFC_state_dynamic_modifier_Rainforest_yzjqs
 				}
 				add_dynamic_modifier = {
 					modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
 				}
+				LFC_frontier_refresh_state_frame = yes
 				add_manpower = 100000
 				set_state_category = four
 				add_building_construction = {
@@ -2775,7 +2700,14 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		icon = GFX_decision_generic_construction
 		fire_only_once = yes		
 		days_remove = 120
-		cost = 50
+		#共用效果扣费，决议负责占用民工和计时
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 50
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_50_pp
 		on_map_mode = map_and_decisions_view
 		state_target = yes
 		visible = {   
@@ -2793,40 +2725,41 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		ai_will_do = {
 			factor = 0
 		}
-		target_trigger = {
-			FROM = {
-				OR = {
-					state = 1203
-					state = 1204
-					state = 1205
-					state = 1206
-					state = 1207
-					state = 1208
-					state = 504
-					state = 505
-					state = 280
-					state = 1202
-				}			
-			}
-		}
+		targets = { 1203 1204 1205 1206 1207 1208 504 505 280 1202 }
 		available = {
+			#排除进行中和已完成的项目
+			FROM = {
+				NOT = {
+					has_state_flag = LFC_frontier_settlement_running
+				}
+				NOT = {
+					has_state_flag = LFC_frontier_settlement_complete
+				}
+			}
 			num_of_civilian_factories_available_for_projects > 3
 
 		}
 		complete_effect = {  
-			COST_200_UBS_LOAD = yes
+			set_temp_variable = {
+				LFC_frontier_request_state = FROM
+			}
+			LFC_frontier_settlement_pay = yes
 		}	
 		modifier = {
 			civilian_factory_use = 3
 	   	}
 		remove_effect = {
 			FROM = {
+				#记录目标州项目完成
+				clr_state_flag = LFC_frontier_settlement_running
+				set_state_flag = LFC_frontier_settlement_complete
 				remove_dynamic_modifier = {
 					modifier = LFC_state_dynamic_modifier_Rainforest_xxthq
 				}
 				add_dynamic_modifier = {
 					modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
 				}
+				LFC_frontier_refresh_state_frame = yes
 				add_manpower = 400000
 				set_state_category = six
 				add_building_construction = {
@@ -2846,7 +2779,14 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		icon = GFX_decision_generic_construction
 		fire_only_once = yes		
 		days_remove = 120
-		cost = 50
+		#共用效果扣费，决议负责占用民工和计时
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 50
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_50_pp
 		on_map_mode = map_and_decisions_view
 		state_target = yes
 		visible = {   
@@ -2864,40 +2804,41 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		ai_will_do = {
 			factor = 0
 		}
-		target_trigger = {
-			FROM = {
-				OR = {
-					state = 1203
-					state = 1204
-					state = 1205
-					state = 1206
-					state = 1207
-					state = 1208
-					state = 504
-					state = 505
-					state = 280
-					state = 1202
-				}			
-			}
-		}
+		targets = { 1203 1204 1205 1206 1207 1208 504 505 280 1202 }
 		available = {
+			#排除进行中和已完成的项目
+			FROM = {
+				NOT = {
+					has_state_flag = LFC_frontier_urbanization_running
+				}
+				NOT = {
+					has_state_flag = LFC_frontier_urbanization_complete
+				}
+			}
 			num_of_civilian_factories_available_for_projects > 5
 
 		}
 		complete_effect = {  
-			COST_300_UBS_LOAD = yes
+			set_temp_variable = {
+				LFC_frontier_request_state = FROM
+			}
+			LFC_frontier_urbanization_pay = yes
 		}	
 		modifier = {
 			civilian_factory_use = 5
 	   	}
 		remove_effect = {
 			FROM = {
+				#记录目标州项目完成
+				clr_state_flag = LFC_frontier_urbanization_running
+				set_state_flag = LFC_frontier_urbanization_complete
 				remove_dynamic_modifier = {
 					modifier = LFC_state_dynamic_modifier_Rainforest_fzzddjd
 				}
 				add_dynamic_modifier = {
 					modifier = LFC_state_dynamic_modifier_Rainforest_frzmd
 				}
+				LFC_frontier_refresh_state_frame = yes
 				add_manpower = 200000
 				set_state_category = eight
 				add_building_construction = {
@@ -2923,7 +2864,14 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		icon = GFX_decision_generic_construction
 		fire_only_once = yes		
 		days_remove = 90
-		cost = 50
+		#共用效果扣费，决议负责占用民工和计时
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 50
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_50_pp
 		on_map_mode = map_and_decisions_view
 		state_target = yes
 		visible = {   
@@ -2946,33 +2894,36 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 		ai_will_do = {
 			factor = 0
 		}
-		target_trigger = {
-			FROM = {
-				OR = {
-					state = 1203
-					state = 1204
-					state = 1205
-					state = 1206
-					state = 1207
-					#state = 1208
-					#state = 504
-					state = 505
-					state = 280
-					state = 1202
-				}			
-			}
+		targets = {
+			1203 1204 1205 1206 1207 505 280 1202
+			# Previously excluded from the target list: 1208, 504
 		}
 		available = {
+			#排除进行中和已完成的项目
+			FROM = {
+				NOT = {
+					has_state_flag = LFC_frontier_survey_running
+				}
+				NOT = {
+					has_state_flag = LFC_frontier_survey_complete
+				}
+			}
 			num_of_civilian_factories_available_for_projects > 3
 		}
 		complete_effect = {  
-			COST_100_UBS_LOAD = yes
+			set_temp_variable = {
+				LFC_frontier_request_state = FROM
+			}
+			LFC_frontier_survey_pay = yes
 		}	
 		modifier = {
 			civilian_factory_use = 3
 	   	}
 		remove_effect = { 
 			FROM = {
+				#记录目标州项目完成
+				clr_state_flag = LFC_frontier_survey_running
+				set_state_flag = LFC_frontier_survey_complete
 				random_list = {
 					3 = {
 						LFC = {
@@ -3021,7 +2972,14 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 	
 	LFC_decision_ywyy_pyyw = { #破译先驱者遗物
 		icon = GFX_decision_generic_electricity		
-		cost = 10
+		#政治点和遗物由开始效果扣除
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 10
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_10_pp
 		days_remove = 120
 		fire_only_once = no				
 		visible = {
@@ -3041,21 +2999,27 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			factor = 0			
 		}
 		complete_effect = {   
-			add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+			LFC_frontier_research_pay = yes
 			
 		}	
 		modifier = {
 			research_speed_factor = 0.2
 	   	}
 		remove_effect = {
-
+			clr_country_flag = LFC_frontier_research_running
 		}
 	}
 
 	LFC_decision_ywyy_pftyfd = { #配发太阳引擎
 		icon = GFX_decision_generic_electricity
-		cost = 10
+		#政治点和遗物由开始效果扣除
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 10
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_10_pp
 		days_remove = 120
 		fire_only_once = no
 		visible = {
@@ -3075,8 +3039,7 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			factor = 0
 		}
 		complete_effect = {
-			add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+			LFC_frontier_solar_pay = yes
 
 		}
 		modifier = {
@@ -3084,13 +3047,20 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			army_artillery_attack_factor = 0.15 #炮兵攻击
 	   	}
 		remove_effect = {
-
+			clr_country_flag = LFC_frontier_solar_running
 		}
 	}
 
 	LFC_decision_ywyy_bsxpg = { #部署一次性偏导力场
 		icon = GFX_decision_generic_electricity
-		cost = 10
+		#政治点和遗物由开始效果扣除
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 10
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_10_pp
 		days_remove = 120
 		fire_only_once = no
 		visible = {
@@ -3110,8 +3080,7 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			factor = 0
 		}
 		complete_effect = {
-			add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+			LFC_frontier_field_pay = yes
 
 		}
 		modifier = {
@@ -3120,13 +3089,20 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			dig_in_speed_factor = 0.25 #堑壕速度
 	   	}
 		remove_effect = {
-
+			clr_country_flag = LFC_frontier_field_running
 		}
 	}
 
 	LFC_decision_ywyy_gmlmjw = { #共鸣灵脉巨网
 		icon = GFX_decision_generic_electricity
-		cost = 10
+		#政治点和遗物由开始效果扣除
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 10
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_10_pp
 		days_remove = 120
 		fire_only_once = no
 		visible = {
@@ -3146,8 +3122,7 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			factor = 0
 		}
 		complete_effect = {
-			add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+			LFC_frontier_network_pay = yes
 
 		}
 		modifier = {
@@ -3156,13 +3131,20 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			initiative_factor = 0.10 #主动性
 	   	}
 		remove_effect = {
-
+			clr_country_flag = LFC_frontier_network_running
 		}
 	}
 
 	LFC_decision_ywyy_xzzh = { #部署前线谐振指挥节点
 		icon = GFX_decision_generic_electricity
-		cost = 10
+		#政治点和遗物由开始效果扣除
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 10
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_10_pp
 		days_remove = 120
 		fire_only_once = no
 		visible = {
@@ -3182,8 +3164,7 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			factor = 0
 		}
 		complete_effect = {
-			add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+			LFC_frontier_command_pay = yes
 
 		}
 		modifier = {
@@ -3191,13 +3172,20 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			army_org_regain = 0.15 #组织度恢复
 		}
 		remove_effect = {
-
+			clr_country_flag = LFC_frontier_command_running
 		}
 	}
 
 	LFC_decision_ywyy_gpzt = { #在主要矿脉部署高频共振探针
 		icon = GFX_decision_generic_electricity
-		cost = 10
+		#政治点和遗物由开始效果扣除
+		cost = 0
+		custom_cost_trigger = {
+			NOT = {
+				has_political_power < 10
+			}
+		}
+		custom_cost_text = LFC_frontier_cost_10_pp
 		days_remove = 120
 		fire_only_once = no
 		visible = {
@@ -3217,15 +3205,14 @@ LFC_decision_l_3_Colony = {  #先驱者遗迹开发署
 			factor = 0
 		}
 		complete_effect = {
-			add_to_variable = { LFC_VAR_Rainforest_product = -100 }
-			custom_effect_tooltip = LFC_tooltip_var_product_jian_100
+			LFC_frontier_probe_pay = yes
 
 		}
 		modifier = {
 			local_resources_factor = 0.15 #战略资源获取率
 		}
 		remove_effect = {
-
+			clr_country_flag = LFC_frontier_probe_running
 		}
 	}
 

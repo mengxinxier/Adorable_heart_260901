@@ -1,0 +1,298 @@
+PAU_no_overnight_light_armor = {
+    track = armor
+    name = PAU_no_overnight_light_armor_name
+    description = PAU_no_overnight_light_armor_desc
+    icon = GFX_PAU_no_overnight_light_armor
+
+    xp_cost = 50
+    xp_type = army
+
+    available = {
+        has_country_flag = PAU_light_armor_doctrine_unlocked
+    }
+
+    visible = {
+        original_tag = PAU
+    }
+
+    ai_will_do = {
+        base = 1
+        modifier = {
+            factor = 100
+            original_tag = PAU
+        }
+    }
+
+    mastery = {
+        multiplier = 10.0
+        sub_units = {
+            light_armor
+            PAU_airborne_light_armor
+            light_flame_tank
+            light_tank_recon
+        }
+    }
+
+    unit_light_armor_design_cost_factor = -0.50
+    unit_motorized_design_cost_factor = -0.50
+    light_armor = {
+        max_organisation = 5
+        default_morale = 0.10
+    }
+    PAU_airborne_light_armor = {
+        max_organisation = 5
+        default_morale = 0.10
+    }
+
+    effect = {
+        if = {
+            limit = { NOT = { has_country_flag = PAU_subdoc_unlock_claimed } }
+            set_country_flag = PAU_subdoc_unlock_claimed
+            PAU_ensure_vanguard_template = yes
+            add_tech_bonus = {
+                name = "PAU_no_overnight_light_armor"
+                bonus = 1.0
+                uses = 1
+                category = cat_light_armor
+            }
+        }
+        custom_effect_tooltip = PAU_subdoc_unlock_garage_tt
+    }
+
+    rewards = {
+
+        all_terrain_chassis = {
+            light_armor = {
+                hills = {
+                    movement = 0.15
+                    attack = 0.10
+                }
+                mountain = {
+                    movement = 0.15
+                }
+                forest = {
+                    movement = 0.15
+                    attack = 0.10
+                }
+                jungle = {
+                    movement = 0.20
+                    attack = 0.10
+                }
+                marsh = {
+                    movement = 0.15
+                }
+                river = {
+                    movement = 0.15
+                }
+                reliability = 0.10
+                supply_consumption = -0.05
+            }
+            PAU_airborne_light_armor = {
+                hills = {
+                    movement = 0.15
+                    attack = 0.10
+                }
+                mountain = {
+                    movement = 0.15
+                }
+                forest = {
+                    movement = 0.15
+                    attack = 0.10
+                }
+                jungle = {
+                    movement = 0.20
+                    attack = 0.10
+                }
+                marsh = {
+                    movement = 0.15
+                }
+                river = {
+                    movement = 0.15
+                }
+                reliability = 0.10
+                supply_consumption = -0.05
+            }
+            effect = {
+                if = {
+                    limit = { NOT = { has_country_flag = PAU_subdoc_tier1_claimed } }
+                    set_country_flag = PAU_subdoc_tier1_claimed
+                    add_timed_idea = {
+                        idea = PAU_garage_retrofits
+                        days = 120
+                    }
+                }
+            }
+        }
+
+        compact_light_battalions = {
+            light_armor = {
+                combat_width = -0.5
+                maximum_speed = 0.10
+            }
+            PAU_airborne_light_armor = {
+                combat_width = -0.5
+                maximum_speed = 0.10
+            }
+            motorized = {
+                max_organisation = 5
+                maximum_speed = 0.10
+                soft_attack = 0.05
+            }
+            mechanized = {
+                max_organisation = 5
+                maximum_speed = 0.10
+                soft_attack = 0.05
+            }
+            light_tank_recon = {
+                max_organisation = 5
+                recon = 0.5
+                battalion_mult = {
+                    category = category_tanks
+                    soft_attack = 0.05
+                    maximum_speed = 0.05
+                }
+            }
+        }
+
+        dual_hmg_and_flamers = {
+            enable_tactic = tactic_PAU_hmg_suppression
+            light_armor = {
+                soft_attack = 0.15
+                breakthrough = 0.15
+            }
+            PAU_airborne_light_armor = {
+                soft_attack = 0.15
+                breakthrough = 0.15
+            }
+            light_flame_tank = {
+                urban = {
+                    attack = 0.15
+                }
+                jungle = {
+                    attack = 0.15
+                }
+                fort = {
+                    attack = 0.20
+                }
+                battalion_mult = {
+                    category = category_tanks
+                    breakthrough = 0.10
+                    soft_attack = 0.05
+                }
+            }
+            effect = {
+                if = {
+                    limit = { NOT = { has_country_flag = PAU_subdoc_tier3_claimed } }
+                    set_country_flag = PAU_subdoc_tier3_claimed
+                    if = {
+                        limit = { NOT = { has_tech = flamethrower } }
+                        set_technology = {
+                            flamethrower = 1
+                            popup = no
+                        }
+                    }
+                    if = {
+                        limit = {
+                            has_dlc = "No Step Back"
+                            NOT = { is_special_project_completed = sp:sp_land_flamethrower_tank }
+                        }
+                        complete_special_project = sp:sp_land_flamethrower_tank
+                    }
+                    if = {
+                        limit = { has_dlc = "No Step Back" }
+                        create_equipment_variant = {
+                            name = "“打火机”"
+                            type = light_tank_flame_chassis_1
+                            parent_version = 0
+                            modules = {
+                                turret_type_slot = tank_light_fixed_superstructure_turret
+                                main_armament_slot = flamethrower
+                                suspension_type_slot = tank_bogie_suspension
+                                armor_type_slot = tank_riveted_armor
+                                engine_type_slot = tank_gasoline_engine
+                                special_type_slot_1 = additional_machine_guns
+                            }
+                            upgrades = {
+                                tank_nsb_engine_upgrade = 4
+                                tank_nsb_armor_upgrade = 1
+                            }
+                        }
+                        add_equipment_to_stockpile = {
+                            type = light_tank_flame_chassis_1
+                            variant_name = "“打火机”"
+                            amount = 50
+                            producer = PAU
+                        }
+                    }
+                    else = {
+                        add_equipment_to_stockpile = {
+                            type = light_tank_equipment_1
+                            amount = 40
+                            producer = PAU
+                        }
+                    }
+                }
+            }
+        }
+
+        no_overnight_pursuit = {
+            enable_tactic = tactic_PAU_no_overnight_raid
+            light_armor = {
+                maximum_speed = 0.10
+                initiative = 0.05
+                equipment_capture_factor = 0.15
+                breakthrough = 0.10
+            }
+            PAU_airborne_light_armor = {
+                maximum_speed = 0.10
+                initiative = 0.05
+                equipment_capture_factor = 0.15
+                breakthrough = 0.10
+            }
+            org_loss_when_moving = -0.25
+            planning_decay_rate_factor = -0.2
+            land_night_attack = 0.15
+            supply_consumption_factor = -0.05
+            no_supply_grace = 24
+            effect = {
+                custom_effect_tooltip = PAU_no_overnight_loot_mech_tt
+            }
+        }
+
+        white_night_airborne_ace = {
+            PAU_airborne_light_armor = {
+                soft_attack = 0.10
+                breakthrough = 0.10
+                supply_consumption = -0.05
+                amphibious = {
+                    attack = 0.15
+                }
+                battalion_mult = {
+                    category = category_paratroopers
+                    breakthrough = 0.15
+                    soft_attack = 0.10
+                }
+                battalion_mult = {
+                    category = category_paratroopers
+                    max_organisation = 5
+                    add = yes
+                }
+            }
+            light_armor = {
+                soft_attack = 0.05
+                breakthrough = 0.05
+                amphibious = {
+                    attack = 0.15
+                }
+            }
+            cas_damage_reduction = 0.15
+            pocket_penalty = -0.25
+            special_forces_cap = 0.05
+            paradrop_organization_factor = 0.25
+            extra_paratrooper_supply_grace = 48
+            effect = {
+                custom_effect_tooltip = PAU_airborne_drop_mech_tt
+            }
+        }
+    }
+}

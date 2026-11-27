@@ -12,8 +12,8 @@
         }
     }
     continuous_focus_position = {
-        x = 48
-        y = 10
+        x = 60
+        y = 2250
     }
     default = no
 
@@ -88,9 +88,19 @@
 
         completion_reward = {
             add_war_support = 0.05
-            swap_ideas = {
-                remove_idea = PAU_divided_legion
-                add_idea = PAU_divided_legion1
+            if = {
+                limit = { has_idea = PAU_divided_legion }
+                swap_ideas = {
+                    remove_idea = PAU_divided_legion
+                    add_idea = PAU_divided_legion1
+                }
+            }
+            else_if = {
+                limit = { has_idea = PAU_divided_legion_no_lhs }
+                swap_ideas = {
+                    remove_idea = PAU_divided_legion_no_lhs
+                    add_idea = PAU_divided_legion1_no_lhs
+                }
             }
             country_event = {
                 id = PAU.4
@@ -251,6 +261,9 @@
                 id = PAU.7
                 hours = 6
             }
+            hidden_effect = {
+                PAU_check_baiye_story_progression = yes
+            }
 
         }
     }
@@ -322,6 +335,9 @@
             country_event = {
                 id = PAU.9
                 hours = 6
+            }
+            hidden_effect = {
+                PAU_check_baiye_story_progression = yes
             }
         }
     }
@@ -405,6 +421,9 @@
             set_country_flag = has_PAU_xfzb2
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
+            hidden_effect = {
+                PAU_check_baiye_story_progression = yes
+            }
         }
     }
 
@@ -435,7 +454,7 @@
         }
 
         completion_reward = {
-            activate_mission = PAU_wl_anti
+            #PAU_wl_anti1在亡灵战争爆发时启动
             country_event = {
                 id = PAU.13
                 hours = 6
@@ -490,6 +509,9 @@
             set_country_flag = has_PAU_xfzb3  #亡灵战争支线：反攻深渊
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
+            hidden_effect = {
+                PAU_check_baiye_story_progression = yes
+            }
         }
     }
 
@@ -567,6 +589,10 @@
         select_effect = {
             country_event = {
                 id = PAU.19
+                days = 15
+            }
+            country_event = {
+                id = PAU.221
                 hours = 6
             }
         }
@@ -632,6 +658,15 @@
             }
             hidden_effect = {
                 remove_ideas = PAU_counterattack_zdw_buff
+                clr_country_flag = PAU_undead_war
+                if = {
+                    limit = { has_dynamic_modifier = { modifier = PAU_liberation_surge } }
+                    remove_dynamic_modifier = { modifier = PAU_liberation_surge }
+                }
+                if = {
+                    limit = { ZDW = { has_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } } }
+                    ZDW = { remove_dynamic_modifier = { modifier = ZDW_solana_backlash_decay } }
+                }
                 annex_country = {
                     target = PAM
                     transfer_troops = no
@@ -768,7 +803,6 @@
             }
 
             unlock_decision_category_tooltip = PAU_bop_name
-            unlock_decision_tooltip = PAU_baiye_auto
         }
     }
 
@@ -791,7 +825,6 @@
             has_country_flag = has_PAU_xiaoyao3
         }
         select_effect = {
-            country_event = {id = PAU.22 hours = 6}
         }
         prerequisite = {
             focus = PAU_tyzz
@@ -801,14 +834,19 @@
         }
 
         completion_reward = {
-            set_country_flag = has_PAU_xiaoyao4
-
             effect_tooltip = {
-                create_wargoal = { target = 301.owner type = annex_everything }
+                declare_war_on = { target = PAO type = annex_everything }
+            } 
+            every_state = {
+                limit = {
+                    has_state_flag = PAO_orgin_controlled_state
+                }
+                add_claim_by_ROOT_if_has_no_core = yes
+                enable_state_integration_50_compliance = yes
             }
-            custom_effect_tooltip = jiesuoguoce
-            mark_focus_tree_layout_dirty = yes
-
+            hidden_effect = {
+                country_event = { id = PAU.22 }
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_stability_factor  #主线动态修正原始值：稳定度=国策/决议累加
@@ -1213,7 +1251,14 @@
         y = 2
         cost = 5
         available = {
-            has_war = no
+            OR = {
+                has_war = no
+                NOT = {
+                    any_enemy_country = {
+                        capital_scope = { is_on_continent = south_america }
+                    }
+                }
+            }
             has_country_flag = PAU_south_america_super_fired  #南美统一超事件触发标记
         }
         bypass = {
@@ -1281,9 +1326,14 @@
             set_country_flag = PAU_administration_reform  #行政改革完成标记
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_industrial_capacity_factory  #主线动态修正原始值：工厂产出=国策/决议累加
+                var = PAU_ml_raw_production_speed_rail_way_factor  #主线动态修正原始值：铁路建造速度=国策/决议累加
                 value = 0.15
-                tooltip = industrial_capacity_factory_tt
+                tooltip = production_speed_rail_way_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_industry_repair_factor  #主线动态修正原始值：工厂修复速度=国策/决议累加
+                value = 0.1
+                tooltip = industry_repair_factor_tt
             }
             add_to_variable = {
                 var = PAU_ml_raw_production_factory_max_efficiency_factor  #主线动态修正原始值：工厂生产效率上限=国策/决议累加
@@ -1292,7 +1342,7 @@
             }
             add_to_variable = {
                 var = PAU_ml_raw_production_factory_efficiency_gain_factor  #主线动态修正原始值：工厂效率增长=国策/决议累加
-                value = 0.1
+                value = 0.2
                 tooltip = production_factory_efficiency_gain_factor_tt
             }
             add_to_variable = {
@@ -1571,13 +1621,12 @@
         }
 
         completion_reward = {
-            unlock_decision_tooltip = PAU_get_military_access
             set_country_flag = has_PAU_xiaoyao7  #主线阶段 7：樱花远征启动
             custom_effect_tooltip = jiesuoguoce
             mark_focus_tree_layout_dirty = yes
 
-            add_mastery = { amount = 20 folder = naval }
-            add_mastery = { amount = 20 folder = air }
+            add_mastery = { amount = 100 folder = naval }
+            add_mastery = { amount = 100 folder = air }
 
             add_ideas = PAU_zgjd_idea
 
@@ -1660,9 +1709,19 @@
                 value = 0.25
                 tooltip = consumer_goods_factor_tt
             }
-            swap_ideas = {
-                remove_idea = PAU_zgjd_idea
-                add_idea = PAU_zgjd_idea1
+            if = {
+                limit = { has_idea = PAU_zgjd_idea }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea
+                    add_idea = PAU_zgjd_idea1
+                }
+            }
+            else_if = {
+                limit = { has_idea = PAU_zgjd_idea_no_jap }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea_no_jap
+                    add_idea = PAU_zgjd_idea1_no_jap
+                }
             }
             country_event = {
                 id = PAU.38
@@ -1715,6 +1774,25 @@
                 var = PAU_ml_raw_repair_speed_factor  #主线动态修正原始值：维修速度=国策/决议累加
                 value = 0.15
                 tooltip = repair_speed_factor_tt
+            }
+            custom_effect_tooltip = PAU_zdgj_request_access_tt
+            every_country = {
+                limit = {
+                    exists = yes
+                    NOT = { tag = ROOT }
+                    NOT = { has_war_with = ROOT }
+                    NOT = { ROOT = { has_military_access_to = PREV } }
+                    OR = {
+                        AND = {
+                            country_exists = JAP
+                            has_war_with = JAP
+                        }
+                        any_enemy_country = {
+                            owns_state = 282
+                        }
+                    }
+                }
+                country_event = { id = PAU.181 days = 1 }
             }
         }
     }
@@ -1770,9 +1848,19 @@
                 news_event = { id = PAU_news.3 hours = 6 }
             }
             set_country_flag = PAU_pursuit_authorized  #追击授权标记
-            swap_ideas = {
-                remove_idea = PAU_zgjd_idea1
-                add_idea = PAU_zgjd_idea2
+            if = {
+                limit = { has_idea = PAU_zgjd_idea1 }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea1
+                    add_idea = PAU_zgjd_idea2
+                }
+            }
+            else_if = {
+                limit = { has_idea = PAU_zgjd_idea1_no_jap }
+                swap_ideas = {
+                    remove_idea = PAU_zgjd_idea1_no_jap
+                    add_idea = PAU_zgjd_idea2_no_jap
+                }
             }
         }
     }
@@ -1870,14 +1958,31 @@
         y = 4
         cost = 5
         available = {
-           has_completed_focus = PAU_byzc
+            has_completed_focus = PAU_byzc
             has_country_flag = PAU_jap_cap
             custom_trigger_tooltip = {
                 tooltip = PAU_controls_all_jap_cores_tt
+                282 = {
+                    OR = {
+                        is_controlled_by = ROOT
+                        controller = { is_subject_of = ROOT }
+                        controller = { is_in_faction_with = ROOT }
+                    }
+                }
                 all_state = {
                     OR = {
                         NOT = { is_core_of = JAP }
+                        is_core_of = KOR
+                        is_claimed_by = KOR
+                        region = 186
+                        state = 525
+                        state = 527
+                        is_core_of = CHI
+                        is_core_of = PRC
+                        is_core_of = MAN
                         is_controlled_by = ROOT
+                        controller = { is_subject_of = ROOT }
+                        controller = { is_in_faction_with = ROOT }
                     }
                 }
             }
@@ -1893,25 +1998,43 @@
 
         completion_reward = {
             if = {
-                limit = { has_idea = PAU_zgjd_idea2 }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea2
-                    add_idea = PAU_zgjd_idea3
+                limit = {
+                    OR = {
+                        has_idea = PAU_zgjd_idea2
+                        has_idea = PAU_zgjd_idea2_no_jap
+                    }
                 }
+                remove_ideas = {
+                    PAU_zgjd_idea2
+                    PAU_zgjd_idea2_no_jap
+                }
+                add_ideas = PAU_zgjd_idea3
             }
             else_if = {
-                limit = { has_idea = PAU_zgjd_idea1 }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea1
-                    add_idea = PAU_zgjd_idea3
+                limit = {
+                    OR = {
+                        has_idea = PAU_zgjd_idea1
+                        has_idea = PAU_zgjd_idea1_no_jap
+                    }
                 }
+                remove_ideas = {
+                    PAU_zgjd_idea1
+                    PAU_zgjd_idea1_no_jap
+                }
+                add_ideas = PAU_zgjd_idea3
             }
             else_if = {
-                limit = { has_idea = PAU_zgjd_idea }
-                swap_ideas = {
-                    remove_idea = PAU_zgjd_idea
-                    add_idea = PAU_zgjd_idea3
+                limit = {
+                    OR = {
+                        has_idea = PAU_zgjd_idea
+                        has_idea = PAU_zgjd_idea_no_jap
+                    }
                 }
+                remove_ideas = {
+                    PAU_zgjd_idea
+                    PAU_zgjd_idea_no_jap
+                }
+                add_ideas = PAU_zgjd_idea3
             }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
@@ -2004,6 +2127,112 @@
                 }
             }
             custom_effect_tooltip = PAU_thsg_tt
+            if = {
+                limit = {
+                    OR = {
+                        KOR = { is_subject_of = ROOT }
+                        any_state = {
+                            OR = {
+                                is_core_of = KOR
+                                is_claimed_by = KOR
+                            }
+                            OR = {
+                                is_owned_by = ROOT
+                                is_controlled_by = ROOT
+                                owner = { is_subject_of = ROOT }
+                                controller = { is_subject_of = ROOT }
+                            }
+                        }
+                    }
+                }
+                custom_effect_tooltip = PAU_thsg_kor_tt
+                hidden_effect = {
+                    every_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = KOR
+                                is_claimed_by = KOR
+                            }
+                            OR = {
+                                is_owned_by = ROOT
+                                is_controlled_by = ROOT
+                                owner = { is_subject_of = ROOT }
+                                controller = { is_subject_of = ROOT }
+                            }
+                        }
+                        if = {
+                            limit = { NOT = { is_core_of = KOR } }
+                            add_core_of = KOR
+                        }
+                        transfer_state_to = KOR
+                    }
+                    KOR = {
+                        if = {
+                            limit = { has_war_with = ROOT }
+                            white_peace = ROOT
+                        }
+                        if = {
+                            limit = { is_subject_of = ROOT }
+                            ROOT = { end_puppet = KOR }
+                        }
+                        else_if = {
+                            limit = {
+                                is_subject = yes
+                                OVERLORD = { is_subject_of = ROOT }
+                            }
+                            OVERLORD = { end_puppet = PREV }
+                        }
+                        set_politics = {
+                            ruling_party = communism
+                            elections_allowed = no
+                        }
+                        if = {
+                            limit = { ROOT = { has_country_leader_ideology = Spartacus } }
+                            set_country_leader_ideology = Spartacus
+                        }
+                        else_if = {
+                            limit = { ROOT = { has_country_leader_ideology = syndicalism } }
+                            set_country_leader_ideology = syndicalism
+                        }
+                        else_if = {
+                            limit = { ROOT = { has_country_leader_ideology = leninism } }
+                            set_country_leader_ideology = leninism
+                        }
+                        else = {
+                            set_country_leader_ideology = Radical_socialism
+                        }
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.55
+                        }
+                        if = {
+                            limit = { has_idea = nuhuasixiang }
+                            remove_ideas = nuhuasixiang
+                        }
+                        if = {
+                            limit = { has_idea = kor_gemingpai }
+                            remove_ideas = kor_gemingpai
+                        }
+                        if = {
+                            limit = {
+                                is_in_faction = yes
+                                NOT = { is_in_faction_with = ROOT }
+                            }
+                            set_country_flag = leave_faction_happily_flag
+                            leave_faction = yes
+                            clr_country_flag = leave_faction_happily_flag
+                        }
+                    }
+                    if = {
+                        limit = { is_in_faction = no }
+                        create_faction_from_template = faction_template_bytm
+                        set_faction_name = PAU_white_night_alliance
+                    }
+                    faction_leader = {
+                        add_to_faction = KOR
+                    }
+                }
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_political_power_gain  #主线动态修正原始值：政治点获取=国策/决议累加
@@ -2177,7 +2406,7 @@
         relative_position_id = PAU_tx
         x = -1
         y = 7
-        cost = 4
+        cost = 2
         available = {
             any_country = {
                 capital_scope = {
@@ -2279,6 +2508,19 @@
                 value = 0.05
                 tooltip = political_power_factor_tt
             }
+            if = {
+                limit = {
+                    PRC = {
+                        exists = yes
+                        has_character = JAP_shana
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                        NOT = { has_government = fascism }
+                    }
+                    NOT = { has_global_flag = PAU_shana_sent_to_pau }
+                }
+                custom_effect_tooltip = PAU_zg_prc_shana_tt
+            }
             custom_effect_tooltip = PAU_hp_effect_tt
         }
     }
@@ -2292,7 +2534,7 @@
         relative_position_id = PAU_tx
         x = 1
         y = 7
-        cost = 4
+        cost = 2
         available = {
             any_country = {
                 is_chinese_country = yes
@@ -2398,7 +2640,7 @@
         relative_position_id = PAU_tx
         x = 0
         y = 8
-        cost = 4
+        cost = 2
         available = {
         }
         bypass = {
@@ -2424,9 +2666,9 @@
             set_country_flag = PAU_defy_death  #无视亡灵威胁标记
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_army_core_attack_factor  #主线动态修正原始值：核心领土攻击=国策/决议累加
-                value = 0.05
-                tooltip = army_core_attack_factor_tt
+                var = PAU_ml_raw_org_damage_multiplier  #主线动态修正原始值：核心领土攻击=国策/决议累加
+                value = -0.05
+                tooltip = org_damage_multiplier_tt
             }
             add_to_variable = {
                 var = PAU_ml_raw_army_morale_factor  #主线动态修正原始值：陆军士气=国策/决议累加
@@ -2455,9 +2697,9 @@
             set_country_flag = PAU_defy_death  #无视亡灵威胁标记
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_army_core_attack_factor  #主线动态修正原始值：核心领土攻击=国策/决议累加
-                value = 0.05
-                tooltip = army_core_attack_factor_tt
+                var = PAU_ml_raw_org_damage_multiplier  #主线动态修正原始值：核心领土攻击=国策/决议累加
+                value = -0.05
+                tooltip = org_damage_multiplier_tt
             }
             add_to_variable = {
                 var = PAU_ml_raw_army_morale_factor  #主线动态修正原始值：陆军士气=国策/决议累加
@@ -2480,7 +2722,7 @@
         relative_position_id = PAU_tx
         x = 0
         y = 9
-        cost = 4
+        cost = 3
         available = {
         }
         bypass = {
@@ -2557,7 +2799,7 @@
         relative_position_id = PAU_tx
         x = -1
         y = 10
-        cost = 4
+        cost = 2
         available = {
             any_country = {
                 capital_scope = {
@@ -2684,7 +2926,7 @@
         relative_position_id = PAU_tx
         x = 1
         y = 10
-        cost = 4
+        cost = 2
         available = {
             any_country = {
                 capital_scope = {
@@ -2853,6 +3095,21 @@
         completion_reward = {
             if = {
                 limit = {
+                    OR = {
+                        has_country_flag = eng_anger
+                        has_country_flag = PAU_grail_refused
+                    }
+                    country_exists = ENG
+                    NOT = { has_war_with = ENG }
+                    NOT = { is_in_faction_with = ENG }
+                }
+                create_wargoal = {
+                    target = ENG
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
                     SOV = {
                         exists = yes
                         is_subject = no
@@ -2866,21 +3123,55 @@
                         limit = { PAU = { NOT = { is_in_faction_with = SOV } } }
                         if = {
                             limit = { PAU = { is_in_faction = yes } }
-                            PAU = {
-                                every_faction_member = {
-                                    limit = { NOT = { tag = PAU } }
-                                    display_individual_scopes = yes
-                                    leave_faction = yes
+                            effect_tooltip = {
+                                PAU = {
+                                    every_faction_member = {
+                                        limit = { NOT = { tag = PAU } is_subject = no }
+                                        display_individual_scopes = yes
+                                        SOV = {
+                                            faction_leader = {
+                                                add_to_faction = PREV.PREV
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            hidden_effect = {
+                                PAU = {
+                                    set_country_flag = PAU_faction_transition_in_progress
+                                    set_country_flag = leave_faction_happily_flag
+                                    every_faction_member = {
+                                        limit = { NOT = { tag = PAU } is_subject = no }
+                                        set_country_flag = PAU_comintern_faction_transfer
+                                        set_country_flag = leave_faction_happily_flag
+                                    }
+                                }
+                                every_other_country = {
+                                    limit = { has_country_flag = PAU_comintern_faction_transfer }
+                                    if = {
+                                        limit = { is_in_faction = yes }
+                                        leave_faction = yes
+                                    }
                                     SOV = {
                                         faction_leader = {
                                             add_to_faction = PREV.PREV
                                         }
                                     }
+                                    clr_country_flag = PAU_comintern_faction_transfer
+                                    clr_country_flag = leave_faction_happily_flag
                                 }
-                                leave_faction = yes
+                                PAU = {
+                                    leave_faction = yes
+                                    clr_country_flag = leave_faction_happily_flag
+                                }
                             }
                         }
                         SOV = { faction_leader = { add_to_faction = PAU } }
+                        hidden_effect = {
+                            PAU = {
+                                clr_country_flag = PAU_faction_transition_in_progress
+                            }
+                        }
                     }
                 }
                 else = {
@@ -2906,28 +3197,76 @@
                     country_event = { id = PAU.512 hours = 6 }
                 }
             }
+            hidden_effect = {
+                PAU_recover_dev_program_loop = yes
+                PAU_refresh_south_america_development = yes
+                country_event = { id = PAU.521 days = 15 }
+            }
+            add_ideas = PAU_world_revolution
+            if = {
+                limit = {
+                    is_in_faction = yes
+                    any_other_country = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
+                every_other_country = {
+                    limit = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                    army_experience = 25
+                    navy_experience = 15
+                    add_timed_idea = {
+                        idea = PAU_joint_drill_partner_buff
+                        days = 180
+                    }
+                    add_opinion_modifier = {
+                        modifier = non_aggression_pact_pau
+                        target = ROOT
+                    }
+                    ROOT = {
+                        add_opinion_modifier = {
+                            modifier = non_aggression_pact_pau
+                            target = PREV
+                        }
+                    }
+                }
+                army_experience = 25
+                navy_experience = 15
+                add_timed_idea = {
+                    idea = PAU_joint_drill_partner_buff
+                    days = 180
+                }
+            }
             if = {
                 limit = {
                     OR = {
-                        has_country_flag = eng_anger
+                        check_variable = { PAU_china_refusals > 0 }
+                        check_variable = { PAU_north_america_refusals > 0 }
                         has_country_flag = PAU_grail_refused
                     }
-                    country_exists = ENG
-                    NOT = { has_war_with = ENG }
-                    NOT = { is_in_faction_with = ENG }
                 }
-                create_wargoal = {
-                    target = ENG
-                    type = annex_everything
+                add_war_support = 0.05
+                add_command_power = 30
+                add_tech_bonus = {
+                    name = "PAU_sjgm"
+                    bonus = 1.0
+                    uses = 1
+                    category = tp_tech
                 }
+                custom_effect_tooltip = PAU_sjgm_mutual_front_tt
             }
-
             custom_effect_tooltip = PAU_sjgm_tt
             set_country_flag = PAU_world_revolution
             set_country_flag = PAU_revolution_network_active
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_export_revolution
+            unlock_decision_tooltip = PAU_comrade_joint_drills
         }
     }
 
@@ -2967,11 +3306,103 @@
 
         completion_reward = {
             add_ideas = PAU_hpgc_idea
+            add_political_power = 50
+            add_stability = 0.05
+            if = {
+                limit = {
+                    any_other_country = {
+                        exists = yes
+                        NOT = { has_war_with = ROOT }
+                        OR = {
+                            has_country_flag = PAU_china_partner_flag
+                            has_country_flag = PAU_na_partner_flag
+                            is_in_faction_with = ROOT
+                        }
+                    }
+                }
+                every_other_country = {
+                    limit = {
+                        exists = yes
+                        NOT = { has_war_with = ROOT }
+                        OR = {
+                            has_country_flag = PAU_china_partner_flag
+                            has_country_flag = PAU_na_partner_flag
+                            is_in_faction_with = ROOT
+                        }
+                    }
+                    add_timed_idea = {
+                        idea = PAU_pacific_partner_prosperity
+                        days = 365
+                    }
+                    if = {
+                        limit = { NOT = { has_non_aggression_pact_with = ROOT } }
+                        diplomatic_relation = {
+                            country = ROOT
+                            relation = non_aggression_pact
+                            active = yes
+                        }
+                    }
+                    add_opinion_modifier = {
+                        modifier = non_aggression_pact_pau
+                        target = ROOT
+                    }
+                    ROOT = {
+                        add_opinion_modifier = {
+                            modifier = non_aggression_pact_pau
+                            target = PREV
+                        }
+                    }
+                }
+                add_to_variable = {
+                    var = PAU_trade_partner_boost_trade_opinion_factor
+                    value = 0.05
+                    tooltip = trade_opinion_factor_tt
+                }
+                add_to_variable = {
+                    var = PAU_trade_partner_boost_production_speed_buildings_factor
+                    value = 0.03
+                    tooltip = production_speed_buildings_factor_tt
+                }
+                add_to_variable = {
+                    var = PAU_trade_partner_boost_production_speed_infrastructure_factor
+                    value = 0.03
+                    tooltip = production_speed_infrastructure_factor_tt
+                }
+                if = {
+                    limit = { NOT = { has_dynamic_modifier = { modifier = PAU_trade_partner_boost } } }
+                    add_dynamic_modifier = { modifier = PAU_trade_partner_boost }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = PAU_grail_peace
+                    country_exists = ENG
+                    NOT = { has_war_with = ENG }
+                }
+                ENG = {
+                    add_timed_idea = {
+                        idea = PAU_pacific_partner_prosperity
+                        days = 365
+                    }
+                    add_opinion_modifier = {
+                        modifier = non_aggression_pact_pau
+                        target = ROOT
+                    }
+                    ROOT = {
+                        add_opinion_modifier = {
+                            modifier = non_aggression_pact_pau
+                            target = ENG
+                        }
+                    }
+                }
+            }
             custom_effect_tooltip = PAU_hpgc_tt
             set_country_flag = PAU_peaceful_coexistence  #和平共处路线标记
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_peace_trade_mission
+            unlock_decision_tooltip = PAU_peace_humanitarian_aid
+            unlock_decision_tooltip = PAU_pacific_grain_relief_convoy
         }
     }
 
@@ -3025,6 +3456,14 @@
                     type = annex_everything
                 }
             }
+            add_ideas = PAU_armed_neutrality
+            navy_experience = 25
+            add_tech_bonus = {
+                name = "PAU_zdbf"
+                bonus = 1.0
+                uses = 1
+                category = naval_equipment
+            }
             custom_effect_tooltip = PAU_zdbf_tt
             set_country_flag = PAU_armed_neutrality
             set_country_flag = PAU_coastal_network_active
@@ -3039,9 +3478,34 @@
                 value = 0.1
                 tooltip = coastal_bunker_effectiveness_factor_tt
             }
+            if = {
+                limit = {
+                    is_in_faction = yes
+                    any_other_country = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
+                every_other_country = {
+                    limit = {
+                        is_in_faction_with = ROOT
+                        is_subject = no
+                        NOT = { has_war_with = ROOT }
+                    }
+                    add_command_power = 20
+                    navy_experience = 20
+                    add_timed_idea = {
+                        idea = PAU_counter_blockade_shield
+                        days = 365
+                    }
+                }
+            }
 
             unlock_decision_category_tooltip = PAU_late_doctrine
             unlock_decision_tooltip = PAU_coastal_fortification
+            unlock_decision_tooltip = PAU_counter_blockade_pact
+            unlock_decision_tooltip = PAU_maritime_hedgehog_alert
         }
     }
 
@@ -3056,7 +3520,14 @@
         y = 12
         cost = 5
         available = {
-            has_war = no
+            OR = {
+                has_war = no
+                AND = {
+                    NOT = { has_war_with = JAP }
+                    NOT = { has_war_with = ZDW }
+                    surrender_progress < 0.05
+                }
+            }
         }
         bypass = {
         }
@@ -3102,7 +3573,14 @@
         y = 12
         cost = 5
         available = {
-            has_war = no
+            OR = {
+                has_war = no
+                AND = {
+                    NOT = { has_war_with = JAP }
+                    NOT = { has_war_with = ZDW }
+                    surrender_progress < 0.05
+                }
+            }
         }
         bypass = {
         }
@@ -3140,13 +3618,20 @@
 
     focus = {
         id = PAU_zkdh
-        icon = GFX_PAU_tyzz
+        icon = GFX_PAU_zkdh
         relative_position_id = PAU_tx
         x = 2
         y = 12
         cost = 3
         available = {
-            has_war = no
+            OR = {
+                has_war = no
+                AND = {
+                    NOT = { has_war_with = JAP }
+                    NOT = { has_war_with = ZDW }
+                    surrender_progress < 0.05
+                }
+            }
         }
         bypass = {
         }
@@ -3180,7 +3665,14 @@
         y = 13
         cost = 0
         available = {
-            has_war = no
+            OR = {
+                has_war = no
+                AND = {
+                    NOT = { has_war_with = JAP }
+                    NOT = { has_war_with = ZDW }
+                    surrender_progress < 0.05
+                }
+            }
         }
         bypass = {
         }
@@ -3241,20 +3733,25 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_mil
-                value = 10
-                tooltip = PAU_axia_mil_tt
-            }
             hidden_effect = {
                 add_ideas = PAU_axia_veteran_school
                 PAU_refresh_mil_reform_tiers = yes
             }
-            unlock_decision_category_tooltip = PAU_army_reform_axia
             custom_effect_tooltip = PAU_unlock_reform_desk_tt
             set_country_flag = PAU_army_reform_axia_unlocked
             army_experience = 25
             add_manpower = 5000
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_experience_loss_factor
+                value = -0.05
+                tooltip = experience_loss_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_army_org_regain
+                value = 0.05
+                tooltip = army_org_regain_tt
+            }
         }
     }
 
@@ -3279,7 +3776,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_axia_mil
-                value = 10
+                value = 20
                 tooltip = PAU_axia_mil_tt
             }
             hidden_effect = {
@@ -3326,21 +3823,25 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_mil
-                value = 10
-                tooltip = PAU_axia_mil_tt
-            }
-            hidden_effect = {
-                PAU_refresh_mil_reform_tiers = yes
-            }
             PAU_Nymph = {
                 add_unit_leader_trait = trait_mountaineer
             }
+            army_experience = 20
             add_equipment_to_stockpile = {
-                type = artillery_equipment
-                amount = 500
+                type = support_equipment
+                amount = 150
                 producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_recon_factor
+                value = 0.05
+                tooltip = recon_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_land_night_attack
+                value = 0.05
+                tooltip = land_night_attack_tt
             }
         }
     }
@@ -3367,14 +3868,6 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_mil
-                value = 10
-                tooltip = PAU_axia_mil_tt
-            }
-            hidden_effect = {
-                PAU_refresh_mil_reform_tiers = yes
-            }
             if = {
                 limit = { NOT = { has_country_flag = PAU_lhs_integrated } }
                 add_to_variable = {
@@ -3387,6 +3880,22 @@
                 type = infantry_equipment
                 amount = 2000
                 producer = LHS
+            }
+            add_equipment_to_stockpile = {
+                type = motorized_equipment
+                amount = 150
+                producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_casualty_trickleback
+                value = 0.05
+                tooltip = casualty_trickleback_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_repair_speed_factor
+                value = 0.05
+                tooltip = repair_speed_factor_tt
             }
         }
     }
@@ -3415,7 +3924,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_axia_mil
-                value = 10
+                value = 20
                 tooltip = PAU_axia_mil_tt
             }
             hidden_effect = {
@@ -3438,6 +3947,17 @@
                 type = support_equipment
                 amount = 1000
                 producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_supply_consumption_factor
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_army_defence_factor
+                value = 0.025
+                tooltip = army_defence_factor_tt
             }
         }
     }
@@ -3466,7 +3986,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_axia_mil
-                value = 10
+                value = 20
                 tooltip = PAU_axia_mil_tt
             }
             hidden_effect = {
@@ -3526,6 +4046,7 @@
                 folder = land
                 track = infantry
             }
+            add_fuel = 3000
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_army_morale_factor
@@ -3533,9 +4054,14 @@
                 tooltip = army_morale_factor_tt
             }
             add_to_variable = {
-                var = PAU_ml_raw_no_supply_grace
-                value = 24
-                tooltip = no_supply_grace_tt
+                var = PAU_ml_raw_winter_attrition_factor
+                value = -0.10
+                tooltip = winter_attrition_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_recon_factor
+                value = 0.05
+                tooltip = recon_factor_tt
             }
         }
     }
@@ -3585,6 +4111,16 @@
                 value = 0.05
                 tooltip = land_night_attack_tt
             }
+            add_to_variable = {
+                var = PAU_ml_raw_coordination_bonus
+                value = 0.05
+                tooltip = coordination_bonus_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_army_morale_factor
+                value = 0.05
+                tooltip = army_morale_factor_tt
+            }
             country_event = { id = PAU.59 hours = 6 }
         }
     }
@@ -3629,6 +4165,19 @@
                 uses = 1
                 category = engineers_tech
             }
+            random_owned_controlled_state = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_production_speed_infrastructure_factor
+                value = 0.05
+                tooltip = production_speed_infrastructure_factor_tt
+            }
         }
     }
 
@@ -3671,6 +4220,13 @@
                     name = "绝不漏水号"
                 }
             }
+            else = {
+                add_equipment_to_stockpile = {
+                    type = convoy
+                    amount = 50
+                    producer = PAU
+                }
+            }
             add_to_variable = {
                 var = PAU_harbor_dev
                 value = 2
@@ -3682,6 +4238,17 @@
                 type = convoy
                 amount = 100
                 producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_repair_speed_factor
+                value = 0.10
+                tooltip = repair_speed_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_amphibious_invasion
+                value = 0.05
+                tooltip = amphibious_invasion_tt
             }
         }
     }
@@ -3696,6 +4263,9 @@
         x = -22
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
         }
@@ -3728,10 +4298,17 @@
                     category = military_police_tech
                 }
             }
+            add_political_power = 40
             every_controlled_state = {
                 limit = { is_core_of = JAP }
                 add_compliance = 10
                 add_resistance = -15
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_compliance_growth
+                value = 0.025
+                tooltip = compliance_growth_tt
             }
         }
     }
@@ -3746,6 +4323,9 @@
         x = -22
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
         }
@@ -3773,6 +4353,13 @@
             every_navy_leader = {
                 add_attack = 1
                 add_coordination = 1
+            }
+            add_political_power = 50
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_compliance_growth
+                value = 0.025
+                tooltip = compliance_growth_tt
             }
         }
     }
@@ -3816,6 +4403,17 @@
                     value = 50
                     tooltip = PAU_lhs_integration_tt
                 }
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_planning_speed
+                value = 0.05
+                tooltip = planning_speed_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_coordination_bonus
+                value = 0.05
+                tooltip = coordination_bonus_tt
             }
         }
         allow_branch = {
@@ -3863,6 +4461,17 @@
                     uses = 1
                     category = signal_company_tech
                 }
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_initiative_factor
+                value = 0.05
+                tooltip = initiative_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_land_reinforce_rate
+                value = 0.05
+                tooltip = land_reinforce_rate_tt
             }
         }
         allow_branch = {
@@ -3950,6 +4559,16 @@
                 value = 0.10
                 tooltip = planning_speed_tt
             }
+            add_to_variable = {
+                var = PAU_ml_raw_amphibious_invasion
+                value = 0.05
+                tooltip = amphibious_invasion_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_naval_coordination
+                value = 0.05
+                tooltip = naval_coordination_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -3966,6 +4585,9 @@
         x = -24
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_ycdd
         }
@@ -3985,18 +4607,29 @@
             }
             add_equipment_to_stockpile = {
                 type = infantry_equipment
-                amount = 5000
+                amount = 3000
                 producer = JAP
             }
             add_equipment_to_stockpile = {
                 type = artillery_equipment
-                amount = 500
+                amount = 300
                 producer = JAP
             }
             add_equipment_to_stockpile = {
                 type = motorized_equipment
-                amount = 500
+                amount = 300
                 producer = JAP
+            }
+            add_to_variable = {
+                var = ubs_save
+                value = 30
+                tooltip = ubs_save_tt
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_equipment_capture_factor
+                value = 0.05
+                tooltip = equipment_capture_factor_tt
             }
         }
         allow_branch = {
@@ -4014,6 +4647,9 @@
         x = -24
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_zsjs
         }
@@ -4032,15 +4668,24 @@
                 PAU_refresh_mil_reform_tiers = yes
             }
             add_mastery = {
-                amount = 50
+                amount = 100
                 folder = land
-                track = combat_support
             }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_coordination_bonus
                 value = 0.05
                 tooltip = coordination_bonus_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_industrial_capacity_factory
+                value = 0.025
+                tooltip = industrial_capacity_factory_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_compliance_growth
+                value = 0.025
+                tooltip = compliance_growth_tt
             }
         }
         allow_branch = {
@@ -4078,6 +4723,12 @@
             custom_effect_tooltip = PAU_unlock_reform_xy_navy_tt
             set_country_flag = PAU_army_reform_xiaoyao_unlocked
             add_political_power = 150
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_attrition
+                value = -0.05
+                tooltip = attrition_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -4117,6 +4768,17 @@
                 tooltip = PAU_guyong_dianshu_tt
             }
             add_manpower = 10000
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 250
+                producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_compliance_growth
+                value = 0.025
+                tooltip = compliance_growth_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao5
@@ -4159,6 +4821,17 @@
                 type = train_equipment_2
                 amount = 50
                 producer = PAU
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_production_speed_rail_way_factor
+                value = 0.10
+                tooltip = production_speed_rail_way_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_supply_node_range
+                value = 0.05
+                tooltip = supply_node_range_tt
             }
         }
         allow_branch = {
@@ -4237,6 +4910,9 @@
         x = -20
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_ydjs
         }
@@ -4259,6 +4935,12 @@
                 add_resistance = -25
                 add_compliance = 25
             }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_recon_factor
+                value = 0.05
+                tooltip = recon_factor_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
@@ -4275,6 +4957,9 @@
         x = -20
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_zsjs
         }
@@ -4295,25 +4980,41 @@
             PAU_xiaoyao = {
                 add_unit_leader_trait = panzer_expert
             }
-            create_equipment_variant = {
-                name = "不提供过夜住宿型"
-                type = light_tank_chassis_1
-                parent_version = 0
-                modules = {
-                    main_armament_slot = tank_heavy_machine_gun
-                    turret_type_slot = tank_light_three_man_tank_turret
-                    special_type_slot_3 = secondary_turret_hmg
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                create_equipment_variant = {
+                    name = "不提供过夜住宿型"
+                    type = light_tank_chassis_1
+                    parent_version = 0
+                    modules = {
+                        main_armament_slot = tank_heavy_machine_gun
+                        turret_type_slot = tank_light_three_man_tank_turret
+                        special_type_slot_3 = secondary_turret_hmg
+                    }
+                    upgrades = {
+                        tank_nsb_engine_upgrade = 5
+                        tank_nsb_armor_upgrade = 5
+                    }
                 }
-                upgrades = {
-                    tank_nsb_engine_upgrade = 5
-                    tank_nsb_armor_upgrade = 5
+                add_equipment_to_stockpile = {
+                    type = light_tank_chassis_1
+                    variant_name = "不提供过夜住宿型"
+                    amount = 250
+                    producer = PAU
                 }
             }
-            add_equipment_to_stockpile = {
-                type = light_tank_chassis_1
-                variant_name = "不提供过夜住宿型"
-                amount = 250
-                producer = PAU
+            else = {
+                add_equipment_to_stockpile = {
+                    type = light_tank_equipment_1
+                    amount = 250
+                    producer = PAU
+                }
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_army_armor_defence_factor
+                value = 0.05
+                tooltip = army_armor_defence_factor_tt
             }
         }
         allow_branch = {
@@ -4338,7 +5039,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_axia_eco
-                value = 10
+                value = 20
                 tooltip = PAU_axia_eco_tt
             }
             hidden_effect = {
@@ -4352,6 +5053,11 @@
                 var = PAU_ml_raw_consumer_goods_factor
                 value = -0.05
                 tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_supply_consumption_factor
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
             }
             add_equipment_to_stockpile = {
                 type = train_equipment
@@ -4379,14 +5085,6 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_eco
-                value = 10
-                tooltip = PAU_axia_eco_tt
-            }
-            hidden_effect = {
-                PAU_refresh_eco_reform_tiers = yes
-            }
             add_to_variable = {
                 var = PAU_debt
                 value = -49
@@ -4424,7 +5122,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_axia_eco
-                value = 10
+                value = 20
                 tooltip = PAU_axia_eco_tt
             }
             hidden_effect = {
@@ -4460,14 +5158,8 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_eco
-                value = 10
-                tooltip = PAU_axia_eco_tt
-            }
             hidden_effect = {
                 add_ideas = PAU_axia_tool_recovery
-                PAU_refresh_eco_reform_tiers = yes
             }
             if = {
                 limit = { NOT = { has_tech = tech_maintenance_company } }
@@ -4513,7 +5205,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_axia_eco
-                value = 10
+                value = 20
                 tooltip = PAU_axia_eco_tt
             }
             hidden_effect = {
@@ -4532,6 +5224,17 @@
                     level = 1
                     instant_build = yes
                 }
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_no_supply_grace
+                value = 12
+                tooltip = no_supply_grace_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_repair_speed_factor
+                value = 0.05
+                tooltip = repair_speed_factor_tt
             }
         }
     }
@@ -4557,14 +5260,6 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_eco
-                value = 10
-                tooltip = PAU_axia_eco_tt
-            }
-            hidden_effect = {
-                PAU_refresh_eco_reform_tiers = yes
-            }
             every_controlled_state = {
                 limit = {
                     has_state_flag = is_lldy_state_flag
@@ -4606,12 +5301,28 @@
                 PAU_refresh_eco_reform_tiers = yes
             }
             capital_scope = {
-                add_extra_state_shared_building_slots = 4
+                add_extra_state_shared_building_slots = 3
                 add_building_construction = {
                     type = industrial_complex
-                    level = 3
+                    level = 2
                     instant_build = yes
                 }
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            add_to_variable = {
+                var = ubs_save
+                value = 25
+                tooltip = ubs_save_tt
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.025
+                tooltip = consumer_goods_factor_tt
             }
         }
     }
@@ -4653,12 +5364,24 @@
                     instant_build = yes
                 }
             }
+            random_core_state = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
             add_fuel = 15000
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_supply_consumption_factor
                 value = -0.05
                 tooltip = supply_consumption_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_fuel_gain_factor
+                value = 0.05
+                tooltip = fuel_gain_factor_tt
             }
         }
     }
@@ -4692,16 +5415,18 @@
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
+            add_political_power = 40
+            add_tech_bonus = {
+                name = PAM_ax_nyxx
+                bonus = 0.75
+                uses = 1
+                category = electronics
+            }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
                 var = PAU_ml_raw_research_speed_factor
-                value = 0.05
+                value = 0.075
                 tooltip = research_speed_factor_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_stability_factor
-                value = 0.05
-                tooltip = stability_factor_tt
             }
         }
     }
@@ -4746,6 +5471,11 @@
                 value = -0.10
                 tooltip = out_of_supply_factor_tt
             }
+            add_to_variable = {
+                var = PAU_ml_raw_supply_node_range
+                value = 0.05
+                tooltip = supply_node_range_tt
+            }
         }
     }
 
@@ -4759,6 +5489,9 @@
         x = 22
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao8
         }
@@ -4789,6 +5522,17 @@
                 type = industrial_complex
                 level = 2
             }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_trade_opinion_factor
+                value = 0.10
+                tooltip = trade_opinion_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.025
+                tooltip = consumer_goods_factor_tt
+            }
         }
     }
 
@@ -4802,6 +5546,9 @@
         x = 22
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao9
         }
@@ -4813,14 +5560,6 @@
         }
 
         completion_reward = {
-            add_to_variable = {
-                var = PAU_axia_eco
-                value = 20
-                tooltip = PAU_axia_eco_tt
-            }
-            hidden_effect = {
-                PAU_refresh_eco_reform_tiers = yes
-            }
             every_core_state = {
                 add_building_construction = {
                     type = infrastructure
@@ -4833,6 +5572,22 @@
                 bonus = 1.0
                 uses = 1
                 category = industry
+            }
+            add_to_variable = {
+                var = ubs_save
+                value = 20
+                tooltip = ubs_save_tt
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_production_speed_infrastructure_factor
+                value = 0.10
+                tooltip = production_speed_infrastructure_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_industry_repair_factor
+                value = 0.05
+                tooltip = industry_repair_factor_tt
             }
         }
     }
@@ -4875,6 +5630,17 @@
             }
             custom_effect_tooltip = available_mio_tt
             custom_effect_tooltip = LHS_ship_organization_tt
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_line_change_production_efficiency_factor
+                value = 0.05
+                tooltip = line_change_production_efficiency_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_production_factory_efficiency_gain_factor
+                value = 0.05
+                tooltip = production_factory_efficiency_gain_factor_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -4910,9 +5676,14 @@
             custom_effect_tooltip = PAU_unlock_reform_xfxy_wages_tt
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_industrial_capacity_factory
-                value = 0.05
-                tooltip = industrial_capacity_factory_tt
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.025
+                tooltip = consumer_goods_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_trade_opinion_factor
+                value = 0.1
+                tooltip = trade_opinion_factor_tt
             }
             country_event = { id = PAU.57 hours = 6 }
         }
@@ -4940,7 +5711,7 @@
         completion_reward = {
             add_to_variable = {
                 var = PAU_xfxy_eco
-                value = 20
+                value = 40
                 tooltip = PAU_xfxy_eco_tt
             }
             hidden_effect = {
@@ -4966,6 +5737,11 @@
                     value = -0.05
                     tooltip = consumer_goods_factor_tt
                 }
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_local_resources_factor
+                value = 0.05
+                tooltip = local_resources_factor_tt
             }
             add_to_variable = {
                 var = PAU_south_america_development
@@ -5022,6 +5798,18 @@
                 uses = 1
                 category = synth_resources
             }
+            add_fuel = 10000
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_fuel_gain_factor
+                value = 0.10
+                tooltip = fuel_gain_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_repair_speed_factor
+                value = 0.05
+                tooltip = repair_speed_factor_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -5037,6 +5825,9 @@
         x = 20
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_hybd
         }
@@ -5054,21 +5845,22 @@
                 PAU_refresh_eco_reform_tiers = yes
             }
             custom_effect_tooltip = PAU_unlock_reform_xfxy_currency_tt
-            custom_effect_tooltip = PAU_mainline_append_tt
-            add_to_variable = {
-                var = PAU_ml_raw_production_speed_rail_way_factor
-                value = 0.15
-                tooltip = production_speed_rail_way_factor_tt
-            }
-            add_to_variable = {
-                var = PAU_ml_raw_supply_node_range
-                value = 0.10
-                tooltip = supply_node_range_tt
-            }
+            add_political_power = 50
             add_to_variable = {
                 var = ubs_save
                 value = 50
                 tooltip = ubs_save_tt
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_hcp_income_factor_monthly
+                value = 0.10
+                tooltip = hcp_income_factor_monthly_tooltip
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.025
+                tooltip = consumer_goods_factor_tt
             }
         }
         allow_branch = {
@@ -5086,6 +5878,9 @@
         x = 20
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xfxy_zsjj
         }
@@ -5105,9 +5900,14 @@
             }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
-                var = PAU_ml_raw_army_speed_factor
+                var = PAU_ml_raw_local_resources_factor
                 value = 0.05
-                tooltip = army_speed_factor_tt
+                tooltip = local_resources_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_industry_repair_factor
+                value = 0.10
+                tooltip = industry_repair_factor_tt
             }
             add_to_variable = {
                 var = PAU_ml_raw_trade_opinion_factor
@@ -5156,7 +5956,24 @@
             }
             custom_effect_tooltip = PAU_unlock_reform_xy_market_tt
             set_country_flag = PAU_economy_reform_xiaoyao_unlocked
-            add_stability = 0.05
+            add_to_variable = {
+                var = ubs_save
+                value = 25
+                tooltip = ubs_save_tt
+            }
+            random_owned_controlled_state = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            custom_effect_tooltip = PAU_mainline_append_tt
+            add_to_variable = {
+                var = PAU_ml_raw_consumer_goods_factor
+                value = -0.025
+                tooltip = consumer_goods_factor_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao4
@@ -5277,6 +6094,16 @@
                 value = 0.05
                 tooltip = army_morale_factor_tt
             }
+            add_to_variable = {
+                var = PAU_ml_raw_supply_consumption_factor
+                value = -0.05
+                tooltip = supply_consumption_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_no_supply_grace
+                value = 12
+                tooltip = no_supply_grace_tt
+            }
         }
         allow_branch = {
             has_country_flag = has_PAU_xiaoyao7
@@ -5293,6 +6120,9 @@
         x = 24
         y = 9
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_ydjj
         }
@@ -5309,14 +6139,27 @@
             hidden_effect = {
                 PAU_refresh_eco_reform_tiers = yes
             }
-            282 = {
-                add_extra_state_shared_building_slots = 2
-                add_building_construction = {
-                    type = industrial_complex
-                    level = 2
-                    instant_build = yes
+            if = {
+                limit = { controls_state = 282 }
+                282 = {
+                    add_extra_state_shared_building_slots = 2
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_compliance = 15
                 }
-                add_compliance = 15
+            }
+            else = {
+                random_owned_controlled_state = {
+                    add_extra_state_shared_building_slots = 2
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 2
+                        instant_build = yes
+                    }
+                }
             }
             custom_effect_tooltip = PAU_mainline_append_tt
             add_to_variable = {
@@ -5325,9 +6168,9 @@
                 tooltip = consumer_goods_factor_tt
             }
             add_to_variable = {
-                var = PAU_ml_raw_stability_factor
+                var = PAU_ml_raw_production_factory_efficiency_gain_factor
                 value = 0.05
-                tooltip = stability_factor_tt
+                tooltip = production_factory_efficiency_gain_factor_tt
             }
         }
         allow_branch = {
@@ -5345,6 +6188,9 @@
         x = 24
         y = 10
         cost = 4
+        available = {
+            has_country_flag = PAU_jap_cap
+        }
         prerequisite = {
             focus = PAM_xy_mdtz
         }
@@ -5366,6 +6212,16 @@
                 var = PAU_ml_raw_production_factory_max_efficiency_factor
                 value = 0.05
                 tooltip = production_factory_max_efficiency_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_line_change_production_efficiency_factor
+                value = 0.10
+                tooltip = line_change_production_efficiency_factor_tt
+            }
+            add_to_variable = {
+                var = PAU_ml_raw_industrial_capacity_factory
+                value = 0.025
+                tooltip = industrial_capacity_factory_tt
             }
             random_core_state = {
                 add_extra_state_shared_building_slots = 4

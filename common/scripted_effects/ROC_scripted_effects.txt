@@ -1145,6 +1145,7 @@ ROC_policy_window_button_close_effect = {  ##保存并关闭UI
 		add_to_array = { ROC_policy_unlock_card_array_true = v }
 	}
 	ROC_policy_card_modifier = yes
+	ROC_recalc_policy_owned_count = yes
 }
 ROC_policy_card_modifier = {  ##添加buff
 	hidden_effect = {
@@ -2917,6 +2918,671 @@ ROC_policy_delete_card = {  ##删除某个政策卡
 		limit = { is_in_array = { ROC_policy_unlock_card_array = card_to_delete } }
 		remove_from_array = { ROC_policy_unlock_card_array = card_to_delete }
 	}
+	ROC_recalc_policy_owned_count = yes
+}
+
+ROC_policy_toast_refresh_frame = {
+	if = {
+		limit = { check_variable = { ROC_policy_toast_current < 31 } }
+		set_variable = { ROC_policy_toast_frame = 2 }
+	}
+	else_if = {
+		limit = { check_variable = { ROC_policy_toast_current < 61 } }
+		set_variable = { ROC_policy_toast_frame = 3 }
+	}
+	else_if = {
+		limit = { check_variable = { ROC_policy_toast_current < 91 } }
+		set_variable = { ROC_policy_toast_frame = 4 }
+	}
+	else = { set_variable = { ROC_policy_toast_frame = 5 } }
+	set_variable = { ROC_policy_toast_remaining = ROC_policy_toast_queue^num }
+}
+
+ROC_policy_toast_next_or_close = {
+	if = {
+		limit = { check_variable = { ROC_policy_toast_queue^num > 0 } }
+		set_variable = { ROC_policy_toast_current = ROC_policy_toast_queue^0 }
+		remove_from_array = { array = ROC_policy_toast_queue index = 0 }
+		set_variable = { ROC_policy_toast_timer = 15 }
+		ROC_policy_toast_refresh_frame = yes
+	}
+	else = {
+		clear_variable = ROC_policy_toast_current
+		clear_variable = ROC_policy_toast_frame
+		clear_variable = ROC_policy_toast_timer
+		clear_variable = ROC_policy_toast_remaining
+	}
+}
+
+ROC_policy_unlock_card_with_toast = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { ROC_policy_unlock_card_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Military_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Economy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Diplomacy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Generic_array_true = card_to_unlock } }
+		}
+		add_to_array = { ROC_policy_unlock_card_array_true = card_to_unlock }
+		ROC_recalc_policy_owned_count = yes
+		if = {
+			limit = { has_country_flag = ROC_policy_window_visible }
+			add_to_array = { ROC_policy_unlock_card_array = card_to_unlock }
+		}
+		if = {
+			limit = { is_ai = no }
+			if = {
+				limit = { NOT = { check_variable = { ROC_policy_toast_current > 0 } } }
+				set_variable = { ROC_policy_toast_current = card_to_unlock }
+				set_variable = { ROC_policy_toast_timer = 15 }
+			}
+			else = { add_to_array = { ROC_policy_toast_queue = card_to_unlock } }
+			ROC_policy_toast_refresh_frame = yes
+		}
+	}
+}
+
+ROC_check_generic_policy_card_unlocks = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_4 }
+			num_of_naval_factories > 4
+		}
+		set_country_flag = ROC_gpcard_unlocked_4
+		set_temp_variable = { card_to_unlock = 4 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_25 }
+			OR = { has_tech = tech_logistics_company has_tech = motorised_infantry }
+		}
+		set_country_flag = ROC_gpcard_unlocked_25
+		set_temp_variable = { card_to_unlock = 25 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_26 }
+			OR = { has_tech = artillery1 num_of_military_factories > 19 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_26
+		set_temp_variable = { card_to_unlock = 26 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_27 }
+			OR = { has_tech = landing_craft has_tech = mtg_landing_craft num_of_naval_factories > 9 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_27
+		set_temp_variable = { card_to_unlock = 27 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_58 }
+			OR = { has_global_flag = ROC_establishment_of_the_capital_at_nanjing AND = { has_war = no num_of_civilian_factories > 29 } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_58
+		set_temp_variable = { card_to_unlock = 58 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_59 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_59
+		set_temp_variable = { card_to_unlock = 59 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_60 }
+			has_tech = excavation1
+		}
+		set_country_flag = ROC_gpcard_unlocked_60
+		set_temp_variable = { card_to_unlock = 60 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_64 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_64
+		set_temp_variable = { card_to_unlock = 64 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_66 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_66
+		set_temp_variable = { card_to_unlock = 66 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_67 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_67
+		set_temp_variable = { card_to_unlock = 67 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_68 }
+			OR = { is_in_faction = yes AND = { has_war = no num_divisions > 23 } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_68
+		set_temp_variable = { card_to_unlock = 68 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_69 }
+			num_subjects > 0
+		}
+		set_country_flag = ROC_gpcard_unlocked_69
+		set_temp_variable = { card_to_unlock = 69 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_70 }
+			OR = { is_in_faction = yes any_enemy_country = { is_major = yes } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_70
+		set_temp_variable = { card_to_unlock = 70 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_71 }
+			OR = { has_global_flag = ROC_establishment_of_the_capital_at_nanjing num_of_civilian_factories > 39 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_71
+		set_temp_variable = { card_to_unlock = 71 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_72 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_72
+		set_temp_variable = { card_to_unlock = 72 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_94 }
+			has_intelligence_agency = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_94
+		set_temp_variable = { card_to_unlock = 94 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_105 }
+			has_war = yes
+		}
+		set_country_flag = ROC_gpcard_unlocked_105
+		set_temp_variable = { card_to_unlock = 105 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_107 }
+			OR = { has_tech = tech_field_hospital has_war = yes }
+		}
+		set_country_flag = ROC_gpcard_unlocked_107
+		set_temp_variable = { card_to_unlock = 107 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_109 }
+			OR = { has_global_flag = CHI_REUNIT any_controlled_state = { NOT = { is_core_of = ROOT } } }
+		}
+		set_country_flag = ROC_gpcard_unlocked_109
+		set_temp_variable = { card_to_unlock = 109 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ROC_gpcard_unlocked_110 }
+			OR = { has_global_flag = CHI_REUNIT amount_research_slots > 3 }
+		}
+		set_country_flag = ROC_gpcard_unlocked_110
+		set_temp_variable = { card_to_unlock = 110 }
+		ROC_policy_unlock_card_with_toast = yes
+	}
+}
+
+ROC_recalc_policy_owned_count = {  ##统计累计已拥有的政策卡总数（未装备池 + 4类槽位非空卡）
+	set_variable = { ROC_policy_owned_card_count = ROC_policy_unlock_card_array_true^num }
+	for_each_loop = {
+		array = ROC_policy_select_card_Military_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+	for_each_loop = {
+		array = ROC_policy_select_card_Economy_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+	for_each_loop = {
+		array = ROC_policy_select_card_Diplomacy_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+	for_each_loop = {
+		array = ROC_policy_select_card_Generic_array_true
+		value = v
+		if = {
+			limit = { check_variable = { v > 0 } }
+			add_to_variable = { ROC_policy_owned_card_count = 1 }
+		}
+	}
+}
+
+ROC_policy_toast_daily_tick = {
+	ROC_check_generic_policy_card_unlocks = yes
+	ROC_recalc_policy_owned_count = yes
+	if = {
+		limit = { check_variable = { ROC_policy_toast_current > 0 } }
+		subtract_from_variable = { ROC_policy_toast_timer = 1 }
+		if = {
+			limit = { NOT = { check_variable = { ROC_policy_toast_timer > 0 } } }
+			ROC_policy_toast_next_or_close = yes
+		}
+	}
+}
+
+ROC_policy_unlock_card_silent = {  ##静默解锁单张政策卡（不弹窗，防重复）
+	if = {
+		limit = {
+			NOT = { is_in_array = { ROC_policy_unlock_card_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Military_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Economy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Diplomacy_array_true = card_to_unlock } }
+			NOT = { is_in_array = { ROC_policy_select_card_Generic_array_true = card_to_unlock } }
+		}
+		add_to_array = { ROC_policy_unlock_card_array_true = card_to_unlock }
+		if = {
+			limit = { has_country_flag = ROC_policy_window_visible }
+			add_to_array = { ROC_policy_unlock_card_array = card_to_unlock }
+		}
+	}
+}
+
+ROC_unlock_all_policy_cards_debug_effect = {  ##Debug一键解锁全部88张已实装政策卡
+	for_loop_effect = {
+		start = 1
+		end = 16
+		compare = less_than_or_equals
+		value = card_to_unlock
+		ROC_policy_unlock_card_silent = yes
+	}
+	for_loop_effect = {
+		start = 18
+		end = 27
+		compare = less_than_or_equals
+		value = card_to_unlock
+		ROC_policy_unlock_card_silent = yes
+	}
+	for_loop_effect = {
+		start = 31
+		end = 60
+		compare = less_than_or_equals
+		value = card_to_unlock
+		ROC_policy_unlock_card_silent = yes
+	}
+	for_loop_effect = {
+		start = 61
+		end = 72
+		compare = less_than_or_equals
+		value = card_to_unlock
+		ROC_policy_unlock_card_silent = yes
+	}
+	for_loop_effect = {
+		start = 91
+		end = 110
+		compare = less_than_or_equals
+		value = card_to_unlock
+		ROC_policy_unlock_card_silent = yes
+	}
+	set_country_flag = ROC_gpcard_unlocked_4
+	set_country_flag = ROC_gpcard_unlocked_25
+	set_country_flag = ROC_gpcard_unlocked_26
+	set_country_flag = ROC_gpcard_unlocked_27
+	set_country_flag = ROC_gpcard_unlocked_58
+	set_country_flag = ROC_gpcard_unlocked_59
+	set_country_flag = ROC_gpcard_unlocked_60
+	set_country_flag = ROC_gpcard_unlocked_64
+	set_country_flag = ROC_gpcard_unlocked_66
+	set_country_flag = ROC_gpcard_unlocked_67
+	set_country_flag = ROC_gpcard_unlocked_68
+	set_country_flag = ROC_gpcard_unlocked_69
+	set_country_flag = ROC_gpcard_unlocked_70
+	set_country_flag = ROC_gpcard_unlocked_71
+	set_country_flag = ROC_gpcard_unlocked_72
+	set_country_flag = ROC_gpcard_unlocked_94
+	set_country_flag = ROC_gpcard_unlocked_105
+	set_country_flag = ROC_gpcard_unlocked_107
+	set_country_flag = ROC_gpcard_unlocked_109
+	set_country_flag = ROC_gpcard_unlocked_110
+	ROC_recalc_policy_owned_count = yes
+}
+
+ROC_policy_ai_refresh_cards = {  ##AI按全局优先级无消耗重排已解锁政策卡（专属槽优先、满则溢入通配槽）
+	if = {
+		limit = {
+			OR = {
+				check_variable = { ROC_policy_select_card_Military_array_true^num > 0 }
+				check_variable = { ROC_policy_select_card_Economy_array_true^num > 0 }
+				check_variable = { ROC_policy_select_card_Diplomacy_array_true^num > 0 }
+				check_variable = { ROC_policy_select_card_Generic_array_true^num > 0 }
+			}
+		}
+		# 1. 记录四类槽位当前容量（保持槽位总数严格不变）
+		set_temp_variable = { ai_rem_M = ROC_policy_select_card_Military_array_true^num }
+		set_temp_variable = { ai_rem_E = ROC_policy_select_card_Economy_array_true^num }
+		set_temp_variable = { ai_rem_D = ROC_policy_select_card_Diplomacy_array_true^num }
+		set_temp_variable = { ai_rem_G = ROC_policy_select_card_Generic_array_true^num }
+
+		# 2. 汇集全部已拥有卡片（未装备池 + 4类槽位）并去重，重建待分配池
+		clear_array = ROC_ai_owned_pool_temp
+		for_each_loop = {
+			array = ROC_policy_unlock_card_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Military_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Economy_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Diplomacy_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+		for_each_loop = {
+			array = ROC_policy_select_card_Generic_array_true
+			value = v
+			if = {
+				limit = {
+					check_variable = { v > 0 }
+					NOT = { is_in_array = { ROC_ai_owned_pool_temp = v } }
+				}
+				add_to_array = { ROC_ai_owned_pool_temp = v }
+			}
+		}
+
+		clear_array = ROC_policy_unlock_card_array_true
+		for_each_loop = {
+			array = ROC_ai_owned_pool_temp
+			value = v
+			add_to_array = { ROC_policy_unlock_card_array_true = v }
+		}
+		clear_array = ROC_ai_owned_pool_temp
+		clear_array = ROC_policy_select_card_Military_array_true
+		clear_array = ROC_policy_select_card_Economy_array_true
+		clear_array = ROC_policy_select_card_Diplomacy_array_true
+		clear_array = ROC_policy_select_card_Generic_array_true
+
+		# 3. 构造全局优先级队列（前60张严格按指定顺位，后28张为未列出卡保底顺位）
+		clear_array = ROC_ai_policy_prio_temp
+		# --- 主优先级（1~60）---
+		add_to_array = { ROC_ai_policy_prio_temp = 14 }   # 1.  拖拉机产线转换 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 102 }  # 2.  安民告示牌 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 26 }   # 3.  炮火准备条例 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 104 }  # 4.  战后忠诚归档 [特] (=107)
+		add_to_array = { ROC_ai_policy_prio_temp = 107 }  # 5.  战地医疗与抚恤 [特] (=104)
+		add_to_array = { ROC_ai_policy_prio_temp = 109 }  # 6.  战后绥靖与重建 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 103 }  # 7.  全民灰档库 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 40 }   # 8.  混合经济 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 59 }   # 9.  战时三班倒 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 41 }   # 10. 五年计划 [经] (=52)
+		add_to_array = { ROC_ai_policy_prio_temp = 52 }   # 11. 国防重工四年计划 [经] (=41)
+		add_to_array = { ROC_ai_policy_prio_temp = 54 }   # 12. 首都经济圈规划 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 47 }   # 13. 三年计划 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 67 }   # 14. 驻外情报武官 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 51 }   # 15. 统制资源统筹令 [经] (=34/35/50/55)
+		add_to_array = { ROC_ai_policy_prio_temp = 34 }   # 16. 土木工程 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 35 }   # 17. 农会 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 50 }   # 18. 保甲保产协约 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 55 }   # 19. 官商协理条例 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 38 }   # 20. 集体农庄 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 36 }   # 21. 乡贤制 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 33 }   # 22. 军需优先 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 49 }   # 23. 平均地权赎买券 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 39 }   # 24. 公务员体系 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 56 }   # 25. 江湖行会契约 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 45 }   # 26. 工人宪法 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 46 }   # 27. 保障外资 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 66 }   # 28. 战时租借通道 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 91 }   # 29. 总理遗嘱 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 100 }  # 30. 保甲连坐治安 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 42 }   # 31. 市场经济 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 2 }    # 32. 清波寨子弟兵 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 25 }   # 33. 轻装急行军 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 20 }   # 34. 黄埔教导旅 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 22 }   # 35. 清波忠义营 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 3 }    # 36. 党军一体 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 24 }   # 37. 焦土与纵深防御 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 98 }   # 38. 新生活风纪督察 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 44 }   # 39. 引进先进产线 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 31 }   # 40. 生丝贸易协定 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 32 }   # 41. 土地改革 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 13 }   # 42. 战争的经验 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 97 }   # 43. 以党治国训政法统 [特] (=101)
+		add_to_array = { ROC_ai_policy_prio_temp = 101 }  # 44. 训政参政花瓶 [特] (=97)
+		add_to_array = { ROC_ai_policy_prio_temp = 96 }   # 45. 监察委员会 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 53 }   # 46. 自然经济平抑 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 61 }   # 47. 以俄为师 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 21 }   # 48. 中正剑军纪 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 23 }   # 49. 特科暗桩网 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 95 }   # 50. 义务教育 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 8 }    # 51. 士兵训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 43 }   # 52. 中央指导队 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 105 }  # 53. 战时紧急动员令 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 99 }   # 54. 儒家训政纲领 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 92 }   # 55. 文官考试制度 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 106 }  # 56. 政务文书精简 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 27 }   # 57. 渡海登陆先锋 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 1 }    # 58. 黄埔遗训 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 15 }   # 59. 准军事组织训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 16 }   # 60. 皇家禁军 [军]
+		# --- 未列出卡保底顺位（61~88，仅当对应槽位尚空时补位）---
+		add_to_array = { ROC_ai_policy_prio_temp = 19 }   # 中央军教导旅 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 58 }   # 平战结合民工潮 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 71 }   # 国际金融信用 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 72 }   # 战地新闻公关 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 18 }   # 三青团军训纲领 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 70 }   # 反帝联合战线 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 60 }   # 资源普查与勘探 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 57 }   # 铁道与公路优先 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 110 }  # 全国统考与留洋潮 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 68 }   # 对外军事顾问团 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 62 }   # 扩大与圣杯合作 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 63 }   # 南洋侨务 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 5 }    # 产业协同 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 48 }   # 资本主义 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 37 }   # 电子战 [经]
+		add_to_array = { ROC_ai_policy_prio_temp = 69 }   # 宗主统筹条约 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 65 }   # 睦邻友善条约 [外]
+		add_to_array = { ROC_ai_policy_prio_temp = 108 }  # 财政紧缩与稽核 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 6 }    # 产学结合 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 7 }    # 产学结合 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 4 }    # 南海海军工业 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 10 }   # 飞行员训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 9 }    # 海员训练 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 11 }   # 制空权 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 12 }   # 制海权 [军]
+		add_to_array = { ROC_ai_policy_prio_temp = 93 }   # 党员忠诚档案 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 94 }   # 盗取经费 [特]
+		add_to_array = { ROC_ai_policy_prio_temp = 64 }   # 战争借口 [外]
+
+		# 4. 贪心装填：优先入专属槽，专属槽满则溢入通配符槽
+		for_each_loop = {
+			array = ROC_ai_policy_prio_temp
+			value = cid
+			break = ai_prio_break
+			if = {
+				limit = {
+					check_variable = { ai_rem_M < 1 }
+					check_variable = { ai_rem_E < 1 }
+					check_variable = { ai_rem_D < 1 }
+					check_variable = { ai_rem_G < 1 }
+				}
+				set_temp_variable = { ai_prio_break = 1 }
+			}
+			else_if = {
+				limit = {
+					is_in_array = { ROC_policy_unlock_card_array_true = cid }
+				}
+				if = {
+					limit = {
+						check_variable = { cid > 0 }
+						check_variable = { cid < 31 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_M > 0 } }
+						add_to_array = { ROC_policy_select_card_Military_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_M = -1 }
+					}
+					else_if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { cid > 30 }
+						check_variable = { cid < 61 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_E > 0 } }
+						add_to_array = { ROC_policy_select_card_Economy_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_E = -1 }
+					}
+					else_if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { cid > 60 }
+						check_variable = { cid < 91 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_D > 0 } }
+						add_to_array = { ROC_policy_select_card_Diplomacy_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_D = -1 }
+					}
+					else_if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { cid > 90 }
+						check_variable = { cid < 121 }
+					}
+					if = {
+						limit = { check_variable = { ai_rem_G > 0 } }
+						add_to_array = { ROC_policy_select_card_Generic_array_true = cid }
+						remove_from_array = { ROC_policy_unlock_card_array_true = cid }
+						add_to_temp_variable = { ai_rem_G = -1 }
+					}
+				}
+			}
+		}
+		clear_array = ROC_ai_policy_prio_temp
+
+		# 5. 若仍有空槽，补回 0 保持各槽位数组长度严格不变
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_M > 0 } }
+			add_to_array = { ROC_policy_select_card_Military_array_true = 0 }
+			add_to_temp_variable = { ai_rem_M = -1 }
+		}
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_E > 0 } }
+			add_to_array = { ROC_policy_select_card_Economy_array_true = 0 }
+			add_to_temp_variable = { ai_rem_E = -1 }
+		}
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_D > 0 } }
+			add_to_array = { ROC_policy_select_card_Diplomacy_array_true = 0 }
+			add_to_temp_variable = { ai_rem_D = -1 }
+		}
+		while_loop_effect = {
+			limit = { check_variable = { ai_rem_G > 0 } }
+			add_to_array = { ROC_policy_select_card_Generic_array_true = 0 }
+			add_to_temp_variable = { ai_rem_G = -1 }
+		}
+
+		# 6. 刷新生效民族精神与持卡统计
+		ROC_policy_card_modifier = yes
+		ROC_recalc_policy_owned_count = yes
+	}
 }
 
 ROC_factional_influence_calculation = {  ##计算广府派系影响力
@@ -3029,7 +3695,7 @@ ROC_monthly_check_effect = {
 		limit = {
 			CHI = { exists = no }
 			608 = { is_controlled_by = ROOT }
-			has_country_flag = Nanjing_evnt_over
+			has_country_flag = Nanjing_event_over
 		}
 		country_event = {#北伐胜利！
 			id = roc.89
@@ -3103,7 +3769,7 @@ ROC_monthly_check_effect = {
 					}
 				}
 				country_event = {
-					id = roc.369
+					id = roc.374
 					days = 7
 				}
 			}
@@ -3114,6 +3780,14 @@ ROC_monthly_check_effect = {
 						character = ROC_Hu_Zongnan
 					}
 				}
+				country_event = {
+					id = roc.443
+					days = 7
+				}
+				country_event = {
+					id = roc.416
+					days = 14
+				}
 			}
 			else_if = {
 				limit = {
@@ -3122,6 +3796,14 @@ ROC_monthly_check_effect = {
 						character = ROC_Tangtang
 					}
 				}
+				country_event = {
+					id = roc.443
+					days = 7
+				}
+				country_event = {
+					id = roc.416
+					days = 14
+				}
 			}
 			else_if = {
 				limit = {
@@ -3129,6 +3811,14 @@ ROC_monthly_check_effect = {
 						ruling_only = yes
 						character = ROC_Herrscher_of_Sentience
 					}
+				}
+				country_event = {
+					id = roc.443
+					days = 7
+				}
+				country_event = {
+					id = roc.416
+					days = 14
 				}
 			}
 		}
@@ -3148,6 +3838,13 @@ ROC_monthly_check_effect = {
 		ROC_PCC_event_modifier_effect = yes
 	}
 	ROC_PCC_modifier_effect = yes
+	if = {
+		limit = {
+			has_global_flag = ROC_Whampoa_party_win
+			has_country_flag = ROC_whampoa_init
+		}
+		ROC_whampoa_monthly_effect = yes
+	}
 	##PRC###
 	if = {
 		limit = { not = { has_global_flag = ROC_win_PRC } }
@@ -3155,7 +3852,7 @@ ROC_monthly_check_effect = {
 			limit = {
 				PRC = { exists = no }
 				650 = { is_controlled_by = ROOT }
-				has_country_flag = Nanjing_evnt_over
+				has_country_flag = Nanjing_event_over
 			}
 			set_global_flag = ROC_win_PRC
 			if = {
@@ -3227,6 +3924,10 @@ ROC_monthly_check_effect = {
 						character = ROC_Hu_Zongnan
 					}
 				}
+				country_event = {
+					id = roc.415
+					days = 7
+				}
 			}
 			else_if = {
 				limit = {
@@ -3235,6 +3936,10 @@ ROC_monthly_check_effect = {
 						character = ROC_Tangtang
 					}
 				}
+				country_event = {
+					id = roc.415
+					days = 7
+				}
 			}
 			else_if = {
 				limit = {
@@ -3242,6 +3947,10 @@ ROC_monthly_check_effect = {
 						ruling_only = yes
 						character = ROC_Herrscher_of_Sentience
 					}
+				}
+				country_event = {
+					id = roc.415
+					days = 7
 				}
 			}
 		}
@@ -4110,6 +4819,7 @@ ROC_collection_gain_random_one = {
 		100 = {
 			modifier = {
 				or = {
+					NOT = { has_country_flag = ROC_sisuitai_recruited_nian }
 					is_in_array = { KMT_collection_using_array = 3 }
 					is_in_array = { KMT_collection_unusing_array = 3 }
 					is_in_array = { KMT_spnode_shop_goods_array = 3 }
@@ -4144,6 +4854,7 @@ ROC_collection_gain_random_one = {
 		100 = {
 			modifier = {
 				or = {
+					NOT = { has_country_flag = ROC_sisuitai_recruited_ling }
 					is_in_array = { KMT_collection_using_array = 5 }
 					is_in_array = { KMT_collection_unusing_array = 5 }
 					is_in_array = { KMT_spnode_shop_goods_array = 5 }
@@ -4195,6 +4906,7 @@ ROC_collection_gain_random_one = {
 		100 = {
 			modifier = {
 				or = {
+					NOT = { has_country_flag = ROC_sisuitai_recruited_chongyue }
 					is_in_array = { KMT_collection_using_array = 8 }
 					is_in_array = { KMT_collection_unusing_array = 8 }
 					is_in_array = { KMT_spnode_shop_goods_array = 8 }
@@ -7723,13 +8435,23 @@ ROC_lunar_daily_effect = {
 				}
 				add_to_variable = { ROC_chixiao_era = 1 }
 			}
-			#统一后第 2 个农历新年：赤霄元年
+			#统一后次年农历新年（第 1 个正月初一）：赤霄元年
 			if = {
 				limit = { has_variable = ROC_reunit_lunar_years }
 				add_to_variable = { ROC_reunit_lunar_years = 1 }
 				if = {
-					limit = { check_variable = { ROC_reunit_lunar_years = 2 } }
+					limit = { NOT = { check_variable = { ROC_reunit_lunar_years < 1 } } }
 					set_variable = { ROC_chixiao_era = 1 }
+					clear_variable = ROC_reunit_lunar_years
+					if = {
+						limit = {
+							has_country_leader = {
+								character = ROC_Chen
+								ruling_only = yes
+							}
+						}
+						set_country_flag = use_era_name_ROC
+					}
 				}
 			}
 		}
@@ -7756,6 +8478,12 @@ ROC_social_reform_init_effect = {
 		set_variable = { ROC_sr_military_reform = 15 }
 	}
 	ROC_social_reform_recalc_effect = yes
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = ROC_social_reform_modifier } }
+		}
+		add_dynamic_modifier = { modifier = ROC_social_reform_modifier }
+	}
 }
 
 ROC_social_reform_recalc_effect = {
@@ -7848,10 +8576,28 @@ ROC_social_reform_recalc_effect = {
 			NOT = { check_variable = { ROC_sr_military_disease > 25 } }
 		}
 		set_variable = { ROC_sr_golden_ready = 1 }
+		set_variable = { ROC_sr_mod_max_eff = 0.05 }
+		set_variable = { ROC_sr_mod_army_attack = 0.05 }
+		set_variable = { ROC_sr_mod_army_defence = 0.05 }
+		set_variable = { ROC_sr_mod_mobilization = 0.15 }
+		set_variable = { ROC_sr_mod_compliance = 0.10 }
 	}
 	else = {
 		set_variable = { ROC_sr_golden_ready = 0 }
+		set_variable = { ROC_sr_mod_max_eff = 0 }
+		set_variable = { ROC_sr_mod_army_attack = 0 }
+		set_variable = { ROC_sr_mod_army_defence = 0 }
+		set_variable = { ROC_sr_mod_mobilization = 0 }
+		set_variable = { ROC_sr_mod_compliance = 0 }
 	}
+
+	# 过程动态增益：随平均改造度 0%~100% 线性成长，满额各 +10%
+	set_temp_variable = { tmp_sr_scale = ROC_sr_avg_reform }
+	multiply_temp_variable = { tmp_sr_scale = 0.001 }
+	set_variable = { ROC_sr_mod_buildings_speed = tmp_sr_scale }
+	set_variable = { ROC_sr_mod_factory_output = tmp_sr_scale }
+	set_variable = { ROC_sr_mod_pp_factor = tmp_sr_scale }
+	set_variable = { ROC_sr_mod_stability = tmp_sr_scale }
 }
 
 # 1. 乡村基层：柔和妥协 / 铁腕清洗
@@ -7920,4 +8666,883 @@ ROC_sr_military_hard_effect = {
 	add_to_variable = { ROC_sr_military_disease = -14 }
 	add_to_variable = { ROC_sr_military_reform = 12 }
 	ROC_social_reform_recalc_effect = yes
+}
+
+# ========================================================
+# 黄埔线：训政中枢办公桌（一底三面 · 副手机制联动）
+# ========================================================
+ROC_whampoa_cd_sync_effect = {
+	if = {
+		limit = { has_country_flag = ROC_wt_btn_1_cd }
+		if = {
+			limit = { NOT = { has_variable = ROC_wt_btn_1_cd_days } }
+			set_variable = { ROC_wt_btn_1_cd_days = 30 }
+		}
+		set_variable = { ROC_wt_btn_1_cd_pct = ROC_wt_btn_1_cd_days }
+		multiply_variable = { ROC_wt_btn_1_cd_pct = 100 }
+		divide_variable = { ROC_wt_btn_1_cd_pct = 60 }
+		round_variable = ROC_wt_btn_1_cd_pct
+		clamp_variable = { var = ROC_wt_btn_1_cd_pct min = 2 max = 100 }
+	}
+	else = {
+		clear_variable = ROC_wt_btn_1_cd_days
+		clear_variable = ROC_wt_btn_1_cd_pct
+	}
+	if = {
+		limit = { has_country_flag = ROC_wt_btn_2_cd }
+		if = {
+			limit = { NOT = { has_variable = ROC_wt_btn_2_cd_days } }
+			set_variable = { ROC_wt_btn_2_cd_days = 30 }
+		}
+		set_variable = { ROC_wt_btn_2_cd_pct = ROC_wt_btn_2_cd_days }
+		multiply_variable = { ROC_wt_btn_2_cd_pct = 100 }
+		divide_variable = { ROC_wt_btn_2_cd_pct = 60 }
+		round_variable = ROC_wt_btn_2_cd_pct
+		clamp_variable = { var = ROC_wt_btn_2_cd_pct min = 2 max = 100 }
+	}
+	else = {
+		clear_variable = ROC_wt_btn_2_cd_days
+		clear_variable = ROC_wt_btn_2_cd_pct
+	}
+	if = {
+		limit = { has_country_flag = ROC_wt_btn_3_cd }
+		if = {
+			limit = { NOT = { has_variable = ROC_wt_btn_3_cd_days } }
+			set_variable = { ROC_wt_btn_3_cd_days = 30 }
+		}
+		set_variable = { ROC_wt_btn_3_cd_pct = ROC_wt_btn_3_cd_days }
+		multiply_variable = { ROC_wt_btn_3_cd_pct = 100 }
+		divide_variable = { ROC_wt_btn_3_cd_pct = 60 }
+		round_variable = ROC_wt_btn_3_cd_pct
+		clamp_variable = { var = ROC_wt_btn_3_cd_pct min = 2 max = 100 }
+	}
+	else = {
+		clear_variable = ROC_wt_btn_3_cd_days
+		clear_variable = ROC_wt_btn_3_cd_pct
+	}
+}
+
+ROC_whampoa_tutelage_init_effect = {
+	if = {
+		limit = { NOT = { has_country_flag = ROC_whampoa_init } }
+		set_country_flag = ROC_whampoa_init
+		set_variable = { ROC_wt_hu_m1 = 15 }
+		set_variable = { ROC_wt_hu_m2 = 0 }
+		set_variable = { ROC_wt_tang_m1 = 15 }
+		set_variable = { ROC_wt_tang_m2 = 0 }
+		set_variable = { ROC_wt_hos_m1 = 15 }
+		set_variable = { ROC_wt_hos_m2 = 0 }
+	}
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier } }
+		}
+		add_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier }
+	}
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+ROC_whampoa_tutelage_recalc_effect = {
+	if = {
+		limit = {
+			NOT = { has_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier } }
+		}
+		add_dynamic_modifier = { modifier = ROC_whampoa_tutelage_modifier }
+	}
+
+	# 1. 上半区双轨上限判定：初始 50 -> 《民主必要之训政》后 75 -> 中轴解锁至 100
+	set_temp_variable = { tmp_wt_base_cap = 50 }
+	if = {
+		limit = { has_completed_focus = ROC_focus_tutelage_necessary_for_democracy }
+		set_temp_variable = { tmp_wt_base_cap = 75 }
+	}
+
+	set_variable = { ROC_wt_hu_m1_cap = tmp_wt_base_cap }
+	set_variable = { ROC_wt_hu_m2_cap = tmp_wt_base_cap }
+	if = {
+		limit = { has_completed_focus = ROC_focus_high_salaries_foster_integrity }
+		set_variable = { ROC_wt_hu_m1_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_true_heir_of_chiang_kai_shek }
+		set_variable = { ROC_wt_hu_m2_cap = 100 }
+	}
+
+	set_variable = { ROC_wt_tang_m1_cap = tmp_wt_base_cap }
+	set_variable = { ROC_wt_tang_m2_cap = tmp_wt_base_cap }
+	if = {
+		limit = { has_completed_focus = ROC_focus_stability_above_all }
+		set_variable = { ROC_wt_tang_m1_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_old_hus_testament }
+		set_variable = { ROC_wt_tang_m2_cap = 100 }
+	}
+
+	set_variable = { ROC_wt_hos_m1_cap = tmp_wt_base_cap }
+	set_variable = { ROC_wt_hos_m2_cap = tmp_wt_base_cap }
+	if = {
+		limit = { has_completed_focus = ROC_focus_purge_parasites }
+		set_variable = { ROC_wt_hos_m1_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_nationwide_surveillance_system }
+		set_variable = { ROC_wt_hos_m2_cap = 100 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_republic_business_as_usual }
+		set_variable = { ROC_wt_hos_m2_cap = 100 }
+		set_variable = { ROC_wt_hos_m2 = 100 }
+	}
+
+	# 钳制 6 条轨道范围
+	clamp_variable = { var = ROC_wt_hu_m1 min = 0 max = ROC_wt_hu_m1_cap }
+	clamp_variable = { var = ROC_wt_hu_m2 min = 0 max = ROC_wt_hu_m2_cap }
+	clamp_variable = { var = ROC_wt_tang_m1 min = 0 max = ROC_wt_tang_m1_cap }
+	clamp_variable = { var = ROC_wt_tang_m2 min = 0 max = ROC_wt_tang_m2_cap }
+	clamp_variable = { var = ROC_wt_hos_m1 min = 0 max = ROC_wt_hos_m1_cap }
+	clamp_variable = { var = ROC_wt_hos_m2 min = 0 max = ROC_wt_hos_m2_cap }
+
+	# 2. 下半区共用底座阶级判定（跨领袖继承、不因换人清零）
+	set_variable = { ROC_wt_ms_lv = 0 }
+	set_variable = { ROC_wt_ms_slot_1_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_2_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_3_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_4_frame = 1 }
+	set_variable = { ROC_wt_ms_slot_5_frame = 1 }
+	if = {
+		limit = { has_completed_focus = ROC_focus_chinese_natural_economy }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_1_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_import_livelihood_goods }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_2_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_maintain_rural_security }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_3_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_impose_socioeconomic_tasks }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_4_frame = 2 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_walk_on_great_harmony }
+		add_to_variable = { ROC_wt_ms_lv = 1 }
+		set_variable = { ROC_wt_ms_slot_5_frame = 2 }
+	}
+
+	set_variable = { ROC_wt_ra_lv = 0 }
+	set_variable = { ROC_wt_ra_slot_1_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_2_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_3_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_4_frame = 1 }
+	set_variable = { ROC_wt_ra_slot_5_frame = 1 }
+	if = {
+		limit = { has_completed_focus = ROC_focus_win_over_financial_magnates }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_1_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_develop_capital_economic_zone }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_2_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_safeguard_peoples_livelihood }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_3_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_republic_industrial_master_plan }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_4_frame = 3 }
+	}
+	if = {
+		limit = { has_completed_focus = ROC_focus_rule_with_benevolence }
+		add_to_variable = { ROC_wt_ra_lv = 1 }
+		set_variable = { ROC_wt_ra_slot_5_frame = 3 }
+	}
+
+	# 3. 归零动态修正变量
+	set_variable = { ROC_wt_mod_conscription = 0 }
+	set_variable = { ROC_wt_mod_compliance = 0 }
+	set_variable = { ROC_wt_mod_resistance = 0 }
+	set_variable = { ROC_wt_mod_core_attack = 0 }
+	set_variable = { ROC_wt_mod_core_defence = 0 }
+	set_variable = { ROC_wt_mod_supply = 0 }
+	set_variable = { ROC_wt_mod_slots = 0 }
+	set_variable = { ROC_wt_mod_build_speed = 0 }
+	set_variable = { ROC_wt_mod_arms_speed = 0 }
+	set_variable = { ROC_wt_mod_max_eff = 0 }
+	set_variable = { ROC_wt_mod_eff_gain = 0 }
+	set_variable = { ROC_wt_mod_factory_output = 0 }
+	set_variable = { ROC_wt_mod_ind_tax = 0 }
+	set_variable = { ROC_wt_mod_hcp_income = 0 }
+	set_variable = { ROC_wt_mod_consumer_goods = 0 }
+	set_variable = { ROC_wt_mod_research = 0 }
+	set_variable = { ROC_wt_mod_pp_factor = 0 }
+	set_variable = { ROC_wt_mod_stability = 0 }
+	set_variable = { ROC_wt_mod_war_support = 0 }
+	set_variable = { ROC_wt_mod_mobilization = 0 }
+	set_variable = { ROC_wt_mod_army_attack = 0 }
+	set_variable = { ROC_wt_mod_army_defence = 0 }
+	set_variable = { ROC_wt_mod_army_org = 0 }
+	set_variable = { ROC_wt_mod_max_planning = 0 }
+	set_variable = { ROC_wt_mod_breakthrough = 0 }
+	set_variable = { ROC_wt_mod_capture = 0 }
+	set_variable = { ROC_wt_mod_non_core_attack = 0 }
+	set_variable = { ROC_wt_mod_non_core_defence = 0 }
+	set_variable = { ROC_wt_mod_operative_slot = 0 }
+	set_variable = { ROC_wt_mod_decryption = 0 }
+	set_variable = { ROC_wt_mod_army_morale = 0 }
+	set_variable = { ROC_wt_mod_initiative = 0 }
+	set_variable = { ROC_wt_mod_intel_net = 0 }
+	set_variable = { ROC_wt_mod_agency_time = 0 }
+	set_variable = { ROC_wt_mod_resistance_growth = 0 }
+
+	# 4. 注入下半区左翼【民生·保甲自然经济】底座（Lv.5 满阶：适役+15%、顺从+10%、抵抗-15%、核心攻防+10%、补给-10%）
+	set_temp_variable = { tmp_ms_03 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_03 = 0.03 }
+	set_temp_variable = { tmp_ms_02 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_02 = 0.02 }
+	set_temp_variable = { tmp_ms_neg03 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_neg03 = -0.03 }
+	set_temp_variable = { tmp_ms_neg02 = ROC_wt_ms_lv }
+	multiply_temp_variable = { tmp_ms_neg02 = -0.02 }
+
+	add_to_variable = { ROC_wt_mod_conscription = tmp_ms_03 }
+	add_to_variable = { ROC_wt_mod_compliance = tmp_ms_02 }
+	add_to_variable = { ROC_wt_mod_resistance = tmp_ms_neg03 }
+	add_to_variable = { ROC_wt_mod_core_attack = tmp_ms_02 }
+	add_to_variable = { ROC_wt_mod_core_defence = tmp_ms_02 }
+	add_to_variable = { ROC_wt_mod_supply = tmp_ms_neg02 }
+
+	# 展示用共享底座数值变量
+	set_variable = { ROC_wt_ms_disp_conscription = tmp_ms_03 }
+	set_variable = { ROC_wt_ms_disp_compliance = tmp_ms_02 }
+	set_variable = { ROC_wt_ms_disp_resistance = tmp_ms_neg03 }
+	set_variable = { ROC_wt_ms_disp_core = tmp_ms_02 }
+	set_variable = { ROC_wt_ms_disp_supply = tmp_ms_neg02 }
+
+	# 5. 注入下半区右翼【仁爱·首都资本兴国】底座（Lv.5 满阶：工厂格+20%、建造+15%、效率上限+10%、税+15%、HCP+15%、消费品-5%）
+	set_temp_variable = { tmp_ra_04 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_04 = 0.04 }
+	set_temp_variable = { tmp_ra_03 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_03 = 0.03 }
+	set_temp_variable = { tmp_ra_02 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_02 = 0.02 }
+	set_temp_variable = { tmp_ra_neg01 = ROC_wt_ra_lv }
+	multiply_temp_variable = { tmp_ra_neg01 = -0.01 }
+
+	add_to_variable = { ROC_wt_mod_slots = tmp_ra_04 }
+	add_to_variable = { ROC_wt_mod_build_speed = tmp_ra_03 }
+	add_to_variable = { ROC_wt_mod_max_eff = tmp_ra_02 }
+	add_to_variable = { ROC_wt_mod_ind_tax = tmp_ra_03 }
+	add_to_variable = { ROC_wt_mod_hcp_income = tmp_ra_03 }
+	add_to_variable = { ROC_wt_mod_consumer_goods = tmp_ra_neg01 }
+
+	set_variable = { ROC_wt_ra_disp_slots = tmp_ra_04 }
+	set_variable = { ROC_wt_ra_disp_build = tmp_ra_03 }
+	set_variable = { ROC_wt_ra_disp_eff = tmp_ra_02 }
+	set_variable = { ROC_wt_ra_disp_tax = tmp_ra_03 }
+	set_variable = { ROC_wt_ra_disp_cg = tmp_ra_neg01 }
+
+	# 6. 注入当前执政领袖上半区轨道 & 副手协同档位
+	set_variable = { ROC_wt_deputy_tier = 0 }
+	if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Hu_Zongnan
+				ruling_only = yes
+			}
+		}
+		set_variable = { ROC_wt_active_mode = 1 }
+		set_temp_variable = { tmp_m1 = ROC_wt_hu_m1 }
+		divide_temp_variable = { tmp_m1 = 100 }
+		set_temp_variable = { tmp_m2 = ROC_wt_hu_m2 }
+		divide_temp_variable = { tmp_m2 = 100 }
+
+		# 轨道1【黄埔军风】：攻防+10%、组织+10%、计划上限+15%
+		set_temp_variable = { tmp_val = tmp_m1 }
+		multiply_temp_variable = { tmp_val = 0.10 }
+		add_to_variable = { ROC_wt_mod_army_attack = tmp_val }
+		add_to_variable = { ROC_wt_mod_army_defence = tmp_val }
+		add_to_variable = { ROC_wt_mod_army_org = tmp_val }
+		set_temp_variable = { tmp_val2 = tmp_m1 }
+		multiply_temp_variable = { tmp_val2 = 0.15 }
+		add_to_variable = { ROC_wt_mod_max_planning = tmp_val2 }
+
+		# 轨道2【训政正统】：PP+10%、稳定+10%、战支+10%、动员速度+20%
+		set_temp_variable = { tmp_val3 = tmp_m2 }
+		multiply_temp_variable = { tmp_val3 = 0.10 }
+		add_to_variable = { ROC_wt_mod_pp_factor = tmp_val3 }
+		add_to_variable = { ROC_wt_mod_stability = tmp_val3 }
+		add_to_variable = { ROC_wt_mod_war_support = tmp_val3 }
+		set_temp_variable = { tmp_val4 = tmp_m2 }
+		multiply_temp_variable = { tmp_val4 = 0.20 }
+		add_to_variable = { ROC_wt_mod_mobilization = tmp_val4 }
+
+		# 副手联动：戴季陶（文官统筹）
+		if = {
+			limit = { has_idea = ROC_Dai_Jitao_idea }
+			if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hu_m1 < 80 } }
+						NOT = { check_variable = { ROC_wt_hu_m2 < 80 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 2 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.10 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.10 }
+				add_to_variable = { ROC_wt_mod_max_eff = 0.05 }
+				add_to_variable = { ROC_wt_mod_pp_factor = 0.05 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hu_m1 < 50 } }
+						NOT = { check_variable = { ROC_wt_hu_m2 < 50 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 1 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.05 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.05 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Tangtang
+				ruling_only = yes
+			}
+		}
+		set_variable = { ROC_wt_active_mode = 2 }
+		set_temp_variable = { tmp_m1 = ROC_wt_tang_m1 }
+		divide_temp_variable = { tmp_m1 = 100 }
+		set_temp_variable = { tmp_m2 = ROC_wt_tang_m2 }
+		divide_temp_variable = { tmp_m2 = 100 }
+
+		# 轨道1【江湖义气】：突破+15%、缴获+10%（含清波精神10%共20%）、非核心攻防+10%
+		set_temp_variable = { tmp_val = tmp_m1 }
+		multiply_temp_variable = { tmp_val = 0.15 }
+		add_to_variable = { ROC_wt_mod_breakthrough = tmp_val }
+		set_temp_variable = { tmp_val2 = tmp_m1 }
+		multiply_temp_variable = { tmp_val2 = 0.10 }
+		add_to_variable = { ROC_wt_mod_capture = tmp_val2 }
+		add_to_variable = { ROC_wt_mod_non_core_attack = tmp_val2 }
+		add_to_variable = { ROC_wt_mod_non_core_defence = tmp_val2 }
+
+		# 轨道2【遗嘱践行】：产出+10%、PP+10%、效率增长+15%
+		set_temp_variable = { tmp_val3 = tmp_m2 }
+		multiply_temp_variable = { tmp_val3 = 0.10 }
+		add_to_variable = { ROC_wt_mod_factory_output = tmp_val3 }
+		add_to_variable = { ROC_wt_mod_pp_factor = tmp_val3 }
+		set_temp_variable = { tmp_val4 = tmp_m2 }
+		multiply_temp_variable = { tmp_val4 = 0.15 }
+		add_to_variable = { ROC_wt_mod_eff_gain = tmp_val4 }
+
+		# 双80灵前觉醒：全军攻防+5%
+		if = {
+			limit = { has_country_flag = ROC_wt_tang_awakened }
+			add_to_variable = { ROC_wt_mod_army_attack = 0.05 }
+			add_to_variable = { ROC_wt_mod_army_defence = 0.05 }
+		}
+
+		# 副手联动：弥弗（清波账房，觉醒后永久锁定满阶红利）
+		if = {
+			limit = { has_idea = ROC_Mi_Fu_idea }
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ROC_wt_tang_awakened
+						NOT = { check_variable = { ROC_wt_tang_m1 < 80 } }
+						NOT = { check_variable = { ROC_wt_tang_m2 < 80 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 2 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.10 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.10 }
+				add_to_variable = { ROC_wt_mod_arms_speed = 0.05 }
+				add_to_variable = { ROC_wt_mod_max_eff = 0.05 }
+				add_to_variable = { ROC_wt_mod_slots = 0.10 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_tang_m1 < 50 } }
+						NOT = { check_variable = { ROC_wt_tang_m2 < 50 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 1 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.05 }
+				add_to_variable = { ROC_wt_mod_arms_speed = 0.10 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Herrscher_of_Sentience
+				ruling_only = yes
+			}
+		}
+		set_variable = { ROC_wt_active_mode = 3 }
+		set_temp_variable = { tmp_m1 = ROC_wt_hos_m1 }
+		divide_temp_variable = { tmp_m1 = 100 }
+		set_temp_variable = { tmp_m2 = ROC_wt_hos_m2 }
+		divide_temp_variable = { tmp_m2 = 100 }
+
+		# 轨道1【天网净化】：特工位+1/+2（无LaR转破译+30%）、抵抗-20%、组织恢复+20%、工厂产出+5%
+		if = {
+			limit = { has_dlc = "La Resistance" }
+			if = {
+				limit = { NOT = { check_variable = { ROC_wt_hos_m1 < 60 } } }
+				add_to_variable = { ROC_wt_mod_operative_slot = 2 }
+			}
+			else_if = {
+				limit = { NOT = { check_variable = { ROC_wt_hos_m1 < 30 } } }
+				add_to_variable = { ROC_wt_mod_operative_slot = 1 }
+			}
+		}
+		else = {
+			set_temp_variable = { tmp_dec = tmp_m1 }
+			multiply_temp_variable = { tmp_dec = 0.30 }
+			add_to_variable = { ROC_wt_mod_decryption = tmp_dec }
+		}
+		set_temp_variable = { tmp_val = tmp_m1 }
+		multiply_temp_variable = { tmp_val = -0.20 }
+		add_to_variable = { ROC_wt_mod_resistance = tmp_val }
+		set_temp_variable = { tmp_val2 = tmp_m1 }
+		multiply_temp_variable = { tmp_val2 = 0.20 }
+		add_to_variable = { ROC_wt_mod_army_morale = tmp_val2 }
+		set_temp_variable = { tmp_val3 = tmp_m1 }
+		multiply_temp_variable = { tmp_val3 = 0.05 }
+		add_to_variable = { ROC_wt_mod_factory_output = tmp_val3 }
+
+		# 轨道2【如常运作·伪装】：PP+15%、稳定+10%、效率增长+10%
+		set_temp_variable = { tmp_val4 = tmp_m2 }
+		multiply_temp_variable = { tmp_val4 = 0.15 }
+		add_to_variable = { ROC_wt_mod_pp_factor = tmp_val4 }
+		set_temp_variable = { tmp_val5 = tmp_m2 }
+		multiply_temp_variable = { tmp_val5 = 0.10 }
+		add_to_variable = { ROC_wt_mod_stability = tmp_val5 }
+		add_to_variable = { ROC_wt_mod_eff_gain = tmp_val5 }
+
+		# 识律中轴情报/监控国策动态联动
+		if = {
+			limit = { has_completed_focus = ROC_focus_train_agents }
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				add_to_variable = { ROC_wt_mod_intel_net = 0.25 }
+				add_to_variable = { ROC_wt_mod_agency_time = -0.25 }
+			}
+			else = {
+				add_to_variable = { ROC_wt_mod_decryption = 0.15 }
+			}
+		}
+		if = {
+			limit = { has_completed_focus = ROC_focus_offensive_operations }
+			add_to_variable = { ROC_wt_mod_decryption = 0.20 }
+		}
+		if = {
+			limit = { has_completed_focus = ROC_focus_recruit_informants }
+			add_to_variable = { ROC_wt_mod_resistance_growth = -0.25 }
+		}
+
+		# 归档觉醒：主动权+10%
+		if = {
+			limit = { has_country_flag = ROC_wt_hos_awakened }
+			add_to_variable = { ROC_wt_mod_initiative = 0.10 }
+		}
+
+		# 副手联动：孙科（体面门面）
+		if = {
+			limit = { has_idea = ROC_Sun_Ke_idea }
+			if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hos_m1 < 80 } }
+						NOT = { check_variable = { ROC_wt_hos_m2 < 80 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 2 }
+				add_to_variable = { ROC_wt_mod_factory_output = 0.10 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.10 }
+				add_to_variable = { ROC_wt_mod_consumer_goods = -0.05 }
+				add_to_variable = { ROC_wt_mod_max_eff = 0.05 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { check_variable = { ROC_wt_hos_m1 < 50 } }
+						NOT = { check_variable = { ROC_wt_hos_m2 < 50 } }
+					}
+				}
+				set_variable = { ROC_wt_deputy_tier = 1 }
+				add_to_variable = { ROC_wt_mod_consumer_goods = -0.03 }
+				add_to_variable = { ROC_wt_mod_build_speed = 0.05 }
+			}
+		}
+	}
+	ROC_whampoa_cd_sync_effect = yes
+}
+
+# 每日按钮冷却计时同步（由 on_daily_ROC 调用）
+ROC_whampoa_daily_effect = {
+	if = {
+		limit = {
+			has_country_flag = ROC_wt_btn_1_cd
+			has_variable = ROC_wt_btn_1_cd_days
+			check_variable = { ROC_wt_btn_1_cd_days > 1 }
+		}
+		subtract_from_variable = { ROC_wt_btn_1_cd_days = 1 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ROC_wt_btn_2_cd
+			has_variable = ROC_wt_btn_2_cd_days
+			check_variable = { ROC_wt_btn_2_cd_days > 1 }
+		}
+		subtract_from_variable = { ROC_wt_btn_2_cd_days = 1 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ROC_wt_btn_3_cd
+			has_variable = ROC_wt_btn_3_cd_days
+			check_variable = { ROC_wt_btn_3_cd_days > 1 }
+		}
+		subtract_from_variable = { ROC_wt_btn_3_cd_days = 1 }
+	}
+	ROC_whampoa_cd_sync_effect = yes
+}
+
+# 月度副手巡航脉冲（由 ROC_monthly_check_effect 调用）
+ROC_whampoa_monthly_effect = {
+	ROC_whampoa_tutelage_recalc_effect = yes
+	if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Hu_Zongnan
+				ruling_only = yes
+			}
+			has_idea = ROC_Dai_Jitao_idea
+		}
+		add_to_variable = { ROC_wt_hu_m2 = 2 }
+		add_to_variable = { ROC_wt_hu_m2 = ROC_wt_ra_lv }
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Tangtang
+				ruling_only = yes
+			}
+			has_idea = ROC_Mi_Fu_idea
+		}
+		add_to_variable = { ROC_wt_tang_m1 = 2 }
+		add_to_variable = { ROC_wt_tang_m2 = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_leader = {
+				character = ROC_Herrscher_of_Sentience
+				ruling_only = yes
+			}
+			has_idea = ROC_Sun_Ke_idea
+		}
+		add_to_variable = { ROC_wt_hos_m2 = 3 }
+	}
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 桌面交互按钮：模式 A · 胡宗南
+ROC_wt_btn_hu_1_effect = {
+	add_political_power = -25
+	add_to_variable = { ROC_wt_hu_m1 = 12 }
+	random_army_leader = {
+		add_logistics = 1
+	}
+	set_country_flag = { flag = ROC_wt_btn_1_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_1_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hu_2_effect = {
+	add_command_power = -20
+	add_to_variable = { ROC_wt_hu_m1 = 10 }
+	army_experience = 10
+	set_country_flag = { flag = ROC_wt_btn_2_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_2_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hu_3_effect = {
+	add_political_power = -30
+	add_to_variable = { ROC_wt_hu_m2 = 12 }
+	add_stability = 0.03
+	add_popularity = { ideology = neutrality popularity = 0.05 }
+	set_country_flag = { flag = ROC_wt_btn_3_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_3_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 桌面交互按钮：模式 B · 汤汤
+ROC_wt_btn_tang_1_effect = {
+	add_political_power = -20
+	add_to_variable = { ROC_wt_tang_m1 = 12 }
+	army_experience = 10
+	set_country_flag = { flag = ROC_wt_btn_1_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_1_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_tang_2_effect = {
+	add_political_power = -25
+	add_to_variable = { ROC_wt_tang_m2 = 12 }
+	add_stability = 0.02
+	set_country_flag = { flag = ROC_wt_btn_2_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_2_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_tang_3_effect = {
+	set_country_flag = ROC_wt_tang_awakened
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 桌面交互按钮：模式 C · 识之律者
+ROC_wt_btn_hos_1_effect = {
+	add_political_power = -15
+	add_to_variable = { ROC_wt_hos_m2 = 14 }
+	add_stability = 0.03
+	set_country_flag = { flag = ROC_wt_btn_1_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_1_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hos_2_effect = {
+	add_stability = -0.03
+	add_to_variable = { ROC_wt_hos_m1 = 12 }
+	add_to_variable = {
+		var = ubs_save
+		value = 30
+		tooltip = ubs_save_tt
+	}
+	set_country_flag = { flag = ROC_wt_btn_2_cd value = 1 days = 60 }
+	set_variable = { ROC_wt_btn_2_cd_days = 60 }
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+ROC_wt_btn_hos_3_effect = {
+	add_command_power = -25
+	add_to_variable = { ROC_wt_hos_m1 = 10 }
+	set_country_flag = ROC_wt_hos_awakened
+	ROC_whampoa_tutelage_recalc_effect = yes
+}
+
+# 司岁台：岁片加入后安全入库专属藏品（#3 古旧铸物 / #5 酿山河 / #8 《拳经三问》）
+ROC_sisuitai_grant_collection_3 = {
+	custom_effect_tooltip = ROC_sisuitai_gain_collection_3_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { KMT_collection_using_array = 3 } }
+				NOT = { is_in_array = { KMT_collection_unusing_array = 3 } }
+			}
+			add_to_array = { KMT_collection_unusing_array = 3 }
+			set_variable = { ROC_collection_new_id_var = 3 }
+			ROC_collection_gain_effect = yes
+			ROC_collection_passive_idea_check = yes
+			ROC_collection_active_bonus_calc = yes
+			ROC_collection_coin_bonus_calc = yes
+			ROC_collection_8_bonus_calc = yes
+		}
+	}
+}
+ROC_sisuitai_grant_collection_5 = {
+	custom_effect_tooltip = ROC_sisuitai_gain_collection_5_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { KMT_collection_using_array = 5 } }
+				NOT = { is_in_array = { KMT_collection_unusing_array = 5 } }
+			}
+			add_to_array = { KMT_collection_unusing_array = 5 }
+			set_variable = { ROC_collection_new_id_var = 5 }
+			ROC_collection_gain_effect = yes
+			ROC_collection_passive_idea_check = yes
+			ROC_collection_active_bonus_calc = yes
+			ROC_collection_coin_bonus_calc = yes
+			ROC_collection_8_bonus_calc = yes
+		}
+	}
+}
+ROC_sisuitai_grant_collection_8 = {
+	custom_effect_tooltip = ROC_sisuitai_gain_collection_8_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { KMT_collection_using_array = 8 } }
+				NOT = { is_in_array = { KMT_collection_unusing_array = 8 } }
+			}
+			add_to_array = { KMT_collection_unusing_array = 8 }
+			set_variable = { ROC_collection_new_id_var = 8 }
+			ROC_collection_gain_effect = yes
+			ROC_collection_passive_idea_check = yes
+			ROC_collection_active_bonus_calc = yes
+			ROC_collection_coin_bonus_calc = yes
+			ROC_collection_8_bonus_calc = yes
+		}
+	}
+}
+
+ROC_sisuitai_force_open_ui = {
+	set_country_flag = ROC_collection_window_visible
+	set_variable = { ROC_sisuitai_tab_var = 1 }
+	set_variable = { ROC_collection_tab_var = 2 }
+	set_variable = { ROC_coin_tab_var = 2 }
+	set_variable = { ROC_shop_tab_var = 2 }
+	scoped_sound_effect = "ROC_collection_change_ui"
+}
+
+# 将附庸国 FROM 的子意识形态转化为与宗主国 ROOT 相同
+ROC_sync_FROM_subideology_to_ROOT_effect = {
+	custom_effect_tooltip = ROC_sync_FROM_subideology_to_ROOT_tt
+	hidden_effect = {
+		if = {
+			limit = { NOT = { FROM = { has_government = ROOT } } }
+			if = { limit = { ROOT = { has_government = communism } } FROM = { set_politics = { ruling_party = communism } } }
+			else_if = { limit = { ROOT = { has_government = democratic } } FROM = { set_politics = { ruling_party = democratic } } }
+			else_if = { limit = { ROOT = { has_government = neutrality } } FROM = { set_politics = { ruling_party = neutrality } } }
+			else_if = { limit = { ROOT = { has_government = fascism } } FROM = { set_politics = { ruling_party = fascism } } }
+		}
+		if = { limit = { ROOT = { has_country_leader_ideology = Three_Principles_of_the_People_c } } FROM = { set_country_leader_ideology = Three_Principles_of_the_People_c } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Monarchical_socialism } } FROM = { set_country_leader_ideology = Monarchical_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Military_socialism } } FROM = { set_country_leader_ideology = Military_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Radical_socialism } } FROM = { set_country_leader_ideology = Radical_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = marxism } } FROM = { set_country_leader_ideology = marxism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = leninism } } FROM = { set_country_leader_ideology = leninism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = stalinism } } FROM = { set_country_leader_ideology = stalinism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = anti_revisionism } } FROM = { set_country_leader_ideology = anti_revisionism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = anarchist_communism } } FROM = { set_country_leader_ideology = anarchist_communism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = syndicalism } } FROM = { set_country_leader_ideology = syndicalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Madokaism } } FROM = { set_country_leader_ideology = Madokaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Spartacus } } FROM = { set_country_leader_ideology = Spartacus } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Farsighted_socialism } } FROM = { set_country_leader_ideology = Farsighted_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = quantum_Farsighted_socialism } } FROM = { set_country_leader_ideology = quantum_Farsighted_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Left_wing_nationalism } } FROM = { set_country_leader_ideology = Left_wing_nationalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = warm_syndicalism_group } } FROM = { set_country_leader_ideology = warm_syndicalism_group } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = YukiNoaism } } FROM = { set_country_leader_ideology = YukiNoaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_communism_subtype } } FROM = { set_country_leader_ideology = astraea_route_communism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = popular_front_subtype } } FROM = { set_country_leader_ideology = popular_front_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Jacobins } } FROM = { set_country_leader_ideology = Jacobins } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Utopian_Socialism } } FROM = { set_country_leader_ideology = Utopian_Socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Maoist_subideology } } FROM = { set_country_leader_ideology = Maoist_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Istinaist } } FROM = { set_country_leader_ideology = Istinaist } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Market_socialism } } FROM = { set_country_leader_ideology = Market_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Socialist_Technocracy } } FROM = { set_country_leader_ideology = Socialist_Technocracy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Security_socialism } } FROM = { set_country_leader_ideology = Security_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Agrarian_socialism } } FROM = { set_country_leader_ideology = Agrarian_socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype_c } } FROM = { set_country_leader_ideology = interim_government_subtype_c } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = AI_Centralizationist_C } } FROM = { set_country_leader_ideology = AI_Centralizationist_C } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Hakureiism } } FROM = { set_country_leader_ideology = Hakureiism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = communism_subtype } } FROM = { set_country_leader_ideology = communism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Fairytale_Communism_subideology } } FROM = { set_country_leader_ideology = Fairytale_Communism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Mumian_Communism_subideology } } FROM = { set_country_leader_ideology = Mumian_Communism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Liberation_Theology_subideology } } FROM = { set_country_leader_ideology = Liberation_Theology_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Enrages } } FROM = { set_country_leader_ideology = Enrages } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Storer } } FROM = { set_country_leader_ideology = Storer } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Trailblaze_Leftism } } FROM = { set_country_leader_ideology = Trailblaze_Leftism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Three_Principles_of_the_People_d } } FROM = { set_country_leader_ideology = Three_Principles_of_the_People_d } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = socialism } } FROM = { set_country_leader_ideology = socialism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = liberalism } } FROM = { set_country_leader_ideology = liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = conservatism } } FROM = { set_country_leader_ideology = conservatism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = KVO_EIG } } FROM = { set_country_leader_ideology = KVO_EIG } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = KVO_government } } FROM = { set_country_leader_ideology = KVO_government } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = RED_market_liberalism } } FROM = { set_country_leader_ideology = RED_market_liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = ABY_committee } } FROM = { set_country_leader_ideology = ABY_committee } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = SCH_schale } } FROM = { set_country_leader_ideology = SCH_schale } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = aristocratic_conservatism_subtype } } FROM = { set_country_leader_ideology = aristocratic_conservatism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_democratic_subtype } } FROM = { set_country_leader_ideology = astraea_route_democratic_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = welfare_enterprise_government_subtype } } FROM = { set_country_leader_ideology = welfare_enterprise_government_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = one_party_system_subtype } } FROM = { set_country_leader_ideology = one_party_system_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Merchant_Republic } } FROM = { set_country_leader_ideology = Merchant_Republic } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Technical_Officer_Republic } } FROM = { set_country_leader_ideology = Technical_Officer_Republic } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = kemalism_subtype } } FROM = { set_country_leader_ideology = kemalism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Guided_democracy } } FROM = { set_country_leader_ideology = Guided_democracy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Trade_liberalism } } FROM = { set_country_leader_ideology = Trade_liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Four_Principles_of_the_People_d } } FROM = { set_country_leader_ideology = Four_Principles_of_the_People_d } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Progressive_Confucianism } } FROM = { set_country_leader_ideology = Progressive_Confucianism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Christian_Democracy } } FROM = { set_country_leader_ideology = Christian_Democracy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Chinese_federalism } } FROM = { set_country_leader_ideology = Chinese_federalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype_d } } FROM = { set_country_leader_ideology = interim_government_subtype_d } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Gensokyo_liberalism } } FROM = { set_country_leader_ideology = Gensokyo_liberalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ongfalos_Harmonism } } FROM = { set_country_leader_ideology = Ongfalos_Harmonism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Viennese_Humanism } } FROM = { set_country_leader_ideology = Viennese_Humanism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Three_Principles_of_the_People_n } } FROM = { set_country_leader_ideology = Three_Principles_of_the_People_n } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Chiang_Kai_shekism_subtype } } FROM = { set_country_leader_ideology = Chiang_Kai_shekism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Absolute_monarchy } } FROM = { set_country_leader_ideology = Absolute_monarchy } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = oligarchism } } FROM = { set_country_leader_ideology = oligarchism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = bandit_state_subideology } } FROM = { set_country_leader_ideology = bandit_state_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = despotism } } FROM = { set_country_leader_ideology = despotism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = anarchism } } FROM = { set_country_leader_ideology = anarchism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = moderatism } } FROM = { set_country_leader_ideology = moderatism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = centrism } } FROM = { set_country_leader_ideology = centrism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = military_politicism } } FROM = { set_country_leader_ideology = military_politicism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = taoism_ideology } } FROM = { set_country_leader_ideology = taoism_ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = buddhism_ideology } } FROM = { set_country_leader_ideology = buddhism_ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Gestalt } } FROM = { set_country_leader_ideology = Gestalt } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Nightingale_Heart_Ideology } } FROM = { set_country_leader_ideology = Nightingale_Heart_Ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Nightingale2_Heart_Ideology } } FROM = { set_country_leader_ideology = Nightingale2_Heart_Ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = mikado_conference } } FROM = { set_country_leader_ideology = mikado_conference } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = enlightened_despotism } } FROM = { set_country_leader_ideology = enlightened_despotism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = TRY_oligarch } } FROM = { set_country_leader_ideology = TRY_oligarch } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = GEH_despotism } } FROM = { set_country_leader_ideology = GEH_despotism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = MIL_auto_technocrats } } FROM = { set_country_leader_ideology = MIL_auto_technocrats } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = RED_cherinoism } } FROM = { set_country_leader_ideology = RED_cherinoism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = AKK_society_union } } FROM = { set_country_leader_ideology = AKK_society_union } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = TRY_mikaism } } FROM = { set_country_leader_ideology = TRY_mikaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = religious_technocracy_subtype } } FROM = { set_country_leader_ideology = religious_technocracy_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_neutrality_subtype } } FROM = { set_country_leader_ideology = astraea_route_neutrality_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype } } FROM = { set_country_leader_ideology = interim_government_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = left_wing_corporatism_subtype } } FROM = { set_country_leader_ideology = left_wing_corporatism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Conservative_Confucianism } } FROM = { set_country_leader_ideology = Conservative_Confucianism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Four_Principles_of_the_People_n } } FROM = { set_country_leader_ideology = Four_Principles_of_the_People_n } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Theocracy_subideology } } FROM = { set_country_leader_ideology = Theocracy_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = autocracy_subideology } } FROM = { set_country_leader_ideology = autocracy_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Swarm_subideology } } FROM = { set_country_leader_ideology = Swarm_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ameliorated_nazism } } FROM = { set_country_leader_ideology = Ameliorated_nazism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Sunflower_annihilationism_subideology } } FROM = { set_country_leader_ideology = Sunflower_annihilationism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Sanaeism_subideology } } FROM = { set_country_leader_ideology = Sanaeism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Homura_subideology } } FROM = { set_country_leader_ideology = Homura_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ainzism_Utopian_subideology } } FROM = { set_country_leader_ideology = Ainzism_Utopian_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = techno_authoritarianism_subtype } } FROM = { set_country_leader_ideology = techno_authoritarianism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Predatory_Anarchism_subtype } } FROM = { set_country_leader_ideology = Predatory_Anarchism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Reactionary_Confucianism } } FROM = { set_country_leader_ideology = Reactionary_Confucianism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Right_populism_subideology } } FROM = { set_country_leader_ideology = Right_populism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = militarism_subtype } } FROM = { set_country_leader_ideology = militarism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = digital_fascism } } FROM = { set_country_leader_ideology = digital_fascism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = nazism } } FROM = { set_country_leader_ideology = nazism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = gen_nazism } } FROM = { set_country_leader_ideology = gen_nazism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = fascism_ideology } } FROM = { set_country_leader_ideology = fascism_ideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = falangism } } FROM = { set_country_leader_ideology = falangism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = rexism } } FROM = { set_country_leader_ideology = rexism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = lisha_xierism } } FROM = { set_country_leader_ideology = lisha_xierism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Strasserism } } FROM = { set_country_leader_ideology = Strasserism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = occultism } } FROM = { set_country_leader_ideology = occultism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = kazumaism } } FROM = { set_country_leader_ideology = kazumaism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astraea_route_fascism_subtype } } FROM = { set_country_leader_ideology = astraea_route_fascism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = astral_autocracy_subtype } } FROM = { set_country_leader_ideology = astral_autocracy_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = lovecraftianism_subtype } } FROM = { set_country_leader_ideology = lovecraftianism_subtype } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Lunar_purification_subideology } } FROM = { set_country_leader_ideology = Lunar_purification_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Crimson_Idealism } } FROM = { set_country_leader_ideology = Crimson_Idealism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Ainzism_subideology } } FROM = { set_country_leader_ideology = Ainzism_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = AI_Centralizationist } } FROM = { set_country_leader_ideology = AI_Centralizationist } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = ABY_color_subideology } } FROM = { set_country_leader_ideology = ABY_color_subideology } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = interim_government_subtype_f } } FROM = { set_country_leader_ideology = interim_government_subtype_f } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Chaos_Emissary } } FROM = { set_country_leader_ideology = Chaos_Emissary } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = wolfpack_survivalism } } FROM = { set_country_leader_ideology = wolfpack_survivalism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = yuki_idealism } } FROM = { set_country_leader_ideology = yuki_idealism } }
+		else_if = { limit = { ROOT = { has_country_leader_ideology = Annihilationism_subideology } } FROM = { set_country_leader_ideology = Annihilationism_subideology } }
+	}
 }

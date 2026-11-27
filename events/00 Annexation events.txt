@@ -6162,7 +6162,18 @@ country_event = {
         }
         release_targeted_tag = yes
         ELA = {
-            set_cosmetic_tag = Britain
+            if = {
+                limit = {
+                    ROOT = {
+                        tag = SOV
+                        has_government = communism
+                    }
+                }
+                set_cosmetic_tag = ENG_SOV
+            }
+            else = {
+                set_cosmetic_tag = Britain
+            }
 			set_party_name = {
 				ideology = communism
 				long_name = BRT_communism_party
@@ -6245,11 +6256,49 @@ country_event = {
             ENG = { is_ally_of_ROOT = no }
             ELA = { is_ally_of_ROOT = no }
         }
-        ENG_state_country_core = yes
         set_temp_variable = {
             tag_to_release = ELA
         }
+        hidden_effect = {
+            if = {
+                limit = {
+                    NOT = { country_exists = ELA }
+                }
+                remove_targeted_core = yes
+            }
+        }
+        ENG_state_country_core = yes
         release_targeted_tag = yes
+        hidden_effect = {
+            if = {
+                limit = {
+                    ELA = { is_subject_of = ROOT }
+                }
+                ELA = {
+                    drop_cosmetic_tag = yes
+                    set_party_name = {
+                        ideology = communism
+                        long_name = ELA_communism_party_long
+                        name = ELA_communism_party
+                    }
+                    set_party_name = {
+                        ideology = democratic
+                        long_name = ELA_democratic_party_long
+                        name = ELA_democratic_party
+                    }
+                    set_party_name = {
+                        ideology = neutrality
+                        long_name = ELA_neutrality_party_long
+                        name = ELA_neutrality_party
+                    }
+                    set_party_name = {
+                        ideology = fascism
+                        long_name = ELA_fascism_party
+                        name = ELA_fascism_party
+                    }
+                }
+            }
+        }
         set_temp_variable = {
             tag_to_release = SCO
         }
@@ -6572,6 +6621,36 @@ country_event = {
             add_core_of = ELA
         }
         release_targeted_tag = yes
+        hidden_effect = {
+            if = {
+                limit = {
+                    ELA = { is_subject_of = ROOT }
+                }
+                ELA = {
+                    drop_cosmetic_tag = yes
+                    set_party_name = {
+                        ideology = communism
+                        long_name = ELA_communism_party_long
+                        name = ELA_communism_party
+                    }
+                    set_party_name = {
+                        ideology = democratic
+                        long_name = ELA_democratic_party_long
+                        name = ELA_democratic_party
+                    }
+                    set_party_name = {
+                        ideology = neutrality
+                        long_name = ELA_neutrality_party_long
+                        name = ELA_neutrality_party
+                    }
+                    set_party_name = {
+                        ideology = fascism
+                        long_name = ELA_fascism_party
+                        name = ELA_fascism_party
+                    }
+                }
+            }
+        }
         annexation_event_option_effect = yes
     }
     option = {
@@ -10366,7 +10445,12 @@ country_event = {
         remove_targeted_core = yes
         every_state = {
             limit = {
-                has_state_flag = is_GEO_state_area
+                OR = {
+                    has_state_flag = is_GEO_state_area
+                    state = 231
+                    state = 585
+                    state = 1080
+                }
             }
             add_core_of = var:tag_to_release
         }
@@ -10884,7 +10968,7 @@ country_event = {
         every_state = {
             limit = {
                 or = {
-                    state = 561
+                    state = 1402
                     state = 657
                     state = 560
                     state = 409
@@ -11031,6 +11115,7 @@ country_event = {
                     state = 585
                     state = 187
                     state = 183
+                    state = 1000
                 }
             }
             add_core_of = TUR
@@ -11096,6 +11181,8 @@ country_event = {
                 or = {
                     state = 350
                     state = 352
+                    state = 417
+                    state = 819
                 }
             }
             add_core_of = KUR
@@ -11914,8 +12001,7 @@ country_event = {
                 }
             }
             AFG = {
-                remove_ideas = AFG_Matsuda_Arisa_head_of_government
-                remove_ideas = AFG_Shijou_Takane_head_of_government
+                AFG_clr_head_of_government = yes
                 add_country_leader_role = {
 		        	character = AFG_Komiya_Kaho
 		        	promote_leader = yes
@@ -13994,11 +14080,13 @@ country_event = {
             base = 10000
         }
         set_country_flag = CAN_CONQ
-        CAN = {
-            every_core_state = {
-                limit = { is_on_continent = north_america }
-                add_claim_by_ROOT_if_has_no_core = yes
+        every_state = {
+            limit = {
+                is_core_of = CAN
+                is_on_continent = north_america
             }
+            add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14051,11 +14139,13 @@ country_event = {
             base = 10000
         }
         set_country_flag = ASK_CONQ
-        ASK = {
-            every_core_state = {
-                limit = { is_on_continent = north_america }
-                add_claim_by_ROOT_if_has_no_core = yes
+        every_state = {
+            limit = {
+                is_core_of = ASK
+                is_on_continent = north_america
             }
+            add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14068,11 +14158,10 @@ country_event = {
             base = 10000
         }
         set_country_flag = ASK_CONQ
-        ASK = {
-            every_core_state = {
-                add_claim_by_ROOT_if_has_no_core = yes
-                enable_state_integration_50_compliance = yes
-            }
+        every_state = {
+            limit = { is_core_of = ASK }
+            add_claim_by_ROOT_if_has_no_core = yes
+            enable_state_integration_50_compliance = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14169,6 +14258,7 @@ country_event = {
         every_state = {
             limit = { region = 186 }
             add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14226,11 +14316,13 @@ country_event = {
             base = 10000
         }
         set_country_flag = NGD_CONQ
-        NGD = {
-            every_core_state = {
-                limit = { is_on_continent = north_america }
-                add_claim_by_ROOT_if_has_no_core = yes
+        every_state = {
+            limit = {
+                is_core_of = NGD
+                is_on_continent = north_america
             }
+            add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14321,11 +14413,13 @@ country_event = {
             base = 100
         }
         set_country_flag = NFA_CONQ
-        NFA = {
-            every_core_state = {
-                limit = { is_on_continent = north_america }
-                add_claim_by_ROOT_if_has_no_core = yes
+        every_state = {
+            limit = {
+                is_core_of = NFA
+                is_on_continent = north_america
             }
+            add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14383,11 +14477,13 @@ country_event = {
             base = 10000
         }
         set_country_flag = USA_CONQ
-        USA = {
-            every_core_state = {
-                limit = { is_on_continent = north_america }
-                add_claim_by_ROOT_if_has_no_core = yes
+        every_state = {
+            limit = {
+                is_core_of = USA
+                is_on_continent = north_america
             }
+            add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }
@@ -14463,11 +14559,13 @@ country_event = {
             base = 10000
         }
         set_country_flag = FRG_CONQ
-        FRG = {
-            every_core_state = {
-                limit = { is_on_continent = north_america }
-                add_claim_by_ROOT_if_has_no_core = yes
+        every_state = {
+            limit = {
+                is_core_of = FRG
+                is_on_continent = north_america
             }
+            add_claim_by_ROOT_if_has_no_core = yes
+            NA_enable_state_integration_by_language = yes
         }
         annexation_event_option_effect = yes
     }

@@ -260,6 +260,16 @@ scripted_gui = {
 		}
 		properties = {
 		}
+		triggers = {
+			ROC_policy_alert_badge_visible = {
+				OR = {
+					is_in_array = { ROC_policy_select_card_Military_array_true = 0 }
+					is_in_array = { ROC_policy_select_card_Economy_array_true = 0 }
+					is_in_array = { ROC_policy_select_card_Diplomacy_array_true = 0 }
+					is_in_array = { ROC_policy_select_card_Generic_array_true = 0 }
+				}
+			}
+		}
 		effects = {
 			ROC_policy_button_click = {
 				if = {
@@ -268,8 +278,12 @@ scripted_gui = {
 					}
 					set_country_flag = ROC_policy_window_visible
 					ROC_policy_window_button_open_effect = yes
+					scoped_sound_effect = "menu_open_window"
 				}
-				else = { clr_country_flag = ROC_policy_window_visible }
+				else = {
+					clr_country_flag = ROC_policy_window_visible
+					scoped_sound_effect = "click_close"
+				}
 				if = {
 					limit = {
 						not = { has_country_flag = ROC_policy_button_arrows_alert_unvisible }
@@ -290,6 +304,37 @@ scripted_gui = {
 		properties = {
 		}
 		effects = {
+		}
+	}
+	ROC_policy_unlock_toast_window = {
+		context_type = player_context
+		window_name = "ROC_policy_unlock_toast_window"
+		visible = {
+			tag = ROC
+			is_ai = no
+			check_variable = { ROC_policy_toast_current > 0 }
+		}
+		properties = {
+			ROC_policy_toast_card_icon = {
+				frame = ROC_policy_toast_frame
+			}
+		}
+		effects = {
+			ROC_policy_toast_open_btn_click = {
+				if = {
+					limit = { NOT = { has_country_flag = ROC_policy_window_visible } }
+					set_country_flag = ROC_policy_window_visible
+					ROC_policy_window_button_open_effect = yes
+				}
+				clear_array = ROC_policy_toast_queue
+				clear_variable = ROC_policy_toast_current
+				clear_variable = ROC_policy_toast_frame
+				clear_variable = ROC_policy_toast_timer
+				clear_variable = ROC_policy_toast_remaining
+			}
+			ROC_policy_toast_close_btn_click = {
+				ROC_policy_toast_next_or_close = yes
+			}
 		}
 	}
 }
@@ -485,6 +530,7 @@ scripted_gui = {
 				scoped_sound_effect = "ROC_collection_change_ui"
 			}
 			ROC_collection_tab_click = {
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 				set_variable = { ROC_sisuitai_tab_var = 2 }
 				set_variable = { ROC_collection_tab_var = 1 }
 				set_variable = { ROC_coin_tab_var = 2 }
@@ -493,6 +539,7 @@ scripted_gui = {
 				scoped_sound_effect = "ROC_collection_change_ui"
 			}
 			ROC_coin_tab_click = {
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 				set_variable = { ROC_sisuitai_tab_var = 2 }
 				set_variable = { ROC_collection_tab_var = 2 }
 				set_variable = { ROC_coin_tab_var = 1 }
@@ -500,6 +547,7 @@ scripted_gui = {
 				scoped_sound_effect = "ROC_collection_change_ui"
 			}
 			ROC_shop_tab_click = {
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 				set_variable = { ROC_sisuitai_tab_var = 2 }
 				set_variable = { ROC_collection_tab_var = 2 }
 				set_variable = { ROC_coin_tab_var = 2 }
@@ -508,6 +556,7 @@ scripted_gui = {
 			}
 			close_button_click = {
 				clr_country_flag = ROC_collection_window_visible
+				clear_variable = ROC_sisuitai_just_unlocked_batch
 			}
 		}
 	}
@@ -1771,9 +1820,14 @@ scripted_gui = {
 		context_type = player_context
 		parent_window_name = ROC_collection_container
 		window_name = "ROC_sisuitai_window"
-		visible = {	
+		visible = {
 			tag = ROC
 			check_variable = { ROC_sisuitai_tab_var = 1 }
+		}
+		properties = {
+			ROC_sisuitai_spoiler_button = {
+				frame = ROC_sisuitai_spoiler_btn_frame
+			}
 		}
 		triggers = {
 			unlock_bg_visible = {
@@ -1782,6 +1836,195 @@ scripted_gui = {
 			unlock_title_visible = {
 				not = { has_completed_focus = ROC_focus_rebuild_sisuitai }
 			}
+			ROC_sisuitai_spoiler_button_visible = {
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			ROC_sisuitai_guide_bar_bg_visible = {
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			ROC_sisuitai_guide_bar_text_visible = {
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			suipian_unlock_fx_1_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 503 }
+			}
+			suipian_unlock_fx_2_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 503 }
+			}
+			suipian_unlock_fx_3_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 502 }
+			}
+			suipian_unlock_fx_6_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 504 }
+			}
+			suipian_unlock_fx_9_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 501 }
+			}
+			suipian_unlock_fx_11_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 501 }
+			}
+			suipian_unlock_fx_12_visible = {
+				check_variable = { ROC_sisuitai_just_unlocked_batch = 504 }
+			}
+			# 7位已有立绘岁片：未招募显剪影，招募后显彩色
+			suipian_picture_1_visible = {
+				has_country_flag = ROC_sisuitai_recruited_chongyue
+			}
+			suipian_picture_1_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_chongyue }
+			}
+			suipian_picture_2_visible = {
+				has_country_flag = ROC_sisuitai_recruited_wang
+			}
+			suipian_picture_2_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_wang }
+			}
+			suipian_picture_3_visible = {
+				has_country_flag = ROC_sisuitai_recruited_ling
+			}
+			suipian_picture_3_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_ling }
+			}
+			suipian_picture_6_visible = {
+				has_country_flag = ROC_sisuitai_recruited_shu
+			}
+			suipian_picture_6_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_shu }
+			}
+			suipian_picture_9_visible = {
+				has_country_flag = ROC_sisuitai_recruited_nian
+			}
+			suipian_picture_9_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_nian }
+			}
+			suipian_picture_11_visible = {
+				has_country_flag = ROC_sisuitai_recruited_xi
+			}
+			suipian_picture_11_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_xi }
+			}
+			suipian_picture_12_visible = {
+				has_country_flag = ROC_sisuitai_recruited_yu
+			}
+			suipian_picture_12_shadow_visible = {
+				NOT = { has_country_flag = ROC_sisuitai_recruited_yu }
+			}
+			# 5个未知问号格：隐藏顶层防叠绘
+			suipian_picture_4_visible = { always = no }
+			suipian_picture_5_visible = { always = no }
+			suipian_picture_7_visible = { always = no }
+			suipian_picture_8_visible = { always = no }
+			suipian_picture_10_visible = { always = no }
+		}
+		effects = {
+			ROC_sisuitai_spoiler_button_click = {
+				if = {
+					limit = { has_country_flag = ROC_sisuitai_spoiler_on }
+					clr_country_flag = ROC_sisuitai_spoiler_on
+					set_variable = { ROC_sisuitai_spoiler_btn_frame = 1 }
+				}
+				else = {
+					set_country_flag = ROC_sisuitai_spoiler_on
+					set_variable = { ROC_sisuitai_spoiler_btn_frame = 2 }
+				}
+			}
+		}
+	}
+
+	#司岁台：省份详情面板右上角视察按钮
+	ROC_sisuitai_state_inspect_window = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "ROC_sisuitai_state_inspect_window"
+		visible = {
+			ROOT = {
+				tag = ROC
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+			}
+			THIS = {
+				is_controlled_by = ROOT
+				is_core_of = ROOT
+			}
+		}
+		properties = {
+			ROC_sisuitai_inspect_button = {
+				frame = ROC_sisuitai_inspect_btn_frame
+			}
+		}
+		triggers = {
+			ROC_sisuitai_inspect_button_click_enabled = {
+				THIS = {
+					NOT = { has_state_flag = ROC_sisuitai_inspected_state }
+				}
+				ROOT = {
+					NOT = { check_variable = { ubs_save < 10 } }
+				}
+			}
+			ROC_sisuitai_key_state_badge_visible = {
+				ROOT = { has_country_flag = ROC_sisuitai_spoiler_on }
+				THIS = {
+					NOT = { has_state_flag = ROC_sisuitai_inspected_state }
+					OR = {
+						state = 326
+						state = 858
+						state = 596
+						state = 605
+					}
+				}
+			}
+		}
+		effects = {
+			ROC_sisuitai_inspect_button_click = {
+				ROOT = {
+					subtract_from_variable = { ubs_save = 10 }
+					set_country_flag = ROC_sisuitai_inspect_arrow_dismissed
+				}
+				THIS = {
+					set_state_flag = ROC_sisuitai_inspected_state
+					set_variable = { ROC_sisuitai_inspect_btn_frame = 2 }
+					save_event_target_as = ROC_sisuitai_inspected_state
+				}
+				if = {
+					limit = { state = 326 }
+					ROOT = { country_event = { id = roc.501 } }
+				}
+				else_if = {
+					limit = { state = 858 }
+					ROOT = { country_event = { id = roc.502 } }
+				}
+				else_if = {
+					limit = { state = 596 }
+					ROOT = { country_event = { id = roc.503 } }
+				}
+				else_if = {
+					limit = { state = 605 }
+					ROOT = { country_event = { id = roc.504 } }
+				}
+				else = {
+					ROOT = { country_event = { id = roc.505 } }
+				}
+			}
+		}
+	}
+	ROC_sisuitai_state_inspect_arrows_alert = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "ROC_sisuitai_state_inspect_arrows_alert"
+		visible = {
+			ROOT = {
+				tag = ROC
+				has_completed_focus = ROC_focus_rebuild_sisuitai
+				NOT = { has_country_flag = ROC_sisuitai_inspect_arrow_dismissed }
+			}
+			THIS = {
+				is_controlled_by = ROOT
+				is_core_of = ROOT
+				NOT = { has_state_flag = ROC_sisuitai_inspected_state }
+			}
+		}
+		properties = {
+		}
+		effects = {
 		}
 	}
 }
@@ -1832,6 +2075,14 @@ scripted_gui = {
 			tag = ROC
 			not = { has_country_flag = ROC_time_window_unvisible }
 			has_country_flag = use_era_name_ROC
+			OR = {
+				NOT = { has_variable = ROC_reunit_years }
+				AND = {
+					has_country_leader = { character = ROC_Chen ruling_only = yes }
+					has_variable = ROC_chixiao_era
+					check_variable = { ROC_chixiao_era > 0 }
+				}
+			}
 		}
 		effects = {
 			close_button_click = {
@@ -1845,6 +2096,14 @@ scripted_gui = {
 			tag = ROC
 			has_country_flag = ROC_time_window_unvisible
 			has_country_flag = use_era_name_ROC
+			OR = {
+				NOT = { has_variable = ROC_reunit_years }
+				AND = {
+					has_country_leader = { character = ROC_Chen ruling_only = yes }
+					has_variable = ROC_chixiao_era
+					check_variable = { ROC_chixiao_era > 0 }
+				}
+			}
 		}
 		effects = {
 			open_button_click = {
@@ -1860,7 +2119,7 @@ scripted_gui = {
 		window_name = "ROC_social_reform_open_btn_window"
 		visible = {
 			tag = ROC
-			has_global_flag = ROC_jiangjingguo_right
+			has_country_flag = ROC_social_reform_open_btn_window_visible
 		}
 		effects = {
 			ROC_social_reform_open_btn_click = {
@@ -1870,13 +2129,33 @@ scripted_gui = {
 					}
 					ROC_social_reform_init_effect = yes
 					set_country_flag = ROC_social_reform_window_visible
-					scoped_sound_effect = "click_default"
+					scoped_sound_effect = "翻书"
 				}
 				else = {
 					clr_country_flag = ROC_social_reform_window_visible
 					scoped_sound_effect = "click_close"
 				}
+				if = {
+					limit = {
+						not = { has_country_flag = ROC_social_reform_open_btn_arrows_alert_unvisible }
+					}
+					set_country_flag = ROC_social_reform_open_btn_arrows_alert_unvisible
+				}
 			}
+		}
+	}
+	ROC_social_reform_open_btn_arrows_alert = {
+		context_type = player_context
+		parent_window_token = politics_tab
+		window_name = "ROC_social_reform_open_btn_arrows_alert"
+		visible = {
+			tag = ROC
+			has_country_flag = ROC_social_reform_open_btn_window_visible
+			not = { has_country_flag = ROC_social_reform_open_btn_arrows_alert_unvisible }
+		}
+		properties = {
+		}
+		effects = {
 		}
 	}
 
@@ -2019,5 +2298,604 @@ scripted_gui = {
 			}
 		}
 	}
+
+	# 胡宗南战败计数与下次阵亡概率计数器（政治栏顶栏）
+	ROC_hu_defeat_counter_window = {
+		context_type = player_context
+		parent_window_token = politics_tab
+		window_name = "ROC_hu_defeat_counter_window"
+		visible = {
+			tag = ROC
+			has_country_leader = {
+				character = ROC_Hu_Zongnan
+				ruling_only = yes
+			}
+			NOT = { has_completed_focus = ROC_focus_supreme_commander_of_three_principles }
+			NOT = { has_country_flag = ROC_hu_kia_event_fired }
+		}
+	}
+
+	# 黄埔线：训政中枢办公桌入口按钮
+	ROC_whampoa_open_btn_window = {
+		context_type = player_context
+		parent_window_token = politics_tab
+		window_name = "ROC_whampoa_open_btn_window"
+		visible = {
+			tag = ROC
+			has_global_flag = ROC_Whampoa_party_win
+			has_country_flag = ROC_whampoa_open_btn_window_visible
+		}
+		effects = {
+			ROC_whampoa_open_btn_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = ROC_whampoa_window_visible }
+					}
+					ROC_whampoa_tutelage_init_effect = yes
+					set_country_flag = ROC_whampoa_window_visible
+					scoped_sound_effect = "翻书"
+				}
+				else = {
+					clr_country_flag = ROC_whampoa_window_visible
+					scoped_sound_effect = "click_close"
+				}
+				if = {
+					limit = {
+						NOT = { has_country_flag = ROC_whampoa_open_btn_arrows_alert_unvisible }
+					}
+					set_country_flag = ROC_whampoa_open_btn_arrows_alert_unvisible
+				}
+			}
+		}
+	}
+	ROC_whampoa_open_btn_arrows_alert = {
+		context_type = player_context
+		parent_window_token = politics_tab
+		window_name = "ROC_whampoa_open_btn_arrows_alert"
+		visible = {
+			tag = ROC
+			has_global_flag = ROC_Whampoa_party_win
+			has_country_flag = ROC_whampoa_open_btn_window_visible
+			NOT = { has_country_flag = ROC_whampoa_open_btn_arrows_alert_unvisible }
+		}
+		properties = {
+		}
+		effects = {
+		}
+	}
+
+	# 黄埔线：训政中枢办公桌主窗（单一面板动态切换，进度条/按钮按叶子显隐，避免嵌套 container *_visible 失效与 parent_window_name 缺失）
+	ROC_whampoa_window = {
+		context_type = player_context
+		window_name = "ROC_whampoa_window"
+		visible = {
+			tag = ROC
+			has_global_flag = ROC_Whampoa_party_win
+			has_country_flag = ROC_whampoa_window_visible
+		}
+		properties = {
+			wt_titlebar_bg = {
+				image = "[Get_ROC_wt_titlebar_gfx]"
+			}
+			wt_stage_bg = {
+				image = "[Get_ROC_wt_stage_gfx]"
+			}
+			wt_leader_portrait = {
+				image = "[Get_ROC_wt_leader_portrait_gfx]"
+			}
+			wt_leader_ring = {
+				image = "[Get_ROC_wt_ring_gfx]"
+			}
+			wt_leader_ribbon = {
+				image = "[Get_ROC_wt_ribbon_gfx]"
+			}
+			wt_center_img = {
+				image = "[Get_ROC_wt_center_gfx]"
+			}
+			wt_deputy_portrait = {
+				image = "[Get_ROC_wt_deputy_portrait_gfx]"
+			}
+			hu_m1_bar = {
+				frame = ROC_wt_hu_m1
+			}
+			hu_m2_bar = {
+				frame = ROC_wt_hu_m2
+			}
+			tang_m1_bar = {
+				frame = ROC_wt_tang_m1
+			}
+			tang_m2_bar = {
+				frame = ROC_wt_tang_m2
+			}
+			hos_m1_bar = {
+				frame = ROC_wt_hos_m1
+			}
+			hos_m2_bar = {
+				frame = ROC_wt_hos_m2
+			}
+			wt_btn_1_cd_bar = {
+				frame = ROC_wt_btn_1_cd_pct
+			}
+			wt_btn_2_cd_bar = {
+				frame = ROC_wt_btn_2_cd_pct
+			}
+			wt_btn_3_cd_bar = {
+				frame = ROC_wt_btn_3_cd_pct
+			}
+			ms_slot_1 = {
+				frame = ROC_wt_ms_slot_1_frame
+			}
+			ms_slot_2 = {
+				frame = ROC_wt_ms_slot_2_frame
+			}
+			ms_slot_3 = {
+				frame = ROC_wt_ms_slot_3_frame
+			}
+			ms_slot_4 = {
+				frame = ROC_wt_ms_slot_4_frame
+			}
+			ms_slot_5 = {
+				frame = ROC_wt_ms_slot_5_frame
+			}
+			ra_slot_1 = {
+				frame = ROC_wt_ra_slot_1_frame
+			}
+			ra_slot_2 = {
+				frame = ROC_wt_ra_slot_2_frame
+			}
+			ra_slot_3 = {
+				frame = ROC_wt_ra_slot_3_frame
+			}
+			ra_slot_4 = {
+				frame = ROC_wt_ra_slot_4_frame
+			}
+			ra_slot_5 = {
+				frame = ROC_wt_ra_slot_5_frame
+			}
+		}
+		triggers = {
+			# 三模式进度条与按钮均作为叶子元素直接判定显隐（互斥划分；避免 scripted_guis 中 NOR 误判，改用并列 NOT）
+			hu_m1_bar_visible = {
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+			hu_m2_bar_visible = {
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+			hu_btn_1_visible = {
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+			hu_btn_2_visible = {
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+			hu_btn_3_visible = {
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+
+			wt_btn_1_cd_bg_visible = {
+				has_country_flag = ROC_wt_btn_1_cd
+			}
+			wt_btn_1_cd_bar_visible = {
+				has_country_flag = ROC_wt_btn_1_cd
+			}
+			wt_btn_2_cd_bg_visible = {
+				has_country_flag = ROC_wt_btn_2_cd
+			}
+			wt_btn_2_cd_bar_visible = {
+				has_country_flag = ROC_wt_btn_2_cd
+			}
+			wt_btn_3_cd_bg_visible = {
+				has_country_flag = ROC_wt_btn_3_cd
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+			wt_btn_3_cd_bar_visible = {
+				has_country_flag = ROC_wt_btn_3_cd
+				NOT = { has_country_leader = { character = ROC_Tangtang ruling_only = yes } }
+				NOT = { has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes } }
+			}
+
+			tang_m1_bar_visible = {
+				has_country_leader = { character = ROC_Tangtang ruling_only = yes }
+			}
+			tang_m2_bar_visible = {
+				has_country_leader = { character = ROC_Tangtang ruling_only = yes }
+			}
+			tang_btn_1_visible = {
+				has_country_leader = { character = ROC_Tangtang ruling_only = yes }
+			}
+			tang_btn_2_visible = {
+				has_country_leader = { character = ROC_Tangtang ruling_only = yes }
+			}
+			tang_btn_3_visible = {
+				has_country_leader = { character = ROC_Tangtang ruling_only = yes }
+			}
+
+			hos_m1_bar_visible = {
+				has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes }
+			}
+			hos_m2_bar_visible = {
+				has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes }
+			}
+			hos_btn_1_visible = {
+				has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes }
+			}
+			hos_btn_2_visible = {
+				has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes }
+			}
+			hos_btn_3_visible = {
+				has_country_leader = { character = ROC_Herrscher_of_Sentience ruling_only = yes }
+			}
+
+			# 模式 A 按钮可用性
+			hu_btn_1_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				NOT = { has_country_flag = ROC_wt_btn_1_cd }
+				NOT = { has_political_power < 25 }
+				check_variable = { ROC_wt_hu_m1 < ROC_wt_hu_m1_cap }
+			}
+			hu_btn_2_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				NOT = { has_country_flag = ROC_wt_btn_2_cd }
+				NOT = { command_power < 20 }
+				check_variable = { ROC_wt_hu_m1 < ROC_wt_hu_m1_cap }
+			}
+			hu_btn_3_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				has_idea = ROC_Dai_Jitao_idea
+				NOT = { has_country_flag = ROC_wt_btn_3_cd }
+				NOT = { has_political_power < 30 }
+				check_variable = { ROC_wt_hu_m2 < ROC_wt_hu_m2_cap }
+			}
+
+			# 模式 B 按钮可用性
+			tang_btn_1_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				NOT = { has_country_flag = ROC_wt_btn_1_cd }
+				NOT = { has_political_power < 20 }
+				check_variable = { ROC_wt_tang_m1 < ROC_wt_tang_m1_cap }
+			}
+			tang_btn_2_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				NOT = { has_country_flag = ROC_wt_btn_2_cd }
+				NOT = { has_political_power < 25 }
+				check_variable = { ROC_wt_tang_m2 < ROC_wt_tang_m2_cap }
+			}
+			tang_btn_3_click_enabled = {
+				has_completed_focus = ROC_focus_future_of_Chinbo
+				has_idea = ROC_Mi_Fu_idea
+				NOT = { has_country_flag = ROC_wt_tang_awakened }
+				NOT = { check_variable = { ROC_wt_tang_m1 < 80 } }
+				NOT = { check_variable = { ROC_wt_tang_m2 < 80 } }
+			}
+
+			# 模式 C 按钮可用性
+			hos_btn_1_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				NOT = { has_country_flag = ROC_wt_btn_1_cd }
+				NOT = { has_political_power < 15 }
+				check_variable = { ROC_wt_hos_m2 < ROC_wt_hos_m2_cap }
+			}
+			hos_btn_2_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				NOT = { has_country_flag = ROC_wt_btn_2_cd }
+				NOT = { has_stability < 0.05 }
+				check_variable = { ROC_wt_hos_m1 < ROC_wt_hos_m1_cap }
+			}
+			hos_btn_3_click_enabled = {
+				has_completed_focus = ROC_focus_sanctify_sun_and_chiang
+				has_idea = ROC_Sun_Ke_idea
+				NOT = { has_country_flag = ROC_wt_hos_awakened }
+				NOT = { check_variable = { ROC_wt_hos_m2 < 70 } }
+				NOT = { command_power < 25 }
+			}
+		}
+		effects = {
+			close_button_click = {
+				clr_country_flag = ROC_whampoa_window_visible
+			}
+			hu_btn_1_click = {
+				ROC_wt_btn_hu_1_effect = yes
+			}
+			hu_btn_2_click = {
+				ROC_wt_btn_hu_2_effect = yes
+			}
+			hu_btn_3_click = {
+				ROC_wt_btn_hu_3_effect = yes
+			}
+			tang_btn_1_click = {
+				ROC_wt_btn_tang_1_effect = yes
+			}
+			tang_btn_2_click = {
+				ROC_wt_btn_tang_2_effect = yes
+			}
+			tang_btn_3_click = {
+				ROC_wt_btn_tang_3_effect = yes
+			}
+			hos_btn_1_click = {
+				ROC_wt_btn_hos_1_effect = yes
+			}
+			hos_btn_2_click = {
+				ROC_wt_btn_hos_2_effect = yes
+			}
+			hos_btn_3_click = {
+				ROC_wt_btn_hos_3_effect = yes
+			}
+		}
+	}
 }
 
+# ROC 九鼎青天仪（挂载于国策界面，纯装饰性 GUI，不影响任何数值与AI行为）
+scripted_gui = {
+	ROC_celestial_pendant_gui = {
+		context_type = player_context
+		parent_window_name = "pau_focus_storybook_toolbar"
+		window_name = "ROC_celestial_pendant_window"
+		visible = {
+			tag = ROC
+			is_ai = no
+		}
+		ai_enabled = { always = no }
+
+		effects = {
+			ca_pendant_open_btn_click = {
+				if = {
+					limit = { has_country_flag = ROC_ca_window_open }
+					clr_country_flag = ROC_ca_window_open
+					scoped_sound_effect = "click_close"
+				}
+				else = {
+					set_country_flag = ROC_ca_window_open
+					set_country_flag = ROC_ca_burst_armed
+					if = {
+						limit = { has_country_flag = ROC_ca_burst_parity }
+						clr_country_flag = ROC_ca_burst_parity
+					}
+					else = {
+						set_country_flag = ROC_ca_burst_parity
+					}
+					scoped_sound_effect = "menu_open_window"
+				}
+			}
+			ca_pendant_sky_btn_click = {
+				if = {
+					limit = { has_country_flag = ROC_ca_sky_ambiance_off }
+					clr_country_flag = ROC_ca_sky_ambiance_off
+				}
+				else = {
+					set_country_flag = ROC_ca_sky_ambiance_off
+				}
+			}
+		}
+	}
+
+	ROC_celestial_ambiance_gui = {
+		context_type = player_context
+		parent_window_name = "pau_focus_storybook_toolbar"
+		window_name = "ROC_celestial_ambiance_window"
+		visible = {
+			tag = ROC
+			is_ai = no
+			NOT = { has_country_flag = ROC_ca_sky_ambiance_off }
+		}
+		ai_enabled = { always = no }
+	}
+
+	ROC_celestial_armillary_gui = {
+		context_type = player_context
+		parent_window_name = "pau_focus_storybook_toolbar"
+		window_name = "ROC_celestial_armillary_window"
+		visible = {
+			tag = ROC
+			is_ai = no
+			has_country_flag = ROC_ca_window_open
+		}
+		ai_enabled = { always = no }
+
+		properties = {
+			ca_theme_backdrop = {
+				image = "[Get_ROC_ca_backdrop_gfx]"
+			}
+			ca_core_medallion = {
+				image = "[Get_ROC_ca_core_gfx]"
+			}
+			ca_gauge_stab_bar = {
+				image = "[Get_ROC_ca_gauge_stab_gfx]"
+			}
+			ca_gauge_ws_bar = {
+				image = "[Get_ROC_ca_gauge_ws_gfx]"
+			}
+			ca_gauge_pp_bar = {
+				image = "[Get_ROC_ca_gauge_pp_gfx]"
+			}
+			ca_gauge_land_bar = {
+				image = "[Get_ROC_ca_gauge_land_gfx]"
+			}
+		}
+
+		triggers = {
+			ca_seal_burst_a_visible = {
+				has_country_flag = ROC_ca_burst_armed
+				has_country_flag = ROC_ca_burst_parity
+			}
+			ca_seal_burst_b_visible = {
+				has_country_flag = ROC_ca_burst_armed
+				NOT = { has_country_flag = ROC_ca_burst_parity }
+			}
+			ca_relic_halo_1_visible = {
+				OR = {
+					NOT = { has_variable = ROC_ca_relic_sel }
+					check_variable = { ROC_ca_relic_sel = 1 }
+				}
+			}
+			ca_relic_halo_2_visible = {
+				check_variable = { ROC_ca_relic_sel = 2 }
+			}
+			ca_relic_halo_3_visible = {
+				check_variable = { ROC_ca_relic_sel = 3 }
+			}
+			ca_relic_halo_4_visible = {
+				check_variable = { ROC_ca_relic_sel = 4 }
+			}
+			ca_relic_halo_5_visible = {
+				check_variable = { ROC_ca_relic_sel = 5 }
+			}
+			ca_relic_halo_6_visible = {
+				check_variable = { ROC_ca_relic_sel = 6 }
+			}
+			ca_relic_halo_7_visible = {
+				check_variable = { ROC_ca_relic_sel = 7 }
+			}
+			ca_relic_halo_8_visible = {
+				check_variable = { ROC_ca_relic_sel = 8 }
+			}
+			ca_bottom_sync_hint_visible = {
+				NOT = { is_debug = yes }
+			}
+			ca_mode_sync_btn_visible = {
+				is_debug = yes
+			}
+			ca_mode_0_btn_visible = {
+				is_debug = yes
+			}
+			ca_mode_1_btn_visible = {
+				is_debug = yes
+			}
+			ca_mode_2_btn_visible = {
+				is_debug = yes
+			}
+			ca_mode_3_btn_visible = {
+				is_debug = yes
+			}
+			ca_mode_4_btn_visible = {
+				is_debug = yes
+			}
+		}
+
+		effects = {
+			close_button_click = {
+				clr_country_flag = ROC_ca_window_open
+			}
+			ca_action_close_btn_click = {
+				clr_country_flag = ROC_ca_window_open
+			}
+			ca_center_seal_btn_click = {
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+				add_to_variable = { ROC_ca_edict_idx = 1 }
+				if = {
+					limit = { check_variable = { ROC_ca_edict_idx > 11 } }
+					set_variable = { ROC_ca_edict_idx = 0 }
+				}
+			}
+			ca_action_strike_btn_click = {
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+				add_to_variable = { ROC_ca_edict_idx = 1 }
+				if = {
+					limit = { check_variable = { ROC_ca_edict_idx > 11 } }
+					set_variable = { ROC_ca_edict_idx = 0 }
+				}
+			}
+			ca_action_sky_btn_click = {
+				if = {
+					limit = { has_country_flag = ROC_ca_sky_ambiance_off }
+					clr_country_flag = ROC_ca_sky_ambiance_off
+				}
+				else = {
+					set_country_flag = ROC_ca_sky_ambiance_off
+				}
+			}
+			ca_mode_sync_btn_click = {
+				clear_variable = ROC_ca_theme_override
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+			}
+			ca_mode_0_btn_click = {
+				set_variable = { ROC_ca_theme_override = 0 }
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+			}
+			ca_mode_1_btn_click = {
+				set_variable = { ROC_ca_theme_override = 1 }
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+			}
+			ca_mode_2_btn_click = {
+				set_variable = { ROC_ca_theme_override = 2 }
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+			}
+			ca_mode_3_btn_click = {
+				set_variable = { ROC_ca_theme_override = 3 }
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+			}
+			ca_mode_4_btn_click = {
+				set_variable = { ROC_ca_theme_override = 4 }
+				set_country_flag = ROC_ca_burst_armed
+				if = {
+					limit = { has_country_flag = ROC_ca_burst_parity }
+					clr_country_flag = ROC_ca_burst_parity
+				}
+				else = {
+					set_country_flag = ROC_ca_burst_parity
+				}
+			}
+			ca_relic_btn_1_click = { set_variable = { ROC_ca_relic_sel = 1 } }
+			ca_relic_btn_2_click = { set_variable = { ROC_ca_relic_sel = 2 } }
+			ca_relic_btn_3_click = { set_variable = { ROC_ca_relic_sel = 3 } }
+			ca_relic_btn_4_click = { set_variable = { ROC_ca_relic_sel = 4 } }
+			ca_relic_btn_5_click = { set_variable = { ROC_ca_relic_sel = 5 } }
+			ca_relic_btn_6_click = { set_variable = { ROC_ca_relic_sel = 6 } }
+			ca_relic_btn_7_click = { set_variable = { ROC_ca_relic_sel = 7 } }
+			ca_relic_btn_8_click = { set_variable = { ROC_ca_relic_sel = 8 } }
+		}
+	}
+}

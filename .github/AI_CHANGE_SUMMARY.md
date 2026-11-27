@@ -11,8 +11,8 @@
 
 - GitHub Actions Secret：`LLM_API_KEY`（加密保存，不在仓库里）
 - GitHub Actions Variables：
-  - `LLM_BASE_URL` = `https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1`
-  - `LLM_MODEL` = `qwen3.8-flash`
+  - `LLM_BASE_URL` = `https://api.deepseek.com/v1`
+  - `LLM_MODEL` = `deepseek-chat`
   - `SUMMARY_LANGUAGE` = `zh-CN`
   - `LLM_MAX_TOKENS` = `3000`
 - 本机用户环境变量已设置 `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL`
@@ -50,7 +50,7 @@ git commit -m "111"
 
 如果提交信息本身是正常的中文/英文说明，本地不会调用 API，原样保留。
 
-### 团队共用一个 API Key（推荐）
+### 选择 API 厂商 / 团队共用 Key
 
 每台电脑只需要安装一次。合作者先 `git pull`，然后双击：
 
@@ -64,15 +64,33 @@ git commit -m "111"
 powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_windows.ps1
 ```
 
-脚本会：
+脚本会显示厂商菜单：
+
+```text
+1. DeepSeek 官方
+2. 通义千问兼容模式
+3. OpenAI 官方
+4. 智谱 GLM 兼容接口
+5. 自定义 OpenAI 兼容接口
+```
+
+选择后脚本会：
 
 - 自动执行 `git config core.hooksPath .githooks`
 - 检查 Python 和钩子文件
-- 提示粘贴团队共用的 `LLM_API_KEY`（输入不回显）
+- 提示粘贴所选厂商的 `LLM_API_KEY`（输入不回显）
 - 把 `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL` 写入当前 Windows 用户环境变量
 - 测试模型接口是否可用
 
-密钥只存在合作者本机的用户环境变量里，不会进入 Git 仓库。需要注意：共用 Key 意味着所有使用者的调用额度和费用都算在同一个 Key 上，任何能登录那台电脑的人也可能读到该环境变量；如果 Key 外泄，应在服务商后台轮换。
+本地钩子是每台电脑独立配置的，所以每个人可以：
+
+- 都选 `1`，粘贴团队共用的 DeepSeek Key
+- 各自选自己的厂商，粘贴自己的 Key
+- 选 `5`，填任意 OpenAI 兼容的 Base URL 和模型名
+
+GitHub Actions 是仓库统一配置，只有一套 `LLM_BASE_URL` / `LLM_MODEL` / Secret，不会跟随每个组员本地的厂商选择。
+
+密钥只存在合作者本机的用户环境变量里，不会进入 Git 仓库。共用 Key 意味着所有使用者的调用额度和费用都算在同一个 Key 上。
 
 ### 手动配置环境变量
 
@@ -81,8 +99,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/setup_window
 ```powershell
 # PowerShell：当前用户永久生效（把 <你的 key> 换成实际值，不要提交）
 [Environment]::SetEnvironmentVariable("LLM_API_KEY", "<你的 key>", "User")
-[Environment]::SetEnvironmentVariable("LLM_BASE_URL", "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1", "User")
-[Environment]::SetEnvironmentVariable("LLM_MODEL", "qwen3.8-flash", "User")
+[Environment]::SetEnvironmentVariable("LLM_BASE_URL", "https://api.deepseek.com/v1", "User")
+[Environment]::SetEnvironmentVariable("LLM_MODEL", "deepseek-chat", "User")
 ```
 
 设置后需要新开终端 / 重启 Git GUI 才会读到新环境变量。
@@ -132,8 +150,8 @@ PR 的 AI 区块使用标记保存，重复执行原地替换，人工写在区�
 | 名称 | 默认值 | 说明 |
 | --- | --- | --- |
 | `LLM_API_KEY` | 无 | 必填，只放环境变量/Secret |
-| `LLM_BASE_URL` | 本仓库默认千问兼容接口 | 模型 API 地址 |
-| `LLM_MODEL` | `qwen3.8-flash` | 模型名 |
+| `LLM_BASE_URL` | DeepSeek 官方接口 | 模型 API 地址 |
+| `LLM_MODEL` | `deepseek-chat` | 模型名 |
 | `SUMMARY_LANGUAGE` | `zh-CN` | 输出语言 |
 | `LLM_MAX_TOKENS` | `3000` | Action 最大输出 token |
 | `AI_COMMIT_MSG_MAX_TOKENS` | `1800` | 本地钩子最大输出 token |

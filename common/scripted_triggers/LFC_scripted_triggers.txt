@@ -1,0 +1,197 @@
+#露斯契亚边疆
+ #远征目标与页面
+	LFC_frontier_expedition_target = { #远征目标州
+		NOT = {
+			is_controlled_by = LFC
+		}
+		has_dynamic_modifier = LFC_state_dynamic_modifier_Rainforest_wktdq
+		OR = {
+			state = 1203
+			state = 1204
+			state = 1205
+			state = 1206
+			state = 1207
+			state = 1208
+			state = 280
+		}
+	}
+
+	LFC_frontier_expedition_show_report = { #当前选中的是正在远征的州
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_relic_page
+		}
+		has_country_flag = FLAG_LFC_Rainforest_Acting
+		has_variable = LFC_frontier_selected_state
+		has_variable = VAR_LFC_Rainforest_state
+		check_variable = {
+			LFC_frontier_selected_state = VAR_LFC_Rainforest_state
+		}
+	}
+
+	LFC_frontier_expedition_show_form = { #远征筹备页
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_relic_page
+		}
+		has_variable = LFC_frontier_selected_state
+		var:LFC_frontier_selected_state = {
+			LFC_frontier_expedition_target = yes
+		}
+		NOT = {
+			AND = {
+				has_country_flag = FLAG_LFC_Rainforest_Acting
+				check_variable = { LFC_frontier_selected_state = VAR_LFC_Rainforest_state }
+			}
+		}
+	}
+
+	LFC_frontier_expedition_show_page = { #远征页公共控件
+		OR = {
+			LFC_frontier_expedition_show_form = yes
+			LFC_frontier_expedition_show_report = yes
+		}
+	}
+
+ #派遣条件
+	LFC_frontier_expedition_idle = { #没有其他远征
+		NOT = {
+			has_country_flag = FLAG_LFC_Rainforest_Acting
+		}
+	}
+
+	LFC_frontier_expedition_adjacent = { #已与核心领土接壤
+		var:LFC_frontier_selected_state = {
+			any_neighbor_state = {
+				is_core_of = LFC
+			}
+		}
+	}
+
+  #库存不足
+	LFC_frontier_expedition_short_funds = { #资金不足
+		check_variable = { ubs_save < LFC_frontier_draft_supply }
+	}
+
+	LFC_frontier_expedition_short_manpower = { #人力不足
+		has_manpower < var:LFC_frontier_cost_manpower
+	}
+
+	LFC_frontier_expedition_short_rifles = { #步兵装备不足
+		check_variable = { num_equipment@infantry_equipment < LFC_frontier_cost_rifles }
+	}
+
+	LFC_frontier_expedition_short_support = { #支援装备不足
+		check_variable = { num_equipment@support_equipment < LFC_frontier_cost_support }
+	}
+
+	LFC_frontier_expedition_short_trucks = { #卡车不足
+		check_variable = { LFC_frontier_cost_trucks > 0 }
+		check_variable = { num_equipment@motorized_equipment < LFC_frontier_cost_trucks }
+	}
+
+	LFC_frontier_expedition_short_knights = { #构装骑士不足
+		check_variable = { LFC_frontier_cost_knights > 0 }
+		check_variable = { num_equipment@construct_knight_equipment < LFC_frontier_cost_knights }
+	}
+
+  #派遣校验
+	LFC_frontier_expedition_can_depart = { #派遣前核对地区、队伍与实际出库量
+		LFC_frontier_expedition_show_form = yes
+		LFC_frontier_expedition_idle = yes
+		LFC_frontier_expedition_adjacent = yes
+		NOT = {
+			LFC_frontier_expedition_short_funds = yes
+		}
+		NOT = {
+			LFC_frontier_expedition_short_manpower = yes
+		}
+		NOT = {
+			LFC_frontier_expedition_short_rifles = yes
+		}
+		NOT = {
+			LFC_frontier_expedition_short_support = yes
+		}
+		NOT = {
+			LFC_frontier_expedition_short_trucks = yes
+		}
+		NOT = {
+			LFC_frontier_expedition_short_knights = yes
+		}
+	}
+
+ #远征进行应急驰援与低值门槛
+	LFC_frontier_exp_manpower_low = { #剩余人力低值变红与增援解锁门槛 (<=800)
+		NOT = {
+			check_variable = { LFC_VAR_Rainforest_manpower > 800 }
+		}
+	}
+
+	LFC_frontier_exp_supply_low = { #剩余补给低值变红与空投解锁门槛 (<=50)
+		NOT = {
+			check_variable = { LFC_VAR_Rainforest_supply > 50 }
+		}
+	}
+
+	LFC_frontier_exp_can_reinforce = { #紧急增援可用条件（一次远征限1次，人力<=800）
+		LFC_frontier_expedition_show_report = yes
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_exp_reinforce_used
+		}
+		LFC_frontier_exp_manpower_low = yes
+		has_manpower > 499
+		NOT = {
+			check_variable = { num_equipment@infantry_equipment < 500 }
+		}
+		NOT = {
+			check_variable = { num_equipment@support_equipment < 30 }
+		}
+		NOT = {
+			check_variable = { ubs_save < 25 }
+		}
+		NOT = {
+			has_political_power < 25
+		}
+	}
+
+	LFC_frontier_exp_can_airdrop = { #空投补给可用条件（一次远征限1次，补给<=50）
+		LFC_frontier_expedition_show_report = yes
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_exp_airdrop_used
+		}
+		LFC_frontier_exp_supply_low = yes
+		NOT = {
+			check_variable = { ubs_save < 100 }
+		}
+		NOT = {
+			check_variable = { num_equipment@support_equipment < 20 }
+		}
+		NOT = {
+			has_political_power < 25
+		}
+	}
+
+ #调试调档
+	LFC_frontier_is_map_state = { #属于十个边疆地图州
+		OR = {
+			state = 1202
+			state = 1203
+			state = 1204
+			state = 1205
+			state = 1206
+			state = 1207
+			state = 1208
+			state = 280
+			state = 504
+			state = 505
+		}
+	}
+
+	LFC_frontier_debug_visible = { #调试栏显示条件
+		is_debug = yes
+		NOT = {
+			has_country_flag = FLAG_LFC_frontier_relic_page
+		}
+		has_variable = LFC_frontier_selected_state
+		var:LFC_frontier_selected_state = {
+			LFC_frontier_is_map_state = yes
+		}
+	}

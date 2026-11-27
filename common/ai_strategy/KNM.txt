@@ -1,6 +1,9 @@
 KNM_start1 = {
+    allowed = {
+        original_tag = KNM
+    }
     enable = {
-        tag = KNM
+        always = yes
     }
     abort_when_not_enabled = yes
     ai_strategy = { #注重船坞
@@ -9,7 +12,7 @@ KNM_start1 = {
             is_coastal = yes
             FROM = { has_war_with = FROM.FROM }
         }
-        priority = 120
+        priority = 25
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -40,11 +43,6 @@ KNM_start1 = {
         type = equipment_production_factor
         id = self_propelled_super_heavy_artillery_equipment
         value = -999
-    }
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 200
     }
     ai_strategy = {
         type = research_tech	#工业
@@ -90,16 +88,20 @@ KNM_start1 = {
 
 KNM_xiabing = {
     allowed = {
-        or = {
+        OR = {
             original_tag = KNM
-            
-            has_country_flag = KNM_ai
+            original_tag = FRA
         }
     }
-    abort_when_not_enabled = yes
     enable = {
-        always = yes
+        OR = {
+            original_tag = KNM
+            has_country_flag = KNM_ai
+        }
+        num_divisions < 320
+        check_variable = { Debt_ratio < 0.85 }
     }
+    abort_when_not_enabled = yes
     ai_strategy = {
         type = force_build_armies
         value = 100
@@ -145,21 +147,19 @@ KNM_the_more_powerful_jiandie = {
 
 
 
-KNM_stop_disbanding_your_army = {#ai部署陆军倾向（扩军期）
+KNM_stop_disbanding_your_army = {#扩军期陆军倾向
     allowed = {
-        or = {
-            original_tag = KNM
-            
-        }
+        original_tag = KNM
     }
     enable = {
-        num_divisions < 700
+        num_divisions < 320
+        check_variable = { Debt_ratio < 0.85 }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 800
+        value = 260
     }
 }
 
@@ -359,26 +359,25 @@ KFLPushForMoreTANK = {
 
 
 KNM_avoid_thin_lines = {
-    allowed = { or = {
+    allowed = {
         original_tag = KNM
-        
-    } }
+    }
     enable = {
         has_war = yes
     }
     abort_when_not_enabled = yes
+    #渗透防线优先增援
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = KNM
-            check_variable = {
-                num_enemy_neighbor_states > 2
+            NOT = { is_fully_controlled_by = KNM }
+            any_neighbor_state = {
+                controller = { has_war_with = KNM }
             }
         }
-        value = 100
+        value = 80
     }
-
-
 }
 
 KNM_push_enemy_capital = {#冲首都
@@ -398,7 +397,7 @@ KNM_push_enemy_capital = {#冲首都
             is_capital = yes
             any_neighbor_state = { is_controlled_by = KNM }
         }
-        priority = 50000
+        priority = 60
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -427,15 +426,15 @@ KNM_push_enemy_capital = {#冲首都
         value = 50
     }
 }
-# <<<<<<< Updated upstream
-# KNM_political_spending = {
-# allowed = { or = {
-# original_tag = KNM
-# 
-# } }
-# enable = { always = yes }
-# =======
-# >>>>>>> Stashed changes
+#<<<<<<< Updated upstream
+#KNM_political_spending = {
+#allowed = { or = {
+#original_tag = KNM
+#
+#} }
+#enable = { always = yes }
+#=======
+#>>>>>>> Stashed changes
 
 KNM_spy_missions = {
     allowed = { or = {
@@ -457,7 +456,7 @@ KNM_spy_missions = {
     #装备优先
     ai_strategy = {
         type = operation_equipment_priority
-        value = 100                   # 将该行动的装备供应优先级设为最高
+        value = 100                   #特工装备最高优先级
     }
 
     ai_strategy = {
@@ -870,7 +869,7 @@ KNM_late_game_warrior = {
         date > 1940.1.1
     }
     abort_when_not_enabled = yes
-    # 军工优先
+    #军工优先
     ai_strategy = {
         type = building_target
         id = arms_factory
@@ -980,7 +979,7 @@ KNM_victory_acceleration = {#冲刺！！！
                 surrender_progress > 0.2
             }
         }
-        priority = 15000
+        priority = 45
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1021,7 +1020,7 @@ KNM_target_enemy_supply_hubs = {#断补给
                 level > 0
             }
         }
-        priority = 32000
+        priority = 50
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1042,7 +1041,7 @@ KNM_target_enemy_supply_hubs = {#断补给
                 level > 0
             }
         }
-        priority = 15000
+        priority = 35
         ordertype = front
         execution_type = balanced
         execute_order = yes
@@ -1257,7 +1256,7 @@ KNM_unit= { #单位倾向
 
     ai_strategy = {
         type = role_ratio
-        id = mountaineers_KNM
+        id = mountaineer
         value = 0
     }
 
@@ -1392,14 +1391,14 @@ KNM_prewar_stockpile_rush = {#战前生产线
     }
 }
 KNM_postwar_consolidation = {#战后恢复
-    allowed = { or = {
+    allowed = {
         original_tag = KNM
-        
-    } }
+    }
     enable = {
         has_war = no
+        check_variable = { Debt_ratio < 0.85 }
         OR = {
-            num_divisions < 300
+            num_divisions < 220
             has_manpower < 1000000
         }
     }
@@ -1417,17 +1416,12 @@ KNM_postwar_consolidation = {#战后恢复
     }
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 1500
+        value = 200
     }
     ai_strategy = {
         type = building_target
         id = infrastructure
-        value = 300
-    }
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 400
+        value = 80
     }
     ai_strategy = {
         type = garrison
@@ -1461,7 +1455,7 @@ KNM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
             controller = { has_war_with = KNM }
         }
         ratio = 0.2
-        priority = 20000
+        priority = 50
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1476,7 +1470,7 @@ KNM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
                 divisions_in_state = { state = PREV size = 0 }
             }
         }
-        priority = 90000
+        priority = 65
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1494,7 +1488,7 @@ KNM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
 
         ratio = 0.8
 
-        priority = 5000
+        priority = 35
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1513,7 +1507,7 @@ KNM_state_is_zhanlue = {#老爷爷，我给你踩地来咯
                 is_coastal = yes
             }
         }
-        priority = 8000
+        priority = 45
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1565,7 +1559,7 @@ KNM_wartime_air_superiority = {#全力争夺制空权
 
 }
 
-# <<<<<<< Updated upstream
+#<<<<<<< Updated upstream
 #提前布局
 KNM_prewar_intelligence_ops = {
     allowed = { or = {
@@ -1579,23 +1573,23 @@ KNM_prewar_intelligence_ops = {
     abort_when_not_enabled = yes
 
     #渗透武装力量
-    # ai_strategy = {
-    # type = operation_priority
-    # id = operation_infiltrate_armed_forces_military
-    # value = 800
-    # }
-    # #建立合作政府
-    # ai_strategy = {
-    # type = operation_priority
-    # id = operation_prepare_collaboration_government
-    # value = 400
-    # }
-    # #偷窃军事蓝图
-    # ai_strategy = {
-    # type = operation_priority
-    # id = operation_steal_tech_mechanical_engineering
-    # value = 300
-    # }
+    #ai_strategy = {
+    #type = operation_priority
+    #id = operation_infiltrate_armed_forces_military
+    #value = 800
+    #}
+    ##建立合作政府
+    #ai_strategy = {
+    #type = operation_priority
+    #id = operation_prepare_collaboration_government
+    #value = 400
+    #}
+    ##偷窃军事蓝图
+    #ai_strategy = {
+    #type = operation_priority
+    #id = operation_steal_tech_mechanical_engineering
+    #value = 300
+    #}
 }
 KNM_wartime_intelligence_surge = {#战时渗透
     allowed = { or = {
@@ -1605,7 +1599,7 @@ KNM_wartime_intelligence_surge = {#战时渗透
     enable = {
         has_war = yes
         num_of_operatives > 1
-        # intelligence_agency_usable_factories > 5
+        #intelligence_agency_usable_factories > 5
     }
     abort_when_not_enabled = yes
 
@@ -1613,19 +1607,19 @@ KNM_wartime_intelligence_surge = {#战时渗透
         type = intelligence_agency_usable_factories
         value = 500
     }
-    # ai_strategy = {
-    # type = operation_priority
-    # id = operation_infiltrate_armed_forces_military
-    # value = 1000
-    # }
-    # ai_strategy = {
-    # type = operation_priority
-    # id = operation_infiltrate_armed_forces_civilian
-    # value = 600
-    # }
+    #ai_strategy = {
+    #type = operation_priority
+    #id = operation_infiltrate_armed_forces_military
+    #value = 1000
+    #}
+    #ai_strategy = {
+    #type = operation_priority
+    #id = operation_infiltrate_armed_forces_civilian
+    #value = 600
+    #}
 }
-# =======
-# >>>>>>> Stashed changes
+#=======
+#>>>>>>> Stashed changes
 
 
 KNM_crisis_iron_wall = {#身后就是雾之湖
@@ -1656,7 +1650,7 @@ KNM_crisis_iron_wall = {#身后就是雾之湖
         state_trigger = {
             is_controlled_by = KNM
         }
-        priority = 20000
+        priority = 195
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -1691,7 +1685,7 @@ KNM_crisis_iron_wall = {#身后就是雾之湖
     #爆兵
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 2000
+        value = 180
     }
 }
 
@@ -1726,7 +1720,7 @@ KNM_capital_shield = {#身后就是幻想乡
                 controller = { has_war_with = KNM }
             }
         }
-        priority = 25000
+        priority = 185
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -1736,10 +1730,9 @@ KNM_capital_shield = {#身后就是幻想乡
 
 #识别可被包围的敌军并优先切断
 KNM_encirclement_hunter = {
-    allowed = { or = {
+    allowed = {
         original_tag = KNM
-        
-    } }
+    }
     enable = {
         has_war = yes
         num_of_military_factories > 60
@@ -1750,12 +1743,16 @@ KNM_encirclement_hunter = {
     ai_strategy = {
         type = front_control
         state_trigger = {
-            controller = { has_war_with = KNM }
+            controller = {
+                has_war_with = KNM
+                divisions_in_state = { state = PREV size < 2 }
+            }
             NOT = { is_coastal = yes }
+            NOT = { is_capital = yes }
+            NOT = { is_fully_controlled_by = FROM }
             any_neighbor_state = { is_controlled_by = KNM }
-            check_variable = { num_enemy_neighbor_states < 2 }
         }
-        priority = 25000
+        priority = 60
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1764,11 +1761,16 @@ KNM_encirclement_hunter = {
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
-            controller = { has_war_with = KNM }
+            controller = {
+                has_war_with = KNM
+                divisions_in_state = { state = PREV size < 2 }
+            }
             NOT = { is_coastal = yes }
-            check_variable = { num_enemy_neighbor_states < 2 }
+            NOT = { is_capital = yes }
+            NOT = { is_fully_controlled_by = FROM }
+            any_neighbor_state = { is_controlled_by = KNM }
         }
-        value = 60
+        value = 45
     }
 }
 KNM_end_pocket = {#包围快速歼灭
@@ -1806,7 +1808,7 @@ KNM_end_pocket = {#包围快速歼灭
             }
         }
         ratio = 0.0
-        priority = 9999999
+        priority = 190
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1856,7 +1858,7 @@ KNM_concentrate_troops = {#集中突破
 
     ai_strategy = {
         type = force_concentration_factor
-        value = 15  # base + 15 = 30 %
+        value = 15  #base + 15 = 30 %
     }
 
 }
@@ -1885,7 +1887,7 @@ KNM_victory_phase1_crack = {
             }
             any_neighbor_state = { is_controlled_by = KNM }
         }
-        priority = 12000
+        priority = 45
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1926,7 +1928,7 @@ KNM_victory_phase2_exploit = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = KNM }
         }
-        priority = 40000
+        priority = 55
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1940,7 +1942,7 @@ KNM_victory_phase2_exploit = {
                 surrender_progress > 0.20
             }
         }
-        priority = 15000
+        priority = 45
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1976,7 +1978,7 @@ KNM_victory_phase3_annihilate = {
                 surrender_progress > 0.45
             }
         }
-        priority = 60000
+        priority = 65
         ratio = 0.95
         ordertype = front
         execution_type = rush_weak
@@ -1990,10 +1992,6 @@ KNM_victory_phase3_annihilate = {
     ai_strategy = {
         type = garrison
         value = -300
-    }
-    ai_strategy = {
-        type = ai_wanted_divisions_factor
-        value = 300
     }
 }
 KNM_strategic_withdrawal = {#主动收缩
@@ -2054,7 +2052,7 @@ KNM_strategic_withdrawal = {#主动收缩
             is_controlled_by = FROM.FROM
             any_neighbor_state = { controller = { has_war_with = FROM.FROM } }
         }
-        priority = 40000
+        priority = 55
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -2069,15 +2067,15 @@ KNM_build_an_air_facility_faster = {#建造空军研究设施
     }
     enable = {
 
-        is_major = yes # Minors don't bother until strong enough to be considered major
-        num_of_military_factories > 40 # We should first build up our military concentrated_industry
+        is_major = yes #Minors don't bother until strong enough to be considered major
+        num_of_military_factories > 40 #We should first build up our military concentrated_industry
 
-        OR = { # Don't start until we can build decent aircraft
+        OR = { #Don't start until we can build decent aircraft
             has_tech = basic_small_airframe
             has_tech = basic_medium_airframe
             has_tech = basic_large_airframe
         }
-        air_facility < 1 # one is enough
+        air_facility < 1 #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -2098,12 +2096,12 @@ KNM_build_a_lw_facility_faster = {#建造陆军研究设施
         is_major = yes
         num_of_civilian_factories > 40
         num_of_military_factories > 40
-        OR = { # Don't start until we can build decent tanks of some kind
+        OR = { #Don't start until we can build decent tanks of some kind
             has_tech = improved_light_tank_chassis
             has_tech = basic_medium_tank_chassis
             has_tech = improved_heavy_tank_chassis
         }
-        land_facility < 1 # one is enough
+        land_facility < 1 #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -2125,8 +2123,8 @@ KNM_build_a_nav_facility_faster = {#建造海军研究设施
         }
     }
     enable = {
-        num_of_naval_factories > 25 # Only Naval Powers should bother with these unless specifically told to do otherwise
-        naval_facility < 1 # one is enough
+        num_of_naval_factories > 25 #Only Naval Powers should bother with these unless specifically told to do otherwise
+        naval_facility < 1 #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -2147,8 +2145,8 @@ KNM_build_a_nl_facility_faster = {#建造核研究设施
     enable = {
         has_tech = atomic_research
         num_of_civilian_factories > 25
-        num_of_military_factories > 25 # Even if we have the base tech, let's wait until we have some kind of capacity
-        nuclear_facility < 1  # one is enough
+        num_of_military_factories > 25 #Even if we have the base tech, let's wait until we have some kind of capacity
+        nuclear_facility < 1  #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -2245,7 +2243,7 @@ KNM_war_with_KMK = { #与红魔馆开战
     ai_strategy = {
         type = front_control
         tag = KMK
-        priority = 10000
+        priority = 160
         manual_attack = yes
         execution_type = rush_weak
         #occupation_policy = 0
@@ -2282,7 +2280,7 @@ KNM_protect_supply_lines = { #死守补给点
                 controller = { has_war_with = KNM }
             }
         }
-        priority = 5000
+        priority = 30
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -2306,85 +2304,43 @@ KNM_protect_supply_lines = { #死守补给点
     }
 }
 
-KNM_check_omega_lul = { #部队逻辑
+KNM_check_omega_lul = {
     allowed = {
-        or = {
-            original_tag = KNM
-            
-        }
+        original_tag = KNM
     }
     enable = {
         has_war = yes
     }
     abort_when_not_enabled = yes
+
+    #避开低基建荒地
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
         execution_type = careful
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
-
+    #加强首都保卫
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -2393,11 +2349,10 @@ KNM_check_omega_lul = { #部队逻辑
         }
         value = 50
     }
-
-    ai_strategy = { #登陆更有价值的地块
+    #优先登陆高价值港口州
+    ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             check_variable = { state_strategic_value < 3 }
         }
         value = -5
@@ -2405,62 +2360,26 @@ KNM_check_omega_lul = { #部队逻辑
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 8 }
         }
-        value = -3
+        value = -6
     }
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-        }
-        value = -3
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
+            is_coastal = yes
+            any_province_building_level = {
+                province = {
+                    all_provinces = yes
+                    limit_to_coastal = yes
                 }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-        }
-        value = -15
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            OR = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
+                building = naval_base
+                level > 0
             }
         }
         value = 15
     }
-
 }
 
 
@@ -2489,7 +2408,7 @@ KNM_war_with_DVL = { #与魔导国开战
         type = front_control
         tag = DVL
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2505,7 +2424,7 @@ KNM_war_with_DVL = { #与魔导国开战
     }
     ai_strategy = {
         type = garrison
-        value = 0                 # 驻军需求（默认70-100）
+        value = 0                 #驻军需求
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -2543,7 +2462,7 @@ KNM_war_with_ENG = { #与圣杯开战
             }
         }
         ratio = 0.3
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -2553,7 +2472,7 @@ KNM_war_with_ENG = { #与圣杯开战
         type = front_control
         tag = ENG
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2567,7 +2486,7 @@ KNM_war_with_ENG = { #与圣杯开战
     }
     ai_strategy = {
         type = garrison
-        value = 20                    # 驻军需求（默认70-100）
+        value = 20                    #驻军需求
     }
 }
 
@@ -2600,7 +2519,7 @@ KNM_war_with_USA = { #与精灵开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -2610,7 +2529,7 @@ KNM_war_with_USA = { #与精灵开战
         type = front_control
         tag = USA
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2624,7 +2543,7 @@ KNM_war_with_USA = { #与精灵开战
     }
     ai_strategy = {
         type = garrison
-        value = 20                    # 驻军需求（默认70-100）
+        value = 20                    #驻军需求
     }
 }
 KNM_war_with_NGD = { #与远洋开战
@@ -2656,7 +2575,7 @@ KNM_war_with_NGD = { #与远洋开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -2666,7 +2585,7 @@ KNM_war_with_NGD = { #与远洋开战
         type = front_control
         tag = NGD
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2680,7 +2599,7 @@ KNM_war_with_NGD = { #与远洋开战
     }
     ai_strategy = {
         type = garrison
-        value = 20                    # 驻军需求（默认70-100）
+        value = 20                    #驻军需求
     }
 }
 
@@ -2713,7 +2632,7 @@ KNM_war_with_NFA = { #与法兰西开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -2723,7 +2642,7 @@ KNM_war_with_NFA = { #与法兰西开战
         type = front_control
         tag = NFA
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2737,7 +2656,7 @@ KNM_war_with_NFA = { #与法兰西开战
     }
     ai_strategy = {
         type = garrison
-        value = 20                    # 驻军需求（默认70-100）
+        value = 20                    #驻军需求
     }
 }
 KNM_war_with_FRG = { #与齐亚德开战
@@ -2769,7 +2688,7 @@ KNM_war_with_FRG = { #与齐亚德开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -2779,7 +2698,7 @@ KNM_war_with_FRG = { #与齐亚德开战
         type = front_control
         tag = FRG
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2793,7 +2712,7 @@ KNM_war_with_FRG = { #与齐亚德开战
     }
     ai_strategy = {
         type = garrison
-        value = 20                    # 驻军需求（默认70-100）
+        value = 20                    #驻军需求
     }
 }
 
@@ -2826,7 +2745,7 @@ KNM_war_with_JAP = { #与日本开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = yes
@@ -2836,7 +2755,7 @@ KNM_war_with_JAP = { #与日本开战
         type = front_control
         tag = JAP
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -2855,15 +2774,17 @@ KNM_war_with_JAP = { #与日本开战
     }
     ai_strategy = {
         type = garrison
-        value = 20                    # 驻军需求（默认70-100）
+        value = 20                    #驻军需求
     }
 }
 
 
 
 KNM_zhunbei_KMK = { #提前准备攻打红魔馆
+    allowed = {
+        original_tag = KNM
+    }
     enable = {
-        tag = KNM
         OR = {
             focus_progress = {
                 focus = KNM_jyngdyz
@@ -2884,8 +2805,10 @@ KNM_zhunbei_KMK = { #提前准备攻打红魔馆
 }
 
 KNM_zhunbei_FRA = { #提前准备攻打幻想乡
+    allowed = {
+        original_tag = KNM
+    }
     enable = {
-        tag = KNM
         OR = {
             focus_progress = {
                 focus = KNM_wfdn
@@ -2909,8 +2832,10 @@ KNM_zhunbei_FRA = { #提前准备攻打幻想乡
 }
 
 KNM_zhunbei_DVL = { #提前准备攻打骨头
+    allowed = {
+        original_tag = KNM
+    }
     enable = {
-        tag = KNM
         OR = {
             focus_progress = {
                 focus = KNM_ctll
@@ -2921,7 +2846,7 @@ KNM_zhunbei_DVL = { #提前准备攻打骨头
 
     }
     abort = {
-        not = { country_exists = ELF }
+        not = { country_exists = DVL }
     }
 
 
@@ -3017,29 +2942,26 @@ KNM_FRA_is_friend = {
 
 
 KNM_support_communism = {#派志愿军给相同意识形态的国家
-
     reversed = yes
-
     allowed = {
-        or = {
-            original_tag = KNM
-            
-        }
+        NOT = { original_tag = KNM }
     }
-
-    enable = {
+    enable_reverse = {
         KNM = {
-            or = {
+            OR = {
                 has_government = communism
                 has_government = democratic
             }
             is_subject = no
             is_major = yes
         }
-        or = {
+    }
+    enable = {
+        OR = {
             has_government = communism
             has_government = democratic
         }
+        NOT = { has_war_with = KNM }
     }
     abort_when_not_enabled = yes
 
@@ -3048,7 +2970,6 @@ KNM_support_communism = {#派志愿军给相同意识形态的国家
         id = "KNM"
         value = 100
     }
-
 }
 
 KNM_diplomacy_with_KMK = { #对抗红魔馆

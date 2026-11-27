@@ -74,6 +74,60 @@ ROC_Battle_in_GuangZhou = {
 			custom_effect_tooltip = generic_skip_one_line_tt
 			custom_effect_tooltip = ROC_establishment_of_the_capital_at_nanjing_tt2
 			custom_effect_tooltip = generic_skip_one_line_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						is_ai = yes
+						OR = {
+							has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_1 }
+							has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_2 }
+							has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_3 }
+						}
+					}
+					set_variable = { kmt_party_percent^2 = 10000 }
+					if = {
+						limit = { has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_3 } }
+						set_variable = { kmt_party_overlord^5 = 2 }
+						set_variable = { kmt_party_overlord^6 = 2 }
+					}
+					else_if = {
+						limit = { has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_2 } }
+						set_variable = { kmt_party_overlord^5 = 0 }
+						set_variable = { kmt_party_overlord^6 = 0 }
+					}
+					ROC_factional_influence_calculation = yes
+				}
+				else_if = {
+					limit = {
+						is_ai = yes
+						has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_4 }
+					}
+					set_variable = { kmt_party_percent^3 = 10000 }
+					ROC_factional_influence_calculation = yes
+				}
+				else_if = {
+					limit = {
+						is_ai = yes
+						has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_5 }
+					}
+					set_variable = { kmt_party_percent^4 = 10000 }
+					ROC_factional_influence_calculation = yes
+				}
+				else_if = {
+					limit = {
+						is_ai = yes
+						OR = {
+							has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_6 }
+							has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_7 }
+							has_game_rule = { rule = AH_ROC_ai_behavior_SELECTION option = ROC_GAME_RULE_8 }
+						}
+					}
+					set_variable = { kmt_party_overlord^5 = 0 }
+					set_variable = { kmt_party_overlord^6 = 0 }
+					set_variable = { kmt_party_percent^5 = 10000 }
+					ROC_factional_influence_calculation = yes
+				}
+			}
 			if = {
 				limit = {
 					not = {
@@ -93,7 +147,7 @@ ROC_Battle_in_GuangZhou = {
 					}
 				}
 			}
-			if = {
+			else_if = {
 				limit = {
 					not = {
 						or = {
@@ -112,7 +166,7 @@ ROC_Battle_in_GuangZhou = {
 					}
 				}
 			}
-			if = {
+			else_if = {
 				limit = {
 					not = {
 						or = {
@@ -131,7 +185,7 @@ ROC_Battle_in_GuangZhou = {
 					}
 				}
 			}
-			if = {
+			else_if = {
 				limit = {
 					not = {
 						or = {
@@ -305,6 +359,7 @@ ROC_CBIS_and_NBIS = {
 	#对改组派进行党务审查
 	CBIS_conduct_party_affairs_review_to_RCAK = {
 		visible = {
+			is_in_array = { KMT_main_party_array = 7 }
 		}
 		available = {
 			not = { has_country_flag = CBIS_is_activing }
@@ -434,6 +489,7 @@ ROC_CBIS_and_NBIS = {
 	#对改组派进行军务审查
 	NBIS_conduct_military_affairs_review_to_RCAK = {
 		visible = {
+			is_in_array = { KMT_main_party_array = 7 }
 		}
 		available = {
 			not = { has_country_flag = NBIS_is_activing }
@@ -495,8 +551,7 @@ ROC_reunit_of_china_d_c = {
 			factor = 100
 		}
 		remove_effect = {
-			set_country_flag = use_era_name_ROC
-			#统一后第 2 个 1 月 1 日起改元重新计年
+			#统一后次年 1 月 1 日（第 1 个新年）起归元为民国元年并开启纪年 UI（陈线若先逢正月初一则于赤霄元年开启）
 			set_variable = { ROC_reunit_years = 0 }
 			set_variable = { ROC_reunit_lunar_years = 0 }
 			set_global_flag = CHI_REUNIT
@@ -1831,6 +1886,126 @@ ROC_foreign_ministry = {
 				}
 				factor = 0
 			}
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_1
+				}
+			}
+			modifier = {
+				add = 100
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_2
+				}
+				FROM = { tag = SOV }
+				has_government = communism
+				SOV = { exists = yes is_faction_leader = yes has_government = communism NOT = { has_war_with = ROOT } }
+			}
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_2
+				}
+				FROM = { NOT = { tag = SOV } }
+				OR = {
+					AND = {
+						has_government = communism
+						SOV = { exists = yes is_faction_leader = yes has_government = communism NOT = { has_war_with = ROOT } }
+					}
+					AND = {
+						has_country_leader = { character = ROC_Chen ruling_only = yes }
+						SOV = {
+							exists = yes
+							is_faction_leader = yes
+							has_country_leader = { character = SOV_Talulah ruling_only = yes }
+							NOT = { has_war_with = ROOT }
+						}
+					}
+				}
+			}
+			modifier = {
+				add = 100
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_3
+				}
+				FROM = { tag = ENG }
+				OR = { has_government = democratic has_government = neutrality }
+				ENG = { exists = yes is_faction_leader = yes has_government = democratic NOT = { has_war_with = ROOT } }
+			}
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_3
+				}
+				FROM = { NOT = { tag = ENG } }
+				OR = { has_government = democratic has_government = neutrality }
+				ENG = { exists = yes is_faction_leader = yes has_government = democratic NOT = { has_war_with = ROOT } }
+			}
+			modifier = {
+				add = 100
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_4
+				}
+				FROM = { tag = GER }
+				OR = { has_government = fascism has_government = neutrality }
+				GER = {
+					exists = yes
+					is_faction_leader = yes
+					OR = { has_government = fascism has_government = neutrality }
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_4
+				}
+				FROM = { NOT = { tag = GER } }
+				OR = { has_government = fascism has_government = neutrality }
+				GER = {
+					exists = yes
+					is_faction_leader = yes
+					OR = { has_government = fascism has_government = neutrality }
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				add = 100
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_5
+				}
+				FROM = { tag = DVL }
+				OR = { has_government = fascism has_government = neutrality }
+				DVL = {
+					exists = yes
+					is_faction_leader = yes
+					OR = { has_government = fascism has_government = neutrality }
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = AH_CHI_DIPLOMACY_ai_behavior_SELECTION
+					option = CHI_DIPLOMACY_GAME_RULE_5
+				}
+				FROM = { NOT = { tag = DVL } }
+				OR = { has_government = fascism has_government = neutrality }
+				DVL = {
+					exists = yes
+					is_faction_leader = yes
+					OR = { has_government = fascism has_government = neutrality }
+					NOT = { has_war_with = ROOT }
+				}
+			}
 		}
 	}
 	##都护府
@@ -3162,6 +3337,103 @@ ROC_foreign_ministry = {
 			base = 1000
 		}
 	}
+
+	##规训附庸意识形态
+	ROC_align_subject_subideology_FROM = {
+		icon = GFX_decision_generic_political_discourse
+		allowed = {
+			original_tag = ROC
+		}
+		visible = {
+			is_subject = no
+			has_global_flag = CHI_REUNIT
+			NOT = { has_global_flag = ROC_CC_party_win }
+			NOT = {
+				has_country_leader = {
+					character = ROC_Chen
+					ruling_only = yes
+				}
+			}
+		}
+		target_array = ROOT.subjects
+		target_root_trigger = {
+			is_subject = no
+			has_global_flag = CHI_REUNIT
+			NOT = { has_global_flag = ROC_CC_party_win }
+			NOT = {
+				has_country_leader = {
+					character = ROC_Chen
+					ruling_only = yes
+				}
+			}
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_global_flag = CHI_REUNIT
+				NOT = { has_global_flag = ROC_CC_party_win }
+				NOT = {
+					has_country_leader = {
+						character = ROC_Chen
+						ruling_only = yes
+					}
+				}
+			}
+			FROM = {
+				is_subject_of = ROOT
+				is_chinese_country = no
+			}
+			NOT = { ROC_FROM_has_same_subideology_as_ROOT = yes }
+		}
+		available = {
+			is_subject = no
+			has_global_flag = CHI_REUNIT
+			NOT = { has_global_flag = ROC_CC_party_win }
+			hidden_trigger = {
+				NOT = {
+					has_country_leader = {
+						character = ROC_Chen
+						ruling_only = yes
+					}
+				}
+			}
+			FROM = {
+				is_subject_of = ROOT
+				hidden_trigger = {
+					is_chinese_country = no
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = ROC_FROM_diff_subideology_tt
+				NOT = { ROC_FROM_has_same_subideology_as_ROOT = yes }
+			}
+		}
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					ROOT = { is_subject = yes }
+					ROOT = { has_global_flag = ROC_CC_party_win }
+					ROOT = {
+						has_country_leader = {
+							character = ROC_Chen
+							ruling_only = yes
+						}
+					}
+					NOT = { FROM = { is_subject_of = ROOT } }
+					FROM = { is_chinese_country = yes }
+					ROC_FROM_has_same_subideology_as_ROOT = yes
+				}
+			}
+		}
+		cost = 15
+		days_remove = 15
+		remove_effect = {
+			ROC_sync_FROM_subideology_to_ROOT_effect = yes
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
 }
 
 Shanghai_Cooperation_Organization = {
@@ -3411,6 +3683,21 @@ political_actions = {
 				tooltip = free_policy_card_unm_change_tt
 			}
 			ROC_policy_card_modifier = yes
+		}
+	}
+	ROC_ai_refresh_policy_cards = {  ##AI每3个月自动按优先级无消耗刷新党国政策卡
+		allowed = { tag = ROC }
+		visible = { is_ai = yes }
+		available = { is_ai = yes }
+		icon = GFX_decision_generic_political_discourse
+		cost = 0
+		fire_only_once = no
+		days_re_enable = 90
+		ai_will_do = {
+			base = 1000
+		}
+		complete_effect = {
+			ROC_policy_ai_refresh_cards = yes
 		}
 	}
 }
@@ -4776,7 +5063,7 @@ CHI_Industrialization_of_China = {
 		remove_effect = {
 			build_railway = {
 				level = 1
-				path = { 7137 7650 4028 1597 }
+				path = { 7137 7650 19451 10050 4028 19545 1597 }
 			}
 			custom_effect_tooltip = {
 				localization_key = China_Industrial_Points_Var_up_tt
@@ -8890,6 +9177,7 @@ CHI_Debug = {
 			drop_cosmetic_tag = yes
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_RCKMT_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
 		}
 	}
@@ -8924,6 +9212,7 @@ CHI_Debug = {
 			set_cosmetic_tag = ROC_Soviet_Republic
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_RCKMT_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
 		}
 	}
@@ -8959,6 +9248,7 @@ CHI_Debug = {
 			set_country_leader_ideology = Chiang_Kai_shekism_subtype
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_RCKMT_party_win
+			set_country_flag = Nanjing_event_over
 			set_global_flag = ROC_jiangjingguo_right
 			mark_focus_tree_layout_dirty = yes
 		}
@@ -8994,6 +9284,7 @@ CHI_Debug = {
 			drop_cosmetic_tag = yes
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_Constitutionalists_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
 			set_variable = { ROC_Ruling_Party_VAR = 3 }
 			clear_array = THIS.Ruling_coalition_array
@@ -9044,6 +9335,7 @@ CHI_Debug = {
 			add_ideas = ROC_Chen_Qianyu_idea
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_CC_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
 		}
 	}
@@ -9079,6 +9371,7 @@ CHI_Debug = {
 			set_country_leader_ideology = Chiang_Kai_shekism_subtype
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_Whampoa_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
 		}
 	}
@@ -9113,6 +9406,7 @@ CHI_Debug = {
 			drop_cosmetic_tag = yes
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_Whampoa_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
 		}
 	}
@@ -9147,7 +9441,30 @@ CHI_Debug = {
 			drop_cosmetic_tag = yes
 			set_global_flag = ROC_establishment_of_the_capital_at_nanjing
 			set_global_flag = ROC_Whampoa_party_win
+			set_country_flag = Nanjing_event_over
 			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	ROC_unlock_all_policy_cards_debug = {  ##一键解锁所有政策卡
+		allowed = {
+			tag = ROC
+		}
+		visible = {
+			is_debug = yes
+		}
+		available = {
+		}
+		fire_only_once = no
+		cost = 0
+		icon = GFX_decision_generic_political_discourse
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			custom_effect_tooltip = ROC_unlock_all_policy_cards_debug_tt
+			hidden_effect = {
+				ROC_unlock_all_policy_cards_debug_effect = yes
+			}
 		}
 	}
 }
@@ -9216,3 +9533,39 @@ ROC_soong_PCC_decision_category = {
 }
 
 
+ROC_anti_sakura_wartime_category = {
+	ROC_anti_sakura_overseas_remittances = {
+		cost = 25
+		days_remove = 90
+		days_re_enable = 120
+		available = { has_war_with = JAP }
+		cancel_trigger = { NOT = { has_war_with = JAP } }
+		modifier = {
+			consumer_goods_factor = -0.05
+		}
+		complete_effect = {
+			add_to_variable = {
+				var = ubs_save
+				value = 50
+				tooltip = ROC_anti_sakura_remittances_treasury_tt
+			}
+		}
+		ai_will_do = { factor = 2 }
+	}
+
+	ROC_anti_sakura_war_bonds = {
+		cost = 50
+		days_remove = 90
+		days_re_enable = 120
+		available = { has_war_with = JAP }
+		cancel_trigger = { NOT = { has_war_with = JAP } }
+		modifier = {
+			production_speed_arms_factory_factor = 0.10
+			industrial_capacity_factory = 0.05
+		}
+		complete_effect = {
+			add_stability = -0.02
+		}
+		ai_will_do = { factor = 1 }
+	}
+}

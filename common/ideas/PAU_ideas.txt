@@ -143,9 +143,38 @@ ideas = {
             }
         }
 
+        #分裂的军团（野火败亡后）
+        PAU_divided_legion_no_lhs = {
+            name = PAU_divided_legion
+            picture = PAU_divided_legion
+            removal_cost = -1
+            modifier = {
+                army_org_factor = -0.05  #陆军组织度
+            }
+        }
+
+        PAU_divided_legion1_no_lhs = {
+            name = PAU_divided_legion
+            picture = PAU_divided_legion
+            removal_cost = -1
+            modifier = {
+                army_org_factor = -0.05  #陆军组织度
+            }
+        }
+
+        PAU_divided_legion2_no_lhs = {
+            name = PAU_divided_legion
+            picture = PAU_divided_legion
+            removal_cost = -1
+            modifier = {
+                army_org_factor = -0.05  #陆军组织度
+                offensive_war_stability_factor = 0.2
+            }
+        }
+
         #组织反冲击
         PAU_undead_counterattack = {
-            picture = generic_volunteer_expedition_bonus
+            picture = PAU_undead_counterattack
             removal_cost = -1
             modifier = {
                 army_attack_speed_factor = -0.8
@@ -154,10 +183,23 @@ ideas = {
 
         #烧毁无法转移的物资
         PAU_undead_burn_depot = {
-            picture = generic_volunteer_expedition_bonus
+            picture = PAU_undead_burn_depot
             removal_cost = -1
             modifier = {
                 army_attack_speed_factor = -0.2
+            }
+        }
+
+        #高空照明弹驱散死雾
+        ZDW_mist_cleared_debuff = {
+            picture = ZDW_mist_cleared_debuff
+            allowed = { always = no }
+            removal_cost = -1
+            modifier = {
+                army_defence_factor = -0.20
+                army_speed_factor = -0.25
+                army_org_factor = -0.15
+                dig_in_speed_factor = -0.30
             }
         }
 
@@ -166,8 +208,14 @@ ideas = {
             picture = PAU_annex_debuff
             removal_cost = -1
             available = {
-                any_country = {
-                    has_country_flag = PAU_bop_loan_active
+                OR = {
+                    AND = {
+                        has_variable = PAU_loan_provider
+                        var:PAU_loan_provider = { has_country_flag = PAU_bop_loan_active }
+                    }
+                    any_country = {
+                        has_country_flag = PAU_bop_loan_active
+                    }
                 }
             }
             modifier = {
@@ -197,8 +245,9 @@ ideas = {
             picture = PAU_guyong_buff
             removal_cost = -1
             modifier = {
-                industrial_capacity_factory = 0.05  #工厂产出
-                industrial_capacity_dockyard = 0.05  #船坞产出
+                supply_consumption_factor = -0.05  #补给消耗
+                production_speed_bunker_factor = 0.1  #陆上要塞建造速度
+                dig_in_speed_factor = 0.1  #堑壕构建速度
             }
         }
 
@@ -219,16 +268,78 @@ ideas = {
             picture = PAU_world_revolution
             removal_cost = -1
             modifier = {
-                industrial_capacity_factory = 0.1  #工厂产出
-                industrial_capacity_dockyard = 0.1  #船坞产出
-                conscription_factor = 0.05  #征兵率
+                war_support_factor = 0.05  #战争支持度
+                justify_war_goal_time = -0.25  #制造战争借口时间
+                send_volunteer_size = 5  #志愿军派遣上限
+                send_volunteers_tension = -1.0  #无视紧张度派志愿军
+                air_volunteer_cap = 250  #空军志愿队上限
+                lend_lease_tension = -1.0  #无视紧张度租借装备
+                planning_speed = 0.10  #计划速度
+                coordination_bonus = 0.05  #协调加成
+                industrial_capacity_dockyard = 0.10  #船坞产出
+            }
+        }
+
+        #白夜军事顾问团
+        PAU_joint_drill_partner_buff = {
+            picture = PAU_joint_drill_partner_buff
+            removal_cost = -1
+            modifier = {
+                planning_speed = 0.10
+                supply_consumption_factor = -0.05
+                industrial_capacity_factory = 0.05
+                license_purchase_cost = -0.35
+            }
+        }
+
+        #革命国际军械增援
+        PAU_revolutionary_aid_buff = {
+            picture = PAU_revolutionary_aid_buff
+            removal_cost = -1
+            modifier = {
+                army_attack_factor = 0.05
+                army_org_factor = 0.05
+                supply_consumption_factor = -0.10
+            }
+        }
+
+        #不给新老爷递鞭子
+        PAU_labor_solidarity_charter = {
+            picture = PAU_labor_solidarity_charter
+            removal_cost = -1
+            modifier = {
+                send_volunteer_size = 2
+                send_volunteers_tension = -1.0
+                political_power_factor = 0.05
+            }
+        }
+
+        #冷却改造
+        PAU_garage_retrofits = {
+            picture = PAU_garage_retrofits
+            removal_cost = -1
+            modifier = {
+                attrition = -0.15
+                army_armor_speed_factor = 0.05
+                supply_consumption_factor = -0.05
+            }
+        }
+
+        #“车轮未冷”
+        PAU_no_overnight_momentum = {
+            picture = PAU_no_overnight_momentum
+            removal_cost = -1
+            modifier = {
+                army_speed_factor = 0.10
+                org_loss_when_moving = -0.15
+                supply_consumption_factor = -0.10
             }
         }
 
         #世界贸易组织观察国
         pau_wto_observer_state = {
             name = GER_wto_observer_state
-            picture = stiff_upper_lip
+            picture = PAU_wto_observer
             available = {
                 any_country = {
                     has_SOV_comecon_buff = yes
@@ -293,14 +404,44 @@ ideas = {
         #看吧，和平才是最强的奇迹
         PAU_hpgc_idea = {
             name = PAU_hpgc
-            picture = PAU_borderless_army
+            picture = PAU_hpgc
             removal_cost = -1
             modifier = {
                 army_core_attack_factor = 0.15  #核心领土攻击
                 army_core_defence_factor = 0.15  #核心领土防御
+                production_speed_industrial_complex_factor = 0.15  #民工建造速度
+                production_speed_infrastructure_factor = 0.15  #基建建造速度
+                industrial_capacity_dockyard = 0.15  #船坞产出
+                global_building_slots_factor = 0.15  #地区建筑槽位
+                guarantee_cost = -0.75  #保障独立成本
+                trade_opinion_factor = 0.25  #贸易好感
             }
             rule = {
                 can_not_declare_war = yes
+            }
+        }
+
+        #泛太平洋互市惠民协定
+        PAU_pacific_partner_prosperity = {
+            picture = PAU_pacific_partner_prosperity
+            removal_cost = -1
+            modifier = {
+                production_speed_infrastructure_factor = 0.10
+                industrial_capacity_factory = 0.05
+                local_resources_factor = 0.10
+                trade_opinion_factor = 0.20
+            }
+        }
+
+        #和平护航救灾援助
+        PAU_humanitarian_relief_buff = {
+            picture = PAU_humanitarian_relief_buff
+            removal_cost = -1
+            modifier = {
+                army_core_defence_factor = 0.10
+                supply_consumption_factor = -0.10
+                casualty_trickleback = 0.15
+                industry_repair_factor = 0.25
             }
         }
 
@@ -317,7 +458,6 @@ ideas = {
             }
             modifier = {
                 intelligence_agency_defense = 99  #反间谍等级
-                enemy_intel_network_gain_factor = -10.0  #敌方情报网增长速度-1000%
                 enemy_operative_detection_chance_factor = 10.0  #敌方特工发现率
                 enemy_operative_capture_chance_factor = 10.0  #敌方特工抓捕率
                 enemy_operative_forced_into_hiding_time_factor = 10.0
@@ -440,17 +580,92 @@ ideas = {
             }
         }
 
-        #大海那边可全是正规舰队啊（樱花战败后：保留部分远洋海军加成并转向空军建设）
+        #大海那边可全是正规舰队啊
+        PAU_zgjd_idea_no_jap = {
+            name = PAU_zgjd
+            picture = PAU_zgjd
+            removal_cost = -1
+            modifier = {
+                naval_invasion_capacity = 5  #登陆容量
+                amphibious_invasion = 0.15  #登陆能力
+                navy_max_range_factor = 0.25  #海军最大航程
+            }
+        }
+
+        PAU_zgjd_idea1_no_jap = {
+            name = PAU_zgjd
+            picture = PAU_zgjd
+            removal_cost = -1
+            modifier = {
+                naval_invasion_capacity = 10  #登陆容量
+                amphibious_invasion = 0.15  #登陆能力
+                navy_visibility = -0.1
+                navy_max_range_factor = 0.25  #海军最大航程
+                consumer_goods_factor = 0.15  #消费品工厂占比
+            }
+            equipment_bonus = {
+                ship_hull_heavy = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+                ship_hull_cruiser = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+                ship_hull_light = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+                ship_hull_submarine = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+            }
+        }
+
+        PAU_zgjd_idea2_no_jap = {
+            name = PAU_zgjd
+            picture = PAU_zgjd
+            removal_cost = -1
+            modifier = {
+                naval_invasion_capacity = 10  #登陆容量
+                amphibious_invasion = 0.20  #登陆能力
+                naval_invasion_penalty = -0.15  #登陆惩罚
+                navy_visibility = -0.1
+                navy_max_range_factor = 0.25  #海军最大航程
+                consumer_goods_factor = 0.15  #消费品工厂占比
+            }
+            equipment_bonus = {
+                ship_hull_heavy = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+                ship_hull_cruiser = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+                ship_hull_light = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+                ship_hull_submarine = {
+                    build_cost_ic = -0.15
+                    instant = yes
+                }
+            }
+        }
+
+        #大海那边可全是正规舰队啊
         PAU_zgjd_idea3 = {
             name = PAU_zgjd
             picture = PAU_zgjd
             removal_cost = -1
             modifier = {
-                naval_invasion_capacity = 5  #登陆容量（保留一半）
-                amphibious_invasion = 0.10  #登陆能力（保留一半）
-                naval_invasion_penalty = -0.10  #登陆惩罚（保留部分）
-                navy_visibility = -0.05  #海军可见度（保留一半）
-                navy_max_range_factor = 0.15  #海军最大航程（保留部分）
+                naval_invasion_capacity = 5  #登陆容量
+                amphibious_invasion = 0.10  #登陆能力
+                naval_invasion_penalty = -0.10  #登陆惩罚
+                navy_visibility = -0.05  #海军可见度
+                navy_max_range_factor = 0.15  #海军最大航程
                 air_superiority_efficiency = 0.10  #制空权任务效率
                 air_cas_present_factor = 0.10  #地面支援伤害
                 air_agility_factor = 0.05  #空军机动
@@ -496,7 +711,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = PAU
@@ -513,7 +731,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = PA1
@@ -530,7 +751,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = PAQ
@@ -547,7 +771,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = ELF
@@ -564,7 +791,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = LFC
@@ -581,7 +811,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = MGU
@@ -598,7 +831,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = PGM
@@ -615,7 +851,10 @@ ideas = {
             modifier = {
             }
             available = {
-                is_in_faction_with = PAU
+                OR = {
+                    tag = PAU
+                    is_in_faction_with = PAU
+                }
             }
             targeted_modifier = {
                 tag = AHM
@@ -628,7 +867,7 @@ ideas = {
 
         #北方的技术援助
         PAU_soviet_contact = {
-            picture = generic_communism_drift_bonus
+            picture = PAU_soviet_contact
             removal_cost = -1
             modifier = {
                 political_power_factor = 0.05  #政治点获取
@@ -639,7 +878,7 @@ ideas = {
 
         #亚洲邻国的照应
         PAU_asia_neighbors = {
-            picture = generic_flexible_foreign_policy
+            picture = PAU_asia_neighbors
             removal_cost = -1
             modifier = {
                 improve_relations_maintain_cost_factor = -0.05  #改善关系维持成本
@@ -650,7 +889,7 @@ ideas = {
 
         #归还归还，别的免谈
         PAU_china_hardline = {
-            picture = generic_war_preparation
+            picture = PAU_china_hardline
             removal_cost = -1
             modifier = {
                 justify_war_goal_time = -0.05
@@ -660,7 +899,7 @@ ideas = {
 
         #活人不会给骷髅让路
         PAU_defy_death = {
-            picture = generic_morale_bonus
+            picture = PAU_defy_death
             removal_cost = -1
             modifier = {
                 army_core_attack_factor = 0.05  #核心领土攻击
@@ -671,7 +910,7 @@ ideas = {
 
         #皇家海军的老交情
         PAU_eng_cooperation = {
-            picture = generic_navy_bonus
+            picture = PAU_eng_cooperation
             removal_cost = -1
             modifier = {
                 naval_coordination = 0.05  #海军协同
@@ -682,7 +921,7 @@ ideas = {
 
         #太平洋贸易口岸
         PAU_pacific_peace = {
-            picture = generic_mild_economic_recovery
+            picture = PAU_pacific_peace
             removal_cost = -1
             modifier = {
                 consumer_goods_factor = -0.05  #消费品工厂占比
@@ -692,7 +931,7 @@ ideas = {
         }
 
         PAU_pacific_defense = {
-            picture = generic_coastal_defense_ships
+            picture = PAU_pacific_defense
             removal_cost = -1
             modifier = {
                 naval_defense_factor = 0.05  #海军防御
@@ -704,18 +943,45 @@ ideas = {
 
         #请别把战争带进来
         PAU_armed_neutrality = {
-            picture = generic_fortify_the_borders
+            picture = PAU_armed_neutrality
             removal_cost = -1
             modifier = {
-                army_defence_factor = 0.05  #陆军防御
-                naval_defense_factor = 0.05  #海军防御
-                justify_war_goal_time = 0.05
+                army_core_defence_factor = 0.15  #核心领土防御
+                naval_defense_factor = 0.10  #海军防御
+                naval_damage_factor = 0.10  #海军对舰攻击
+                convoy_escort_efficiency = 0.25  #护航效率
+                production_speed_coastal_bunker_factor = 0.25  #海岸要塞建造速度
+                production_speed_anti_air_building_factor = 0.25  #防空炮建造速度
+                justify_war_goal_time = 0.15
+            }
+        }
+
+        #太平洋戒备哨网
+        PAU_armed_neutrality_alert = {
+            picture = PAU_armed_neutrality_alert
+            removal_cost = -1
+            modifier = {
+                naval_detection = 0.15
+                navy_anti_air_attack_factor = 0.15
+                static_anti_air_damage_factor = 0.25
+                amphibious_invasion_defence = 0.15
+            }
+        }
+
+        #反霸权海疆互保协防
+        PAU_counter_blockade_shield = {
+            picture = PAU_counter_blockade_shield
+            removal_cost = -1
+            modifier = {
+                army_core_defence_factor = 0.10
+                naval_defense_factor = 0.10
+                convoy_escort_efficiency = 0.15
             }
         }
 
         #与国同罪
         PAU_shared_guilt = {
-            picture = generic_political_support
+            picture = PAU_shared_guilt
             removal_cost = -1
             modifier = {
                 army_morale_factor = 0.05  #陆军士气
@@ -726,7 +992,7 @@ ideas = {
 
         #白夜本来就是只野兽
         PAU_white_night_beast = {
-            picture = generic_guerilla_warfare
+            picture = PAU_white_night_beast
             removal_cost = -1
             modifier = {
                 army_attack_factor = 0.05  #陆军攻击
@@ -737,10 +1003,11 @@ ideas = {
 
         #白夜同盟的正式名分
         PAU_final_settlement = {
-            picture = generic_improved_industries
+            picture = PAU_final_settlement
             removal_cost = -1
             modifier = {
-                industrial_capacity_factory = 0.05  #工厂产出
+                stability_factor = 0.05  #稳定度
+                monthly_population = 0.15  #月度人口增长
                 industrial_capacity_dockyard = 0.05  #船坞产出
                 political_power_factor = 0.05  #政治点获取
             }
@@ -760,7 +1027,7 @@ ideas = {
         }
         #勉强维持的平衡
         PAU_joint_council = {
-            picture = generic_political_support
+            picture = PAU_joint_council
             removal_cost = -1
             modifier = {
                 political_power_factor = -0.25  #政治点获取
@@ -799,7 +1066,7 @@ ideas = {
 
         #履约凯旋
         PAU_contract_victory = {
-             picture = PAU_contract_victory
+            picture = PAU_contract_victory
             name = "PAU_contract_victory"
             removal_cost = -1
             modifier = {
@@ -807,6 +1074,136 @@ ideas = {
                 army_org_factor = 0.05  #陆军组织度
                 stability_factor = 0.05  #稳定度
                 political_power_factor = 0.05  #政治点获取
+            }
+        }
+
+        #国际志愿旅
+        PAU_international_brigade = {
+            picture = PAU_international_brigade
+            name = "PAU_international_brigade"
+            removal_cost = -1
+            modifier = {
+                army_org_factor = 0.05  #陆军组织度
+                army_morale_factor = 0.05  #陆军士气
+                weekly_manpower = 500  #每周人力
+            }
+        }
+
+        #贸易与外交的繁荣
+        PAU_trade_boom_diplomacy = {
+            picture = PAU_trade_boom_diplomacy
+            name = "PAU_trade_boom_diplomacy"
+            removal_cost = -1
+            modifier = {
+                consumer_goods_factor = -0.05  #消费品工厂占比
+                trade_opinion_factor = 0.1  #贸易好感
+                political_power_factor = 0.05  #政治点获取
+            }
+        }
+
+        #岸防安全承诺
+        PAU_coastal_security = {
+            picture = PAU_coastal_security
+            name = "PAU_coastal_security"
+            removal_cost = -1
+            modifier = {
+                naval_defense_factor = 0.1  #海军防御
+                naval_coordination = 0.05  #海军协同
+                naval_ship_recovery_chance_factor = 0.05  #舰船修复概率
+            }
+        }
+
+        #决心
+        PAU_ultimatum_resolve = {
+            picture = PAU_ultimatum_resolve
+            name = "PAU_ultimatum_resolve"
+            removal_cost = -1
+            modifier = {
+                war_support_factor = 0.05  #战争支持度
+                command_power_gain = 0.1
+                planning_speed = 0.05  #计划速度
+            }
+        }
+
+        #白夜：神社加餐
+        PAU_baiye_shrine_fish_treat_idea = {
+            picture = PAU_baiye_fish_treat
+            removal_cost = -1
+            modifier = {
+                stability_factor = 0.05
+                consumer_goods_factor = -0.05
+                army_morale_factor = 0.05
+            }
+        }
+
+        #白夜：营房投喂纪律
+        PAU_baiye_shrine_order_idea = {
+            picture = PAU_baiye_shrine_order
+            removal_cost = -1
+            modifier = {
+                supply_consumption_factor = -0.05
+                planning_speed = 0.10
+                recon_factor = 0.05
+            }
+        }
+
+        #白夜：樱花港口的欢迎招牌
+        PAU_baiye_sakura_homecoming_idea = {
+            picture = PAU_baiye_sakura_homecoming
+            removal_cost = -1
+            modifier = {
+                stability_factor = 0.05
+                political_power_factor = 0.05
+                industrial_capacity_factory = 0.05
+                compliance_gain = 0.02
+            }
+        }
+
+        #白夜：顺着雾气探路
+        PAU_baiye_mist_scouting_idea = {
+            picture = PAU_baiye_mist_idea
+            removal_cost = -1
+            modifier = {
+                recon_factor = 0.15
+                army_speed_factor = 0.05
+                attrition = -0.10
+            }
+            targeted_modifier = {
+                tag = ZDW
+                attack_bonus_against = 0.05
+                defense_bonus_against = 0.05
+            }
+            targeted_modifier = {
+                tag = PAQ
+                attack_bonus_against = 0.05
+                defense_bonus_against = 0.05
+            }
+            targeted_modifier = {
+                tag = DVL
+                attack_bonus_against = 0.05
+                defense_bonus_against = 0.05
+            }
+        }
+
+        #白夜：旗舰瞭望台
+        PAU_baiye_flagship_lookout_idea = {
+            picture = PAU_baiye_lookout_idea
+            removal_cost = -1
+            modifier = {
+                spotting_chance = 0.15
+                naval_coordination = 0.10
+                amphibious_invasion = 0.10
+            }
+        }
+
+        #白夜：高空照明弹驱散死雾
+        PAU_baiye_mist_flare_idea = {
+            picture = PAU_baiye_mist_flare_idea
+            removal_cost = -1
+            modifier = {
+                recon_factor = 0.15
+                land_night_attack = 0.10
+                breakthrough_factor = 0.10
             }
         }
     }
@@ -878,7 +1275,7 @@ ideas = {
         }
         #漫山遍野的死潮
         ZDW_unstoppable_tide = {
-            picture = PAU_divided_legion
+            picture = ZDW_unstoppable_tide
             removal_cost = -1
             available = {
                 NOT = { PAU = { has_country_flag = has_PAU_xiaoyao3 } }
@@ -896,7 +1293,7 @@ ideas = {
 
         #失控反噬的尸群
         ZDW_solana_backlash = {
-            picture = PAU_divided_legion
+            picture = ZDW_solana_backlash
             removal_cost = -1
             on_remove = {
                 delete_unit_template_and_units = {
@@ -937,17 +1334,14 @@ ideas = {
                 }
             }
             modifier = {
-                army_org_factor = -0.25
-                army_defence_factor = -0.2
-                land_reinforce_rate = -0.15
-                out_of_supply_factor = -0.80
-                supply_consumption_factor = -0.80
+                out_of_supply_factor = -0.50
+                supply_consumption_factor = -0.50
             }
         }
 
         #反攻加成
         PAU_counterattack_zdw_buff = {
-            picture = PAU_divided_legion
+            picture = PAU_counterattack_zdw_buff
             removal_cost = -1
             available = {
                 country_exists = ZDW
@@ -968,7 +1362,7 @@ ideas = {
             }
         }
         PAU_game_rule_win_lhs = {
-            picture = PAU_divided_legion
+            picture = PAU_game_rule_win_lhs
             removal_cost = -1
             available = {
                 country_exists = LHS
@@ -990,8 +1384,15 @@ ideas = {
             }
         }
         PAM_bzwtp = {
-            picture = PAU_divided_legion
+            picture = PAM_bzwtp
             removal_cost = -1
+            available = {
+                PAQ = {
+                    exists = yes
+                    NOT = { is_subject_of = PAU }
+                    NOT = { is_in_faction_with = PAU }
+                }
+            }
             targeted_modifier = {
                 tag = PAQ
                 attack_bonus_against = 0.1
@@ -1001,13 +1402,51 @@ ideas = {
         }
 
         PAM_bzwtp2 = {
-            picture = PAU_divided_legion
+            picture = PAM_bzwtp
             removal_cost = -1
+            available = {
+                PAQ = {
+                    exists = yes
+                    NOT = { is_subject_of = PAU }
+                    NOT = { is_in_faction_with = PAU }
+                }
+            }
             targeted_modifier = {
                 tag = PAQ
                 attack_bonus_against = 0.1
                 defense_bonus_against = 0.1
                 breakthrough_bonus_against = 0.1
+            }
+        }
+
+        #白夜伞降奇袭行动（14天限时高空突袭态）
+        PAU_airborne_white_night_raid_idea = {
+            picture = PAU_mil_reform
+            removal_cost = -1
+            allowed = { original_tag = PAU }
+            modifier = {
+                extra_paratrooper_supply_grace = 72
+                paradrop_organization_factor = 0.20
+                paratrooper_aa_defense = 0.25
+                air_invasion_division_cap = 8
+                breakthrough_factor = 0.10
+                special_forces_attack_factor = 0.15
+                modifier_army_sub_unit_PAU_airborne_light_armor_attack_factor = 0.15
+                modifier_army_sub_unit_PAU_airborne_light_armor_speed_factor = 0.15
+            }
+        }
+
+        #白夜天降奇兵·首支伞降轻装甲王牌联队（常驻战功荣誉）
+        PAU_airborne_ace_regiment_idea = {
+            picture = PAU_borderless_army
+            removal_cost = -1
+            allowed = { original_tag = PAU }
+            modifier = {
+                special_forces_cap = 0.05
+                extra_paratrooper_supply_grace = 24
+                modifier_army_sub_unit_PAU_airborne_light_armor_attack_factor = 0.10
+                modifier_army_sub_unit_PAU_airborne_light_armor_defence_factor = 0.10
+                modifier_army_sub_unit_PAU_airborne_light_armor_speed_factor = 0.10
             }
         }
 
@@ -1017,8 +1456,8 @@ ideas = {
             removal_cost = -1
             available = { is_subject = no }
             modifier = {
-                stability_factor = 0.1  #稳定度
-                political_power_factor = 0.1  #政治点获取
+                stability_factor = 0.05  #稳定度
+                political_power_factor = 0.15  #政治点获取
                 improve_relations_maintain_cost_factor = -0.25  #改善关系维持成本
                 trade_opinion_factor = 0.1  #贸易好感
             }
@@ -1055,57 +1494,13 @@ ideas = {
             on_add = { set_variable = { deputy_country_leader_var = token:PAU_Nymph2 } }
             on_remove = { clear_variable = deputy_country_leader_var }
         }
-
-        #国际志愿旅
-        PAU_international_brigade = {
-            name = "PAU_international_brigade"
-            removal_cost = -1
-            modifier = {
-                army_org_factor = 0.05  #陆军组织度
-                army_morale_factor = 0.05  #陆军士气
-                weekly_manpower = 500  #每周人力
-            }
-        }
-
-        #贸易与外交的繁荣
-        PAU_trade_boom_diplomacy = {
-            name = "PAU_trade_boom_diplomacy"
-            removal_cost = -1
-            modifier = {
-                consumer_goods_factor = -0.05  #消费品工厂占比
-                trade_opinion_factor = 0.1  #贸易好感
-                political_power_factor = 0.05  #政治点获取
-            }
-        }
-
-        #岸防安全承诺
-        PAU_coastal_security = {
-            name = "PAU_coastal_security"
-            removal_cost = -1
-            modifier = {
-                naval_defense_factor = 0.1  #海军防御
-                naval_coordination = 0.05  #海军协同
-                naval_ship_recovery_chance_factor = 0.05  #舰船修复概率
-            }
-        }
-
-        #决心
-        PAU_ultimatum_resolve = {
-            name = "PAU_ultimatum_resolve"
-            removal_cost = -1
-            modifier = {
-                war_support_factor = 0.05  #战争支持度
-                command_power_gain = 0.1
-                planning_speed = 0.05  #计划速度
-            }
-        }
     }
 
     industrial_concern = {
 
         #安第斯矿业联营
         PAU_andes_cableway_coop = {
-            picture = generic_industrial_concern_2
+            picture = PAU_andes_cableway
             allowed = {
                 or = {
                     original_tag = PAU

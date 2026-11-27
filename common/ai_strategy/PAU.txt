@@ -13,10 +13,6 @@ PAU_start_base = {
         value = -1000
     }
     ai_strategy = {
-        type = force_build_armies
-        value = 100
-    }
-    ai_strategy = {
         type = equipment_production_min_factories_archetype
         id = super_heavy_artillery_equipment
         value = -99
@@ -77,16 +73,36 @@ PAU_start_base = {
     }
 }
 
+#债务安全期内下兵
+PAU_force_build_armies_debt_safe = {
+    allowed = {
+        original_tag = PAU
+    }
+    enable = {
+        num_divisions < 320
+        check_variable = { Debt_ratio < 0.85 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = force_build_armies
+        value = 100
+    }
+}
+
 PAU_ask_for_access = {
     reversed = yes
     allowed = {
-        original_tag = PAU
+        NOT = { original_tag = PAU }
+    }
+    enable_reverse = {
+        PAU = { exists = yes }
     }
     enable = {
         NOT = {
             OR = {
                 is_in_faction_with = PAU
                 has_military_access_to = PAU
+                has_war_with = PAU
             }
         }
         OR = {
@@ -118,13 +134,14 @@ PAU_stop_disbanding_your_army = {
         original_tag = PAU
     }
     enable = {
-        num_divisions < 600
+        num_divisions < 320
+        check_variable = { Debt_ratio < 0.85 }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 800
+        value = 260
     }
 }
 
@@ -177,7 +194,7 @@ PAU_defensive_when_player_is_LHS_or_PAM = {
     ai_strategy = {
         type = front_control
         tag = LHS
-        priority = 80000
+        priority = 260
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -215,7 +232,7 @@ PAU_offensive_against_ai_LHS = {
     ai_strategy = {
         type = front_control
         tag = LHS
-        priority = 50000
+        priority = 220
         ordertype = front
         manual_attack = yes
         execution_type = rush_weak
@@ -236,7 +253,7 @@ PAU_delaying_defense_against_ZDW = {
     ai_strategy = {
         type = front_control
         tag = ZDW
-        priority = 60000
+        priority = 250
         ordertype = front
         manual_attack = yes
         execution_type = careful
@@ -287,7 +304,7 @@ PAU_counterattack_ZDW = {
     ai_strategy = {
         type = front_control
         tag = ZDW
-        priority = 55000
+        priority = 240
         ordertype = front
         manual_attack = yes
         execution_type = rush_weak
@@ -309,34 +326,16 @@ PAU_check_omega_lul = {
     }
     abort_when_not_enabled = yes
 
+    #避开低基建荒地
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
@@ -348,34 +347,13 @@ PAU_check_omega_lul = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
-
+    #加强首都保卫
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -384,11 +362,10 @@ PAU_check_omega_lul = {
         }
         value = 50
     }
-
+    #优先登陆高价值港口州
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             check_variable = { state_strategic_value < 3 }
         }
         value = -5
@@ -396,57 +373,22 @@ PAU_check_omega_lul = {
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 8 }
         }
-        value = -3
+        value = -6
     }
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-        }
-        value = -3
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
+            is_coastal = yes
+            any_province_building_level = {
+                province = {
+                    all_provinces = yes
+                    limit_to_coastal = yes
                 }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-        }
-        value = -15
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            OR = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
+                building = naval_base
+                level > 0
             }
         }
         value = 15
@@ -517,7 +459,7 @@ PAU_prepare_and_crush_PAQ = {
     ai_strategy = {
         type = front_control
         tag = PAQ
-        priority = 25000
+        priority = 140
         ordertype = front
         manual_attack = yes
         execution_type = balanced
@@ -544,7 +486,7 @@ PAU_unify_south_america_war = {
                 capital_scope = { is_on_continent = south_america }
             }
         }
-        priority = 30000
+        priority = 150
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -595,7 +537,7 @@ PAU_prepare_and_invade_JAP = {
     ai_strategy = {
         type = front_control
         tag = JAP
-        priority = 40000
+        priority = 170
         ordertype = front
         manual_attack = yes
         execution_type = rush
@@ -655,7 +597,7 @@ PAU_war_with_DVL = {
     ai_strategy = {
         type = front_control
         tag = DVL
-        priority = 28000
+        priority = 160
         ordertype = front
         manual_attack = yes
         execution_type = balanced
@@ -727,12 +669,14 @@ PAU_befriend_China = {
 PAU_endgame_world_revolution = {
     reversed = yes
     allowed = {
-        original_tag = PAU
+        NOT = { original_tag = PAU }
     }
-    enable = {
+    enable_reverse = {
         PAU = {
             has_country_flag = PAU_world_revolution
         }
+    }
+    enable = {
         has_government = communism
         NOT = { has_war_with = PAU }
     }
@@ -757,15 +701,17 @@ PAU_avoid_thin_lines = {
     }
     abort_when_not_enabled = yes
 
+    #渗透防线优先增援
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
-            check_variable = {
-                num_enemy_neighbor_states > 2
+            NOT = { is_fully_controlled_by = FROM.FROM }
+            any_neighbor_state = {
+                controller = { has_war_with = FROM.FROM }
             }
         }
-        value = 100
+        value = 80
     }
 }
 
@@ -800,7 +746,7 @@ PAU_target_enemy_supply_hubs = {
             }
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
-        priority = 65000
+        priority = 65
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -821,7 +767,7 @@ PAU_target_enemy_supply_hubs = {
                 level > 0
             }
         }
-        priority = 62000
+        priority = 60
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -842,7 +788,7 @@ PAU_target_enemy_supply_hubs = {
                 level > 0
             }
         }
-        priority = 15000
+        priority = 35
         ordertype = front
         execution_type = balanced
         execute_order = yes
@@ -885,7 +831,7 @@ PAU_end_pocket = {
                 is_controlled_by = FROM.FROM
             }
         }
-        priority = 80000
+        priority = 190
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -925,7 +871,7 @@ PAU_push_enemy_capital = {
             is_capital = yes
             any_neighbor_state = { is_controlled_by = FROM.FROM }
         }
-        priority = 55000
+        priority = 55
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -961,7 +907,7 @@ PAU_crisis_iron_wall = {
         state_trigger = {
             is_controlled_by = FROM.FROM
         }
-        priority = 90000
+        priority = 195
         ordertype = front
         execution_type = careful
         manual_attack = yes
@@ -978,7 +924,7 @@ PAU_crisis_iron_wall = {
     }
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 1200
+        value = 180
     }
 }
 

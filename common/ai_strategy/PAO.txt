@@ -1,6 +1,9 @@
 PAO_start1 = {
+    allowed = {
+        original_tag = PAO
+    }
     enable = {
-        tag = PAO
+        always = yes
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -10,7 +13,7 @@ PAO_start1 = {
     }
     ai_strategy = {
         type = become_spymaster
-        value = 30  # 花费政治点数竞选间谍大师的权重值
+        value = 30  #竞选间谍大师权重
     }
     ai_strategy = {
         type = garrison
@@ -48,16 +51,11 @@ PAO_start1 = {
             is_coastal = yes
             FROM = { has_war_with = FROM.FROM }
         }
-        priority = 120
+        priority = 25
         ordertype = front
         execution_type = rush
         manual_attack = no
         execute_order  = yes
-    }
-    ai_strategy = {
-        type = building_target
-        id = supply_node
-        value = 200
     }
     ai_strategy = {
         type = research_weight_factor	#重坦
@@ -97,13 +95,14 @@ PAO_stop_disbanding_your_army = {#ai部署陆军倾向
         original_tag = PAO
     }
     enable = {
-        num_divisions < 800
+        num_divisions < 300
+        check_variable = { Debt_ratio < 0.85 }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = 1000
+        value = 250
     }
 }
 PAO_stop_disbanding_your_army2 = {#ai部署陆军倾向2
@@ -111,17 +110,17 @@ PAO_stop_disbanding_your_army2 = {#ai部署陆军倾向2
         original_tag = PAO
     }
     enable = {
-        num_divisions > 800
+        num_divisions > 350
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = ai_wanted_divisions_factor
-        value = -2000
+        value = -400
     }
 }
 
-PAO_wants_civ = {#搓民工
+PAO_wants_civ_bhsh = {#搓民工
     allowed = {
         original_tag = PAO
     }
@@ -419,23 +418,22 @@ PAO_train_production = { #缺火车
         value = 8
     }
 }
-PAO_train_production = { #缺运输船
+PAO_convoy_production = {#缺运输船
     allowed = {
         original_tag = PAO
-
     }
     enable = {
+        num_of_naval_factories > 0
         has_equipment = {
-            convoy  < 500
+            convoy < 500
         }
     }
-
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = equipment_production_min_factories
         id = convoy
-        value = 10
+        value = 6
     }
 }
 
@@ -468,7 +466,7 @@ PAO_wants_arms_factory2 = { #狠狠搓军工
                 num_of_military_factories < 300
                #has_completed_focus = PAO_minshengjihua
                 #not ={
-                  #  has_completed_focus = PAO_guofangjihua
+                  #has_completed_focus = PAO_guofangjihua
                 #}
             }
         }
@@ -724,7 +722,7 @@ PAO_unit= { #单位倾向
 
     ai_strategy = {
         type = role_ratio
-        id = mountaineers_PAO
+        id = mountaineer
         value = 0
     }
 
@@ -747,13 +745,13 @@ PAO_unit= { #单位倾向
 
     ai_strategy = {
         type = template_prio
-        id = infantry_PAO2
+        id = PAO_infantry2
         value = 0
 
     }
     ai_strategy = {
         type = role_ratio
-        id = infantry_PAO2
+        id = PAO_infantry2
         value = 0
 
     }
@@ -886,7 +884,7 @@ PAO_unit2= { #露西莉亚单位倾向
     }
 }
 
-PAO_unit2= { #露西莉亚单位倾向
+PAO_unit_revolution = { #露西莉亚单位倾向
     allowed = {
         original_tag = PAO
     }
@@ -895,7 +893,7 @@ PAO_unit2= { #露西莉亚单位倾向
             has_completed_focus = PAO_gymt
             has_completed_focus = PAO_wrkc
         }
-        num_divisions < 400
+        num_divisions < 320
     }
 
     abort = {
@@ -946,12 +944,12 @@ PAO_unit_buffer_for_asian_threat = {#退守战场
     ai_strategy = {
         type = put_unit_buffers
 
-        # ratio of total armeis in country to be buffered
+        #ratio of total armeis in country to be buffered
 
-        # you can specify an order id. ratio of same orders ids will be share same ratio
+        #you can specify an order id. ratio of same orders ids will be share same ratio
         #order_id = 2
 
-        # states to put garrison orders (if no state is friendly, strat is invalid)
+        #states to put garrison orders (if no state is friendly, strat is invalid)
         states = {
             487
             688
@@ -966,9 +964,9 @@ PAO_unit_buffer_for_asian_threat = {#退守战场
         area = africa
         area = south_america
         area = north_america
-        # ai areas that the orders will use these buffers in
-        # by default if you have orders in target areas, the buffer will request less units.
-        # you can override this to disable the feature
+        #ai areas that the orders will use these buffers in
+        #by default if you have orders in target areas, the buffer will request less units.
+        #you can override this to disable the feature
         subtract_invasions_from_need = no
         subtract_fronts_from_need = yes
     }
@@ -987,16 +985,16 @@ PAO_civ = { #前期别产飞机
         type = added_military_to_civilian_factory_ratio
         value = -999
     }
-    # ai_strategy = {
-        # type = equipment_production_factor #飞机不急着产
-        # id = strike_witches_equipment
-        # value = -999
-    # }
-    # ai_strategy = {
-        # type = equipment_production_factor #飞机不急着产
-        # id = strike_witches_equipment
-        # value = -999
-    # }
+    #ai_strategy = {
+        #type = equipment_production_factor #飞机不急着产
+        #id = strike_witches_equipment
+        #value = -999
+    #}
+    #ai_strategy = {
+        #type = equipment_production_factor #飞机不急着产
+        #id = strike_witches_equipment
+        #value = -999
+    #}
     ai_strategy = {
         type = equipment_production_factor #别造坦克
         id = armor
@@ -1049,7 +1047,7 @@ PAO_air_production = { #空军生产
 
 }
 
-always_prioritize_our_core = {
+PAO_always_prioritize_our_core = {
     allowed={
         original_tag = PAO
     }
@@ -1098,7 +1096,7 @@ PAO_state_is_zhanlue = {#老爷爷，我给你踩地来咯
             controller = { has_war_with = PAO }
         }
         ratio = 0.2
-        priority = 20000
+        priority = 60
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1113,7 +1111,7 @@ PAO_state_is_zhanlue = {#老爷爷，我给你踩地来咯
                 divisions_in_state = { state = PREV size = 0 }
             }
         }
-        priority = 9000
+        priority = 50
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1130,7 +1128,7 @@ PAO_state_is_zhanlue = {#老爷爷，我给你踩地来咯
 
         ratio = 0.8
 
-        priority = 5000
+        priority = 35
         ordertype = front
         execution_type = rush
         execute_order = yes
@@ -1150,7 +1148,7 @@ PAO_state_is_zhanlue = {#老爷爷，我给你踩地来咯
         }
 
 
-        priority = 8000
+        priority = 45
         ordertype = front
         execution_type = rush
     }
@@ -1187,7 +1185,7 @@ PAO_end_pocket = {#包围快速歼灭
             }
         }
         ratio = 0.0
-        priority = 9999
+        priority = 190
         ordertype = front
         execution_type = rush_weak
         execute_order = yes
@@ -1234,7 +1232,7 @@ PAO_concentrate_troops = {#集中突破
 
     ai_strategy = {
         type = force_concentration_factor
-        value = 15  # base + 15 = 30 %
+        value = 15  #base + 15 = 30 %
     }
 
 }
@@ -1246,15 +1244,15 @@ PAO_build_an_air_facility_faster = {#建造空军研究设施
     }
     enable = {
 
-        is_major = yes # Minors don't bother until strong enough to be considered major
-        num_of_military_factories > 200 # We should first build up our military concentrated_industry
+        is_major = yes #Minors don't bother until strong enough to be considered major
+        num_of_military_factories > 200 #We should first build up our military concentrated_industry
 
-        OR = { # Don't start until we can build decent aircraft
+        OR = { #Don't start until we can build decent aircraft
             has_tech = basic_small_airframe
             has_tech = basic_medium_airframe
             has_tech = basic_large_airframe
         }
-        air_facility < 1 # one is enough
+        air_facility < 1 #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -1273,12 +1271,12 @@ PAO_build_a_lw_facility_faster = {#建造陆军研究设施
         num_of_civilian_factories > 40
         num_of_military_factories > 40
         has_completed_focus = PAO_nzsj
-        OR = { # Don't start until we can build decent tanks of some kind
+        OR = { #Don't start until we can build decent tanks of some kind
             has_tech = improved_light_tank_chassis
             has_tech = basic_medium_tank_chassis
             has_tech = improved_heavy_tank_chassis
         }
-        land_facility < 1 # one is enough
+        land_facility < 1 #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -1297,8 +1295,8 @@ PAO_build_a_nav_facility_faster = {#建造海军研究设施
         original_tag = PAO
     }
     enable = {
-        num_of_naval_factories > 25 # Only Naval Powers should bother with these unless specifically told to do otherwise
-        naval_facility < 1 # one is enough
+        num_of_naval_factories > 25 #Only Naval Powers should bother with these unless specifically told to do otherwise
+        naval_facility < 1 #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -1316,8 +1314,8 @@ PAO_build_a_nl_facility_faster = {#建造核研究设施
     enable = {
         has_tech = atomic_research
         num_of_civilian_factories > 25
-        num_of_military_factories > 25 # Even if we have the base tech, let's wait until we have some kind of capacity
-        nuclear_facility < 1  # one is enough
+        num_of_military_factories > 25 #Even if we have the base tech, let's wait until we have some kind of capacity
+        nuclear_facility < 1  #one is enough
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -1388,82 +1386,43 @@ PAO_recruit_air_scientist_faster = {#招募空战科学家
 }
 
 
-PAO_check_omega_lul = { #部队逻辑
+PAO_check_omega_lul = {
     allowed = {
         original_tag = PAO
     }
-     enable = {
+    enable = {
         has_war = yes
     }
     abort_when_not_enabled = yes
+
+    #避开低基建荒地
     ai_strategy = {
         type = front_control
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = {
-                        has_war_with = FROM.FROM
-                        divisions_in_state = { state = PREV size < 3 }
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         priority = 10
         ordertype = front
         execution_type = careful
     }
-
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
             is_controlled_by = FROM.FROM
             NOT = { is_capital = yes }
             NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-            NOT = {
-                any_neighbor_state = {
-                    controller = { has_war_with = FROM.FROM }
-                    any_province_building_level = {
-                        province = { all_provinces = yes }
-                        building = supply_node
-                        level > 0
-                    }
-                }
-            }
+            is_coastal = no
+            infrastructure < 3
+            check_variable = { state_strategic_value < 5 }
         }
         value = -20
     }
-
+    #加强首都保卫
     ai_strategy = {
         type = front_unit_request
         state_trigger = {
@@ -1472,11 +1431,10 @@ PAO_check_omega_lul = { #部队逻辑
         }
         value = 50
     }
-
-    ai_strategy = { #登陆更有价值的地块
+    #优先登陆高价值港口州
+    ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             check_variable = { state_strategic_value < 3 }
         }
         value = -5
@@ -1484,62 +1442,26 @@ PAO_check_omega_lul = { #部队逻辑
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
             NOT = { is_core_of = FROM.FROM }
             check_variable = { state_strategic_value < 8 }
         }
-        value = -3
+        value = -6
     }
     ai_strategy = {
         type = invasion_unit_request
         state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-        }
-        value = -3
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            NOT = { is_core_of = FROM.FROM }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
+            is_coastal = yes
+            any_province_building_level = {
+                province = {
+                    all_provinces = yes
+                    limit_to_coastal = yes
                 }
-            }
-            NOT = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
-            }
-        }
-        value = -15
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state_trigger = {
-            NOT = { has_state_flag = recent_naval_invasion_flag }
-            OR = {
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = supply_node
-                    level > 0
-                }
-                any_province_building_level = {
-                    province = { all_provinces = yes }
-                    building = naval_base
-                    level > 0
-                }
+                building = naval_base
+                level > 0
             }
         }
         value = 15
     }
-
 }
 
 
@@ -1559,7 +1481,7 @@ PAO_war_with_PAU = { #与莉兰迪亚和军团开战
         type = front_control
         tag = PAU
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = no
         execution_type = rush
@@ -1577,7 +1499,7 @@ PAO_war_with_PAU = { #与莉兰迪亚和军团开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                   # 驻军需求（默认70-100）
+        value = -100                   #驻军需求
     }
 
     ai_strategy = { #注重船坞
@@ -1590,7 +1512,7 @@ PAO_war_with_PAU = { #与莉兰迪亚和军团开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -1599,7 +1521,7 @@ PAO_war_with_PAU = { #与莉兰迪亚和军团开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = PAU
-        value = 2000 # lets put more units, should be safe
+        value = 2000 #lets put more units, should be safe
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -1637,7 +1559,7 @@ PAO_war_with_PAM = { #与莉兰迪亚开战
         type = front_control
         tag = PAM
 
-        priority = 75
+        priority = 150
         ordertype = front
         manual_attack = no
         execution_type = rush_weak
@@ -1646,12 +1568,12 @@ PAO_war_with_PAM = { #与莉兰迪亚开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                # 驻军需求（默认70-100）
+        value = -100                #驻军需求
     }
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = PAM
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = front_armor_score
@@ -1668,7 +1590,7 @@ PAO_war_with_PAM = { #与莉兰迪亚开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -1738,7 +1660,7 @@ PAO_war_with_MS1 = { #与魔女之夜开战
         type = front_control
         tag = MS1
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -1746,7 +1668,7 @@ PAO_war_with_MS1 = { #与魔女之夜开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = front_armor_score
@@ -1756,7 +1678,7 @@ PAO_war_with_MS1 = { #与魔女之夜开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = MS1
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
 
 
@@ -1776,7 +1698,7 @@ PAO_war_with_WL1 = { #与躁动的亡灵开战
         type = front_control
         tag = WL1
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -1784,7 +1706,7 @@ PAO_war_with_WL1 = { #与躁动的亡灵开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = front_armor_score
@@ -1794,7 +1716,7 @@ PAO_war_with_WL1 = { #与躁动的亡灵开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = WL1
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -1834,7 +1756,7 @@ PAO_war_with_LHS = { #与野火开战
         type = front_control
         tag = LHS
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -1842,7 +1764,7 @@ PAO_war_with_LHS = { #与野火开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = front_armor_score
@@ -1852,7 +1774,7 @@ PAO_war_with_LHS = { #与野火开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = LHS
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -1895,7 +1817,7 @@ PAO_war_with_BRA = { #与妖精开战
         type = front_control
         tag = ELF
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -1903,7 +1825,7 @@ PAO_war_with_BRA = { #与妖精开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = front_armor_score
@@ -1933,7 +1855,7 @@ PAO_war_with_BRA = { #与妖精开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = ELF
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -1965,7 +1887,7 @@ PAO_war_with_NANMEI = { #南美解放战争
         type = front_control
         tag = ELF
 
-        priority = 75
+        priority = 140
         ordertype = front
         execution_type = rush_weak
         #occupation_policy = 3
@@ -1973,7 +1895,7 @@ PAO_war_with_NANMEI = { #南美解放战争
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = front_armor_score
@@ -2008,7 +1930,7 @@ PAO_war_with_MGU = { #与魔法少女联盟开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = MGU
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = { #注重船坞
         type = front_control
@@ -2020,7 +1942,7 @@ PAO_war_with_MGU = { #与魔法少女联盟开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2030,7 +1952,7 @@ PAO_war_with_MGU = { #与魔法少女联盟开战
         type = front_control
         tag = MGU
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2054,7 +1976,7 @@ PAO_war_with_MGU = { #与魔法少女联盟开战
 
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -2099,7 +2021,7 @@ PAO_war_with_BRA_MGU = { #与妖精和魔法少女联盟开战
         type = front_control
         tag = ELF
 
-        priority = 75
+        priority = 140
         ordertype = front
         manual_attack = no
         execution_type = rush
@@ -2114,11 +2036,11 @@ PAO_war_with_BRA_MGU = { #与妖精和魔法少女联盟开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = ELF
-        value = 80 # lets put more units, should be safe
+        value = 80 #lets put more units, should be safe
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
     ai_strategy = {
         type = force_defend_ally_borders
@@ -2168,7 +2090,7 @@ PAO_war1_with_PAQ = { #单独与阿德莱希开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2179,7 +2101,7 @@ PAO_war1_with_PAQ = { #单独与阿德莱希开战
         type = front_control
         tag = PAQ
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2193,11 +2115,11 @@ PAO_war1_with_PAQ = { #单独与阿德莱希开战
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = PAQ
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = garrison
-        value = -100                   # 驻军需求（默认70-100）
+        value = -100                   #驻军需求
     }
 }
 PAO_war_with_PAQ = { #与阿德莱希开战
@@ -2227,7 +2149,7 @@ PAO_war_with_PAQ = { #与阿德莱希开战
             }
         }
         ratio = 0.2
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2238,7 +2160,7 @@ PAO_war_with_PAQ = { #与阿德莱希开战
         type = front_control
         tag = PAQ
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2251,7 +2173,7 @@ PAO_war_with_PAQ = { #与阿德莱希开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                   # 驻军需求（默认70-100）
+        value = -100                   #驻军需求
     }
 }
 
@@ -2284,7 +2206,7 @@ PAO_war_with_PAY = { #与魔女之树开战
             }
         }
 
-        priority = 120
+        priority = 170
         ordertype = front
         execution_type = rush
         manual_attack = no
@@ -2301,7 +2223,7 @@ PAO_war_with_PAY = { #与魔女之树开战
         type = front_control
         tag = PAY
 
-        priority = 75
+        priority = 150
         ordertype = front
         execution_type = careful
         #occupation_policy = 3
@@ -2314,7 +2236,7 @@ PAO_war_with_PAY = { #与魔女之树开战
     }
     ai_strategy = {
         type = garrison
-        value = -100                    # 驻军需求（默认70-100）
+        value = -100                    #驻军需求
     }
 }
 
@@ -2322,8 +2244,10 @@ PAO_war_with_PAY = { #与魔女之树开战
 
 
 PAO_zhunbei_LHS = { #提前准备攻打野火
+    allowed = {
+        original_tag = PAO
+    }
     enable = {
-        tag = PAO
         OR = {
             focus_progress = {
                 focus = PAO_wmsq
@@ -2349,8 +2273,10 @@ PAO_zhunbei_LHS = { #提前准备攻打野火
     }
 }
 PAO_zhunbei_MS1 = { #提前准备攻打魔女之夜
+    allowed = {
+        original_tag = PAO
+    }
     enable = {
-        tag = PAO
         OR = {
             focus_progress = {
                 focus = PAO_zdsy
@@ -2375,8 +2301,10 @@ PAO_zhunbei_MS1 = { #提前准备攻打魔女之夜
 
 
 PAO_zhunbei_WL1 = { #提前准备攻打躁动亡灵
+    allowed = {
+        original_tag = PAO
+    }
     enable = {
-        tag = PAO
         OR = {
             focus_progress = {
                 focus = PAO_wlcj
@@ -2396,7 +2324,7 @@ PAO_zhunbei_WL1 = { #提前准备攻打躁动亡灵
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = WL1
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = prepare_for_war
@@ -2439,8 +2367,10 @@ PAO_diplomacy_with_PAY  = { #干魔女
     }
 }
 PAO_zhunbei_jiefang = { #提前准备大陆解放战争
+    allowed = {
+        original_tag = PAO
+    }
     enable = {
-        tag = PAO
         OR = {
             focus_progress = {
                 focus = PAO_xzjl
@@ -2468,7 +2398,7 @@ PAO_zhunbei_jiefang = { #提前准备大陆解放战争
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = MGU
-        value = -9999 # lets put more units, should be safe
+        value = -9999 #lets put more units, should be safe
     }
     ai_strategy = {
         type = prepare_for_war
@@ -2509,8 +2439,10 @@ PAO_zhunbei_jiefang = { #提前准备大陆解放战争
 }
 
 PAO_zhunbei_jiefang2 = { #提前准备南美革命战争
+    allowed = {
+        original_tag = PAO
+    }
     enable = {
-        tag = PAO
         OR = {
             focus_progress = {
                 focus = PAO_yllj
@@ -2698,32 +2630,25 @@ PAO_LHS_is_friend = {
 }
 
 #要军通
-LHS_ask_for_access = {
-    reversed = yes
-
+PAO_ask_for_access = {
     allowed = {
         original_tag = PAO
     }
-
     enable = {
+        country_exists = PAM
         NOT = {
-
             OR = {
-                is_in_faction_with = LHS
-                has_military_access_to = LHS
-
+                is_in_faction_with = PAM
+                has_military_access_to = PAM
+                has_war_with = PAM
             }
-        }
-
-        OR = {
-            TAG = PAM
         }
     }
     abort_when_not_enabled = yes
 
     ai_strategy = {
         type = diplo_action_desire
-        id = "PAO"
+        id = "PAM"
         target = military_access
         value = 1000
     }
@@ -2815,7 +2740,7 @@ PAM_war_PAO = {
     ai_strategy = {
         type = front_control
         tag = PAO
-        priority = 10000
+        priority = 240
         manual_attack = no
         execution_type = careful
         execute_order = no
@@ -2823,7 +2748,7 @@ PAM_war_PAO = {
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = PAO
-        value = -9999 # lets put more units, should be safe
+        value = -9999 #lets put more units, should be safe
     }
 }
 
@@ -2837,10 +2762,6 @@ qyj_war_PAO = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-        type = force_build_armies
-        value = 1000
-    }
-    ai_strategy = {
         type = land_xp_spend_priority
         id = upgrade_xp_cutoff
         value = 9999
@@ -2848,7 +2769,7 @@ qyj_war_PAO = {
     ai_strategy = {
         type = front_control
         tag = PAM
-        priority = 10000
+        priority = 240
         manual_attack = yes
         execution_type = rush_weak
         execute_order = yes
@@ -2856,7 +2777,24 @@ qyj_war_PAO = {
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = PAM
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
+    }
+}
+
+#QYJ债务安全期内下兵
+qyj_war_PAO_force_build = {
+    allowed = {
+        original_tag = QYJ
+    }
+    enable = {
+        has_war_with = PAM
+        num_divisions < 280
+        check_variable = { Debt_ratio < 0.85 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = force_build_armies
+        value = 100
     }
 }
 
@@ -2870,10 +2808,6 @@ PAO_war_PAM = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-        type = force_build_armies
-        value = 1000
-    }
-    ai_strategy = {
         type = land_xp_spend_priority
         id = upgrade_xp_cutoff
         value = 9999
@@ -2881,7 +2815,7 @@ PAO_war_PAM = {
     ai_strategy = {
         type = front_control
         tag = PAM
-        priority = 10000
+        priority = 240
         manual_attack = yes
         execution_type = rush_weak
         execute_order = yes
@@ -2889,6 +2823,22 @@ PAO_war_PAM = {
     ai_strategy = {
         type = front_unit_request #前线部队
         tag = PAM
-        value = 9999 # lets put more units, should be safe
+        value = 9999 #lets put more units, should be safe
+    }
+}
+#PAO债务安全期内下兵
+PAO_war_PAM_force_build = {
+    allowed = {
+        original_tag = PAO
+    }
+    enable = {
+        has_war_with = PAM
+        num_divisions < 300
+        check_variable = { Debt_ratio < 0.85 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = force_build_armies
+        value = 100
     }
 }
