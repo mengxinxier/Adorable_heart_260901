@@ -129,3 +129,546 @@ paq_tishengguanxi_cs = {
 		value = 1
 	}
 }
+
+# 战败线：伟大游戏对应神明胜出时，立刻刷新对应神明所有邪恶显化CD
+paq_zbx_refresh_xxh_cd = {
+	if = {
+		limit = { has_country_flag = paq_zhanzhengxian_flag }
+		clr_country_flag = PAQ_xxh_zz_1_cd
+		clr_country_flag = PAQ_xxh_zz_2_cd
+		clr_country_flag = PAQ_xxh_zz_3_cd
+		clr_country_flag = PAQ_xxh_zz_4_cd
+	}
+	if = {
+		limit = { has_country_flag = paq_guijixian_flag }
+		clr_country_flag = PAQ_xxh_gj_1_cd
+		clr_country_flag = PAQ_xxh_gj_2_cd
+		clr_country_flag = PAQ_xxh_gj_3_cd
+		clr_country_flag = PAQ_xxh_gj_4_cd
+	}
+	if = {
+		limit = { has_country_flag = paq_seyuxian_flag }
+		clr_country_flag = PAQ_xxh_sy_1_cd
+		clr_country_flag = PAQ_xxh_sy_2_cd
+		clr_country_flag = PAQ_xxh_sy_3_cd
+		clr_country_flag = PAQ_xxh_sy_4_cd
+	}
+	if = {
+		limit = { has_country_flag = paq_changshengxian_flag }
+		clr_country_flag = PAQ_xxh_cs_1_cd
+		clr_country_flag = PAQ_xxh_cs_2_cd
+		clr_country_flag = PAQ_xxh_cs_3_cd
+		clr_country_flag = PAQ_xxh_cs_4_cd
+	}
+}
+
+# 色欲线：更新莉娅堕落度(0~100)并同步五阶段平衡民族精神
+paq_sy_update_duoluo = {
+	clamp_variable = {
+		var = paq_sy_duoluo
+		min = 0
+		max = 100
+	}
+	hidden_effect = {
+		remove_ideas = {
+			PAQ_sy_dl_idea_1
+			PAQ_sy_dl_idea_2
+			PAQ_sy_dl_idea_3
+			PAQ_sy_dl_idea_4
+			PAQ_sy_dl_idea_5
+		}
+		if = {
+			limit = { check_variable = { paq_sy_duoluo < 21 } }
+			add_ideas = PAQ_sy_dl_idea_1
+		}
+		else_if = {
+			limit = { check_variable = { paq_sy_duoluo < 41 } }
+			add_ideas = PAQ_sy_dl_idea_2
+		}
+		else_if = {
+			limit = { check_variable = { paq_sy_duoluo < 60 } }
+			add_ideas = PAQ_sy_dl_idea_3
+		}
+		else_if = {
+			limit = { check_variable = { paq_sy_duoluo < 80 } }
+			add_ideas = PAQ_sy_dl_idea_4
+		}
+		else = {
+			add_ideas = PAQ_sy_dl_idea_5
+			if = {
+				limit = { NOT = { has_country_flag = paq_sy_lost_self_triggered } }
+				set_country_flag = paq_sy_lost_self_triggered
+				country_event = { id = paq.80 days = 1 }
+			}
+		}
+	}
+}
+
+# 色欲线：在当前目标国作用域的一个尚未被腐蚀的核心州散播混沌腐蚀
+paq_sy_corrupt_one_core_state = {
+	random_owned_controlled_state = {
+		limit = {
+			is_core_of = PREV
+			NOT = {
+				has_dynamic_modifier = {
+					modifier = PAQ_hundunfushi_state
+					scope = PAQ
+				}
+			}
+		}
+		set_state_flag = paq_sanbolefushi_state
+		add_dynamic_modifier = {
+			modifier = PAQ_hundunfushi_state
+			scope = PAQ
+		}
+	}
+}
+
+# 战争线：更新嗜血度(0~100)并同步四阶段血祭民族精神
+paq_zz_update_shixue = {
+	clamp_variable = {
+		var = paq_zz_shixue
+		min = 0
+		max = 100
+	}
+	hidden_effect = {
+		remove_ideas = {
+			PAQ_zz_sx_idea_1
+			PAQ_zz_sx_idea_2
+			PAQ_zz_sx_idea_3
+			PAQ_zz_sx_idea_4
+		}
+		if = {
+			limit = { check_variable = { paq_zz_shixue < 25 } }
+			add_ideas = PAQ_zz_sx_idea_1
+		}
+		else_if = {
+			limit = { check_variable = { paq_zz_shixue < 50 } }
+			add_ideas = PAQ_zz_sx_idea_2
+		}
+		else_if = {
+			limit = { check_variable = { paq_zz_shixue < 80 } }
+			add_ideas = PAQ_zz_sx_idea_3
+		}
+		else = {
+			add_ideas = PAQ_zz_sx_idea_4
+		}
+	}
+}
+
+# 战争线：确保恐虐血军精锐模板已创建（印记改由部队勋章 PAQ_medal_war 提供）
+paq_zz_ensure_xuejun_template = {
+	if = {
+		limit = { NOT = { has_country_flag = paq_zz_xuejun_template_created } }
+		set_country_flag = paq_zz_xuejun_template_created
+		division_template = {
+			name = "恐虐血军"
+			is_locked = yes
+			priority = 2
+			regiments = {
+				paq_hundunyongshi = { x = 0 y = 0 }
+				paq_hundunyongshi = { x = 0 y = 1 }
+				paq_hundunyongshi = { x = 0 y = 2 }
+				paq_hundunyongshi = { x = 0 y = 3 }
+				paq_hundunyongshi = { x = 1 y = 0 }
+				paq_hundunyongshi = { x = 1 y = 1 }
+				paq_hundunyongshi = { x = 1 y = 2 }
+				paq_hundunyongshi = { x = 1 y = 3 }
+				paq_hundunyongshi = { x = 2 y = 0 }
+				paq_hundunyongshi = { x = 2 y = 1 }
+			}
+			support = {
+				artillery = { x = 0 y = 0 }
+				engineer = { x = 0 y = 1 }
+				recon = { x = 0 y = 2 }
+			}
+		}
+	}
+}
+
+# 诡计线：确保万变魔君亲卫模板已创建（4师精锐，完美契合大鸟将领4师上限）
+paq_gj_ensure_mojun_template = {
+	if = {
+		limit = { NOT = { has_country_flag = paq_gj_mojun_template_created } }
+		set_country_flag = paq_gj_mojun_template_created
+		division_template = {
+			name = "万变魔君亲卫"
+			is_locked = yes
+			priority = 2
+			regiments = {
+				paq_hundunshenxuanzhe = { x = 0 y = 0 }
+				paq_hundunshenxuanzhe = { x = 0 y = 1 }
+				paq_hundunshenxuanzhe = { x = 0 y = 2 }
+				paq_hundunshenxuanzhe = { x = 0 y = 3 }
+				paq_hundunyishou = { x = 1 y = 0 }
+				paq_hundunyishou = { x = 1 y = 1 }
+				paq_hundunyishou = { x = 1 y = 2 }
+			}
+			support = {
+				artillery = { x = 0 y = 0 }
+				engineer = { x = 0 y = 1 }
+				recon = { x = 0 y = 2 }
+			}
+		}
+	}
+}
+
+# 诡计线：格蕾清醒反抗成功 -> 全南美老TAG原地炸出并围攻PAQ + 致命必输崩溃debuff
+paq_gj_south_america_collapse = {
+	set_country_flag = paq_gj_collapsed_flag
+	add_ideas = PAQ_gj_collapse_debuff
+	add_stability = -0.8
+	add_war_support = -0.8
+	add_political_power = -500
+	custom_effect_tooltip = paq_gj_collapse_tt
+	hidden_effect = {
+		remove_country_leader_trait = trait_paq_gjsx
+		remove_country_leader_trait = trait_paq_gjsx2
+		remove_country_leader_trait = trait_paq_gjsx3
+		# 先解除对已附庸南美国家的控制
+		every_subject_country = {
+			limit = {
+				OR = {
+					tag = PA1
+					tag = ELF
+					tag = EFC
+					tag = EWW
+					tag = ELW
+					tag = ELG
+					tag = MGU
+					tag = LFC
+					tag = PAO
+					tag = LHS
+					tag = PAM
+					tag = PAU
+					tag = CHL
+				}
+			}
+			PAQ = { end_puppet = PREV }
+			if = {
+				limit = { is_in_faction_with = PAQ }
+				leave_faction = yes
+			}
+		}
+		# 剥离PAQ在南美各老国家核心上的核心并全部释放
+		every_owned_state = {
+			limit = {
+				OR = {
+					is_core_of = PA1
+					is_core_of = ELF
+					is_core_of = EFC
+					is_core_of = EWW
+					is_core_of = ELW
+					is_core_of = ELG
+					is_core_of = MGU
+					is_core_of = LFC
+					is_core_of = PAO
+					is_core_of = LHS
+					is_core_of = PAM
+					is_core_of = PAU
+					is_core_of = CHL
+				}
+			}
+			remove_core_of = PAQ
+		}
+		if = { limit = { NOT = { country_exists = PA1 } } release = PA1 }
+		if = { limit = { NOT = { country_exists = ELF } } release = ELF }
+		if = { limit = { NOT = { country_exists = EFC } } release = EFC }
+		if = { limit = { NOT = { country_exists = EWW } } release = EWW }
+		if = { limit = { NOT = { country_exists = ELW } } release = ELW }
+		if = { limit = { NOT = { country_exists = ELG } } release = ELG }
+		if = { limit = { NOT = { country_exists = MGU } } release = MGU }
+		if = { limit = { NOT = { country_exists = LFC } } release = LFC }
+		if = { limit = { NOT = { country_exists = PAO } } release = PAO }
+		if = { limit = { NOT = { country_exists = LHS } } release = LHS }
+		if = { limit = { NOT = { country_exists = PAM } } release = PAM }
+		if = { limit = { NOT = { country_exists = PAU } } release = PAU }
+		if = { limit = { NOT = { country_exists = CHL } } release = CHL }
+		# 所有炸出的老南美国家立刻向崩溃的PAQ全面宣战并补充起义部队
+		every_country = {
+			limit = {
+				OR = {
+					tag = PA1
+					tag = ELF
+					tag = EFC
+					tag = EWW
+					tag = ELW
+					tag = ELG
+					tag = MGU
+					tag = LFC
+					tag = PAO
+					tag = LHS
+					tag = PAM
+					tag = PAU
+					tag = CHL
+				}
+				exists = yes
+			}
+			division_template = {
+				name = "解放复仇军"
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 1 y = 0 }
+					infantry = { x = 1 y = 1 }
+					infantry = { x = 1 y = 2 }
+				}
+			}
+			for_loop_effect = {
+				start = 0
+				end = 6
+				add = 1
+				capital_scope = {
+					create_unit = {
+						division = "name = \"解放复仇军\" division_template = \"解放复仇军\" start_experience_factor = 0.5 start_equipment_factor = 1"
+						owner = PREV.PREV
+					}
+				}
+			}
+			declare_war_on = {
+				target = PAQ
+				type = annex_everything
+			}
+		}
+	}
+}
+
+# 诡计线：反抗失败/放弃 -> 彻底疯狂沦为赠予诡计之主并完成南美统一
+paq_gj_complete_unification = {
+	add_research_slot = 1
+	if = {
+		limit = { NOT = { 895 = { owner = { is_subject_of = PAQ } } } }
+		transfer_state = 895
+	}
+	if = {
+		limit = { NOT = { 685 = { owner = { is_subject_of = PAQ } } } }
+		transfer_state = 685
+	}
+	every_state = {
+		limit = {
+			is_owned_and_controlled_by = PAQ
+			OR = {
+				is_core_of = LHS
+				is_core_of = PAM
+				is_core_of = ELF
+				is_core_of = PA1
+				is_core_of = PAO
+				is_core_of = PAU
+				is_core_of = MGU
+				is_core_of = LFC
+				is_core_of = CHL
+			}
+		}
+		add_core_of = PAQ
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PAQ_jiahexin_state } }
+			remove_dynamic_modifier = { modifier = PAQ_jiahexin_state }
+		}
+	}
+	if = {
+		limit = { NOT = { PAQ_gelei = { has_trait = trait_paq_jscl } } }
+		add_country_leader_trait = trait_paq_jscl
+	}
+	if = {
+		limit = { PAQ_gelei = { has_trait = trait_paq_nhdlr } }
+		swap_ruler_traits = { remove = trait_paq_nhdlr add = trait_paq_hddyr }
+	}
+	custom_effect_tooltip = paq_gj_unlock_dark_advisor_tt
+	hidden_effect = {
+		remove_advisor_role = {
+			character = PAQ_gelei
+			slot = political_advisor
+		}
+		add_advisor_role = {
+			character = PAQ_gelei
+			activate = no
+			advisor = {
+				slot = political_advisor
+				cost = 150
+				idea_token = PAQ_gelei
+				available = {
+					is_subject = no
+					has_government = fascism
+					has_country_leader = {
+						character = PAQ_gelei
+						ruling_only = yes
+					}
+				}
+				traits = {
+					trait_paq_zygjzz
+				}
+				ai_will_do = {
+					factor = 10
+				}
+			}
+		}
+	}
+	add_to_variable = { var = paq_gj_gx value = 5 }
+	custom_effect_tooltip = paq_gj_gx_zengzhang_duo
+	custom_effect_tooltip = paq_gj_midian_up_150_tt
+	add_to_variable = { var = paq_gj_midian value = 150 }
+	hidden_effect = {
+		if = {
+			limit = { NOT = { has_idea = PAQ_Iron_cross_afterglow2 } }
+			add_ideas = PAQ_Iron_cross_afterglow2
+			remove_ideas = PAQ_Iron_cross_afterglow
+			remove_ideas = PAQ_mechanical_buff
+		}
+	}
+}
+
+# 长生线：确保长生不朽疫军精锐模板已创建（印记改由部队勋章 PAQ_medal_longevity 提供）
+paq_cs_ensure_yijun_template = {
+	if = {
+		limit = { NOT = { has_country_flag = paq_cs_yijun_template_created } }
+		set_country_flag = paq_cs_yijun_template_created
+		division_template = {
+			name = "长生不朽疫军"
+			is_locked = yes
+			priority = 2
+			regiments = {
+				paq_hundunyongshi = { x = 0 y = 0 }
+				paq_hundunyongshi = { x = 0 y = 1 }
+				paq_hundunyongshi = { x = 0 y = 2 }
+				paq_hundunyongshi = { x = 0 y = 3 }
+				paq_hundunyongshi = { x = 1 y = 0 }
+				paq_hundunyongshi = { x = 1 y = 1 }
+				paq_hundunyongshi = { x = 1 y = 2 }
+				paq_hundunyongshi = { x = 1 y = 3 }
+				paq_hundunyongshi = { x = 2 y = 0 }
+				paq_hundunyongshi = { x = 2 y = 1 }
+			}
+			support = {
+				artillery = { x = 0 y = 0 }
+				engineer = { x = 0 y = 1 }
+				logistics_company = { x = 0 y = 2 }
+			}
+		}
+	}
+}
+
+# 色欲线：确保色欲混沌勇士精锐模板只创建一次（不重复堆叠锁定编制）
+paq_sy_ensure_shengwei_template = {
+	if = {
+		limit = { NOT = { has_country_flag = paq_sy_template_created } }
+		set_country_flag = paq_sy_template_created
+		division_template = {
+			name = "色欲混沌勇士"
+			is_locked = yes
+			priority = 2
+			regiments = {
+				paq_hundunyongshi = { x = 0 y = 0 }
+				paq_hundunyongshi = { x = 0 y = 1 }
+				paq_hundunyongshi = { x = 0 y = 2 }
+				paq_hundunyongshi = { x = 0 y = 3 }
+				paq_hundunyongshi = { x = 1 y = 0 }
+				paq_hundunyongshi = { x = 1 y = 1 }
+				paq_hundunyongshi = { x = 1 y = 2 }
+				paq_hundunyongshi = { x = 1 y = 3 }
+				paq_hundunyongshi = { x = 2 y = 0 }
+				paq_hundunyongshi = { x = 2 y = 1 }
+			}
+			support = {
+				artillery = { x = 0 y = 0 }
+				engineer = { x = 0 y = 1 }
+				recon = { x = 0 y = 2 }
+			}
+		}
+	}
+}
+
+# 动态给2支混沌精锐师颁发对应四神印记勋章（国家作用域 every_country_division，稳妥生效）
+paq_grant_medal_war_2 = {
+	every_country_division = {
+		limit = {
+			division_has_majority_template = paq_hundunyongshi
+		}
+		random_select_amount = 2
+		add_history_entry = {
+			key = PAQ_medal_war_history
+			subject = "阿德莱希城"
+			allow = yes
+		}
+		add_unit_medal_to_latest_entry = { unit_medals = PAQ_medal_war }
+	}
+}
+paq_grant_medal_deception_2 = {
+	every_country_division = {
+		limit = {
+			division_has_majority_template = paq_hundunshenxuanzhe
+		}
+		random_select_amount = 2
+		add_history_entry = {
+			key = PAQ_medal_deception_history
+			subject = "阿德莱希城"
+			allow = yes
+		}
+		add_unit_medal_to_latest_entry = { unit_medals = PAQ_medal_deception }
+	}
+}
+paq_grant_medal_lust_2 = {
+	every_country_division = {
+		limit = {
+			division_has_majority_template = paq_hundunyongshi
+		}
+		random_select_amount = 2
+		add_history_entry = {
+			key = PAQ_medal_lust_history
+			subject = "阿德莱希城"
+			allow = yes
+		}
+		add_unit_medal_to_latest_entry = { unit_medals = PAQ_medal_lust }
+	}
+}
+paq_grant_medal_longevity_2 = {
+	every_country_division = {
+		limit = {
+			division_has_majority_template = paq_hundunyongshi
+		}
+		random_select_amount = 2
+		add_history_entry = {
+			key = PAQ_medal_longevity_history
+			subject = "阿德莱希城"
+			allow = yes
+		}
+		add_unit_medal_to_latest_entry = { unit_medals = PAQ_medal_longevity }
+	}
+}
+
+# 循环切换决议国家目标大洲筛选器（0->1->2->3->4->5->0）
+paq_cycle_target_filter_effect = {
+	if = {
+		limit = { check_variable = { paq_target_filter < 5 } }
+		add_to_variable = { var = paq_target_filter value = 1 }
+	}
+	else = {
+		set_variable = { paq_target_filter = 0 }
+	}
+}
+
+# DEBUG：清理四条战败线互斥状态，便于一键无缝切换测试
+paq_debug_clear_zbx_routes = {
+	clr_country_flag = paq_zhanzhengxian_flag
+	clr_country_flag = paq_guijixian_flag
+	clr_country_flag = paq_seyuxian_flag
+	clr_country_flag = paq_changshengxian_flag
+	clr_country_flag = paq_xuanze_zz
+	clr_country_flag = paq_xuanze_gj
+	clr_country_flag = paq_xuanze_sy
+	clr_country_flag = paq_xuanze_cs
+	clr_country_flag = paq_gj_collapsed_flag
+	drop_cosmetic_tag = yes
+	hidden_effect = {
+		remove_ideas = {
+			PAQ_sishnbuxuan
+			PAQ_zz_buff_0 PAQ_zz_buff_1 PAQ_zz_buff_2
+			PAQ_gj_buff_0 PAQ_gj_buff_1 PAQ_gj_buff_2
+			PAQ_sy_buff_0 PAQ_sy_buff_1 PAQ_sy_buff_2
+			PAQ_cs_buff_0 PAQ_cs_buff_1 PAQ_cs_buff_2
+			PAQ_sy_dl_idea_1 PAQ_sy_dl_idea_2 PAQ_sy_dl_idea_3 PAQ_sy_dl_idea_4 PAQ_sy_dl_idea_5
+			PAQ_zz_sx_idea_1 PAQ_zz_sx_idea_2 PAQ_zz_sx_idea_3 PAQ_zz_sx_idea_4
+			PAQ_gj_collapse_debuff
+		}
+	}
+}

@@ -6,6 +6,7 @@ NDefines.NCareerProfile.MOD_STATISTICS_GROUP_NAME = "ADORABLEHEART_CAREER_PROFIL
 -- 游戏性预设
 NDefines.NGame.SAVE_VERSION = 318											-- Vanilla is 30 存档标识
 NDefines.NGame.END_DATE = "1999.1.1.1"										-- Vanilla is 1949.1.1.1
+NDefines.NGame.HANDS_OFF_START_TAG = "ATA"									-- Vanilla is "HAI"
 NDefines.NCountry.EVENT_PROCESS_OFFSET = 5									-- Vanilla is 20 再苦一苦CPU...
 
 --三军经验最大值

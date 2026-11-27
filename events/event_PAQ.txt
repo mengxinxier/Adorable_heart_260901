@@ -1969,7 +1969,12 @@ country_event = {
 	desc = paq.63.d
 	trigger = {
 		is_subject_of = PAQ
-		PAQ = { has_completed_focus = PAQ_42 }
+		PAQ = {
+			OR = {
+				has_completed_focus = PAQ_42
+				has_completed_focus = PAQ_sy_10
+			}
+		}
 		has_government = fascism
 		not = { has_country_flag = paq_subject_qh_yes }
 	}
@@ -2222,7 +2227,10 @@ country_event = {
 		tag = PAQ
 		has_government = fascism
 		is_puppet = no
-		has_completed_focus = PAQ_65
+		OR = {
+			has_completed_focus = PAQ_65
+			has_completed_focus = PAQ_end_3
+		}
 		all_other_country = {
 			OR = {
 				is_subject_of = PAQ
@@ -2435,25 +2443,210 @@ country_event = {
 	option = {
 		name = paq.79.a
 		set_country_flag = paq_zhanzhengxian_flag
+		mark_focus_tree_layout_dirty = yes
 		ai_chance = {
 			base = 30
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_2 }
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_3 }
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_4 }
+				}
+			}
+			modifier = {
+				add = 100
+				has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_1 }
+			}
 		}
 	}
 
 	option = {
 		name = paq.79.b
 		set_country_flag = paq_changshengxian_flag
+		mark_focus_tree_layout_dirty = yes
 		ai_chance = {
 			base = 10
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_1 }
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_2 }
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_3 }
+				}
+			}
+			modifier = {
+				add = 100
+				has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_4 }
+			}
 		}
 	}
 
 	option = {
 		name = paq.79.c
 		set_country_flag = paq_seyuxian_flag
+		mark_focus_tree_layout_dirty = yes
 		ai_chance = {
 			base = 60
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_1 }
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_2 }
+					has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_4 }
+				}
+			}
+			modifier = {
+				add = 100
+				has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_3 }
+			}
+		}
+	}
+
+	option = {
+		name = paq.79.e
+		set_country_flag = paq_guijixian_flag
+		mark_focus_tree_layout_dirty = yes
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				has_game_rule = { rule = AH_PAQ_successor_ai_behavior_SELECTION option = PAQ_successor_GAME_RULE_2 }
+			}
 		}
 	}
 	
+}
+
+#色欲线：堕落度过高，莉娅逐渐迷失自我
+country_event = {
+	id = paq.80
+	title = paq.80.t
+	desc = paq.80.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.80.a
+		paq_tishengguanxi_sy = yes
+		add_political_power = 50
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#诡计线渐进堕落①：首次妥协与伙伴生疑
+country_event = {
+	id = paq.81
+	title = paq.81.t
+	desc = paq.81.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.81.a
+		paq_tishengguanxi_gj = yes
+		swap_ideas = {
+			remove_idea = PAQ_gj_xinzheng_idea
+			add_idea = PAQ_gj_yinying_idea
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#诡计线渐进堕落②：理想变质与伙伴凋零 -> 精神错乱
+country_event = {
+	id = paq.82
+	title = paq.82.t
+	desc = paq.82.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.82.a
+		add_country_leader_trait = trait_paq_jscl
+		if = {
+			limit = { has_idea = PAQ_gj_xinzheng_idea }
+			swap_ideas = {
+				remove_idea = PAQ_gj_xinzheng_idea
+				add_idea = PAQ_gj_jiushu_idea
+			}
+		}
+		else = {
+			swap_ideas = {
+				remove_idea = PAQ_gj_yinying_idea
+				add_idea = PAQ_gj_jiushu_idea
+			}
+		}
+		paq_tishengguanxi_gj = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#诡计线高潮抉择：碎镜中的最后清醒（统一南美后触发）
+country_event = {
+	id = paq.83
+	title = paq.83.t
+	desc = paq.83.d
+	is_triggered_only = yes
+
+	# 孤注一掷反抗诡计之神（极低概率成功 -> 全南美老TAG炸出+国家崩溃）
+	option = {
+		name = paq.83.a
+		custom_effect_tooltip = paq.83.a_tt
+		random_list = {
+			10 = {
+				country_event = { id = paq.84 days = 1 }
+			}
+			90 = {
+				country_event = { id = paq.85 days = 1 }
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+
+	# 放弃挣扎，彻底拥抱疯狂
+	option = {
+		name = paq.83.b
+		country_event = { id = paq.85 days = 1 }
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#诡计线：极低概率反抗成功 -> 破碎的自由：全南美解体围攻与帝国崩塌
+country_event = {
+	id = paq.84
+	title = paq.84.t
+	desc = paq.84.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.84.a
+		paq_gj_south_america_collapse = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#诡计线：反抗失败/放弃 -> 万变之主的嗤笑：彻底疯狂成为赠予诡计之主
+country_event = {
+	id = paq.85
+	title = paq.85.t
+	desc = paq.85.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.85.a
+		paq_gj_complete_unification = yes
+		ai_chance = {
+			base = 100
+		}
+	}
 }

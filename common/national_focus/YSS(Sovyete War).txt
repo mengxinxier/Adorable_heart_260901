@@ -1,0 +1,158 @@
+focus_tree = {
+	id = YSS_war_focus_tree
+	country = {
+		factor = 0
+		modifier = {
+			add = 100
+			tag = YSS
+		}
+	}
+	default = no
+	#十三年僵局之终
+	focus = {
+		id = YSS_end_of_thirteen_year_stalemate
+		x = 13
+		y = -1
+		cost = 2
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		icon = GFX_YSS_end_of_thirteen_year_stalemate
+		text_icon = YSS_focus_style
+		completion_reward = {
+			add_stability = 0.1
+			add_war_support = 0.1
+			add_political_power = 200
+			add_ideas = YSS_war_mobilization_0_idea
+		}
+	}
+	#分发物资
+	focus = {
+		id = YSS_distribute_war_supplies
+		relative_position_id = YSS_end_of_thirteen_year_stalemate
+		x = 0
+		y = 1
+		cost = 2
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		icon = GFX_YSS_distribute_war_supplies
+		text_icon = YSS_focus_style
+		prerequisite = {
+			focus = YSS_end_of_thirteen_year_stalemate
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = YSS_war_mobilization_0_idea
+				add_idea = YSS_war_mobilization_3_idea
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 2000
+				producer = YSS
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 100
+				producer = YSS
+			}
+		}
+	}
+	#渗透敌境
+	focus = {
+		id = YSS_infiltrate_enemy_territory
+		relative_position_id = YSS_end_of_thirteen_year_stalemate
+		x = 0
+		y = 2
+		cost = 2
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		icon = GFX_YSS_infiltrate_enemy_territory
+		text_icon = YSS_focus_style
+		prerequisite = {
+			focus = YSS_distribute_war_supplies
+		}
+		completion_reward = {
+			add_collaboration = {
+				target = ETH
+				value = 0.45
+			}
+			add_collaboration = {
+				target = AOI
+				value = 0.45
+			}
+			swap_ideas = {
+				remove_idea = YSS_war_mobilization_3_idea
+				add_idea = YSS_war_mobilization_4_idea
+			}
+		}
+	}
+	#动员民兵
+	focus = {
+		id = YSS_mobilize_militia
+		relative_position_id = YSS_end_of_thirteen_year_stalemate
+		x = 0
+		y = 3
+		cost = 2
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		icon = GFX_YSS_mobilize_militia
+		text_icon = YSS_focus_style
+		prerequisite = {
+			focus = YSS_infiltrate_enemy_territory
+		}
+		completion_reward = {
+			custom_effect_tooltip = YSS_mobilize_militia_tt
+			army_experience = 50
+			hidden_effect = {
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"索维耶特地方军区兵团\" start_experience_factor = 0 start_equipment_factor = 0.1 start_manpower_factor = 1"
+						owner = ROOT
+						count = 15
+					}
+				}
+			}
+		}
+	}
+	#吉布提港事变 / 全国总攻击令
+	focus = {
+		id = YSS_launch_liberation_war
+		relative_position_id = YSS_end_of_thirteen_year_stalemate
+		x = 0
+		y = 4
+		cost = 2
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		dynamic = yes
+		icon = {
+			GFX_YSS_general_offensive_order = {
+				has_country_flag = YSS_daxiaotiao
+			}
+			GFX_YSS_djibouti_port_incident = yes
+		}
+		text_icon = YSS_focus_style
+		bypass = {
+			AND = {
+				has_war_with = ETH
+				has_war_with = AOI
+			}
+		}
+		prerequisite = {
+			focus = YSS_mobilize_militia
+		}
+		completion_reward = {
+			custom_effect_tooltip = YSS_war5_effect
+			hidden_effect = {
+				declare_war_on = {
+					target = ETH
+					type = annex_everything
+				}
+				declare_war_on = {
+					target = AOI
+					type = annex_everything
+				}
+				news_event = { id = YSS.news.1 days = 1 }
+				set_country_flag = YSS_the_civil_war_of_YSS_launched
+			}
+		}
+	}
+}

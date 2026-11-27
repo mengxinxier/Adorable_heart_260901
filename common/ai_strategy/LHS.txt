@@ -1709,12 +1709,14 @@ LHS_crisis_iron_wall = {
         has_war = yes
         NOT = { has_war_with = PAU }
         NOT = { has_war_with = PAM }
+        NOT = { has_war_with = ZDW }
     }
     abort = {
         OR = {
             has_war = no
             surrender_progress < 0.13
             has_capitulated = yes
+            has_war_with = ZDW
         }
     }
 
@@ -1768,6 +1770,32 @@ LHS_crisis_iron_wall = {
     }
 }
 
+LHS_zdw_scripted_defeat_hold = {
+    allowed = {
+        original_tag = LHS
+    }
+    enable = {
+        is_ai = yes
+        OR = {
+            has_country_flag = anxijingong
+            AND = {
+                has_country_flag = zhanzhengkaishi3
+                has_war_with = ZDW
+            }
+        }
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = ai_wanted_divisions_factor
+        value = -1000
+    }
+    ai_strategy = {
+        type = force_build_armies
+        value = -1000
+    }
+}
+
 #身后就是莉兰迪亚
 LHS_capital_shield = {
     allowed = {
@@ -1781,6 +1809,7 @@ LHS_capital_shield = {
         }
         NOT = { has_war_with = PAU }
         NOT = { has_war_with = PAM }
+        NOT = { has_war_with = ZDW }
     }
     abort_when_not_enabled = yes
 
@@ -2085,6 +2114,7 @@ LHS_strategic_withdrawal = {
         surrender_progress < 0.20
         NOT = { has_war_with = PAU }
         NOT = { has_war_with = PAM }
+        NOT = { has_war_with = ZDW }
         NOT = {
             any_enemy_country = {
                 surrender_progress > 0.05
@@ -2273,8 +2303,27 @@ heguo_war_with_PAM = {
         value = 100
     }
     ai_strategy = {
+        type = invade
+        id = "PAM"
+        value = 200
+    }
+    ai_strategy = {
         type = invasion_unit_request
         state = 845
+        value = 200
+    }
+    ai_strategy = {
+        type = front_control
+        tag = PAM
+        priority = 160
+        ordertype = front
+        manual_attack = yes
+        execution_type = rush_weak
+        execute_order = yes
+    }
+    ai_strategy = {
+        type = front_unit_request
+        tag = PAM
         value = 200
     }
     ai_strategy = {
@@ -3001,7 +3050,7 @@ ZDWwangling_war_with_LHS = {
         priority = 240
         ordertype = front
         manual_attack = yes
-        execution_type = balanced
+        execution_type = rush
         execute_order = yes
     }
     ai_strategy = {
