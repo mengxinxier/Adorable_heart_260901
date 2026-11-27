@@ -34,140 +34,50 @@ on_actions = {
 					annex_country = { target = AOI transfer_troops = no }
 				}
 			}
+			if = {
+				limit = {
+					OR = {
+						FROM = { tag = YSS }
+						ROOT = { tag = ETH }
+						ROOT = { tag = AOI }
+					}
+				}
+				YSS_check_civil_war_victory = yes
+			}
 		}
 	}
 
-	# ── YSS 每日检查：大清洗善后自动推进 + 崩溃/内战胜利事件触发 ──
-	on_daily_YSS = {
+	on_peace = {
 		effect = {
 			if = {
-				limit = {
-					has_stability < 0.04
-					NOT = { has_country_flag = YSS_2_triggered }
-				}
-				set_country_flag = YSS_2_triggered
-				country_event = YSS.2
-			}
-			if = {
-				limit = {
-					has_country_flag = YSS_the_civil_war_of_YSS_launched
-					NOT = { has_country_flag = YSS_win_war }
-					NOT = { has_country_flag = YSS_90_triggered }
-					NOT = { has_war_with = ETH }
-					NOT = { has_war_with = AOI }
-				}
-				set_country_flag = YSS_90_triggered
-				country_event = YSS.90
-			}
-			if = {
-				limit = {
-					has_country_flag = YSS_daqingxi_jiaoting
-					NOT = { has_completed_focus = YSS_redefine_party_spirit }
-				}
-				# YSS_emergency_halt_to_purge（入口，需要 YSS_daqingxi_jiaoting flag）
-				if = {
-					limit = {
-						NOT = { has_completed_focus = YSS_emergency_halt_to_purge }
-					}
-					if = {
-						limit = { NOT = { has_variable = YSS_af_30 } }
-						set_variable = { YSS_af_30 = 1 }
-					}
-					subtract_from_variable = { YSS_af_30 = 1 }
-					if = {
-						limit = { check_variable = { YSS_af_30 < 1 } }
-						complete_national_focus = YSS_emergency_halt_to_purge
-						clear_variable = YSS_af_30
-					}
-				}
-				# YSS_dismiss_purge_directors（前置 YSS_emergency_halt_to_purge）
-				else_if = {
-					limit = {
-						has_completed_focus = YSS_emergency_halt_to_purge
-						NOT = { has_completed_focus = YSS_dismiss_purge_directors }
-					}
-					if = {
-						limit = { NOT = { has_variable = YSS_af_31 } }
-						set_variable = { YSS_af_31 = 70 }
-					}
-					subtract_from_variable = { YSS_af_31 = 1 }
-					if = {
-						limit = { check_variable = { YSS_af_31 < 1 } }
-						complete_national_focus = YSS_dismiss_purge_directors
-						clear_variable = YSS_af_31
-					}
-				}
-				# YSS_rehabilitate_wronged_cases（前置 YSS_dismiss_purge_directors）
-				else_if = {
-					limit = {
-						has_completed_focus = YSS_dismiss_purge_directors
-						NOT = { has_completed_focus = YSS_rehabilitate_wronged_cases }
-					}
-					if = {
-						limit = { NOT = { has_variable = YSS_af_32 } }
-						set_variable = { YSS_af_32 = 70 }
-					}
-					subtract_from_variable = { YSS_af_32 = 1 }
-					if = {
-						limit = { check_variable = { YSS_af_32 < 1 } }
-						complete_national_focus = YSS_rehabilitate_wronged_cases
-						clear_variable = YSS_af_32
-					}
-				}
-				# YSS_reorganize_the_politburo（前置 YSS_rehabilitate_wronged_cases）
-				else_if = {
-					limit = {
-						has_completed_focus = YSS_rehabilitate_wronged_cases
-						NOT = { has_completed_focus = YSS_reorganize_the_politburo }
-					}
-					if = {
-						limit = { NOT = { has_variable = YSS_af_43 } }
-						set_variable = { YSS_af_43 = 70 }
-					}
-					subtract_from_variable = { YSS_af_43 = 1 }
-					if = {
-						limit = { check_variable = { YSS_af_43 < 1 } }
-						complete_national_focus = YSS_reorganize_the_politburo
-						clear_variable = YSS_af_43
-					}
-				}
-				# YSS_convene_politburo_session（前置 YSS_reorganize_the_politburo）
-				else_if = {
-					limit = {
-						has_completed_focus = YSS_reorganize_the_politburo
-						NOT = { has_completed_focus = YSS_convene_politburo_session }
-					}
-					if = {
-						limit = { NOT = { has_variable = YSS_af_44 } }
-						set_variable = { YSS_af_44 = 70 }
-					}
-					subtract_from_variable = { YSS_af_44 = 1 }
-					if = {
-						limit = { check_variable = { YSS_af_44 < 1 } }
-						complete_national_focus = YSS_convene_politburo_session
-						clear_variable = YSS_af_44
-					}
-				}
-				# YSS_redefine_party_spirit（前置 YSS_convene_politburo_session）
-				else_if = {
-					limit = {
-						has_completed_focus = YSS_convene_politburo_session
-						NOT = { has_completed_focus = YSS_redefine_party_spirit }
-					}
-					if = {
-						limit = { NOT = { has_variable = YSS_af_45 } }
-						set_variable = { YSS_af_45 = 70 }
-					}
-					subtract_from_variable = { YSS_af_45 = 1 }
-					if = {
-						limit = { check_variable = { YSS_af_45 < 1 } }
-						complete_national_focus = YSS_redefine_party_spirit
-						clear_variable = YSS_af_45
-					}
-				}
+				limit = { tag = YSS }
+				YSS_check_civil_war_victory = yes
 			}
 		}
 	}
+
+	on_annex = {
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						ROOT = { tag = YSS }
+						FROM = { tag = ETH }
+						FROM = { tag = AOI }
+					}
+				}
+				YSS_check_civil_war_victory = yes
+			}
+		}
+	}
+
+	on_peaceconference_ended = {
+		effect = {
+			YSS_check_civil_war_victory = yes
+		}
+	}
+
+	# ── 原 on_daily_YSS 已清空：内战胜利改由投降/停战/吞并/和谈钩子触发，大清洗善后改由 YSS_purge_aftermath 事件链推进，低稳定度崩溃已移入 on_monthly_YSS ──
 
 	# ── YSS 非洲革命内战胜利结算 ──
 	on_civil_war_end = {
@@ -258,9 +168,17 @@ on_actions = {
 		}
 	}
 
-	# === YSS 第一个三年计划月度/周度计算 ===
+	# === YSS 低稳定度崩溃检测 & 第一个三年计划月度计算 ===
 	on_monthly_YSS = {
 		effect = {
+			if = {
+				limit = {
+					has_stability < 0.04
+					NOT = { has_country_flag = YSS_2_triggered }
+				}
+				set_country_flag = YSS_2_triggered
+				country_event = YSS.2
+			}
 			if = {
 				limit = { has_country_flag = YSS_open_sannianjihua }
 				set_variable = { YSS_gy_upkeep_soft = 0 }
