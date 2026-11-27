@@ -1025,6 +1025,124 @@ focus_tree = {
 			}
 		}
 
+		#重整军备
+		focus = {
+			id = NGD_rearmament
+			icon = GFX_goal_generic_production2
+			cost = 4
+			x = 21
+			y = 0
+			ai_will_do = {
+				base = 30
+			}
+			available = {
+				date > 1936.6.1
+				NOT = {
+					has_idea = NGD_influence_of_Black_Tuesday_idea
+					has_idea = NGD_influence_of_Black_Tuesday_idea_1
+					has_idea = NGD_influence_of_Black_Tuesday_idea_2
+					has_idea = NGD_influence_of_Black_Tuesday_idea_3
+					has_idea = NGD_influence_of_Black_Tuesday_idea_4
+				}
+			}
+			completion_reward = {
+				if = {
+					limit = {
+						has_idea = civilian_economy
+					}
+					swap_ideas = {
+						remove_idea = civilian_economy
+						add_idea = low_economic_mobilisation
+					}
+				}
+				else = {
+					add_political_power = 50
+				}
+				add_manpower = 20000
+			}
+		}
+
+		#增加军事拨款
+		focus = {
+			id = NGD_increase_military_funding
+			icon = GFX_focus_SWI_issue_war_bonds
+			cost = 2
+			prerequisite = {
+				focus = NGD_rearmament
+			}
+			relative_position_id = NGD_rearmament
+			x = -5
+			y = 1
+			ai_will_do = {
+				base = 30
+			}
+			completion_reward = {
+				#加钱
+				add_to_variable = {
+					var = ubs_save
+					value = 100
+					tooltip = UBS_SAVE_UP_100
+				}
+			}
+		}
+
+		#军用物资生产许可
+		focus = {
+			id = NGD_production_license_for_military_materials
+			icon = GFX_focus_generic_treaty
+			cost = 5
+			prerequisite = {
+				focus = NGD_increase_military_funding
+			}
+			prerequisite = {
+				focus = NGD_ensure_supply_chain
+			}
+			relative_position_id = NGD_increase_military_funding
+			x = 1
+			y = 1
+			ai_will_do = {
+				base = 30
+			}
+			completion_reward = {
+				add_political_power = -200
+				every_military_industrial_organization = {
+					add_mio_funds_gain_factor = 0.1
+					add_mio_size = 1
+					add_mio_design_team_assign_cost = -1
+					# add_mio_design_team_change_cost = -0.8
+					add_mio_research_bonus = 0.05
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 1500
+				}
+				add_equipment_to_stockpile = {
+					type = motorized_equipment
+					amount = 1000
+				}
+			}
+		}
+
+		#装备现代化
+		focus = {
+			id = NGD_equipment_modernization
+			icon = GFX_focus_research
+			cost = 5
+			prerequisite = {
+				focus = NGD_production_license_for_military_materials
+			}
+			relative_position_id = NGD_production_license_for_military_materials
+			x = -1
+			y = 3
+			ai_will_do = {
+				base = 30
+			}
+			completion_reward = {
+				add_ideas = NGD_equipment_modernization_idea
+				add_research_slot = 1
+			}
+		}
+
 		#创新精神
 		focus = {
 			id = NGD_creative_spirit
@@ -1122,67 +1240,6 @@ focus_tree = {
 
 	### - 陆军 - ###
 
-		#重整军备
-		focus = {
-			id = NGD_rearmament
-			icon = GFX_goal_generic_production2
-			cost = 4
-			x = 21
-			y = 0
-			ai_will_do = {
-				base = 30
-			}
-			available = {
-				date > 1936.6.1
-				NOT = {
-					has_idea = NGD_influence_of_Black_Tuesday_idea
-					has_idea = NGD_influence_of_Black_Tuesday_idea_1
-					has_idea = NGD_influence_of_Black_Tuesday_idea_2
-					has_idea = NGD_influence_of_Black_Tuesday_idea_3
-					has_idea = NGD_influence_of_Black_Tuesday_idea_4
-				}
-			}
-			completion_reward = {
-				if = {
-					limit = {
-						has_idea = civilian_economy
-					}
-					swap_ideas = {
-						remove_idea = civilian_economy
-						add_idea = low_economic_mobilisation
-					}
-				}
-				else = {
-					add_political_power = 50
-				}
-				add_manpower = 20000
-			}
-		}
-
-		#增加军事拨款
-		focus = {
-			id = NGD_increase_military_funding
-			icon = GFX_focus_SWI_issue_war_bonds
-			cost = 2
-			prerequisite = {
-				focus = NGD_rearmament
-			}
-			relative_position_id = NGD_rearmament
-			x = -5
-			y = 1
-			ai_will_do = {
-				base = 30
-			}
-			completion_reward = {
-				#加钱
-				add_to_variable = {
-					var = ubs_save
-					value = 100
-					tooltip = UBS_SAVE_UP_100
-				}
-			}
-		}
-
 		#确保供应链
 		focus = {
 			id = NGD_ensure_supply_chain
@@ -1222,63 +1279,6 @@ focus_tree = {
 					type = artillery_equipment
 					amount = 1500
 				}
-			}
-		}
-
-		#军用物资生产许可
-		focus = {
-			id = NGD_production_license_for_military_materials
-			icon = GFX_focus_generic_treaty
-			cost = 5
-			prerequisite = {
-				focus = NGD_increase_military_funding
-			}
-			prerequisite = {
-				focus = NGD_ensure_supply_chain
-			}
-			relative_position_id = NGD_increase_military_funding
-			x = 1
-			y = 1
-			ai_will_do = {
-				base = 30
-			}
-			completion_reward = {
-				add_political_power = -200
-				every_military_industrial_organization = {
-					add_mio_funds_gain_factor = 0.1
-					add_mio_size = 1
-					add_mio_design_team_assign_cost = -1
-					add_mio_design_team_change_cost = -0.8
-					add_mio_research_bonus = 0.05
-				}
-				add_equipment_to_stockpile = {
-					type = support_equipment
-					amount = 1500
-				}
-				add_equipment_to_stockpile = {
-					type = motorized_equipment
-					amount = 1000
-				}
-			}
-		}
-
-		#装备现代化
-		focus = {
-			id = NGD_equipment_modernization
-			icon = GFX_focus_research
-			cost = 5
-			prerequisite = {
-				focus = NGD_production_license_for_military_materials
-			}
-			relative_position_id = NGD_production_license_for_military_materials
-			x = -1
-			y = 3
-			ai_will_do = {
-				base = 30
-			}
-			completion_reward = {
-				add_ideas = NGD_equipment_modernization_idea
-				add_research_slot = 1
 			}
 		}
 
@@ -6393,6 +6393,35 @@ focus_tree = {
 		# 	}
 		# }
 
+		#革命进行时
+		focus = {
+			id = NGD_revolution_in_progress
+			icon = GFX_focus_spr_masters_of_our_own_fate
+			cost = 0
+			x = 40
+			y = 13
+			allow_branch = {
+				NOT = {
+					has_completed_focus = NGD_gradually_restore
+					has_completed_focus = NGD_return_to_stability
+					has_completed_focus = NGD_end_of_republic
+				}
+			}
+			offset = {
+				x = -22
+				trigger = {
+					has_completed_focus = NGD_revolution_in_progress
+				}
+			}
+			available = {
+				always = no
+			}
+			completion_reward = {
+				mark_focus_tree_layout_dirty = yes
+				custom_effect_tooltip = this_focus_triggered_by_events_tt
+			}
+		}
+
 		#下一步
 		focus = {
 			id = NGD_next_step
@@ -7440,35 +7469,6 @@ focus_tree = {
 						THIS_country_is_defender_and_ROOT_is_accacker = yes
 					}
 				}
-			}
-		}
-
-		#革命进行时
-		focus = {
-			id = NGD_revolution_in_progress
-			icon = GFX_focus_spr_masters_of_our_own_fate
-			cost = 0
-			x = 40
-			y = 13
-			allow_branch = {
-				NOT = {
-					has_completed_focus = NGD_gradually_restore
-					has_completed_focus = NGD_return_to_stability
-					has_completed_focus = NGD_end_of_republic
-				}
-			}
-			offset = {
-				x = -22
-				trigger = {
-					has_completed_focus = NGD_revolution_in_progress
-				}
-			}
-			available = {
-				always = no
-			}
-			completion_reward = {
-				mark_focus_tree_layout_dirty = yes
-				custom_effect_tooltip = this_focus_triggered_by_events_tt
 			}
 		}
 
@@ -11409,6 +11409,44 @@ focus_tree = {
 					set_country_leader_ideology = enlightened_despotism
 				}
 			}
+			#抓紧缰绳
+			focus = {
+				id = NGD_hold_the_reins
+				icon = GFX_focus_CHI_planned_economy
+				cost = 5
+				prerequisite = {
+					focus = NGD_traditional_morality
+				}
+				prerequisite = {
+					focus = NGD_loyalty_to_the_emperor_and_nation
+				}
+				mutually_exclusive = {
+					focus = NGD_free_market
+				}
+				relative_position_id = NGD_loyalty_to_the_emperor_and_nation
+				x = 1
+				y = 1
+				completion_reward = {
+					add_ideas = NGD_hold_the_reins_idea_1
+					random_owned_controlled_state = {
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+							instant_build = yes
+						}
+						add_extra_state_shared_building_slots = 1
+					}
+					random_owned_controlled_state = {
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+						add_extra_state_shared_building_slots = 1
+					}
+				}
+			}
+
 			#科举现代化
 			focus = {
 				id = NGD_reform_civil_service_exams
@@ -11461,43 +11499,6 @@ focus_tree = {
 				y = 1
 				completion_reward = {
 					add_ideas = NGD_virtue_of_labor_idea
-				}
-			}
-			#抓紧缰绳
-			focus = {
-				id = NGD_hold_the_reins
-				icon = GFX_focus_CHI_planned_economy
-				cost = 5
-				prerequisite = {
-					focus = NGD_traditional_morality
-				}
-				prerequisite = {
-					focus = NGD_loyalty_to_the_emperor_and_nation
-				}
-				mutually_exclusive = {
-					focus = NGD_free_market
-				}
-				relative_position_id = NGD_loyalty_to_the_emperor_and_nation
-				x = 1
-				y = 1
-				completion_reward = {
-					add_ideas = NGD_hold_the_reins_idea_1
-					random_owned_controlled_state = {
-						add_building_construction = {
-							type = industrial_complex
-							level = 1
-							instant_build = yes
-						}
-						add_extra_state_shared_building_slots = 1
-					}
-					random_owned_controlled_state = {
-						add_building_construction = {
-							type = arms_factory
-							level = 1
-							instant_build = yes
-						}
-						add_extra_state_shared_building_slots = 1
-					}
 				}
 			}
 			#有序工业
