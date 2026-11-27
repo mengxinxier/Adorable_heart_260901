@@ -1150,6 +1150,7 @@ PAQ_hundunzhushen_jyz = {
 			has_government = fascism
 			has_completed_focus = PAQ_013
 			is_ai = no
+			not = { has_country_flag = paq_beisishenpaoqi_flag }
 		}
 		available = {
 			OR = {
@@ -1244,6 +1245,7 @@ PAQ_hundunzhushen_jyz = {
 			has_government = fascism
 			has_completed_focus = PAQ_013
 			is_ai = no
+			not = { has_country_flag = paq_beisishenpaoqi_flag }
 		}
 		available = {
 			OR = {
@@ -1458,6 +1460,10 @@ PAQ_hundunenci_jyz = {
 		visible = {
 			is_subject = no
 			has_government = fascism
+			not = { has_country_flag = paq_seyuxian_flag }
+			not = { has_country_flag = paq_zhanzhengxian_flag }
+			not = { has_country_flag = paq_guijixian_flag }
+			not = { has_country_flag = paq_changshengxian_flag }
 		}
 		priority = 1001
 		available = {
@@ -1970,6 +1976,145 @@ PAQ_hundunenci_jyz = {
 						instant_build = yes
 					}
 				}
+			}
+		}
+	}
+
+	# 战败线专属伟大游戏：本路线对应神明胜出时立刻刷新邪恶显化CD
+	PAQ_zbx_weidayouxi_time = {
+		icon = generic_research
+		activation = {
+			always = no
+		}
+		available = {
+			OR = {
+				is_subject = yes
+				not = { has_government = fascism }
+			}
+		}
+		priority = 14
+		days_mission_timeout = 180
+		is_good = yes
+		timeout_effect = {
+			random_list = {
+				25 = {
+					custom_effect_tooltip = paq_wdyx_tips_1
+					if = {
+						limit = { has_country_flag = paq_zhanzhengxian_flag }
+						add_to_variable = { var = paq_zz_gx value = 2 }
+						custom_effect_tooltip = paq_zbx_wdyx_refresh_cd_tt
+						paq_zbx_refresh_xxh_cd = yes
+					}
+					else = {
+						add_political_power = 15
+					}
+				}
+				25 = {
+					custom_effect_tooltip = paq_wdyx_tips_2
+					if = {
+						limit = { has_country_flag = paq_guijixian_flag }
+						add_to_variable = { var = paq_gj_gx value = 2 }
+						custom_effect_tooltip = paq_zbx_wdyx_refresh_cd_tt
+						paq_zbx_refresh_xxh_cd = yes
+					}
+					else = {
+						add_political_power = 15
+					}
+				}
+				25 = {
+					custom_effect_tooltip = paq_wdyx_tips_3
+					if = {
+						limit = { has_country_flag = paq_seyuxian_flag }
+						add_to_variable = { var = paq_sy_gx value = 2 }
+						custom_effect_tooltip = paq_zbx_wdyx_refresh_cd_tt
+						paq_zbx_refresh_xxh_cd = yes
+					}
+					else = {
+						add_political_power = 15
+					}
+				}
+				25 = {
+					custom_effect_tooltip = paq_wdyx_tips_4
+					if = {
+						limit = { has_country_flag = paq_changshengxian_flag }
+						add_to_variable = { var = paq_cs_gx value = 2 }
+						custom_effect_tooltip = paq_zbx_wdyx_refresh_cd_tt
+						paq_zbx_refresh_xxh_cd = yes
+					}
+					else = {
+						add_political_power = 15
+					}
+				}
+			}
+			hidden_effect = {
+				activate_mission = PAQ_zbx_weidayouxi_time
+			}
+		}
+	}
+
+	# 战败线终局恶魔/混沌勇士传送门
+	PAQ_zbx_chuansongmen_emo = {
+		icon = generic_operation
+		activation = {
+			always = no
+		}
+		available = {
+			OR = {
+				is_subject = yes
+				not = { has_government = fascism }
+			}
+		}
+		priority = 12
+		days_mission_timeout = 180
+		is_good = yes
+		timeout_effect = {
+			custom_effect_tooltip = PAQ_zbx_emo_spawn_tt
+			for_loop_effect = {
+				start = 0
+				end = 16
+				add = 1
+				capital_scope = {
+					create_unit = {
+						division = "name = \"混沌恶魔\" division_template = \"混沌恶魔\" start_experience_factor = 0.3 start_equipment_factor = 1"
+						owner = ROOT
+					}
+				}
+			}
+			hidden_effect = {
+				activate_mission = PAQ_zbx_chuansongmen_emo
+			}
+		}
+	}
+
+	PAQ_zbx_chuansongmen_yongshi = {
+		icon = generic_operation
+		activation = {
+			always = no
+		}
+		available = {
+			OR = {
+				is_subject = yes
+				not = { has_government = fascism }
+			}
+		}
+		priority = 11
+		days_mission_timeout = 120
+		is_good = yes
+		timeout_effect = {
+			custom_effect_tooltip = PAQ_zbx_yongshi_spawn_tt
+			for_loop_effect = {
+				start = 0
+				end = 2
+				add = 1
+				capital_scope = {
+					create_unit = {
+						division = "name = \"混沌勇士\" division_template = \"混沌勇士\" start_experience_factor = 0.5 start_equipment_factor = 1"
+						owner = ROOT
+					}
+				}
+			}
+			hidden_effect = {
+				activate_mission = PAQ_zbx_chuansongmen_yongshi
 			}
 		}
 	}
@@ -2542,7 +2687,7 @@ PAQ_sanbofushi_jyz = {
 	PAQ_sanbofushi_jy = {
 		icon = eng_propaganda_campaigns
 		state_target = yes
-		on_map_mode = map_and_decisions_view
+		on_map_mode = map_only
 		target_array = controlled_states
 		highlight_states = {
 			highlight_color_while_active = 1
@@ -3493,6 +3638,7 @@ PAQ_hundunruqin_jyz = {
 			}
 		}
 		available = {
+			date > 1939.1.1
 			FROM = {
 				is_neighbor_of = ROOT
 				not = {
@@ -3502,14 +3648,16 @@ PAQ_hundunruqin_jyz = {
 						is_subject_of = ROOT
 					}
 				}
+				if = {
+					limit = {
+						is_ai = yes
+					}
+					tag = WL1
+				}
 			}
 		}
 		ai_will_do = {
-			factor = 0
-			modifier = {
-				date > 1939.6.1
-				add = 100
-			}
+			factor = 1
 		}
 		fire_only_once = yes
 		days_remove = 7
@@ -3522,6 +3670,2107 @@ PAQ_hundunruqin_jyz = {
 				target = FROM
 				type = annex_everything
 			}
+		}
+	}
+}
+
+################################################################################
+# 战败线 · 邪恶显化决议组（四神共用，伟大游戏本神胜出时立刻刷新冷却）
+################################################################################
+PAQ_xieexianhua_jyz = {
+	# 决议精简开关：一键折叠或按大洲切换设教团的目标国家列表
+	PAQ_xxh_cycle_filter = {
+		icon = PAQ_filter_toggle
+		cost = 0
+		priority = 200
+		visible = {
+			is_ai = no
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			paq_cycle_target_filter_effect = yes
+		}
+	}
+
+	# 战争基础显化①：血仇教团（设立战争教团+获颅骨）
+	PAQ_xxh_zz_jiaotuan = {
+		icon = PAQ_xxh_zz_jiaotuan
+		cost = 35
+		priority = 100
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_1
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = paq_zhanzhengjiaotuan_flag }
+				paq_target_matches_filter = yes
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_zz_1_cd }
+			FROM = {
+				NOT = { is_in_faction_with = ROOT }
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_zz_1_cd days = 180 value = 1 }
+			paq_tishengguanxi_zz = yes
+			custom_effect_tooltip = paq_zz_lugu_up_50_tt
+			add_to_variable = { var = paq_zz_lugu value = 50 }
+			FROM = {
+				custom_effect_tooltip = paq_zhanzhengjiaotuan_flag_tt
+				set_country_flag = paq_zhanzhengjiaotuan_flag
+				add_timed_idea = {
+					idea = PAQ_xxh_zz_cult_debuff
+					days = 90
+				}
+			}
+		}
+	}
+
+	# 战争基础显化②：血神狂怒（持续120天，冷却240天）
+	PAQ_xxh_zz_kuangnu = {
+		icon = PAQ_xxh_zz_kuangnu
+		cost = 50
+		priority = 99
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_zz_2_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_zz_2_cd days = 240 value = 1 }
+			add_timed_idea = {
+				idea = PAQ_xxh_zz_kuangnu_buff
+				days = 120
+			}
+			custom_effect_tooltip = paq_zz_shixue_up_15_tt
+			add_to_variable = { var = paq_zz_shixue value = 15 }
+			paq_zz_update_shixue = yes
+		}
+	}
+
+	# 战争终极显化①：血神天罚（立刻摧毁指定州上的所有敌军单位）
+	PAQ_xxh_zz_tianfa = {
+		icon = PAQ_xxh_zz_tianfa
+		cost = 75
+		priority = 110
+		state_target = yes
+		on_map_mode = map_only
+		highlight_states = {
+			highlight_color_while_active = 1
+		}
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_end_1
+			has_war = yes
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_war = yes
+			}
+			FROM = {
+				controller = {
+					has_war_with = ROOT
+				}
+				OR = {
+					is_capital = yes
+					any_neighbor_state = {
+						controller = {
+							OR = {
+								tag = ROOT
+								is_in_faction_with = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_zz_3_cd }
+			FROM = {
+				controller = { has_war_with = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_zz_3_cd days = 180 value = 1 }
+			paq_tishengguanxi_zz = yes
+			custom_effect_tooltip = PAQ_xxh_zz_tianfa_tt
+			hidden_effect = {
+				every_enemy_country = {
+					delete_unit = {
+						state = FROM
+						disband = no
+					}
+				}
+			}
+			custom_effect_tooltip = paq_zz_lugu_up_80_tt
+			add_to_variable = { var = paq_zz_lugu value = 80 }
+			custom_effect_tooltip = paq_zz_shixue_up_20_tt
+			add_to_variable = { var = paq_zz_shixue value = 20 }
+			paq_zz_update_shixue = yes
+		}
+	}
+
+	# 战争终极显化②：血军降临（立刻在首都召唤一支庞大血军，唯一锁定编制+战争印记勋章）
+	PAQ_xxh_zz_xuejun = {
+		icon = PAQ_xxh_zz_xuejun
+		cost = 100
+		priority = 109
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_end_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_zz_4_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_zz_4_cd days = 240 value = 1 }
+			paq_zz_ensure_xuejun_template = yes
+			custom_effect_tooltip = PAQ_xxh_zz_xuejun_spawn_tt
+			hidden_effect = {
+				for_loop_effect = {
+					start = 0
+					end = 8
+					add = 1
+					capital_scope = {
+						create_unit = {
+							division = "name = \"恐虐血军\" division_template = \"恐虐血军\" start_experience_factor = 0.75 start_equipment_factor = 1"
+							owner = ROOT
+						}
+					}
+				}
+				paq_grant_medal_war_2 = yes
+				for_loop_effect = {
+					start = 0
+					end = 2
+					add = 1
+					capital_scope = {
+						create_unit = {
+							division = "name = \"血神神选者\" division_template = \"神选者\" start_experience_factor = 0.8 start_equipment_factor = 1"
+							owner = ROOT
+						}
+					}
+				}
+			}
+			custom_effect_tooltip = paq_zz_lugu_up_100_tt
+			add_to_variable = { var = paq_zz_lugu value = 100 }
+			custom_effect_tooltip = paq_zz_shixue_up_25_tt
+			add_to_variable = { var = paq_zz_shixue value = 25 }
+			paq_zz_update_shixue = yes
+		}
+	}
+
+	# 色欲基础显化①：立刻在某国设立色欲教团
+	PAQ_xxh_sy_jiaotuan = {
+		icon = PAQ_xxh_sy_jiaotuan
+		cost = 35
+		priority = 100
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_1
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+			}
+			FROM = {
+				exists = yes
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = paq_seyujiaotuan_flag }
+				paq_target_matches_filter = yes
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_sy_1_cd }
+			FROM = {
+				NOT = { is_in_faction_with = ROOT }
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_sy_1_cd days = 180 value = 1 }
+			paq_tishengguanxi_sy = yes
+			FROM = {
+				custom_effect_tooltip = paq_seyujiaotuan_flag_tt
+				set_country_flag = paq_seyujiaotuan_flag
+				custom_effect_tooltip = paq_sy_corrupt_2_tt
+				hidden_effect = {
+					paq_sy_corrupt_one_core_state = yes
+					paq_sy_corrupt_one_core_state = yes
+				}
+			}
+		}
+	}
+
+	# 色欲基础显化②：获得产能Buff（持续120天，冷却240天）
+	PAQ_xxh_sy_channeng = {
+		icon = PAQ_xxh_sy_channeng
+		cost = 50
+		priority = 99
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_sy_2_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_sy_2_cd days = 240 value = 1 }
+			add_timed_idea = {
+				idea = PAQ_xxh_sy_channeng_buff
+				days = 120
+			}
+			custom_effect_tooltip = paq_sy_duoluo_up_5_tt
+			add_to_variable = { var = paq_sy_duoluo value = 5 }
+			paq_sy_update_duoluo = yes
+		}
+	}
+
+	# 色欲终极显化①：立刻诱惑指定交战国家，使其获得时限Debuff
+	PAQ_xxh_sy_youhuo_war = {
+		icon = PAQ_xxh_sy_youhuo_war
+		cost = 50
+		priority = 110
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_end_1
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_war = yes
+			}
+			FROM = {
+				exists = yes
+				has_war_with = ROOT
+				NOT = { has_idea = PAQ_xxh_sy_war_debuff }
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_sy_3_cd }
+			FROM = {
+				has_war_with = ROOT
+			}
+		}
+		ai_will_do = {
+			factor = 80
+			modifier = {
+				FROM = { is_major = yes }
+				add = 100
+			}
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_sy_3_cd days = 180 value = 1 }
+			paq_tishengguanxi_sy = yes
+			FROM = {
+				add_timed_idea = {
+					idea = PAQ_xxh_sy_war_debuff
+					days = 90
+				}
+			}
+			if = {
+				limit = { is_ai = no }
+				FROM = {
+					custom_effect_tooltip = paq_sy_corrupt_3_tt
+					hidden_effect = {
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+					}
+				}
+			}
+		}
+	}
+
+	# 色欲终极显化②：在首都召唤大批享有色欲印记勋章的混沌勇士色欲信徒部队
+	PAQ_xxh_sy_shengwei = {
+		icon = PAQ_xxh_sy_shengwei
+		cost = 100
+		priority = 109
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_end_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_sy_4_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_sy_4_cd days = 240 value = 1 }
+			paq_sy_ensure_shengwei_template = yes
+			custom_effect_tooltip = PAQ_xxh_sy_shengwei_spawn_tt
+			hidden_effect = {
+				for_loop_effect = {
+					start = 0
+					end = 8
+					add = 1
+					capital_scope = {
+						create_unit = {
+							division = "name = \"混沌勇士·色欲信徒\" division_template = \"色欲混沌勇士\" start_experience_factor = 0.75 start_equipment_factor = 1"
+							owner = ROOT
+						}
+					}
+				}
+				paq_grant_medal_lust_2 = yes
+			}
+			custom_effect_tooltip = paq_sy_duoluo_up_5_tt
+			add_to_variable = { var = paq_sy_duoluo value = 5 }
+			paq_sy_update_duoluo = yes
+		}
+	}
+
+	# 诡计基础显化①：立刻在某国设立诡计教团
+	PAQ_xxh_gj_jiaotuan = {
+		icon = PAQ_xxh_gj_jiaotuan
+		cost = 35
+		priority = 100
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_1
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = paq_guijijiaotuan_flag }
+				paq_target_matches_filter = yes
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_gj_1_cd }
+			FROM = {
+				NOT = { is_in_faction_with = ROOT }
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_gj_1_cd days = 180 value = 1 }
+			paq_tishengguanxi_gj = yes
+			custom_effect_tooltip = paq_gj_midian_up_40_tt
+			add_to_variable = { var = paq_gj_midian value = 40 }
+			FROM = {
+				custom_effect_tooltip = paq_guijijiaotuan_flag
+				set_country_flag = paq_guijijiaotuan_flag
+			}
+		}
+	}
+
+	# 诡计基础显化②：获得长期的间谍相关效果
+	PAQ_xxh_gj_jiandie = {
+		icon = PAQ_xxh_gj_jiandie
+		cost = 50
+		priority = 99
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_gj_2_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_gj_2_cd days = 240 value = 1 }
+			add_timed_idea = {
+				idea = PAQ_xxh_gj_jiandie_buff
+				days = 120
+			}
+			custom_effect_tooltip = paq_gj_midian_up_40_tt
+			add_to_variable = { var = paq_gj_midian value = 40 }
+		}
+	}
+
+	# 诡计终极显化①：迷雾噬军（立刻令指定州上的所有敌方军队承受高额损耗）
+	PAQ_xxh_gj_sunhao = {
+		icon = PAQ_xxh_gj_sunhao
+		cost = 60
+		priority = 110
+		state_target = yes
+		on_map_mode = map_only
+		highlight_states = {
+			highlight_color_while_active = 1
+		}
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_end_1
+			has_war = yes
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_war = yes
+			}
+			FROM = {
+				controller = { has_war_with = ROOT }
+				NOT = { has_dynamic_modifier = { modifier = PAQ_gj_miwu_sunhao_state } }
+				OR = {
+					is_capital = yes
+					any_neighbor_state = {
+						controller = {
+							OR = {
+								tag = ROOT
+								is_in_faction_with = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_gj_3_cd }
+			FROM = {
+				controller = { has_war_with = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_gj_3_cd days = 180 value = 1 }
+			paq_tishengguanxi_gj = yes
+			FROM = {
+				add_dynamic_modifier = {
+					modifier = PAQ_gj_miwu_sunhao_state
+					scope = PAQ
+					days = 90
+				}
+			}
+			custom_effect_tooltip = paq_gj_midian_up_60_tt
+			add_to_variable = { var = paq_gj_midian value = 60 }
+		}
+	}
+
+	# 诡计终极显化②：魔君降世（立刻向某地传送一队万变魔君亲卫+诡计印记勋章）
+	PAQ_xxh_gj_mojun = {
+		icon = PAQ_xxh_gj_mojun
+		cost = 100
+		priority = 109
+		state_target = yes
+		on_map_mode = map_only
+		highlight_states = {
+			highlight_color_while_active = 1
+		}
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_end_1
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+				OR = {
+					is_capital = yes
+					any_neighbor_state = {
+						controller = { has_war_with = ROOT }
+					}
+				}
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_gj_4_cd }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_gj_4_cd days = 240 value = 1 }
+			paq_gj_ensure_mojun_template = yes
+			custom_effect_tooltip = PAQ_xxh_gj_mojun_spawn_tt
+			hidden_effect = {
+				for_loop_effect = {
+					start = 0
+					end = 4
+					add = 1
+					FROM = {
+						create_unit = {
+							division = "name = \"万变魔君亲卫\" division_template = \"万变魔君亲卫\" start_experience_factor = 0.85 start_equipment_factor = 1"
+							owner = ROOT
+						}
+					}
+				}
+				paq_grant_medal_deception_2 = yes
+			}
+			paq_tishengguanxi_gj = yes
+		}
+	}
+
+	# 长生基础显化①：播撒病灶（设立长生教团+传播瘟疫+获感染点数）
+	PAQ_xxh_cs_jiaotuan = {
+		icon = PAQ_xxh_cs_jiaotuan
+		cost = 35
+		priority = 100
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_1
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = paq_changshengjiaotuan_flag }
+				paq_target_matches_filter = yes
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_cs_1_cd }
+			FROM = {
+				NOT = { is_in_faction_with = ROOT }
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_cs_1_cd days = 180 value = 1 }
+			paq_tishengguanxi_cs = yes
+			custom_effect_tooltip = paq_cs_ganran_up_60_tt
+			add_to_variable = { var = paq_cs_ganran value = 60 }
+			FROM = {
+				custom_effect_tooltip = paq_changshengjiaotuan_flag_tt
+				set_country_flag = paq_changshengjiaotuan_flag
+				add_timed_idea = {
+					idea = PAQ_ggwy_buff
+					days = 90
+				}
+				custom_effect_tooltip = paq_sy_corrupt_2_tt
+				hidden_effect = {
+					paq_sy_corrupt_one_core_state = yes
+					paq_sy_corrupt_one_core_state = yes
+				}
+			}
+		}
+	}
+
+	# 长生基础显化②：腐殖滋养（持续120天，冷却240天）
+	PAQ_xxh_cs_ziyang = {
+		icon = PAQ_xxh_cs_ziyang
+		cost = 50
+		priority = 99
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_cs_2_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_cs_2_cd days = 240 value = 1 }
+			add_timed_idea = {
+				idea = PAQ_xxh_cs_ziyang_buff
+				days = 120
+			}
+			custom_effect_tooltip = paq_cs_ganran_up_50_tt
+			add_to_variable = { var = paq_cs_ganran value = 50 }
+		}
+	}
+
+	# 长生终极显化①：大腐烂降临（对指定交战国降下终极瘟疫灾厄Debuff）
+	PAQ_xxh_cs_dafu = {
+		icon = PAQ_xxh_cs_dafu
+		cost = 60
+		priority = 110
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_end_1
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_war = yes
+			}
+			FROM = {
+				exists = yes
+				has_war_with = ROOT
+				NOT = { has_idea = PAQ_xxh_cs_dafu_debuff }
+			}
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_cs_3_cd }
+			FROM = { has_war_with = ROOT }
+		}
+		ai_will_do = {
+			factor = 80
+			modifier = {
+				FROM = { is_major = yes }
+				add = 100
+			}
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_cs_3_cd days = 180 value = 1 }
+			paq_tishengguanxi_cs = yes
+			FROM = {
+				add_timed_idea = {
+					idea = PAQ_xxh_cs_dafu_debuff
+					days = 90
+				}
+			}
+			if = {
+				limit = { is_ai = no }
+				FROM = {
+					custom_effect_tooltip = paq_sy_corrupt_3_tt
+					hidden_effect = {
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+					}
+				}
+			}
+			custom_effect_tooltip = paq_cs_ganran_up_80_tt
+			add_to_variable = { var = paq_cs_ganran value = 80 }
+		}
+	}
+
+	# 长生终极显化②：不朽疫军（在首都召唤大批享有长生印记勋章的精锐疫军与神选者）
+	PAQ_xxh_cs_yijun = {
+		icon = PAQ_xxh_cs_yijun
+		cost = 100
+		priority = 109
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_end_1
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_xxh_cs_4_cd }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_xxh_cs_4_cd days = 240 value = 1 }
+			paq_cs_ensure_yijun_template = yes
+			custom_effect_tooltip = PAQ_xxh_cs_yijun_spawn_tt
+			hidden_effect = {
+				for_loop_effect = {
+					start = 0
+					end = 8
+					add = 1
+					capital_scope = {
+						create_unit = {
+							division = "name = \"长生不朽疫军\" division_template = \"长生不朽疫军\" start_experience_factor = 0.75 start_equipment_factor = 1"
+							owner = ROOT
+						}
+					}
+				}
+				paq_grant_medal_longevity_2 = yes
+				for_loop_effect = {
+					start = 0
+					end = 2
+					add = 1
+					capital_scope = {
+						create_unit = {
+							division = "name = \"长生神选者\" division_template = \"神选者\" start_experience_factor = 0.8 start_equipment_factor = 1"
+							owner = ROOT
+						}
+					}
+				}
+			}
+			custom_effect_tooltip = paq_cs_ganran_up_100_tt
+			add_to_variable = { var = paq_cs_ganran value = 100 }
+		}
+	}
+}
+
+################################################################################
+# 色欲神选（莉娅）专属决议组：堕落度对抗 + 教团渗透 + 腐蚀扩散 + 强制附庸
+################################################################################
+PAQ_seyumeihuo_jyz = {
+	# 决议精简开关：一键折叠或按大洲切换色欲诱惑/教团目标列表
+	PAQ_sy_cycle_filter = {
+		icon = PAQ_filter_toggle
+		cost = 0
+		priority = 200
+		visible = {
+			is_ai = no
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			paq_cycle_target_filter_effect = yes
+		}
+	}
+	# 堕落度调控①：静室祈祷（降低堕落度，维持理智）
+	PAQ_sy_qidao_jy = {
+		icon = PAQ_sy_qidao_jy
+		cost = 35
+		priority = 100
+		days_re_enable = 60
+		visible = {
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_1
+		}
+		available = {
+			check_variable = { paq_sy_duoluo > 0 }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_sy_duoluo_down_10_tt
+			add_to_variable = { var = paq_sy_duoluo value = -10 }
+			paq_sy_update_duoluo = yes
+			add_stability = 0.03
+		}
+	}
+
+	# 堕落度调控②：纵情圣宴（提高堕落度，顺从色欲）
+	PAQ_sy_kuanghuan_jy = {
+		icon = PAQ_sy_kuanghuan_jy
+		cost = 35
+		priority = 99
+		days_re_enable = 60
+		visible = {
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_1
+		}
+		available = {
+			check_variable = { paq_sy_duoluo < 100 }
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				check_variable = { paq_sy_duoluo > 75 }
+				factor = 0
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_sy_duoluo_up_10_tt
+			add_to_variable = { var = paq_sy_duoluo value = 10 }
+			paq_sy_update_duoluo = yes
+			paq_tishengguanxi_sy = yes
+		}
+	}
+
+	# 欢愉教团网络（PAQ_sy_8 解锁）：日常在外国设立色欲教团
+	PAQ_sy_jianli_jiaotuan_jy = {
+		icon = PAQ_sy_jianli_jiaotuan_jy
+		cost = 50
+		priority = 90
+		days_remove = 30
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_8
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				is_major = no
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = paq_seyujiaotuan_flag }
+				paq_target_matches_filter = yes
+			}
+		}
+		available = {
+			NOT = { has_country_flag = paq_sy_setting_cult }
+			FROM = {
+				NOT = { has_war_with = ROOT }
+				NOT = { is_in_faction_with = ROOT }
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = paq_sy_setting_cult
+		}
+		remove_effect = {
+			clr_country_flag = paq_sy_setting_cult
+			FROM = {
+				custom_effect_tooltip = paq_seyujiaotuan_flag_tt
+				set_country_flag = paq_seyujiaotuan_flag
+			}
+		}
+	}
+
+	# 奉献者献礼（PAQ_sy_8 解锁）：定期收获人力与建设资金
+	PAQ_sy_fengxianzhe_jy = {
+		icon = PAQ_sy_fengxianzhe_jy
+		cost = 25
+		priority = 88
+		days_re_enable = 90
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_8
+		}
+		available = {
+			any_other_country = {
+				OR = {
+					has_country_flag = paq_seyujiaotuan_flag
+					is_subject_of = ROOT
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 60
+		}
+		complete_effect = {
+			add_manpower = 12500
+			add_cic = 2000
+			paq_tishengguanxi_sy = yes
+		}
+	}
+
+	# 甜美侵蚀（PAQ_sy_9 解锁）：向已建教团或已附庸的国家持续散播混沌腐蚀，直至满足立刻附庸条件
+	PAQ_sy_sanbo_fushi_jy = {
+		icon = PAQ_sy_sanbo_fushi_jy
+		cost = 25
+		priority = 95
+		days_remove = 45
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_9
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				NOT = { tag = ROOT }
+				OR = {
+					has_country_flag = paq_seyujiaotuan_flag
+					is_subject_of = ROOT
+				}
+				paq_target_matches_filter = yes
+				any_owned_state = {
+					is_core_of = PREV
+					NOT = {
+						has_dynamic_modifier = {
+							modifier = PAQ_hundunfushi_state
+							scope = PAQ
+						}
+					}
+				}
+			}
+		}
+		available = {
+			NOT = { has_country_flag = paq_sy_spreading_fushi }
+			FROM = {
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = paq_sy_spreading_fushi
+		}
+		remove_effect = {
+			clr_country_flag = paq_sy_spreading_fushi
+			paq_tishengguanxi_sy = yes
+			if = {
+				limit = { has_completed_focus = PAQ_sy_4b }
+				FROM = {
+					custom_effect_tooltip = paq_sy_corrupt_5_tt
+					hidden_effect = {
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+					}
+				}
+			}
+			else = {
+				FROM = {
+					custom_effect_tooltip = paq_sy_corrupt_3_tt
+					hidden_effect = {
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+						paq_sy_corrupt_one_core_state = yes
+					}
+				}
+			}
+		}
+	}
+
+	# 无血臣服（PAQ_sy_10 解锁，最终效果需先统一南美）：强制附庸一个未交战、非附庸、非主要且核心已被完全腐蚀的国家
+	PAQ_sy_qiangzhi_fuyong_jy = {
+		icon = PAQ_sy_qiangzhi_fuyong_jy
+		cost = 75
+		priority = 98
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_seyuxian_flag
+			has_completed_focus = PAQ_sy_10
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				is_major = no
+				is_subject = no
+				NOT = { tag = ROOT }
+				NOT = { has_war_with = ROOT }
+				NOT = { is_in_faction_with = ROOT }
+				paq_target_matches_filter = yes
+				OR = {
+					has_country_flag = paq_seyujiaotuan_flag
+					all_core_state = {
+						has_dynamic_modifier = {
+							modifier = PAQ_hundunfushi_state
+							scope = PAQ
+						}
+					}
+				}
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = PAQ_need_unify_sa_tt
+				paq_zbx_has_unified_sa = yes
+			}
+			FROM = {
+				is_major = no
+				is_subject = no
+				NOT = { has_war_with = ROOT }
+				NOT = { is_in_faction_with = ROOT }
+				all_core_state = {
+					has_dynamic_modifier = {
+						modifier = PAQ_hundunfushi_state
+						scope = PAQ
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			paq_tishengguanxi_sy = yes
+			FROM = {
+				if = {
+					limit = { is_in_faction = yes }
+					leave_faction = yes
+				}
+				set_politics = {
+					ruling_party = fascism
+					elections_allowed = no
+				}
+				set_political_party = {
+					ideology = fascism
+					popularity = 100
+				}
+				set_country_leader_ideology = Chaos_Emissary
+				set_party_name = { ideology = fascism long_name = "PAQ_Chaos_Worshippers" name = "PAQ_Chaos_Worshippers" }
+			}
+			set_autonomy = {
+				target = FROM
+				autonomy_state = paq_subject
+			}
+		}
+	}
+}
+
+################################################################################
+# 战争神选（莱娅）专属决议组：嗜血循环 + 颅骨掠夺 + 血神祭礼 + 血军召唤
+################################################################################
+PAQ_zhanzhengjitan_jyz = {
+	# 30天嗜血与颅骨周期结算：连战加嗜血与颅骨，和平则嗜血衰减
+	PAQ_zz_shixue_tick_time = {
+		icon = PAQ_zz_shixue_tick_time
+		activation = {
+			always = no
+		}
+		available = {
+			OR = {
+				is_subject = yes
+				not = { has_government = fascism }
+			}
+		}
+		priority = 100
+		days_mission_timeout = 30
+		is_good = yes
+		timeout_effect = {
+			if = {
+				limit = { has_war = yes }
+				if = {
+					limit = { has_completed_focus = PAQ_zz_11 }
+					custom_effect_tooltip = paq_zz_shixue_up_15_tt
+					add_to_variable = { var = paq_zz_shixue value = 15 }
+				}
+				else = {
+					custom_effect_tooltip = paq_zz_shixue_up_10_tt
+					add_to_variable = { var = paq_zz_shixue value = 10 }
+				}
+				if = {
+					limit = { has_war_with_major = yes }
+					custom_effect_tooltip = paq_zz_lugu_up_60_tt
+					add_to_variable = { var = paq_zz_lugu value = 60 }
+				}
+				else = {
+					custom_effect_tooltip = paq_zz_lugu_up_35_tt
+					add_to_variable = { var = paq_zz_lugu value = 35 }
+				}
+			}
+			else = {
+				custom_effect_tooltip = paq_zz_shixue_down_10_tt
+				add_to_variable = { var = paq_zz_shixue value = -10 }
+			}
+			paq_zz_update_shixue = yes
+			hidden_effect = {
+				activate_mission = PAQ_zz_shixue_tick_time
+			}
+		}
+	}
+
+	# 献祭战俘与废墟（PAQ_zz_8 解锁）：内置60天CD防止反复刷资源
+	PAQ_zz_lueduo_lugu = {
+		icon = PAQ_zz_lueduo_lugu
+		cost = 20
+		priority = 95
+		days_re_enable = 60
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_8
+		}
+		available = {
+			has_war = yes
+			NOT = { has_country_flag = PAQ_zz_lueduo_cd }
+		}
+		ai_will_do = {
+			factor = 80
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_zz_lueduo_cd days = 60 value = 1 }
+			custom_effect_tooltip = paq_zz_lugu_up_60_tt
+			add_to_variable = { var = paq_zz_lugu value = 60 }
+			custom_effect_tooltip = paq_zz_shixue_up_15_tt
+			add_to_variable = { var = paq_zz_shixue value = 15 }
+			paq_zz_update_shixue = yes
+		}
+	}
+
+	# 血神祭礼①：血铸军械（消耗50颅骨，装备与Buff对半平衡）
+	PAQ_zz_jili_wuqi = {
+		icon = PAQ_zz_jili_wuqi
+		cost = 15
+		priority = 90
+		days_re_enable = 90
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_9
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_zz_need_lugu_50_tt
+				check_variable = { var = paq_zz_lugu value = 50 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_zz_lugu_down_50_tt
+			add_to_variable = { var = paq_zz_lugu value = -50 }
+			add_equipment_to_stockpile = { type = infantry_equipment amount = 1500 producer = PAQ }
+			add_equipment_to_stockpile = { type = artillery_equipment amount = 150 producer = PAQ }
+			add_equipment_to_stockpile = { type = support_equipment amount = 125 producer = PAQ }
+			add_timed_idea = {
+				idea = PAQ_zz_jili_wuqi_buff
+				days = 90
+			}
+		}
+	}
+
+	# 血神祭礼②：血神加护（消耗60颅骨）
+	PAQ_zz_jili_zhanli = {
+		icon = PAQ_zz_jili_zhanli
+		cost = 15
+		priority = 89
+		days_re_enable = 90
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_9
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_zz_need_lugu_60_tt
+				check_variable = { var = paq_zz_lugu value = 60 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 70
+			modifier = {
+				has_war = yes
+				add = 60
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_zz_lugu_down_60_tt
+			add_to_variable = { var = paq_zz_lugu value = -60 }
+			paq_tishengguanxi_zz = yes
+			add_timed_idea = {
+				idea = PAQ_zz_jili_zhanli_buff
+				days = 90
+			}
+			custom_effect_tooltip = paq_zz_shixue_up_15_tt
+			add_to_variable = { var = paq_zz_shixue value = 15 }
+			paq_zz_update_shixue = yes
+		}
+	}
+
+	# 血神祭礼③：嗜血征兵（消耗40颅骨）
+	PAQ_zz_jili_renli = {
+		icon = PAQ_zz_jili_renli
+		cost = 15
+		priority = 88
+		days_re_enable = 60
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_9
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_zz_need_lugu_40_tt
+				check_variable = { var = paq_zz_lugu value = 40 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 60
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_zz_lugu_down_40_tt
+			add_to_variable = { var = paq_zz_lugu value = -40 }
+			add_manpower = 40000
+			army_experience = 15
+		}
+	}
+
+	# 召唤恐虐血军（PAQ_zz_10 解锁，花费提高1/3，唯一锁定编制+战争印记勋章）
+	PAQ_zz_zhaohuan_xuejun = {
+		icon = PAQ_zz_zhaohuan_xuejun
+		cost = 35
+		priority = 92
+		days_re_enable = 90
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_zhanzhengxian_flag
+			has_completed_focus = PAQ_zz_10
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = PAQ_need_unify_sa_tt
+				paq_zbx_has_unified_sa = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = paq_zz_need_lugu_110_tt
+				check_variable = { var = paq_zz_lugu value = 110 compare = greater_than_or_equals }
+			}
+			OR = {
+				has_war = yes
+				custom_trigger_tooltip = {
+					tooltip = paq_zz_need_shixue_50_tt
+					check_variable = { var = paq_zz_shixue value = 50 compare = greater_than_or_equals }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 120
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_zz_lugu_down_110_tt
+			add_to_variable = { var = paq_zz_lugu value = -110 }
+			paq_zz_ensure_xuejun_template = yes
+			if = {
+				limit = { has_completed_focus = PAQ_zz_11 }
+				custom_effect_tooltip = PAQ_zz_xuejun_spawn_6_tt
+				hidden_effect = {
+					for_loop_effect = {
+						start = 0
+						end = 6
+						add = 1
+						capital_scope = {
+							create_unit = {
+								division = "name = \"恐虐血军\" division_template = \"恐虐血军\" start_experience_factor = 0.75 start_equipment_factor = 1"
+								owner = ROOT
+							}
+						}
+					}
+					paq_grant_medal_war_2 = yes
+				}
+			}
+			else = {
+				custom_effect_tooltip = PAQ_zz_xuejun_spawn_4_tt
+				hidden_effect = {
+					for_loop_effect = {
+						start = 0
+						end = 4
+						add = 1
+						capital_scope = {
+							create_unit = {
+								division = "name = \"恐虐血军\" division_template = \"恐虐血军\" start_experience_factor = 0.75 start_equipment_factor = 1"
+								owner = ROOT
+							}
+						}
+					}
+					paq_grant_medal_war_2 = yes
+				}
+			}
+		}
+	}
+}
+
+################################################################################
+# 诡计神选（格蕾）专属决议组：秘典积累 + 万变之道三神技
+################################################################################
+PAQ_wanbianzhidao_jyz = {
+	# 30天秘典收集循环
+	PAQ_gj_midian_tick_time = {
+		icon = PAQ_gj_midian_tick_time
+		activation = {
+			always = no
+		}
+		available = {
+			OR = {
+				is_subject = yes
+				not = { has_government = fascism }
+				has_country_flag = paq_gj_collapsed_flag
+			}
+		}
+		priority = 100
+		days_mission_timeout = 30
+		is_good = yes
+		timeout_effect = {
+			if = {
+				limit = {
+					has_completed_focus = PAQ_gj_10
+					has_completed_focus = PAQ_gj_11
+				}
+				custom_effect_tooltip = paq_gj_midian_up_65_tt
+				add_to_variable = { var = paq_gj_midian value = 65 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_completed_focus = PAQ_gj_10
+						has_completed_focus = PAQ_gj_11
+					}
+				}
+				custom_effect_tooltip = paq_gj_midian_up_45_tt
+				add_to_variable = { var = paq_gj_midian value = 45 }
+			}
+			else = {
+				custom_effect_tooltip = paq_gj_midian_up_30_tt
+				add_to_variable = { var = paq_gj_midian value = 30 }
+			}
+			hidden_effect = {
+				activate_mission = PAQ_gj_midian_tick_time
+			}
+		}
+	}
+
+	# 基础万变之道（PAQ_gj_6 解锁）：窃取科技突破与规划洞察
+	PAQ_gj_wb_dongcha = {
+		icon = PAQ_gj_wb_dongcha
+		cost = 25
+		priority = 92
+		days_re_enable = 90
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_6
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_gj_need_midian_50_tt
+				check_variable = { var = paq_gj_midian value = 50 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_gj_midian_down_50_tt
+			add_to_variable = { var = paq_gj_midian value = -50 }
+			add_breakthrough_progress = { specialization = all value = 0.125 }
+			add_political_power = 30
+			paq_tishengguanxi_gj = yes
+		}
+	}
+
+	# 万变之道①（PAQ_gj_7 解锁，最终效果需先统一南美）：立刻获得指定的州省份（地图点选，不占列表）
+	PAQ_gj_wb_qiedi = {
+		icon = PAQ_gj_wb_qiedi
+		cost = 50
+		priority = 98
+		days_re_enable = 90
+		state_target = yes
+		on_map_mode = map_only
+		highlight_states = {
+			highlight_color_while_active = 1
+		}
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_7
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				is_capital = no
+				NOT = { is_owned_by = ROOT }
+				owner = {
+					NOT = { is_subject_of = ROOT }
+					NOT = { is_in_faction_with = ROOT }
+				}
+				OR = {
+					any_neighbor_state = { is_controlled_by = ROOT }
+					owner = { has_country_flag = paq_guijijiaotuan_flag }
+				}
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = PAQ_need_unify_sa_tt
+				paq_zbx_has_unified_sa = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = paq_gj_need_midian_100_tt
+				check_variable = { var = paq_gj_midian value = 100 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_gj_midian_down_100_tt
+			add_to_variable = { var = paq_gj_midian value = -100 }
+			paq_tishengguanxi_gj = yes
+			transfer_state = FROM
+		}
+	}
+
+	# 万变之道②（PAQ_gj_8 解锁）：立刻与选择的交战势力停战（禁止对 DVL/ENG/SOV 使用）
+	PAQ_gj_wb_tingzhan = {
+		icon = PAQ_gj_wb_tingzhan
+		cost = 50
+		priority = 97
+		days_re_enable = 120
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_8
+			has_war = yes
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_war = yes
+			}
+			FROM = {
+				exists = yes
+				has_war_with = ROOT
+				NOT = { tag = DVL }
+				NOT = { tag = ENG }
+				NOT = { tag = SOV }
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_gj_need_midian_120_tt
+				check_variable = { var = paq_gj_midian value = 120 compare = greater_than_or_equals }
+			}
+			FROM = {
+				has_war_with = ROOT
+				NOT = { tag = DVL }
+				NOT = { tag = ENG }
+				NOT = { tag = SOV }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_gj_midian_down_120_tt
+			add_to_variable = { var = paq_gj_midian value = -120 }
+			paq_tishengguanxi_gj = yes
+			white_peace = FROM
+			hidden_effect = {
+				every_enemy_country = {
+					limit = {
+						is_in_faction_with = FROM
+						NOT = { tag = DVL }
+						NOT = { tag = ENG }
+						NOT = { tag = SOV }
+					}
+					PAQ = { white_peace = PREV }
+				}
+			}
+		}
+	}
+
+	# 万变之道③-步1（PAQ_gj_9 解锁）：锁定第一位存在且为阵营领袖的主要国家（禁止对 DVL/ENG/SOV 使用）
+	PAQ_gj_wb_pick_leader = {
+		icon = PAQ_gj_wb_pick_leader
+		cost = 0
+		priority = 96
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_9
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+			NOT = { has_country_flag = paq_gj_has_war_target_1 }
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				is_major = yes
+				is_faction_leader = yes
+				NOT = { tag = ROOT }
+				NOT = { tag = DVL }
+				NOT = { tag = ENG }
+				NOT = { tag = SOV }
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_gj_need_midian_180_tt
+				check_variable = { var = paq_gj_midian value = 180 compare = greater_than_or_equals }
+			}
+			NOT = { has_country_flag = paq_gj_wb_war_cd }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = paq_gj_has_war_target_1
+			FROM = {
+				set_country_flag = paq_gj_war_target_1
+				custom_effect_tooltip = paq_gj_pick_leader_1_tt
+			}
+		}
+	}
+
+	# 万变之道③-步2：强制令已锁定阵营领袖与所选第二位阵营领袖交战（禁止对 DVL/ENG/SOV 使用）
+	PAQ_gj_wb_ignite_war = {
+		icon = PAQ_gj_wb_ignite_war
+		cost = 75
+		priority = 96
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_guijixian_flag
+			has_completed_focus = PAQ_gj_9
+			has_country_flag = paq_gj_has_war_target_1
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				is_major = yes
+				is_faction_leader = yes
+				NOT = { tag = ROOT }
+				NOT = { tag = DVL }
+				NOT = { tag = ENG }
+				NOT = { tag = SOV }
+				NOT = { has_country_flag = paq_gj_war_target_1 }
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_gj_need_midian_180_tt
+				check_variable = { var = paq_gj_midian value = 180 compare = greater_than_or_equals }
+			}
+			any_other_country = {
+				has_country_flag = paq_gj_war_target_1
+				exists = yes
+				is_major = yes
+				is_faction_leader = yes
+				NOT = { has_war_with = FROM }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			set_country_flag = { flag = paq_gj_wb_war_cd days = 180 value = 1 }
+			custom_effect_tooltip = paq_gj_midian_down_180_tt
+			add_to_variable = { var = paq_gj_midian value = -180 }
+			paq_tishengguanxi_gj = yes
+			clr_country_flag = paq_gj_has_war_target_1
+			random_other_country = {
+				limit = { has_country_flag = paq_gj_war_target_1 }
+				clr_country_flag = paq_gj_war_target_1
+				declare_war_on = {
+					target = FROM
+					type = annex_everything
+				}
+			}
+		}
+	}
+
+	# 万变之道③-重置锁定目标
+	PAQ_gj_wb_reset_leader = {
+		icon = PAQ_gj_wb_reset_leader
+		cost = 0
+		priority = 95
+		visible = {
+			has_country_flag = paq_guijixian_flag
+			has_country_flag = paq_gj_has_war_target_1
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			clr_country_flag = paq_gj_has_war_target_1
+			every_other_country = {
+				limit = { has_country_flag = paq_gj_war_target_1 }
+				clr_country_flag = paq_gj_war_target_1
+			}
+		}
+	}
+}
+
+################################################################################
+# 长生神选（黛丽·达威）专属决议组：腐殖循环 + 慈父瘟疫大锅
+################################################################################
+PAQ_changshengdaguo_jyz = {
+	# 决议精简开关：一键折叠或按大洲切换瘟疫投放目标列表
+	PAQ_cs_cycle_filter = {
+		icon = PAQ_filter_toggle
+		cost = 0
+		priority = 200
+		visible = {
+			is_ai = no
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			paq_cycle_target_filter_effect = yes
+		}
+	}
+	# 腐殖循环周期任务（4阶段轮转：萌芽->蔓延->腐熟->丰收爆发）
+	PAQ_cs_fuzhi_cycle_time = {
+		icon = PAQ_cs_fuzhi_cycle_time
+		activation = {
+			always = no
+		}
+		available = {
+			OR = {
+				is_subject = yes
+				not = { has_government = fascism }
+			}
+		}
+		priority = 100
+		days_mission_timeout = 60
+		is_good = yes
+		timeout_effect = {
+			if = {
+				limit = { check_variable = { paq_cs_fuzhi_level < 4 } }
+				add_to_variable = { var = paq_cs_fuzhi_level value = 1 }
+				if = {
+					limit = { has_completed_focus = PAQ_cs_11 }
+					custom_effect_tooltip = paq_cs_ganran_up_60_tt
+					add_to_variable = { var = paq_cs_ganran value = 60 }
+					add_manpower = 30000
+				}
+				else = {
+					custom_effect_tooltip = paq_cs_ganran_up_35_tt
+					add_to_variable = { var = paq_cs_ganran value = 35 }
+					add_manpower = 15000
+				}
+			}
+			else = {
+				set_variable = { paq_cs_fuzhi_level = 1 }
+				custom_effect_tooltip = PAQ_cs_fuzhi_harvest_tt
+				if = {
+					limit = { has_completed_focus = PAQ_cs_11 }
+					add_to_variable = { var = paq_cs_ganran value = 120 }
+					add_manpower = 80000
+					random_owned_controlled_state = {
+						limit = { is_core_of = ROOT }
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+						add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+					}
+				}
+				else = {
+					add_to_variable = { var = paq_cs_ganran value = 70 }
+					add_manpower = 40000
+					random_owned_controlled_state = {
+						limit = { is_core_of = ROOT }
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+					}
+				}
+			}
+			hidden_effect = {
+				activate_mission = PAQ_cs_fuzhi_cycle_time
+			}
+		}
+	}
+
+	# 慈父大锅基础（PAQ_cs_8 解锁）：熬煮基础感染液（内置60天CD防止反复刷资源）
+	PAQ_cs_daguo_aozhu = {
+		icon = PAQ_cs_daguo_aozhu
+		cost = 25
+		priority = 94
+		days_re_enable = 60
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_8
+		}
+		available = {
+			NOT = { has_country_flag = PAQ_cs_aozhu_cd }
+		}
+		ai_will_do = {
+			factor = 70
+		}
+		complete_effect = {
+			set_country_flag = { flag = PAQ_cs_aozhu_cd days = 60 value = 1 }
+			custom_effect_tooltip = paq_cs_ganran_up_60_tt
+			add_to_variable = { var = paq_cs_ganran value = 60 }
+			paq_tishengguanxi_cs = yes
+		}
+	}
+
+	# 祝福型瘟疫①（PAQ_cs_9 解锁）：不朽脓甲（极致防御/耐久/低补给）
+	PAQ_cs_zhufu_buxiu = {
+		icon = PAQ_cs_zhufu_buxiu
+		cost = 20
+		priority = 92
+		days_re_enable = 150
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_9
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_cs_need_ganran_60_tt
+				check_variable = { var = paq_cs_ganran value = 60 compare = greater_than_or_equals }
+			}
+			NOT = { has_idea = PAQ_cs_zhufu_buxiu_buff }
+		}
+		ai_will_do = {
+			factor = 60
+			modifier = {
+				has_war = yes
+				add = 60
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_cs_ganran_down_60_tt
+			add_to_variable = { var = paq_cs_ganran value = -60 }
+			add_timed_idea = {
+				idea = PAQ_cs_zhufu_buxiu_buff
+				days = 150
+			}
+		}
+	}
+
+	# 祝福型瘟疫②（PAQ_cs_9 解锁）：丰饶腐殖（工业效率/人口/人力/资源）
+	PAQ_cs_zhufu_fuzhi = {
+		icon = PAQ_cs_zhufu_fuzhi
+		cost = 20
+		priority = 91
+		days_re_enable = 150
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_9
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_cs_need_ganran_60_tt
+				check_variable = { var = paq_cs_ganran value = 60 compare = greater_than_or_equals }
+			}
+			NOT = { has_idea = PAQ_cs_zhufu_fuzhi_buff }
+		}
+		ai_will_do = {
+			factor = 70
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_cs_ganran_down_60_tt
+			add_to_variable = { var = paq_cs_ganran value = -60 }
+			add_timed_idea = {
+				idea = PAQ_cs_zhufu_fuzhi_buff
+				days = 150
+			}
+		}
+	}
+
+	# 诅咒型瘟疫①（PAQ_cs_10 解锁）：溃烂疫潮（向指定非附庸外国投放瘟疫+散播腐蚀）
+	PAQ_cs_zuzhou_kuilan = {
+		icon = PAQ_cs_zuzhou_kuilan
+		cost = 25
+		priority = 95
+		days_re_enable = 90
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_10
+		}
+		target_trigger = {
+			ROOT = { is_subject = no }
+			FROM = {
+				exists = yes
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { is_in_faction_with = ROOT }
+				NOT = { has_idea = PAQ_cs_zuzhou_kuilan_debuff }
+				paq_target_matches_filter = yes
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = paq_cs_need_ganran_70_tt
+				check_variable = { var = paq_cs_ganran value = 70 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_cs_ganran_down_70_tt
+			add_to_variable = { var = paq_cs_ganran value = -70 }
+			paq_tishengguanxi_cs = yes
+			FROM = {
+				add_timed_idea = {
+					idea = PAQ_cs_zuzhou_kuilan_debuff
+					days = 150
+				}
+				custom_effect_tooltip = paq_sy_corrupt_3_tt
+				hidden_effect = {
+					paq_sy_corrupt_one_core_state = yes
+					paq_sy_corrupt_one_core_state = yes
+					paq_sy_corrupt_one_core_state = yes
+				}
+			}
+		}
+	}
+
+	# 诅咒型瘟疫②（PAQ_cs_11 解锁）：终极毒株·黑死腐烂（向交战国投放灭世毒株）
+	PAQ_cs_zuzhou_zhongji = {
+		icon = PAQ_cs_zuzhou_zhongji
+		cost = 35
+		priority = 96
+		days_re_enable = 120
+		visible = {
+			is_subject = no
+			has_government = fascism
+			has_country_flag = paq_changshengxian_flag
+			has_completed_focus = PAQ_cs_11
+			has_war = yes
+		}
+		target_trigger = {
+			ROOT = {
+				is_subject = no
+				has_war = yes
+			}
+			FROM = {
+				exists = yes
+				has_war_with = ROOT
+				NOT = { has_idea = PAQ_cs_zuzhou_zhongji_debuff }
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = PAQ_need_unify_sa_tt
+				paq_zbx_has_unified_sa = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = paq_cs_need_ganran_100_tt
+				check_variable = { var = paq_cs_ganran value = 100 compare = greater_than_or_equals }
+			}
+		}
+		ai_will_do = {
+			factor = 90
+			modifier = {
+				FROM = { is_major = yes }
+				add = 100
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = paq_cs_ganran_down_100_tt
+			add_to_variable = { var = paq_cs_ganran value = -100 }
+			paq_tishengguanxi_cs = yes
+			FROM = {
+				add_timed_idea = {
+					idea = PAQ_cs_zuzhou_zhongji_debuff
+					days = 180
+				}
+			}
+		}
+	}
+}
+
+################################################################################
+# DEBUG 测试决议组（仅 is_debug = yes 时对玩家可见，便于一键切换四条战败线测试）
+################################################################################
+PAQ_debug_jyz = {
+	PAQ_debug_enter_zbx = {
+		icon = generic_decision
+		priority = 100
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			set_country_flag = paq_beisishenpaoqi_flag
+			complete_national_focus = PAQ_67
+			complete_national_focus = PAQ_68
+			complete_national_focus = PAQ_69
+			complete_national_focus = PAQ_70
+			complete_national_focus = PAQ_71
+			complete_national_focus = PAQ_66
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	PAQ_debug_switch_zz = {
+		icon = generic_military
+		priority = 99
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			set_country_flag = paq_beisishenpaoqi_flag
+			paq_debug_clear_zbx_routes = yes
+			set_country_flag = paq_zhanzhengxian_flag
+			set_country_flag = paq_xuanze_zz
+			add_ideas = PAQ_zz_buff_1
+			set_variable = { paq_zz_gx = 15 }
+			add_country_leader_role = {
+				character = PAQ_laiya
+				promote_leader = yes
+				country_leader = {
+					ideology = Chaos_Emissary
+					desc = PAQ_LY_DESC
+					expire = "1985.1.1.1"
+					traits = { trait_paq_dghdlaiya trait_paq_zzsx }
+				}
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	PAQ_debug_switch_gj = {
+		icon = generic_operation
+		priority = 98
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			set_country_flag = paq_beisishenpaoqi_flag
+			paq_debug_clear_zbx_routes = yes
+			set_country_flag = paq_guijixian_flag
+			set_country_flag = paq_xuanze_gj
+			add_ideas = PAQ_gj_buff_1
+			set_variable = { paq_gj_gx = 15 }
+			add_country_leader_role = {
+				character = PAQ_gelei
+				promote_leader = yes
+				country_leader = {
+					ideology = Chaos_Emissary
+					desc = PAQ_GL_DESC
+					expire = "1985.1.1.1"
+					traits = { trait_paq_nhdlr trait_paq_gjsx }
+				}
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	PAQ_debug_switch_sy = {
+		icon = generic_monarchism
+		priority = 97
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			set_country_flag = paq_beisishenpaoqi_flag
+			paq_debug_clear_zbx_routes = yes
+			set_country_flag = paq_seyuxian_flag
+			set_country_flag = paq_xuanze_sy
+			add_ideas = PAQ_sy_buff_1
+			set_variable = { paq_sy_gx = 15 }
+			set_variable = { paq_sy_duoluo = 50 }
+			paq_sy_update_duoluo = yes
+			add_country_leader_role = {
+				character = PAQ_liya
+				promote_leader = yes
+				country_leader = {
+					ideology = Chaos_Emissary
+					desc = PAQ_LIY_DESC
+					expire = "1985.1.1.1"
+					traits = { trait_paq_nhdlr trait_paq_sysx }
+				}
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	PAQ_debug_switch_cs = {
+		icon = generic_crisis
+		priority = 96
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			set_country_flag = paq_beisishenpaoqi_flag
+			paq_debug_clear_zbx_routes = yes
+			set_country_flag = paq_changshengxian_flag
+			set_country_flag = paq_xuanze_cs
+			add_ideas = PAQ_cs_buff_1
+			set_variable = { paq_cs_gx = 15 }
+			set_cosmetic_tag = PAQ_FLGD
+			set_party_name = { ideology = fascism long_name = "PAQ_csxr_ideology" name = "PAQ_csxr_ideology" }
+			add_country_leader_role = {
+				character = PAQ_daili
+				promote_leader = yes
+				country_leader = {
+					ideology = Chaos_Emissary
+					desc = PAQ_DL_DESC
+					expire = "1985.1.1.1"
+					traits = { trait_paq_cssx }
+				}
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	PAQ_debug_refresh_res_cd = {
+		icon = generic_research
+		priority = 95
+		visible = {
+			is_debug = yes
+			is_ai = no
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			paq_zbx_refresh_xxh_cd = yes
+			clr_country_flag = paq_gj_wb_war_cd
+			add_to_variable = { var = paq_zz_lugu value = 500 }
+			add_to_variable = { var = paq_gj_midian value = 500 }
+			add_to_variable = { var = paq_cs_ganran value = 500 }
+			add_political_power = 500
 		}
 	}
 }
