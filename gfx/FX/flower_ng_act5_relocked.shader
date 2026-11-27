@@ -82,8 +82,9 @@ PixelShader =
 			suv = clamp( suv, 0.002f, 0.998f );
 
 			// Smooth outer border lock to pure black across zoom and micro-shake
-			float frameMask = smoothstep( 0.0f, 0.032f, uv.x ) * ( 1.0f - smoothstep( 0.968f, 1.0f, uv.x ) )
-			                * smoothstep( 0.0f, 0.040f, uv.y ) * ( 1.0f - smoothstep( 0.960f, 1.0f, uv.y ) );
+			float2 fmA = smoothstep( float2( 0.0f, 0.0f ), float2( 0.032f, 0.040f ), uv );
+			float2 fmB = 1.0f - smoothstep( float2( 0.968f, 0.960f ), float2( 1.0f, 1.0f ), uv );
+			float frameMask = fmA.x * fmB.x * fmA.y * fmB.y;
 
 			float2 sampleBase = float2( frameOff + suv.x * 0.5f, suv.y );
 			float4 baseCol = tex2D( MapTexture, sampleBase );
@@ -123,23 +124,31 @@ PixelShader =
 			// Natural -5.8 deg eye-axis alignment (cosA = 0.9949, sinA = -0.1011; right eye higher than left eye)
 			float2 dEyeL = float2( ( suv.x - eyeL.x ) * 1.7778f, suv.y - eyeL.y );
 			float2 dEyeR = float2( ( suv.x - eyeR.x ) * 1.7778f, suv.y - eyeR.y );
-			float2 gTiltL = float2( dEyeL.x * 0.9949f + dEyeL.y * ( -0.1011f ), -dEyeL.x * ( -0.1011f ) + dEyeL.y * 0.9949f );
-			float2 gTiltR = float2( dEyeR.x * 0.9949f + dEyeR.y * ( -0.1011f ), -dEyeR.x * ( -0.1011f ) + dEyeR.y * 0.9949f );
+			float2 gTiltL = float2( dEyeL.x * 0.9949f - dEyeL.y * 0.1011f, dEyeL.x * 0.1011f + dEyeL.y * 0.9949f );
+			float2 gTiltR = float2( dEyeR.x * 0.9949f - dEyeR.y * 0.1011f, dEyeR.x * 0.1011f + dEyeR.y * 0.9949f );
 
-			// Tapered almond eyelid & iris geometry (strictly zero circular orb bloom)
-			float taperL = max( 0.35f, 1.0f - 0.55f * saturate( abs( gTiltL.x ) / 0.056f ) );
-			float taperR = max( 0.35f, 1.0f - 0.55f * saturate( abs( gTiltR.x ) / 0.056f ) );
-			float mAlmondL = length( float2( gTiltL.x / 0.054f, gTiltL.y / ( 0.025f * taperL ) ) );
-			float mAlmondR = length( float2( gTiltR.x / 0.054f, gTiltR.y / ( 0.025f * taperR ) ) );
-			float mIrisL   = length( float2( gTiltL.x / 0.036f, gTiltL.y / ( 0.023f * taperL ) ) );
-			float mIrisR   = length( float2( gTiltR.x / 0.036f, gTiltR.y / ( 0.023f * taperR ) ) );
+			// Tapered almond eyelid & iris geometry (vectorized L/R pair for DX9 SM 3.0 slot budget; algebraically identical)
+			float2 gTiltXAbs = abs( float2( gTiltL.x, gTiltR.x ) );
+			float2 taper = max( 0.35f, 1.0f - 0.55f * saturate( gTiltXAbs / 0.056f ) );
+			float2 mAlmond = float2(
+				length( float2( gTiltL.x / 0.054f, gTiltL.y / ( 0.025f * taper.x ) ) ),
+				length( float2( gTiltR.x / 0.054f, gTiltR.y / ( 0.025f * taper.y ) ) )
+			);
+			float2 mIris = float2(
+				length( float2( gTiltL.x / 0.036f, gTiltL.y / ( 0.023f * taper.x ) ) ),
+				length( float2( gTiltR.x / 0.036f, gTiltR.y / ( 0.023f * taper.y ) ) )
+			);
 
-			float eyeAlmond = max( 1.0f - smoothstep( 0.48f, 1.00f, mAlmondL ), 1.0f - smoothstep( 0.48f, 1.00f, mAlmondR ) );
-			float eyeCore   = max( 1.0f - smoothstep( 0.16f, 0.92f, mIrisL ),   1.0f - smoothstep( 0.16f, 0.92f, mIrisR ) ) * eyeAlmond;
-			float eyePin    = max( 1.0f - smoothstep( 0.00f, 0.30f, mIrisL ),   1.0f - smoothstep( 0.00f, 0.30f, mIrisR ) ) * eyeAlmond;
-			float glintL    = ( 1.0f - smoothstep( 0.0009f, 0.0045f, abs( gTiltL.y + 0.0018f ) ) ) * ( 1.0f - smoothstep( 0.006f, 0.045f, abs( gTiltL.x ) ) );
-			float glintR    = ( 1.0f - smoothstep( 0.0009f, 0.0045f, abs( gTiltR.y + 0.0018f ) ) ) * ( 1.0f - smoothstep( 0.006f, 0.045f, abs( gTiltR.x ) ) );
-			float eyeGlint  = max( glintL, glintR ) * eyeAlmond;
+			float2 almondV = 1.0f - smoothstep( 0.48f, 1.00f, mAlmond );
+			float2 coreV   = 1.0f - smoothstep( 0.16f, 0.92f, mIris );
+			float2 pinV    = 1.0f - smoothstep( 0.00f, 0.30f, mIris );
+			float2 glintV  = ( 1.0f - smoothstep( 0.0009f, 0.0045f, abs( float2( gTiltL.y, gTiltR.y ) + 0.0018f ) ) )
+			               * ( 1.0f - smoothstep( 0.006f, 0.045f, gTiltXAbs ) );
+
+			float eyeAlmond = max( almondV.x, almondV.y );
+			float eyeCore   = max( coreV.x, coreV.y ) * eyeAlmond;
+			float eyePin    = max( pinV.x, pinV.y ) * eyeAlmond;
+			float eyeGlint  = max( glintV.x, glintV.y ) * eyeAlmond;
 
 			// Beat 2 (0.06s..0.30s): Deep chiaroscuro lock with subtle facial silhouette & clear luminous amethyst eyes
 			float darkHold = 1.0f - smoothstep( 0.290f, 0.316f, sec );
