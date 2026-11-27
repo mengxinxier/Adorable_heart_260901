@@ -80,28 +80,29 @@ PixelShader =
 		float4 main( VS_OUTPUT v ) : PDX_COLOR
 		{
             // The number of frames is in the last frame
-            float4 frame_size = tex2D( MapTexture, float2((Offset.x - NextOffset.x)/2, 0));
-            int nb_frames = int(round(frame_size.x * 256) + 1);
-            // Get the inputs parameters
-            int offsetInt = int(round(Offset.x*nb_frames));
-            int start_frame   = (offsetInt >> 0)  & 0x3F;
-            int end_frame     = ((offsetInt >> 6) & 0x3F) + 1;
-            int frame_per_sec = (offsetInt >> 12) & 0xFF;
-            int looping       = (offsetInt >> 20) & 0x1;
+            float4 frame_size = tex2D( MapTexture, float2((Offset.x - NextOffset.x) * 0.5, 0.0));
+            float nb_frames = floor(frame_size.x * 256.0 + 0.5) + 1.0;
+            // Get the inputs parameters (DX9 SM 3.0 compatible exact extraction for 21-bit unsigned int)
+            float offsetVal     = floor(Offset.x * nb_frames + 0.5);
+            float start_frame   = fmod(offsetVal, 64.0);
+            float end_frame     = fmod(floor(offsetVal / 64.0), 64.0) + 1.0;
+            float frame_per_sec = fmod(floor(offsetVal / 4096.0), 256.0);
+            float looping       = fmod(floor(offsetVal / 1048576.0), 2.0);
 
 
             // Compute the effective fps
-            float fps = float(frame_per_sec + 1)/256.0;
-            fps = fps*fps * 50;
+            float fps = (frame_per_sec + 1.0) / 256.0;
+            fps = fps * fps * 50.0;
 
 			// Display the first frame
-            float delta_time = (Time - AnimationTime)*fps/(end_frame - start_frame);
-            float current_frame_offset = floor(part_dec(delta_time)*(end_frame - start_frame));
-            if ((looping == 0) && (delta_time >= 1.0) ) {
-                current_frame_offset = end_frame - start_frame - 1;
+            float frame_span = end_frame - start_frame;
+            float delta_time = (Time - AnimationTime) * fps / frame_span;
+            float current_frame_offset = floor(part_dec(delta_time) * frame_span);
+            if ((looping < 0.5) && (delta_time >= 1.0) ) {
+                current_frame_offset = frame_span - 1.0;
             }
 
-            v.vTexCoord.x += float(start_frame + current_frame_offset)/nb_frames;
+            v.vTexCoord.x += (start_frame + current_frame_offset) / nb_frames;
             return tex2D(MapTexture, v.vTexCoord);
 		}
 	]]
