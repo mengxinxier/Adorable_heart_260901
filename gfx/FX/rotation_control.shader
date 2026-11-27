@@ -170,7 +170,7 @@ BlendState BlendState
     BlendEnable = yes
     SourceBlend = "src_alpha"
     DestBlend = "inv_src_alpha"
-    BlendOp = "add"
+    BlendOp = "blend_op_add"
 }
 
 Effect Up
