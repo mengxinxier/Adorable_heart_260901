@@ -2433,7 +2433,7 @@ country_event = {
 	
 }
 
-#临时事件，决定战败线领导人
+#AI专用事件，决定战败线领导人并立刻完成国策 PAQ_70
 country_event = {
 	id = paq.79
 	title = paq.79.t
@@ -2444,6 +2444,10 @@ country_event = {
 		name = paq.79.a
 		set_country_flag = paq_zhanzhengxian_flag
 		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
 		ai_chance = {
 			base = 30
 			modifier = {
@@ -2465,6 +2469,10 @@ country_event = {
 		name = paq.79.b
 		set_country_flag = paq_changshengxian_flag
 		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
 		ai_chance = {
 			base = 10
 			modifier = {
@@ -2486,6 +2494,10 @@ country_event = {
 		name = paq.79.c
 		set_country_flag = paq_seyuxian_flag
 		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
 		ai_chance = {
 			base = 60
 			modifier = {
@@ -2507,6 +2519,10 @@ country_event = {
 		name = paq.79.e
 		set_country_flag = paq_guijixian_flag
 		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
 		ai_chance = {
 			base = 0
 			modifier = {
@@ -2645,6 +2661,1324 @@ country_event = {
 	option = {
 		name = paq.85.a
 		paq_gj_complete_unification = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#############################################################################
+# 阿德莱希的妹神官（PAQ_70）玩家专属剧情事件链 (paq.86 ~ paq.102)
+#############################################################################
+
+# 事件1（点击国策15天后）：莱娅东进军队遭遇黛丽长生起义军并爆发火并
+country_event = {
+	id = paq.86
+	title = paq.86.t
+	desc = paq.86.d
+	is_triggered_only = yes
+
+	# 莱娅赢了
+	option = {
+		name = paq.86.a
+		hidden_effect = {
+			set_country_flag = paq_70_laiya_win
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+
+	# 黛丽赢了
+	option = {
+		name = paq.86.b
+		hidden_effect = {
+			set_country_flag = paq_70_daili_win
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+
+	# 两败俱伤
+	option = {
+		name = paq.86.c
+		hidden_effect = {
+			set_country_flag = paq_70_liangbaijushang
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# 事件2（点击国策30天后）：格蕾一行抵达首都，城门前为莉娅解围，马克一见钟情
+country_event = {
+	id = paq.87
+	title = paq.87.t
+	desc = paq.87.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.87.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件3（点击国策45天后）：莉娅面见托莉娜并被正式授予职位，周围炽热的目光令其不安
+country_event = {
+	id = paq.88
+	title = paq.88.t
+	desc = paq.88.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.88.a
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = paq_70_laiya_win }
+				country_event = { id = paq.89 days = 15 }
+			}
+			else_if = {
+				limit = { has_country_flag = paq_70_daili_win }
+				country_event = { id = paq.91 days = 15 }
+			}
+			else = {
+				country_event = { id = paq.92 days = 15 }
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件4A（事件3的15天后，莱娅胜出分支）：莱娅包围首都，格蕾伙伴战死，格蕾被诡计救走下落不明
+country_event = {
+	id = paq.89
+	title = paq.89.t
+	desc = paq.89.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.89.a
+		hidden_effect = {
+			country_event = { id = paq.90 days = 5 }
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件5A（莱娅分支5天后后续）：莱娅处决薇莉安，疯狂格蕾再现并被收入麾下（立绘换2，内阁不变）-> 战争线（短线无PP）
+country_event = {
+	id = paq.90
+	title = paq.90.t
+	desc = paq.90.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.90.a
+		set_country_flag = paq_zhanzhengxian_flag
+		if = {
+			limit = { has_character = PAQ_weilian }
+			retire_character = PAQ_weilian
+		}
+		custom_effect_tooltip = paq_gelei_mad_portrait_tt
+		hidden_effect = {
+			set_portraits = {
+				character = PAQ_gelei
+				civilian = {
+					large = "gfx/leaders/PAQ/gelei2.png"
+					small = "gfx/leaders/PAQ/small/gelei2_small.png"
+				}
+				army = {
+					large = "gfx/leaders/PAQ/gelei2.png"
+					small = "gfx/leaders/PAQ/small/gelei2_small.png"
+				}
+			}
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件4B（事件3的15天后，黛丽胜出分支）：黛丽腐蚀军团包围首都，格蕾被诡计救走、伙伴全灭 -> 长生线（短线无PP）
+country_event = {
+	id = paq.91
+	title = paq.91.t
+	desc = paq.91.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.91.a
+		set_country_flag = paq_changshengxian_flag
+		if = {
+			limit = { has_character = PAQ_weilian }
+			retire_character = PAQ_weilian
+		}
+		if = {
+			limit = { has_character = PAQ_gelei }
+			retire_character = PAQ_gelei
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件4C（事件3的15天后，两败俱伤分支）：双线叛军逼近，格蕾出征，城内莉娅瘙痒难耐面临抉择
+country_event = {
+	id = paq.92
+	title = paq.92.t
+	desc = paq.92.d
+	is_triggered_only = yes
+
+	# 忍耐下去
+	option = {
+		name = paq.92.a
+		hidden_effect = {
+			country_event = { id = paq.94 days = 5 }
+		}
+		ai_chance = {
+			base = 60
+		}
+	}
+
+	# 解放自我，堕落沉沦
+	option = {
+		name = paq.92.b
+		hidden_effect = {
+			country_event = { id = paq.93 days = 15 }
+		}
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# 事件5C-2（两败俱伤+莉娅堕落沉沦15天后）：色欲席卷首都，马克欢愉中死去，格蕾失踪 -> 色欲线（短支线无PP）
+country_event = {
+	id = paq.93
+	title = paq.93.t
+	desc = paq.93.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.93.a
+		set_country_flag = paq_seyuxian_flag
+		if = {
+			limit = { has_character = PAQ_gelei }
+			retire_character = PAQ_gelei
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件5C-1（两败俱伤+莉娅忍耐5天后）：格蕾率先遭遇莱娅叛军，激战不利，四策抉择
+country_event = {
+	id = paq.94
+	title = paq.94.t
+	desc = paq.94.d
+	is_triggered_only = yes
+
+	# 1. 坚守阵地，就在这里拖死莱娅
+	option = {
+		name = paq.94.a
+		hidden_effect = {
+			country_event = { id = paq.95 days = 10 }
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+
+	# 2. 先行撤退，回到城内防守
+	option = {
+		name = paq.94.b
+		hidden_effect = {
+			country_event = { id = paq.96 days = 5 }
+		}
+		ai_chance = {
+			base = 25
+		}
+	}
+
+	# 3. 设法引诱莱娅的军队撞上黛丽的军队
+	option = {
+		name = paq.94.c
+		hidden_effect = {
+			country_event = { id = paq.98 days = 10 }
+		}
+		ai_chance = {
+			base = 25
+		}
+	}
+
+	# 4. 打开爷爷的第二个锦囊
+	option = {
+		name = paq.94.e
+		hidden_effect = {
+			country_event = { id = paq.99 days = 5 }
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+
+# 事件6C-1（坚守阵地10天后）：逃兵夜袭防线崩溃，伙伴战死格蕾失踪，莱娅抵都城亦沦陷 -> 色欲线（偏长 +30 PP）
+country_event = {
+	id = paq.95
+	title = paq.95.t
+	desc = paq.95.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.95.a
+		add_political_power = 30
+		set_country_flag = paq_seyuxian_flag
+		if = {
+			limit = { has_character = PAQ_gelei }
+			retire_character = PAQ_gelei
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件6C-2（先行撤退5天后）：孤城无援被攻破，格蕾与伙伴投降，莱娅突然停手未杀
+country_event = {
+	id = paq.96
+	title = paq.96.t
+	desc = paq.96.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.96.a
+		hidden_effect = {
+			country_event = { id = paq.97 days = 5 }
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件7C-2（先行撤退+5天后处决薇莉安）：莱娅处决薇莉安，格蕾因伙伴未全灭保持清醒 -> 战争线（长线 +50 PP）
+country_event = {
+	id = paq.97
+	title = paq.97.t
+	desc = paq.97.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.97.a
+		add_political_power = 50
+		set_country_flag = paq_zhanzhengxian_flag
+		if = {
+			limit = { has_character = PAQ_weilian }
+			retire_character = PAQ_weilian
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件6C-3（引诱敌军10天后）：成功借刀杀人并消灭两支叛军，但回城后首都已沦陷、格蕾失踪 -> 色欲线（偏长 +30 PP）
+country_event = {
+	id = paq.98
+	title = paq.98.t
+	desc = paq.98.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.98.a
+		add_political_power = 30
+		set_country_flag = paq_seyuxian_flag
+		if = {
+			limit = { has_character = PAQ_gelei }
+			retire_character = PAQ_gelei
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件6C-4（打开第二个锦囊5天后）：无字锦囊天降神迹，格蕾生擒莱娅，面对黛丽叛军的三选抉择
+country_event = {
+	id = paq.99
+	title = paq.99.t
+	desc = paq.99.d
+	is_triggered_only = yes
+
+	# 1. 先回城休整
+	option = {
+		name = paq.99.a
+		hidden_effect = {
+			country_event = { id = paq.100 days = 5 }
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+
+	# 2. 立刻全去迎击黛丽
+	option = {
+		name = paq.99.b
+		hidden_effect = {
+			country_event = { id = paq.101 days = 5 }
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+
+	# 3. 听天由命
+	option = {
+		name = paq.99.c
+		hidden_effect = {
+			country_event = { id = paq.102 days = 5 }
+		}
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# 事件7C-4a（打开锦囊+回城休整5天后）：马克巷中遭莉娅吻走，首都沦陷，黛丽疫军亦瓦解 -> 色欲线（长线 +50 PP）
+country_event = {
+	id = paq.100
+	title = paq.100.t
+	desc = paq.100.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.100.a
+		add_political_power = 50
+		set_country_flag = paq_seyuxian_flag
+		if = {
+			limit = { has_character = PAQ_gelei }
+			retire_character = PAQ_gelei
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件7C-4b（打开锦囊+立刻迎击5天后）：疲军惨败莱娅逃跑，格蕾遭传送孤身徒步返都却见腐绿之城 -> 长生线（长线 +50 PP）
+country_event = {
+	id = paq.101
+	title = paq.101.t
+	desc = paq.101.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.101.a
+		add_political_power = 50
+		set_country_flag = paq_changshengxian_flag
+		if = {
+			limit = { has_character = PAQ_weilian }
+			retire_character = PAQ_weilian
+		}
+		if = {
+			limit = { has_character = PAQ_gelei }
+			retire_character = PAQ_gelei
+		}
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 事件7C-4c（打开锦囊+听天由命5天后）：精密埋伏大破黛丽，潜回首都唤醒莉娅，薇莉安封格蕾为女皇代理人 -> 诡计线（长线 +50 PP）
+country_event = {
+	id = paq.102
+	title = paq.102.t
+	desc = paq.102.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.102.a
+		add_political_power = 50
+		set_country_flag = paq_guijixian_flag
+		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = { NOT = { has_completed_focus = PAQ_70 } }
+			complete_national_focus = PAQ_70
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#############################################################################
+# 诡计线（格蕾）进线后扩写剧情事件 (paq.103 ~ paq.110)
+#############################################################################
+
+# PAQ_gj_1（黎明之下的新政）完成后触发：初掌国政与深宫探视薇莉安
+country_event = {
+	id = paq.103
+	title = paq.103.t
+	desc = paq.103.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.103.a
+		add_political_power = 25
+		add_stability = 0.03
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = {
+		name = paq.103.b
+		custom_effect_tooltip = paq_gj_midian_up_20_tt
+		add_to_variable = { var = paq_gj_midian value = 20 }
+		paq_tishengguanxi_gj = yes
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# PAQ_gj_10（阴影情报总局）完成后触发：地下十三号档案室的无字卷宗
+country_event = {
+	id = paq.104
+	title = paq.104.t
+	desc = paq.104.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.104.a
+		custom_effect_tooltip = paq_gj_midian_up_30_tt
+		add_to_variable = { var = paq_gj_midian value = 30 }
+		paq_tishengguanxi_gj = yes
+		ai_chance = {
+			base = 70
+		}
+	}
+
+	option = {
+		name = paq.104.b
+		add_political_power = 30
+		add_stability = 0.02
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+
+# PAQ_gj_4（提线木偶的南美）完成触发：几封假电报引爆南美诸国防线内讧
+country_event = {
+	id = paq.105
+	title = paq.105.t
+	desc = paq.105.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.105.a
+		add_war_support = 0.05
+		army_experience = 25
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# PAQ_gj_11（禁忌奥术研习）完成后触发：科学院发疯的学者与倒转的怀表
+country_event = {
+	id = paq.106
+	title = paq.106.t
+	desc = paq.106.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.106.a
+		custom_effect_tooltip = paq_gj_midian_up_30_tt
+		add_to_variable = { var = paq_gj_midian value = 30 }
+		paq_tishengguanxi_gj = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# PAQ_gj_12（呼唤万变魔君）完成触发：双翼大魔降临并道破荒原蓝雷真相
+country_event = {
+	id = paq.107
+	title = paq.107.t
+	desc = paq.107.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.107.a
+		custom_effect_tooltip = paq_gj_midian_up_40_tt
+		add_to_variable = { var = paq_gj_midian value = 40 }
+		paq_tishengguanxi_gj = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 首次执行决议「万变之道：窃取疆土」触发：蓝墨水改写界碑与驻军记忆
+country_event = {
+	id = paq.108
+	title = paq.108.t
+	desc = paq.108.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.108.a
+		add_political_power = 35
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 首次执行决议「万变之道：引爆阵营大战」触发：千里之外点燃旧世界火药桶
+country_event = {
+	id = paq.109
+	title = paq.109.t
+	desc = paq.109.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.109.a
+		custom_effect_tooltip = paq_gj_midian_up_50_tt
+		add_to_variable = { var = paq_gj_midian value = 50 }
+		paq_tishengguanxi_gj = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 诡计线完成 PAQ_end_2（北伐秩序大陆）触发：北美疗养院的老元帅遗物与烧毁旧合照
+country_event = {
+	id = paq.110
+	title = paq.110.t
+	desc = paq.110.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.110.a
+		add_political_power = 50
+		add_war_support = 0.05
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#############################################################################
+# 色欲线（莉娅）进线后扩写剧情事件 (paq.111 ~ paq.120)
+#############################################################################
+
+# PAQ_sy_1（圣女的代行权）完成后触发：初入深宫代行国政与满殿微香
+country_event = {
+	id = paq.111
+	title = paq.111.t
+	desc = paq.111.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.111.a
+		custom_effect_tooltip = paq_sy_duoluo_down_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = -5 }
+		paq_sy_update_duoluo = yes
+		add_stability = 0.03
+		ai_chance = {
+			base = 0
+		}
+	}
+
+	option = {
+		name = paq.111.b
+		custom_effect_tooltip = paq_sy_duoluo_up_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = 5 }
+		paq_sy_update_duoluo = yes
+		add_political_power = 30
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# PAQ_sy_2a（克制圣咏）完成后触发：禁欲严令下反而变调的晚祷
+country_event = {
+	id = paq.112
+	title = paq.112.t
+	desc = paq.112.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.112.a
+		add_political_power = 25
+		add_stability = 0.02
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# PAQ_sy_2b（狂喜祷告）完成后触发：撤去忏悔室的不夜圣殿
+country_event = {
+	id = paq.113
+	title = paq.113.t
+	desc = paq.113.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.113.a
+		add_political_power = 25
+		add_war_support = 0.03
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 堕落度首次降至 <=20（圣洁坚守）触发：偷藏手帕的小侍女与玻璃罩里的修女
+country_event = {
+	id = paq.114
+	title = paq.114.t
+	desc = paq.114.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.114.a
+		add_stability = 0.05
+		add_political_power = 35
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# PAQ_sy_5（林间与王冠的迷香）开战5天后触发：妖精密林与艾尔孚利登战壕的缴械潮
+country_event = {
+	id = paq.115
+	title = paq.115.t
+	desc = paq.115.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.115.a
+		custom_effect_tooltip = paq_sy_duoluo_down_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = -5 }
+		paq_sy_update_duoluo = yes
+		add_manpower = 5000
+		ai_chance = {
+			base = 0
+		}
+	}
+
+	option = {
+		name = paq.115.b
+		custom_effect_tooltip = paq_sy_duoluo_up_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = 5 }
+		paq_sy_update_duoluo = yes
+		add_war_support = 0.04
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# PAQ_sy_6（堕落星光与夜曲）开战5天后触发：魔法少女染粉的灵魂宝石与落泪的夜莺亡灵
+country_event = {
+	id = paq.116
+	title = paq.116.t
+	desc = paq.116.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.116.a
+		army_experience = 25
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# PAQ_sy_8（欢愉教团网络）完成后触发：邻国上流沙龙疯抢的圣殿香膏与情书
+country_event = {
+	id = paq.117
+	title = paq.117.t
+	desc = paq.117.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.117.a
+		custom_effect_tooltip = paq_sy_duoluo_down_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = -5 }
+		paq_sy_update_duoluo = yes
+		add_political_power = 30
+		ai_chance = {
+			base = 0
+		}
+	}
+
+	option = {
+		name = paq.117.b
+		custom_effect_tooltip = paq_sy_duoluo_up_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = 5 }
+		paq_sy_update_duoluo = yes
+		add_political_power = 30
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# 首次执行决议「无血臣服」附庸外国触发：铺满鲜花的公路与跪迎的外国全体内阁
+country_event = {
+	id = paq.118
+	title = paq.118.t
+	desc = paq.118.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.118.a
+		add_political_power = 40
+		add_stability = 0.03
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = {
+		name = paq.118.b
+		custom_effect_tooltip = paq_sy_duoluo_up_5_tt
+		add_to_variable = { var = paq_sy_duoluo value = 5 }
+		paq_sy_update_duoluo = yes
+		add_political_power = 40
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# PAQ_sy_11（南美极乐圣国）完成触发：南美统一与大教堂露台上的极乐加冕
+country_event = {
+	id = paq.119
+	title = paq.119.t
+	desc = paq.119.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.119.a
+		add_political_power = 60
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 色欲线完成 PAQ_end_2（北伐秩序大陆）触发：兵指故土法兰西第二王国与旧日偏见
+country_event = {
+	id = paq.120
+	title = paq.120.t
+	desc = paq.120.d
+	is_triggered_only = yes
+
+	option = {
+		name = paq.120.a
+		add_political_power = 40
+		army_experience = 25
+		ai_chance = {
+			base = 40
+		}
+	}
+
+	option = {
+		name = paq.120.b
+		custom_effect_tooltip = paq_sy_duoluo_up_10_tt
+		add_to_variable = { var = paq_sy_duoluo value = 10 }
+		paq_sy_update_duoluo = yes
+		add_war_support = 0.05
+		paq_tishengguanxi_sy = yes
+		ai_chance = {
+			base = 60
+		}
+	}
+}
+
+#############################################################################
+# 南美其他国家通用感知事件（无论阿德莱希走哪条路线，满足条件均会向南美各国触发） (paq.121 ~ paq.126)
+#############################################################################
+
+# 通用事件1：阿德莱希打开混沌之门（主线 PAQ_4）或新神选加冕（战败线 PAQ_71）后，畸变难民涌入南美各国边境
+country_event = {
+	id = paq.121
+	title = paq.121.t
+	desc = paq.121.d
+
+	trigger = {
+		paq_is_other_south_american_country = yes
+		NOT = { has_country_flag = paq_sa_horror_121_flag }
+		NOT = { is_subject_of = PAQ }
+		NOT = { is_in_faction_with = PAQ }
+		PAQ = {
+			exists = yes
+			has_government = fascism
+			is_subject = no
+			NOT = { has_idea = PAQ_jdxrhl_buff }
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+			OR = {
+				has_completed_focus = PAQ_4
+				has_completed_focus = PAQ_71
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 7
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = paq_sa_horror_121_flag
+		}
+	}
+
+	option = {
+		name = paq.121.a
+		add_stability = 0.03
+		add_war_support = 0.03
+		ai_chance = {
+			base = 60
+		}
+	}
+
+	option = {
+		name = paq.121.b
+		add_stability = -0.02
+		army_experience = 15
+		add_intel = {
+			target = PAQ
+			civilian_intel = 15
+			army_intel = 15
+		}
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# 通用事件2：边境夜空异象（与掌控混沌神权的阿德莱希接壤的南美国家触发）
+country_event = {
+	id = paq.122
+	title = paq.122.t
+	desc = paq.122.d
+
+	trigger = {
+		paq_is_other_south_american_country = yes
+		NOT = { has_country_flag = paq_sa_horror_122_flag }
+		NOT = { is_subject_of = PAQ }
+		NOT = { is_in_faction_with = PAQ }
+		NOT = { has_war_with = PAQ }
+		any_neighbor_country = {
+			tag = PAQ
+		}
+		PAQ = {
+			exists = yes
+			has_government = fascism
+			is_subject = no
+			NOT = { has_idea = PAQ_jdxrhl_buff }
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+			OR = {
+				has_completed_focus = PAQ_010
+				has_completed_focus = PAQ_71
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 10
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = paq_sa_horror_122_flag
+		}
+	}
+
+	option = {
+		name = paq.122.a
+		army_experience = 15
+		add_war_support = 0.03
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+# 通用事件3：境内查获地下混沌邪教祭坛（当南美国家被阿德莱希建立任意混沌教团或任意州被散播混沌腐蚀时触发）
+country_event = {
+	id = paq.123
+	title = paq.123.t
+	desc = paq.123.d
+
+	trigger = {
+		paq_is_other_south_american_country = yes
+		NOT = { has_country_flag = paq_sa_horror_123_flag }
+		NOT = { is_subject_of = PAQ }
+		NOT = { is_in_faction_with = PAQ }
+		PAQ = {
+			exists = yes
+			has_government = fascism
+			is_subject = no
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+		OR = {
+			has_country_flag = paq_zhanzhengjiaotuan_flag
+			has_country_flag = paq_guijijiaotuan_flag
+			has_country_flag = paq_seyujiaotuan_flag
+			has_country_flag = paq_changshengjiaotuan_flag
+			has_country_flag = paq_hundunyiji_flag
+			any_owned_state = {
+				OR = {
+					has_state_flag = paq_sanbolefushi_state
+					has_dynamic_modifier = {
+						modifier = PAQ_hundunfushi_state
+						scope = PAQ
+					}
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = paq_sa_horror_123_flag
+		}
+	}
+
+	option = {
+		name = paq.123.a
+		add_stability = -0.03
+		add_political_power = 30
+		add_war_support = 0.05
+		ai_chance = {
+			base = 60
+		}
+	}
+
+	option = {
+		name = paq.123.b
+		add_political_power = -25
+		add_stability = 0.03
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# 通用事件4：第一道屏障陷落（当艾尔孚利登 PA1 或妖精森林 ELF 被阿德莱希攻陷/吞并/附庸时，向其余南美国家触发）
+country_event = {
+	id = paq.124
+	title = paq.124.t
+	desc = paq.124.d
+
+	trigger = {
+		paq_is_other_south_american_country = yes
+		NOT = { has_country_flag = paq_sa_horror_124_flag }
+		NOT = { is_subject_of = PAQ }
+		NOT = { is_in_faction_with = PAQ }
+		PAQ = {
+			exists = yes
+			has_government = fascism
+			is_subject = no
+			NOT = { has_idea = PAQ_jdxrhl_buff }
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+			OR = {
+				has_completed_focus = PAQ_7
+				has_completed_focus = PAQ_8
+				has_completed_focus = PAQ_71
+			}
+		}
+		OR = {
+			AND = {
+				NOT = { tag = PA1 }
+				OR = {
+					NOT = { country_exists = PA1 }
+					PA1 = { is_subject_of = PAQ }
+					PA1 = { has_capitulated = yes }
+				}
+				any_state = {
+					is_core_of = PA1
+					CONTROLLER = {
+						OR = {
+							tag = PAQ
+							is_subject_of = PAQ
+						}
+					}
+				}
+			}
+			AND = {
+				NOT = { tag = ELF }
+				OR = {
+					NOT = { country_exists = ELF }
+					ELF = { is_subject_of = PAQ }
+					ELF = { has_capitulated = yes }
+				}
+				any_state = {
+					is_core_of = ELF
+					CONTROLLER = {
+						OR = {
+							tag = PAQ
+							is_subject_of = PAQ
+						}
+					}
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = paq_sa_horror_124_flag
+		}
+	}
+
+	option = {
+		name = paq.124.a
+		add_war_support = 0.08
+		army_experience = 20
+		ai_chance = {
+			base = 70
+		}
+	}
+
+	option = {
+		name = paq.124.b
+		add_political_power = 40
+		add_stability = 0.03
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+
+# 通用事件5：与阿德莱希的混沌大军正面交锋（当任意南美国家与阿德莱希处于交战状态时触发）
+country_event = {
+	id = paq.125
+	title = paq.125.t
+	desc = paq.125.d
+
+	trigger = {
+		paq_is_other_south_american_country = yes
+		NOT = { has_country_flag = paq_sa_horror_125_flag }
+		has_war_with = PAQ
+		PAQ = {
+			exists = yes
+			has_government = fascism
+			is_subject = no
+			NOT = { has_idea = PAQ_jdxrhl_buff }
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = paq_sa_horror_125_flag
+		}
+	}
+
+	option = {
+		name = paq.125.a
+		add_war_support = 0.05
+		army_experience = 25
+		ai_chance = {
+			base = 60
+		}
+	}
+
+	option = {
+		name = paq.125.b
+		add_stability = 0.03
+		add_manpower = 3000
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# 通用事件6：南美腹地沦陷的活祭场（当魔联 MGU、夜莺 PAO、圣杯远征军 LFC 或莉兰迪亚 LHS 任一被阿德莱希攻灭时，向幸存南美国家触发）
+country_event = {
+	id = paq.126
+	title = paq.126.t
+	desc = paq.126.d
+
+	trigger = {
+		paq_is_other_south_american_country = yes
+		NOT = { has_country_flag = paq_sa_horror_126_flag }
+		NOT = { is_subject_of = PAQ }
+		NOT = { is_in_faction_with = PAQ }
+		PAQ = {
+			exists = yes
+			has_government = fascism
+			is_subject = no
+			NOT = { has_idea = PAQ_jdxrhl_buff }
+			NOT = { has_country_flag = paq_gj_collapsed_flag }
+		}
+		OR = {
+			AND = {
+				NOT = { tag = MGU }
+				OR = {
+					NOT = { country_exists = MGU }
+					MGU = { is_subject_of = PAQ }
+				}
+				any_state = {
+					is_core_of = MGU
+					OWNER = {
+						OR = {
+							tag = PAQ
+							is_subject_of = PAQ
+						}
+					}
+				}
+			}
+			AND = {
+				NOT = { tag = PAO }
+				OR = {
+					NOT = { country_exists = PAO }
+					PAO = { is_subject_of = PAQ }
+				}
+				any_state = {
+					is_core_of = PAO
+					OWNER = {
+						OR = {
+							tag = PAQ
+							is_subject_of = PAQ
+						}
+					}
+				}
+			}
+			AND = {
+				NOT = { tag = LFC }
+				OR = {
+					NOT = { country_exists = LFC }
+					LFC = { is_subject_of = PAQ }
+				}
+				any_state = {
+					is_core_of = LFC
+					OWNER = {
+						OR = {
+							tag = PAQ
+							is_subject_of = PAQ
+						}
+					}
+				}
+			}
+			AND = {
+				NOT = { tag = LHS }
+				OR = {
+					NOT = { country_exists = LHS }
+					LHS = { is_subject_of = PAQ }
+				}
+				any_state = {
+					is_core_of = LHS
+					OWNER = {
+						OR = {
+							tag = PAQ
+							is_subject_of = PAQ
+						}
+					}
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = paq_sa_horror_126_flag
+		}
+	}
+
+	option = {
+		name = paq.126.a
+		add_war_support = 0.10
+		add_political_power = 50
+		add_manpower = 5000
 		ai_chance = {
 			base = 100
 		}
