@@ -10357,6 +10357,28 @@ focus_tree = {
 					TAM_clr_head_of_government = yes
 					add_ideas = TAM_Hishi_Akebono_head_of_government
 				}
+				# 优秀素质入阁：若她已是阁员，或内阁（政治顾问 6 格）已满，则改为补偿政治点数
+				if = {
+					limit = {
+						OR = {
+							has_idea = TAM_Nice_Nature
+							NOT = {
+								amount_taken_ideas = {
+									amount < 6
+									slots = { political_advisor }
+								}
+							}
+						}
+					}
+					add_political_power = 100
+				}
+				else = {
+					hidden_effect = {
+						add_ideas = TAM_Nice_Nature
+						# 对冲该顾问 on_add 触发的 TAM_bop_left（-0.05）
+						TAM_bop_right = yes
+					}
+				}
 			}
 		}
 		#优秀素质方案
@@ -10436,6 +10458,57 @@ focus_tree = {
 				hidden_effect = {
 					TAM_clr_head_of_government = yes
 					add_ideas = TAM_Symboli_Rudolf_head_of_government
+				}
+				# 鲁道夫内阁：先移除，让出的空位可以立刻给优秀素质
+				if = {
+					limit = {
+						has_idea = TAM_Symboli_Rudolf_token
+					}
+					hidden_effect = {
+						remove_ideas = TAM_Symboli_Rudolf_token
+						# 对冲该顾问 on_remove 触发的 TAM_bop_left（-0.05）
+						TAM_bop_right = yes
+					}
+					# 移除后再判定：优秀素质已在阁或仍无空位则补偿政治点数
+					if = {
+						limit = {
+							OR = {
+								has_idea = TAM_Nice_Nature
+								NOT = {
+									amount_taken_ideas = {
+										amount < 6
+										slots = { political_advisor }
+									}
+								}
+							}
+						}
+						add_political_power = 100
+					}
+					else = {
+						hidden_effect = {
+							add_ideas = TAM_Nice_Nature
+							# 对冲该顾问 on_add 触发的 TAM_bop_left（-0.05）
+							TAM_bop_right = yes
+						}
+					}
+				}
+				else = {
+					# 鲁道夫本就未入阁：优秀素质能入阁则入阁并补偿；不能入阁则两者都不结算
+					if = {
+						limit = {
+							NOT = { has_idea = TAM_Nice_Nature }
+							amount_taken_ideas = {
+								amount < 6
+								slots = { political_advisor }
+							}
+						}
+						hidden_effect = {
+							add_ideas = TAM_Nice_Nature
+							# 对冲该顾问 on_add 触发的 TAM_bop_left（-0.05）
+							TAM_bop_right = yes
+						}
+						add_political_power = 50
+					}
 				}
 			}
 		}
