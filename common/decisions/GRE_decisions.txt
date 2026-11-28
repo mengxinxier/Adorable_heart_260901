@@ -212,6 +212,18 @@ GRE_debug_decision_category = {
 			}
 		}
 	}
+
+	GRE_decision_debug_start_the_third_dark_tide = {
+		visible = {
+            is_debug = yes
+		}
+		available = {
+			NOT = { has_country_flag = GRE_the_third_dark_tide_happened_flag }
+		}
+		complete_effect = {
+			country_event = GRE_event.16
+		}
+	}
 }
 
 GRE_the_third_dark_tide_decision_category = {
@@ -450,7 +462,17 @@ GRE_the_third_dark_tide_decision_category = {
 			else = { always = yes }
 		}
 		available = {
-			always = yes
+			FROM = {
+				has_dynamic_modifier = {
+					modifier = GRE_tacet_field_state_dynamic_modifier
+				}
+			}
+			ROOT = {
+				divisions_in_state = {
+					size > 4
+					state = FROM
+				}
+			}
 		}
 		fire_only_once = no
 		custom_cost_text = decision_cost_ie_1000
@@ -476,6 +498,25 @@ GRE_the_third_dark_tide_decision_category = {
 			ROOT = {
 				army_experience = 20
 				add_command_power = 10
+				random_state_division = {
+					destroy_unit = yes
+				}
+				every_state_division = {
+					set_unit_organization = 0.1
+				}
+			}
+			FROM = {
+				remove_dynamic_modifier = {
+					modifier = GRE_tacet_field_state_dynamic_modifier
+				}
+			}
+		}
+		cancel_trigger = {
+			ROOT = {
+				divisions_in_state = {
+					size < 5
+					state = FROM
+				}
 			}
 		}
 	}
@@ -554,7 +595,7 @@ GRE_the_third_dark_tide_decision_category = {
 		}
 	}
 	GRE_TDT_economic_recovery_decision_1 = {
-		icon = GRE_contact_threnodian_resonator
+		icon = generic_industry
 		visible = {
 			NOT = { has_country_flag = GRE_the_third_dark_tide_finished_flag }
 		}
@@ -601,7 +642,7 @@ GRE_the_third_dark_tide_decision_category = {
 		}
 	}
 	GRE_TDT_economic_recovery_decision_2 = {
-		icon = GRE_contact_threnodian_resonator
+		icon = supplies
 		visible = {
 			NOT = { has_country_flag = GRE_the_third_dark_tide_finished_flag }
 		}
@@ -651,7 +692,7 @@ GRE_the_third_dark_tide_decision_category = {
 		}
 	}
 	GRE_TDT_economic_recovery_decision_3 = {
-		icon = GRE_contact_threnodian_resonator
+		icon = concessions
 		visible = {
 			NOT = { has_country_flag = GRE_the_third_dark_tide_finished_flag }
 		}
@@ -695,7 +736,7 @@ GRE_the_third_dark_tide_decision_category = {
 		}
 	}
 	GRE_TDT_economic_recovery_decision_4 = {
-		icon = GRE_contact_threnodian_resonator
+		icon = generic_court
 		visible = {
 			NOT = { has_country_flag = GRE_the_third_dark_tide_finished_flag }
 		}
@@ -745,6 +786,7 @@ GRE_the_third_dark_tide_decision_category = {
 		}
 	}
 	GRE_TDT_show_map_state_decision = {
+		icon = generic_fortification
 		visible = {
 			check_variable = {
 				ROOT.GRE_TDT_category = 1
@@ -754,6 +796,208 @@ GRE_the_third_dark_tide_decision_category = {
 			hidden_trigger = {
 				always = no
 			}
+		}
+	}
+	GRE_TDT_dark_tide_upgrade_mission = {
+		icon = generic_ignite_civil_war
+		allowed = { tag = GRE }
+		visible = { NOT = { has_global_flag = eylstadt_drift_defence_war } }
+		available = {
+			hidden_trigger = { always = no }
+			all_core_state = {
+				NOT = {
+					has_dynamic_modifier = {
+						modifier = GRE_dark_tide_1_state_dynamic_modifier
+					}
+					has_dynamic_modifier = {
+						modifier = GRE_dark_tide_2_state_dynamic_modifier
+					}
+					has_dynamic_modifier = {
+						modifier = GRE_dark_tide_3_state_dynamic_modifier
+					}
+				}
+			}
+		}
+		days_mission_timeout = 30
+		is_good = no
+		activation = {
+			has_country_flag = GRE_the_third_dark_tide_happened_flag
+			NOT = { has_country_flag = GRE_the_third_dark_tide_finished_flag }
+		}
+		timeout_effect = {
+			custom_effect_tooltip = GRE_TDT_dark_tide_upgrade_mission_tt
+			every_core_state = {
+				limit = {
+					OR = {
+						has_dynamic_modifier = {
+							modifier = GRE_dark_tide_1_state_dynamic_modifier
+						}
+						has_dynamic_modifier = {
+							modifier = GRE_dark_tide_2_state_dynamic_modifier
+						}
+						has_dynamic_modifier = {
+							modifier = GRE_dark_tide_3_state_dynamic_modifier
+						}
+					}
+				}
+				random_list = {
+					20 = {
+						modifier = {
+							factor = 0
+							
+							has_dynamic_modifier = {
+								modifier = GRE_dark_tide_3_state_dynamic_modifier
+							}
+						}
+						custom_effect_tooltip = generic_skip_one_line_tt
+						custom_effect_tooltip = GRE_TDT_dark_tide_upgrade_mission_tt2
+						if = {
+							limit = {
+								has_dynamic_modifier = {
+									modifier = GRE_dark_tide_2_state_dynamic_modifier
+								}
+							}
+							effect_tooltip = {
+								swap_ideas = {
+									remove_idea = GRE_dark_tide_2_idea_fake
+									add_idea = GRE_dark_tide_3_idea_fake
+								}
+							}
+							hidden_effect = {
+								remove_dynamic_modifier = {
+									modifier = GRE_dark_tide_2_state_dynamic_modifier
+								}
+								add_dynamic_modifier = {
+									modifier = GRE_dark_tide_3_state_dynamic_modifier
+								}
+							}
+						}
+						else_if = {
+							limit = {
+								has_dynamic_modifier = {
+									modifier = GRE_dark_tide_1_state_dynamic_modifier
+								}
+							}
+							effect_tooltip = {
+								swap_ideas = {
+									remove_idea = GRE_dark_tide_1_idea_fake
+									add_idea = GRE_dark_tide_2_idea_fake
+								}
+							}
+							hidden_effect = {
+								remove_dynamic_modifier = {
+									modifier = GRE_dark_tide_1_state_dynamic_modifier
+								}
+								add_dynamic_modifier = {
+									modifier = GRE_dark_tide_2_state_dynamic_modifier
+								}
+							}
+						}
+					}
+					20 = {
+						custom_effect_tooltip = generic_skip_one_line_tt
+						custom_effect_tooltip = GRE_TDT_dark_tide_upgrade_mission_tt3
+						random_neighbor_state = {
+							limit = {
+								is_core_of = ROOT
+								NOT = {
+									has_dynamic_modifier = {
+										modifier = GRE_dark_tide_3_state_dynamic_modifier
+									}
+								}
+								NOT = {
+									state = 47
+									state = 989
+								}
+							}
+							if = {
+								limit = {
+									has_dynamic_modifier = {
+										modifier = GRE_dark_tide_2_state_dynamic_modifier
+									}
+								}
+								effect_tooltip = {
+									swap_ideas = {
+										remove_idea = GRE_dark_tide_2_idea_fake
+										add_idea = GRE_dark_tide_3_idea_fake
+									}
+								}
+								hidden_effect = {
+									remove_dynamic_modifier = {
+										modifier = GRE_dark_tide_2_state_dynamic_modifier
+									}
+									add_dynamic_modifier = {
+										modifier = GRE_dark_tide_3_state_dynamic_modifier
+									}
+								}
+							}
+							else_if = {
+								limit = {
+									has_dynamic_modifier = {
+										modifier = GRE_dark_tide_1_state_dynamic_modifier
+									}
+								}
+								effect_tooltip = {
+									swap_ideas = {
+										remove_idea = GRE_dark_tide_1_idea_fake
+										add_idea = GRE_dark_tide_2_idea_fake
+									}
+								}
+								hidden_effect = {
+									remove_dynamic_modifier = {
+										modifier = GRE_dark_tide_1_state_dynamic_modifier
+									}
+									add_dynamic_modifier = {
+										modifier = GRE_dark_tide_2_state_dynamic_modifier
+									}
+								}
+							}
+							else = {
+								add_dynamic_modifier = {
+									modifier = GRE_dark_tide_1_state_dynamic_modifier
+								}
+							}
+						}
+					}
+					20 = {
+						custom_effect_tooltip = generic_skip_one_line_tt
+						custom_effect_tooltip = GRE_TDT_dark_tide_upgrade_mission_tt4
+						custom_effect_tooltip = GRE_modify_dark_tide_dynamic_modifier_tt
+						add_to_variable = { GRE_KC_consumer_goods_factor = 0.05 tooltip = consumer_goods_factor_tt }
+					}
+					20 = {
+						modifier = {
+							add = 0
+							
+							has_dynamic_modifier = {
+								modifier = GRE_tacet_field_state_dynamic_modifier
+							}
+						}
+						custom_effect_tooltip = generic_skip_one_line_tt
+						custom_effect_tooltip = GRE_TDT_dark_tide_upgrade_mission_tt5
+						add_dynamic_modifier = {
+							modifier = GRE_tacet_field_state_dynamic_modifier
+						}
+					}
+					20 = {
+						custom_effect_tooltip = generic_skip_one_line_tt
+						custom_effect_tooltip = GRE_TDT_dark_tide_upgrade_mission_tt6
+						custom_effect_tooltip = GRE_modify_dark_tide_dynamic_modifier_tt
+						add_to_variable = { GRE_KC_stability_factor = -0.02 tooltip = stability_factor_tt }
+					}
+				}
+			}
+			GRE_TDT_calc_state_dark_tide_impact = yes
+			custom_effect_tooltip = generic_skip_one_line_tt
+			activate_mission = GRE_TDT_dark_tide_upgrade_mission
+		}
+		complete_effect = {
+			remove_dynamic_modifier = {
+				modifier = GRE_kuroshio_coming_dynamic_modifier
+			}
+		}
+		ai_will_do = {
+			factor = 200
 		}
 	}
 }
